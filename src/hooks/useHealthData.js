@@ -75,8 +75,30 @@ export function useHealthData() {
       setIsAvailable(true);
       const saved = await AsyncStorage.getItem(STORAGE_KEY);
       if (saved === 'true') {
-        setIsConnected(true);
-        await _performSync();
+        try {
+          // HealthKit requires re-initialization on every app launch before any API calls
+          await new Promise((resolve, reject) => {
+            AppleHealthKit.initHealthKit({
+              permissions: {
+                read: [
+                  AppleHealthKit.Constants?.Permissions?.SleepAnalysis      ?? 'SleepAnalysis',
+                  AppleHealthKit.Constants?.Permissions?.Workout             ?? 'Workout',
+                  AppleHealthKit.Constants?.Permissions?.HeartRate           ?? 'HeartRate',
+                  AppleHealthKit.Constants?.Permissions?.RestingHeartRate    ?? 'RestingHeartRate',
+                  AppleHealthKit.Constants?.Permissions?.HeartRateVariabilitySDNN ?? 'HeartRateVariabilitySDNN',
+                  AppleHealthKit.Constants?.Permissions?.StepCount           ?? 'StepCount',
+                  AppleHealthKit.Constants?.Permissions?.ActiveEnergyBurned  ?? 'ActiveEnergyBurned',
+                  AppleHealthKit.Constants?.Permissions?.DistanceWalkingRunning ?? 'DistanceWalkingRunning',
+                ],
+                write: [],
+              },
+            }, (err) => { if (err) reject(err); else resolve(); });
+          });
+          setIsConnected(true);
+          await _performSync();
+        } catch (e) {
+          console.warn('[useHealthData] initHealth error:', e);
+        }
       }
     } else if (Platform.OS === 'android' && HealthConnect) {
       try {
