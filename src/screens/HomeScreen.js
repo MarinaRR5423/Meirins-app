@@ -14,7 +14,7 @@ import { calcAdherence } from '../utils/adherenceStats';
 
 const BLUE = { primary: '#1A56DB', light: '#EFF6FF', mid: 'rgba(26,86,219,0.10)' };
 const HORMONAL_CONTRA = ['pill', 'hormonal_iud', 'ring', 'patch', 'implant'];
-export default function HomeScreen({ pi, profile, lang = 'es' }) {
+export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
   const { phaseData } = usePhaseData(pi?.phase, lang);
   const baseD = phaseData;
   const d = baseD ? getPhaseDisplay(lang, pi?.phase, baseD) : null;
@@ -182,6 +182,79 @@ export default function HomeScreen({ pi, profile, lang = 'es' }) {
   {todaySession?.dur ? <Text style={[styles.sessionDur, { color: BLUE.primary }]}>{todaySession.dur}</Text> : null}
 </TouchableOpacity>
         </View>
+
+{/* ── RACHA ── */}
+{(() => {
+  const adh = calcAdherence(profile?.profileExtended?.activityLog || {}, 30);
+  if (adh.streak < 1) return null;
+  const streakTxt = {
+    title:  { es: '¡Vas genial!', en: 'You\'re on fire!', fr: 'Tu es en feu !', it: 'Sei in forma!' },
+    days:   { es: 'días seguidos', en: 'days in a row', fr: 'jours de suite', it: 'giorni di fila' },
+    msg1:   { es: 'Sigue así, estás construyendo un hábito real.', en: 'Keep it up, you\'re building a real habit.', fr: 'Continue, tu construis une vraie habitude.', it: 'Continua così, stai costruendo un\'abitudine vera.' },
+    msg7:   { es: '¡Una semana entera! Tu cuerpo ya lo nota.', en: 'A full week! Your body can already feel it.', fr: 'Une semaine entière ! Ton corps le ressent déjà.', it: 'Una settimana intera! Il tuo corpo lo sente già.' },
+    msg14:  { es: 'Dos semanas. Esto ya es un estilo de vida.', en: 'Two weeks. This is already a lifestyle.', fr: 'Deux semaines. C\'est déjà un mode de vie.', it: 'Due settimane. È già uno stile di vita.' },
+    msg30:  { es: '¡Un mes! Eres imparable.', en: 'One month! You\'re unstoppable.', fr: 'Un mois ! Tu es inarrêtable.', it: 'Un mese! Sei inarrestabile.' },
+  };
+  const msg = adh.streak >= 30 ? streakTxt.msg30 : adh.streak >= 14 ? streakTxt.msg14 : adh.streak >= 7 ? streakTxt.msg7 : streakTxt.msg1;
+  const streakColor = adh.streak >= 14 ? '#7C3AED' : adh.streak >= 7 ? '#D97706' : '#1A56DB';
+  const streakBg = adh.streak >= 14 ? 'rgba(124,58,237,0.07)' : adh.streak >= 7 ? 'rgba(217,119,6,0.07)' : 'rgba(26,86,219,0.07)';
+  return (
+    <View style={[styles.card, { marginBottom: 12, borderLeftWidth: 3, borderLeftColor: streakColor }]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 12, color: '#94A3B8', fontWeight: '500', marginBottom: 2 }}>{streakTxt.title[lang] || streakTxt.title.es}</Text>
+          <Text style={{ fontSize: 13, color: '#475569', lineHeight: 18 }}>{msg[lang] || msg.es}</Text>
+        </View>
+        <View style={{ backgroundColor: streakBg, borderRadius: 14, padding: 12, alignItems: 'center', minWidth: 64 }}>
+          <Text style={{ fontSize: 26, fontWeight: '800', color: streakColor, lineHeight: 30 }}>{adh.streak}</Text>
+          <Text style={{ fontSize: 10, color: streakColor, marginTop: 1 }}>🔥 {streakTxt.days[lang] || streakTxt.days.es}</Text>
+        </View>
+      </View>
+    </View>
+  );
+})()}
+
+{/* ── SUEÑO ── */}
+{healthData?.lastSleep && (() => {
+  const s = healthData.lastSleep;
+  const sleepTxt = {
+    title:  { es: 'Sueño anoche', en: 'Last night sleep', fr: 'Sommeil cette nuit', it: 'Sonno stanotte' },
+    hours:  { es: 'h de sueño', en: 'h sleep', fr: 'h de sommeil', it: 'h di sonno' },
+    deep:   { es: 'Profundo', en: 'Deep', fr: 'Profond', it: 'Profondo' },
+    rem:    { es: 'REM', en: 'REM', fr: 'REM', it: 'REM' },
+  };
+  const t = (k) => sleepTxt[k][lang] || sleepTxt[k].es;
+  const sleepEmoji = s.duration >= 7 ? '😴' : s.duration >= 6 ? '🌙' : '⚠️';
+  const sleepColor = s.duration >= 7 ? '#0284C7' : s.duration >= 6 ? '#7C3AED' : '#DC2626';
+  return (
+    <View style={[styles.card, { marginBottom: 12 }]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+        <Text style={styles.cardLabel}>{t('title')}</Text>
+        <Text style={{ fontSize: 18 }}>{sleepEmoji}</Text>
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4, marginBottom: 8 }}>
+        <Text style={{ fontSize: 32, fontWeight: '700', color: sleepColor }}>{s.duration}</Text>
+        <Text style={{ fontSize: 14, color: '#64748B' }}>{t('hours')}</Text>
+      </View>
+      {(s.deepSleep > 0 || s.remSleep > 0) && (
+        <View style={{ flexDirection: 'row', gap: 12 }}>
+          {s.deepSleep > 0 && (
+            <View style={{ backgroundColor: 'rgba(2,132,199,0.08)', borderRadius: 8, padding: 8, flex: 1, alignItems: 'center' }}>
+              <Text style={{ fontSize: 16, fontWeight: '700', color: '#0284C7' }}>{s.deepSleep}h</Text>
+              <Text style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>{t('deep')}</Text>
+            </View>
+          )}
+          {s.remSleep > 0 && (
+            <View style={{ backgroundColor: 'rgba(124,58,237,0.08)', borderRadius: 8, padding: 8, flex: 1, alignItems: 'center' }}>
+              <Text style={{ fontSize: 16, fontWeight: '700', color: '#7C3AED' }}>{s.remSleep}h</Text>
+              <Text style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>{t('rem')}</Text>
+            </View>
+          )}
+        </View>
+      )}
+    </View>
+  );
+})()}
 
 {/* ── ADHERENCIA SEMANAL ── */}
 {(() => {

@@ -54,7 +54,8 @@ const HC_TYPE_MAP = {
   EXERCISE_TYPE_ELLIPTICAL: 'cardio',
 };
 
-const STORAGE_KEY = '@meirins_health_connected';
+const STORAGE_KEY       = '@meirins_health_connected';
+const SLEEP_HISTORY_KEY = '@meirins_sleep_history';
 
 // ─────────────────────────────────────────────────────────────────────────────
 export function useHealthData() {
@@ -66,11 +67,22 @@ export function useHealthData() {
   const [recentWorkouts, setRecentWorkouts] = useState([]);
   const [todayMetrics,   setTodayMetrics]   = useState(null);
   const [lastSleep,      setLastSleep]      = useState(null);
+  const [sleepHistory,   setSleepHistory]   = useState([]);
 
   // ── Init on mount ───────────────────────────────────────────────────────────
   useEffect(() => { initHealth(); }, []);
 
   const initHealth = async () => {
+    // Load cached sleep history on every startup regardless of HealthKit status
+    try {
+      const cached = await AsyncStorage.getItem(SLEEP_HISTORY_KEY);
+      if (cached) {
+        const history = JSON.parse(cached);
+        setSleepHistory(history);
+        if (history.length > 0) setLastSleep(history[0]);
+      }
+    } catch (_) {}
+
     if (Platform.OS === 'ios' && AppleHealthKit) {
       setIsAvailable(true);
       const saved = await AsyncStorage.getItem(STORAGE_KEY);
@@ -249,35 +261,50 @@ export function useHealthData() {
       setRecentWorkouts([enriched, ...workouts.slice(1, 10)]);
     }
 
-    // ── Sleep ───────────────────────────────────────────────────────────────
+    // ── Sleep (7-day history + cache) ───────────────────────────────────────
+    const eightDaysAgo = new Date(Date.now() - 8 * 86_400_000);
     await new Promise(resolve => {
       AppleHealthKit.getSleepSamples(
-        { startDate: twoDaysAgo.toISOString(), endDate: now.toISOString() },
-        (err, results) => {
+        { startDate: eightDaysAgo.toISOString(), endDate: now.toISOString() },
+        async (err, results) => {
           if (err || !results?.length) { resolve(); return; }
 
-          // Filtrar solo la última noche: samples que terminaron después de
-          // ayer mediodía (12:00) — evita acumular noches anteriores
-          const yesterdayNoon = new Date(Date.now() - 86_400_000);
-          yesterdayNoon.setHours(12, 0, 0, 0);
-          const lastNight = results.filter(r => new Date(r.endDate) > yesterdayNoon);
-
-          const ms = (arr) =>
+          const msRange = (arr) =>
             arr.reduce((s, r) => s + (new Date(r.endDate) - new Date(r.startDate)), 0);
-          const inBed   = lastNight.filter(r => r.value === 'INBED');
-          const asleep  = lastNight.filter(r => ['ASLEEP','CORE','DEEP','REM'].includes(r.value));
-          const deep    = lastNight.filter(r => r.value === 'DEEP');
-          const rem     = lastNight.filter(r => r.value === 'REM');
-          const totalH  = Math.round(ms(asleep) / 360_000) / 10;
-          if (totalH > 0) {
-            setLastSleep({
-              date:      lastNight[0]?.startDate?.split('T')[0] ?? '',
-              duration:  totalH,
-              inBed:     Math.round(ms(inBed)  / 360_000) / 10,
-              deepSleep: Math.round(ms(deep)   / 360_000) / 10,
-              remSleep:  Math.round(ms(rem)    / 360_000) / 10,
-            });
+
+          // Group samples by night — samples ending before noon belong to previous day's night
+          const nights = {};
+          for (const r of results) {
+            const end = new Date(r.endDate);
+            const key = end.getHours() < 12
+              ? new Date(end - 86_400_000).toISOString().split('T')[0]
+              : end.toISOString().split('T')[0];
+            if (!nights[key]) nights[key] = [];
+            nights[key].push(r);
           }
+
+          const history = Object.entries(nights)
+            .map(([date, samples]) => {
+              const asleep = samples.filter(r => ['ASLEEP','CORE','DEEP','REM'].includes(r.value));
+              const deep   = samples.filter(r => r.value === 'DEEP');
+              const rem    = samples.filter(r => r.value === 'REM');
+              const inBed  = samples.filter(r => r.value === 'INBED');
+              const totalH = Math.round(msRange(asleep) / 360_000) / 10;
+              return {
+                date,
+                duration:  totalH,
+                deepSleep: Math.round(msRange(deep)  / 360_000) / 10,
+                remSleep:  Math.round(msRange(rem)   / 360_000) / 10,
+                inBed:     Math.round(msRange(inBed) / 360_000) / 10,
+              };
+            })
+            .filter(n => n.duration > 0)
+            .sort((a, b) => b.date.localeCompare(a.date))
+            .slice(0, 7);
+
+          setSleepHistory(history);
+          if (history.length > 0) setLastSleep(history[0]);
+          try { await AsyncStorage.setItem(SLEEP_HISTORY_KEY, JSON.stringify(history)); } catch (_) {}
           resolve();
         },
       );
@@ -429,6 +456,7 @@ export function useHealthData() {
     recentWorkouts,
     todayMetrics,
     lastSleep,
+    sleepHistory,
     requestPermissions,
     syncData,
     disconnect,

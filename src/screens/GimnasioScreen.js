@@ -578,7 +578,7 @@ export default function GimnasioScreen({
 function HealthTab({ hl, hd, lang, wLabel, wEmoji }) {
   const {
     isAvailable, isConnected, isLoading, lastSync,
-    lastWorkout, recentWorkouts, todayMetrics, lastSleep,
+    lastWorkout, recentWorkouts, todayMetrics, lastSleep, sleepHistory,
     requestPermissions, syncData, disconnect,
   } = hd;
 
@@ -726,28 +726,76 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji }) {
     );
   };
 
-  // ── Last sleep ─────────────────────────────────────────────────────────────
+  // ── Sleep history (7 days) ─────────────────────────────────────────────────
   const SleepCard = () => {
-    if (!isConnected) return null;
-    const s = lastSleep;
+    const data = sleepHistory?.length > 0 ? sleepHistory : (lastSleep ? [lastSleep] : []);
+    if (!data.length) return null;
+
+    const maxDur = Math.max(...data.map(n => n.duration), 8);
+    const scoreColor = (d) => d >= 7 ? '#16A34A' : d >= 6 ? '#F59E0B' : '#DC2626';
+
     return (
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>{hl?.sleepTitle}</Text>
-        {!s ? (
-          <Text style={styles.tipText}>{hl?.noSleep}</Text>
-        ) : (
+
+        {/* 7-day bar chart */}
+        <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6, marginBottom: 16, marginTop: 8 }}>
+          {[...data].reverse().map((n, i) => {
+            const barH = Math.max(4, (n.duration / maxDur) * 72);
+            const deepH = n.deepSleep > 0 ? Math.max(2, (n.deepSleep / maxDur) * 72) : 0;
+            const dayLabel = new Date(n.date + 'T12:00:00').toLocaleDateString('default', { weekday: 'narrow' });
+            const isLatest = i === data.length - 1;
+            return (
+              <View key={n.date} style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={{ fontSize: 9, color: scoreColor(n.duration), fontWeight: '700', marginBottom: 2 }}>
+                  {n.duration}h
+                </Text>
+                <View style={{ width: '100%', height: 72, justifyContent: 'flex-end', backgroundColor: '#F1F5F9', borderRadius: 6, overflow: 'hidden' }}>
+                  <View style={{ width: '100%', height: barH, backgroundColor: isLatest ? '#1A56DB' : '#94A3B8', borderRadius: 6 }} />
+                  {deepH > 0 && (
+                    <View style={{ position: 'absolute', bottom: 0, width: '100%', height: deepH, backgroundColor: '#0284C7', borderRadius: 6 }} />
+                  )}
+                </View>
+                <Text style={{ fontSize: 9, color: isLatest ? '#1A56DB' : '#94A3B8', marginTop: 3, fontWeight: isLatest ? '700' : '400' }}>
+                  {dayLabel}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
+
+        {/* Legend */}
+        <View style={{ flexDirection: 'row', gap: 12, marginBottom: 14 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#1A56DB' }} />
+            <Text style={{ fontSize: 10, color: '#64748B' }}>Total</Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#0284C7' }} />
+            <Text style={{ fontSize: 10, color: '#64748B' }}>{hl?.deepSleep ?? 'Profundo'}</Text>
+          </View>
+        </View>
+
+        {/* Last night detail */}
+        {data[0] && (
           <>
-            <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4, marginBottom: 12 }}>
-              <Text style={styles.sleepHours}>{s.duration}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4, marginBottom: 10 }}>
+              <Text style={styles.sleepHours}>{data[0].duration}</Text>
               <Text style={styles.sleepUnit}>h</Text>
-              {s.date && <Text style={styles.sleepDate}> · {fmtDate(s.date + 'T00:00:00', lang)}</Text>}
+              <Text style={styles.sleepDate}> · {fmtDate(data[0].date + 'T00:00:00', lang)}</Text>
             </View>
             <View style={styles.metricRow}>
-              {s.deepSleep > 0 && <MetricPill icon="🌑" label={hl?.deepSleep} value={`${s.deepSleep} h`} color="#4F46E5" />}
-              {s.remSleep  > 0 && <MetricPill icon="🌙" label={hl?.remSleep}  value={`${s.remSleep} h`}  color="#7C3AED" />}
-              {s.inBed     > 0 && <MetricPill icon="🛏"  label={hl?.inBed}    value={`${s.inBed} h`}     color="#64748B" />}
+              {data[0].deepSleep > 0 && <MetricPill icon="🌑" label={hl?.deepSleep ?? 'Profundo'} value={`${data[0].deepSleep} h`} color="#4F46E5" />}
+              {data[0].remSleep  > 0 && <MetricPill icon="🌙" label={hl?.remSleep  ?? 'REM'}      value={`${data[0].remSleep} h`}  color="#7C3AED" />}
+              {data[0].inBed     > 0 && <MetricPill icon="🛏"  label={hl?.inBed    ?? 'En cama'}  value={`${data[0].inBed} h`}     color="#64748B" />}
             </View>
           </>
+        )}
+
+        {!isConnected && (
+          <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 10, fontStyle: 'italic' }}>
+            Datos guardados · Reconecta Apple Health para actualizar
+          </Text>
         )}
       </View>
     );
