@@ -227,31 +227,33 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
   const sleepEmoji = s.duration >= 7 ? '😴' : s.duration >= 6 ? '🌙' : '⚠️';
   const sleepColor = s.duration >= 7 ? '#0284C7' : s.duration >= 6 ? '#7C3AED' : '#DC2626';
   return (
-    <View style={[styles.card, { marginBottom: 12 }]}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-        <Text style={styles.cardLabel}>{t('title')}</Text>
-        <Text style={{ fontSize: 18 }}>{sleepEmoji}</Text>
-      </View>
-      <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4, marginBottom: 8 }}>
-        <Text style={{ fontSize: 32, fontWeight: '700', color: sleepColor }}>{s.duration}</Text>
-        <Text style={{ fontSize: 14, color: '#64748B' }}>{t('hours')}</Text>
-      </View>
-      {(s.deepSleep > 0 || s.remSleep > 0) && (
-        <View style={{ flexDirection: 'row', gap: 12 }}>
-          {s.deepSleep > 0 && (
-            <View style={{ backgroundColor: 'rgba(2,132,199,0.08)', borderRadius: 8, padding: 8, flex: 1, alignItems: 'center' }}>
-              <Text style={{ fontSize: 16, fontWeight: '700', color: '#0284C7' }}>{s.deepSleep}h</Text>
-              <Text style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>{t('deep')}</Text>
-            </View>
-          )}
-          {s.remSleep > 0 && (
-            <View style={{ backgroundColor: 'rgba(124,58,237,0.08)', borderRadius: 8, padding: 8, flex: 1, alignItems: 'center' }}>
-              <Text style={{ fontSize: 16, fontWeight: '700', color: '#7C3AED' }}>{s.remSleep}h</Text>
-              <Text style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>{t('rem')}</Text>
-            </View>
-          )}
+    <View style={[styles.card, { marginBottom: 12, paddingVertical: 10 }]}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <Text style={{ fontSize: 20 }}>{sleepEmoji}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 11, color: '#94A3B8', fontWeight: '500' }}>{t('title')}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 3 }}>
+            <Text style={{ fontSize: 22, fontWeight: '700', color: sleepColor }}>{s.duration}</Text>
+            <Text style={{ fontSize: 12, color: '#64748B' }}>{t('hours')}</Text>
+          </View>
         </View>
-      )}
+        {(s.deepSleep > 0 || s.remSleep > 0) && (
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            {s.deepSleep > 0 && (
+              <View style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: 13, fontWeight: '700', color: '#0284C7' }}>{s.deepSleep}h</Text>
+                <Text style={{ fontSize: 9, color: '#94A3B8' }}>{t('deep')}</Text>
+              </View>
+            )}
+            {s.remSleep > 0 && (
+              <View style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: 13, fontWeight: '700', color: '#7C3AED' }}>{s.remSleep}h</Text>
+                <Text style={{ fontSize: 9, color: '#94A3B8' }}>{t('rem')}</Text>
+              </View>
+            )}
+          </View>
+        )}
+      </View>
     </View>
   );
 })()}
