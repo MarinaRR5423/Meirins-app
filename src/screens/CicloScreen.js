@@ -5,6 +5,8 @@ import T, { getPhaseDisplay, getDayLetters } from '../i18n/translations';
 import { ARTICLES } from '../data/articles';
 import TipsCard from '../components/TipsCard';
 import { CicloSetupCard, CicloHealthCard } from '../components/TabSetupCard';
+import CycleTrackingModal from '../components/CycleTrackingModal';
+import SwipeableTabs from '../components/SwipeableTabs';
 
 const CICLO_ARTICLE_IDS = ['sleep-cycle', 'cycle-training'];
 const cicloArticles = ARTICLES.filter(a => CICLO_ARTICLE_IDS.includes(a.id));
@@ -212,12 +214,11 @@ function SleepCard({ sleepLog, logSleep, lang }) {
 }
 
 // ─── Main component ────────────────────────────────────────────────────────────
-export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLength, periodEnd, setPeriodEnd, sleepLog = [], logSleep, lang = 'es', profileExtended, saveProfileExtended }) {
-  const [view, setView]              = useState('wheel');   // 'wheel' | 'calendar'
-  const [editing, setEditing]        = useState(false);
+export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLength, periodEnd, setPeriodEnd, sleepLog = [], logSleep, lang = 'es', profileExtended, saveProfileExtended, logCycleDay }) {
+  const [trackingOpen, setTrackingOpen] = useState(false);
+  const [view, setView]              = useState('calendar'); // 'calendar' | 'wheel'
   const [expandedPhase, setExpanded] = useState(pi?.phase || null);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [newLen, setNewLen]          = useState(pi?.cycleLen || 28);
   const cy = (T[lang] || T.es).cycle;
 
   const today     = new Date();
@@ -225,39 +226,128 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
   const cycleLen  = pi?.cycleLen || 28;
   const d         = pi?.data;
 
-  // Calendar
-  const year        = today.getFullYear();
-  const month       = today.getMonth();
-  const monthName   = today.toLocaleDateString(lang === 'en' ? 'en-GB' : lang === 'fr' ? 'fr-FR' : 'es-ES', { month: 'long', year: 'numeric' });
+  // Anticoncepción hormonal: oculta ventana fértil y fases hormonales proyectadas
+  const contra = profileExtended?.contraception;
+  const HORMONAL_CONTRA = ['pill', 'hormonal_iud', 'ring', 'patch', 'implant'];
+  const isHormonalContra = HORMONAL_CONTRA.includes(contra);
+
+  // Calendar — navegación por meses (0 = mes actual, negativo = pasado, positivo = pronóstico)
+  const [calOffset, setCalOffset] = useState(0);
+  const [marking, setMarking]     = useState(false);   // modo "marcar regla"
+  const [markStart, setMarkStart] = useState(null);
+  const [markEnd, setMarkEnd]     = useState(null);
+
+  const calBase     = new Date(today.getFullYear(), today.getMonth() + calOffset, 1);
+  const year        = calBase.getFullYear();
+  const month       = calBase.getMonth();
+  const monthName   = calBase.toLocaleDateString(lang === 'en' ? 'en-GB' : lang === 'fr' ? 'fr-FR' : lang === 'it' ? 'it-IT' : 'es-ES', { month: 'long', year: 'numeric' });
   const firstDay    = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const startOffset = (firstDay + 6) % 7;
+
+  // Historial de reglas reales (profile_extended.periodHistory) + el período vigente
+  const periods = useMemo(() => {
+    const hist = Array.isArray(profileExtended?.periodHistory)
+      ? profileExtended.periodHistory.filter(p => p?.start) : [];
+    const all = [...hist];
+    if (lastPeriod && !all.some(p => p.start === lastPeriod)) {
+      all.push({ start: lastPeriod, end: periodEnd || null });
+    }
+    return all.sort((a, b) => a.start.localeCompare(b.start));
+  }, [profileExtended?.periodHistory, lastPeriod, periodEnd]);
+
+  const inRealPeriod = (dateStr) => {
+    const norm = dateStr.split('T')[0];
+    return periods.some(p => {
+      const pStart = p.start?.split('T')[0] || p.start;
+      const pEnd   = (p.end?.split('T')[0]  || p.end)  || pStart;
+      return norm >= pStart && norm <= pEnd;
+    });
+  };
+
+  // Duración media real del ciclo (últimos 3 intervalos entre reglas) para el pronóstico
+  const effectiveCycleLen = useMemo(() => {
+    const starts = periods.map(p => p.start);
+    if (starts.length < 2) return cycleLen;
+    const gaps = [];
+    for (let i = 1; i < starts.length; i++) {
+      const g = Math.round((new Date(starts[i] + 'T12:00:00') - new Date(starts[i - 1] + 'T12:00:00')) / 86400000);
+      if (g >= 18 && g <= 45) gaps.push(g);   // descarta huecos no plausibles (meses sin registrar)
+    }
+    if (!gaps.length) return cycleLen;
+    const recent = gaps.slice(-3);
+    return Math.round(recent.reduce((s, g) => s + g, 0) / recent.length);
+  }, [periods, cycleLen]);
+
+  // Modo marcar regla: la selección se puede ampliar y REDUCIR tocando
+  // el nuevo inicio o fin (fix: antes un rango completo se reiniciaba y
+  // los días sobrantes parecían no desmarcarse)
+  const handleMarkTap = (dateStr) => {
+    if (dateStr > todayStr) return;               // no se marcan reglas en el futuro
+    if (!markStart) { setMarkStart(dateStr); return; }
+
+    if (markEnd) {
+      // Rango completo → ajustar inicio o fin
+      const daysFromEnd = Math.round((new Date(dateStr + 'T12:00:00') - new Date(markEnd + 'T12:00:00')) / 86400000);
+      if (daysFromEnd > 15) {
+        // Toque muy lejano: es otra regla distinta → empezar selección nueva
+        setMarkStart(dateStr); setMarkEnd(null);
+      } else if (dateStr < markStart) {
+        setMarkStart(dateStr);                    // ampliar por el inicio
+      } else {
+        setMarkEnd(dateStr);                      // mover el fin (reduce o amplía)
+        if (dateStr < markStart) setMarkStart(dateStr);
+      }
+      return;
+    }
+
+    // Solo inicio marcado → segundo toque define el fin (con intercambio si va antes)
+    if (dateStr < markStart) {
+      setMarkEnd(markStart); setMarkStart(dateStr);
+    } else {
+      setMarkEnd(dateStr);
+    }
+  };
+
+  const savePeriodMark = async () => {
+    if (!markStart) return;
+    const entry = { start: markStart, end: markEnd || markStart };
+    const hist = Array.isArray(profileExtended?.periodHistory)
+      ? profileExtended.periodHistory.filter(p => p?.start) : [];
+    const overlaps = (p) => !((p.end || p.start) < entry.start || p.start > entry.end);
+    const merged = hist.filter(p => !overlaps(p));   // reemplaza períodos solapados
+
+    const isNewest = !lastPeriod || entry.start >= lastPeriod;
+    if (isNewest) {
+      // El período vigente pasa al historial; el nuevo se convierte en el actual
+      const current = lastPeriod ? { start: lastPeriod, end: periodEnd || lastPeriod } : null;
+      if (current && !overlaps(current) && !merged.some(p => p.start === current.start)) merged.push(current);
+      merged.push(entry);
+      merged.sort((a, b) => a.start.localeCompare(b.start));
+      await saveProfileExtended({ periodHistory: merged.slice(-24), periodEnd: entry.end });
+      await setLastPeriod(entry.start);
+    } else {
+      merged.push(entry);
+      merged.sort((a, b) => a.start.localeCompare(b.start));
+      await saveProfileExtended({ periodHistory: merged.slice(-24) });
+    }
+    setMarking(false); setMarkStart(null); setMarkEnd(null);
+  };
+
+  const tr = (es, en, fr, it) => ({ es, en, fr, it }[lang] || es);
 
   const pDays = {
     menstrual:  cy.phaseDays.menstrual,
     follicular: cy.phaseDays.follicular,
     ovulation:  cy.phaseDays.ovulation,
-    luteal:     cy.phaseDays.luteal + cycleLen,
+    luteal:     cy.phaseDays.luteal + (cycleLen || 28),
   };
   const phaseInfo = cy.phaseInfo;
-
-  // 60 days for period start picker
-  const periodStartDays = Array.from({ length: 60 }, (_, i) => {
-    const dt = new Date(); dt.setDate(today.getDate() - i);
-    return dt.toISOString().split('T')[0];
-  });
-
-  // Period end: up to 15 days after start
-  const periodEndDays = lastPeriod ? Array.from({ length: 12 }, (_, i) => {
-    const dt = new Date(lastPeriod + 'T12:00:00');
-    dt.setDate(dt.getDate() + i + 1);
-    const str = dt.toISOString().split('T')[0];
-    return { str, dayNum: i + 2 }; // day 2 through day 13
-  }) : [];
 
   const dateLocale = lang === 'en' ? 'en-GB' : lang === 'fr' ? 'fr-FR' : 'es-ES';
 
   return (
+    <SwipeableTabs tabs={['calendar', 'wheel']} current={view} onChange={setView}>
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
       {/* ── SETUP CARDS ── */}
@@ -277,16 +367,26 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
       />
 
       {/* ── HOY BANNER ── */}
-      <View style={[styles.card, { backgroundColor: d?.color || BLUE.primary }]}>
+      <View style={[styles.card, { backgroundColor: isHormonalContra ? '#6B7280' : (d?.color || BLUE.primary) }]}>
         <View style={styles.todayRow}>
           <View style={styles.todayBlock}>
             <Text style={styles.todayLabel}>{cy.cycleDay}</Text>
             <Text style={styles.todayDay}>{pi?.day ?? '—'}</Text>
           </View>
           <View style={styles.todayPhase}>
-            <Text style={{ fontSize: 34 }}>{d?.emoji}</Text>
-            <Text style={styles.todayPhaseName}>{d?.name}</Text>
-            <Text style={styles.todayTagline}>{d?.tagline}</Text>
+            {isHormonalContra ? (
+              <>
+                <Text style={{ fontSize: 34 }}>💊</Text>
+                <Text style={styles.todayPhaseName}>{tr('Ciclo con AC', 'Cycle on BC', 'Cycle sous CO', 'Ciclo con AC')}</Text>
+                <Text style={[styles.todayTagline, { opacity: 0.8 }]}>{tr('Fases no aplican', 'Phases don\'t apply', 'Phases non applicables', 'Fasi non applicable')}</Text>
+              </>
+            ) : (
+              <>
+                <Text style={{ fontSize: 34 }}>{d?.emoji}</Text>
+                <Text style={styles.todayPhaseName}>{d?.name}</Text>
+                <Text style={styles.todayTagline}>{d?.tagline}</Text>
+              </>
+            )}
           </View>
           <View style={styles.todayBlock}>
             <Text style={styles.todayLabel}>{cy.remaining}</Text>
@@ -305,31 +405,84 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
               <Text style={styles.viewToggleBtnText}>📅</Text>
             </TouchableOpacity>
           </View>
-          <CycleOrbit pi={pi} cycleLen={cycleLen} />
-          {!pi && <Text style={styles.noDataNote}>{cy.noData}</Text>}
+          {isHormonalContra ? (
+            <View style={{ alignItems: 'center', paddingVertical: 24, gap: 10 }}>
+              <Text style={{ fontSize: 48 }}>💊</Text>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#374151' }}>
+                {tr('Anticoncepción hormonal activa', 'Hormonal contraception active', 'Contraception hormonale active', 'Contraccezione ormonale attiva')}
+              </Text>
+              <Text style={{ fontSize: 12, color: '#6B7280', textAlign: 'center', paddingHorizontal: 20, lineHeight: 18 }}>
+                {tr(
+                  'Las fases del ciclo (folicular, ovulación, lútea) no se muestran porque la anticoncepción hormonal suprime la ovulación y altera el patrón hormonal natural.',
+                  'Cycle phases (follicular, ovulation, luteal) are not shown because hormonal contraception suppresses ovulation and alters the natural hormonal pattern.',
+                  'Les phases du cycle (folliculaire, ovulation, lutéale) ne sont pas affichées car la contraception hormonale supprime l\'ovulation et modifie le schéma hormonal naturel.',
+                  'Le fasi del ciclo (follicolare, ovulazione, luteale) non vengono mostrate perché la contraccezione ormonale sopprime l\'ovulazione e altera il pattern ormonale naturale.',
+                )}
+              </Text>
+              <Text style={{ fontSize: 12, color: '#6B7280', textAlign: 'center', paddingHorizontal: 20 }}>
+                {tr('Día del ciclo: ', 'Cycle day: ', 'Jour du cycle : ', 'Giorno del ciclo: ')}<Text style={{ fontWeight: '700', color: '#374151' }}>{pi?.day ?? '—'}</Text>
+              </Text>
+            </View>
+          ) : (
+            <>
+              <CycleOrbit pi={pi} cycleLen={cycleLen} />
+              {!pi && <Text style={styles.noDataNote}>{cy.noData}</Text>}
+            </>
+          )}
         </View>
       )}
 
       {/* ── CALENDAR VIEW ── */}
       {view === 'calendar' && (
-        <View style={styles.card}>
+        <View style={[styles.card, { paddingHorizontal: 8 }]}>
           <View style={styles.cardHeader}>
-            <Text style={styles.cardTitle}>📅 {monthName.charAt(0).toUpperCase() + monthName.slice(1)}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, flex: 1 }}>
+              <TouchableOpacity onPress={() => setCalOffset(o => Math.max(-24, o - 1))}
+                style={{ paddingHorizontal: 10, paddingVertical: 4 }}>
+                <Text style={{ fontSize: 20, color: '#1A56DB', fontWeight: '700' }}>‹</Text>
+              </TouchableOpacity>
+              <Text style={[styles.cardTitle, { flex: 1, textAlign: 'center' }]}>
+                {monthName.charAt(0).toUpperCase() + monthName.slice(1)}
+              </Text>
+              <TouchableOpacity onPress={() => setCalOffset(o => Math.min(6, o + 1))}
+                style={{ paddingHorizontal: 10, paddingVertical: 4 }}>
+                <Text style={{ fontSize: 20, color: '#1A56DB', fontWeight: '700' }}>›</Text>
+              </TouchableOpacity>
+            </View>
             <TouchableOpacity onPress={() => setView('wheel')} style={styles.viewToggleBtn}>
               <Text style={styles.viewToggleBtnText}>🔵</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.legend}>
-            {Object.keys(PHASE_BG).map(k => {
-              const phTr = getPhaseDisplay(lang, k, PHASES[k]);
-              return (
-                <View key={k} style={styles.legendItem}>
-                  <View style={[styles.legendDot, { backgroundColor: PHASE_BG[k] }]} />
-                  <Text style={styles.legendText}>{PHASES[k]?.emoji} {phTr.name}</Text>
-                </View>
-              );
-            })}
-          </View>
+          {calOffset > 0 && (
+            <Text style={{ fontSize: 11, color: '#94A3B8', textAlign: 'center', marginBottom: 8 }}>
+              {tr('🔮 Pronóstico estimado', '🔮 Estimated forecast', '🔮 Prévision estimée', '🔮 Previsione stimata')}
+            </Text>
+          )}
+          {isHormonalContra ? (
+            <View style={{ backgroundColor: '#FEF3C7', borderRadius: 10, padding: 10, marginBottom: 8, flexDirection: 'row', gap: 8 }}>
+              <Text style={{ fontSize: 14 }}>💊</Text>
+              <Text style={{ fontSize: 12, color: '#92400E', flex: 1, lineHeight: 17 }}>
+                {tr(
+                  'Con anticoncepción hormonal el ciclo no sigue el patrón natural. Solo se muestra la regla real — las fases estimadas no aplican.',
+                  'With hormonal contraception the cycle does not follow a natural pattern. Only real period data is shown — estimated phases do not apply.',
+                  'Avec une contraception hormonale, le cycle ne suit pas le schéma naturel. Seules les règles réelles sont affichées — les phases estimées ne s\'appliquent pas.',
+                  'Con contraccettivi ormonali il ciclo non segue il pattern naturale. Vengono mostrate solo le mestruazioni reali — le fasi stimate non si applicano.',
+                )}
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.legend}>
+              {Object.keys(PHASE_BG).map(k => {
+                const phTr = getPhaseDisplay(lang, k, PHASES[k]);
+                return (
+                  <View key={k} style={styles.legendItem}>
+                    <View style={[styles.legendDot, { backgroundColor: PHASE_BG[k] }]} />
+                    <Text style={styles.legendText}>{PHASES[k]?.emoji} {phTr.name}</Text>
+                  </View>
+                );
+              })}
+            </View>
+          )}
           <View style={styles.calHeader}>
             {[...getDayLetters(lang).slice(1), getDayLetters(lang)[0]].map((h, i) => (
               <Text key={i} style={styles.calHeaderText}>{h}</Text>
@@ -342,32 +495,92 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
             {Array.from({ length: daysInMonth }, (_, i) => {
               const dayNum = i + 1;
               const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(dayNum).padStart(2,'0')}`;
-              const phase = lastPeriod ? getPhaseForDate(dateStr, lastPeriod, cycleLen) : null;
+              const isFuture = dateStr > todayStr;
+              // Regla real (historial) → rojo; desde el último período → fórmula/pronóstico;
+              // Con anticoncepción hormonal, solo se muestra la regla real (no las fases)
+              const isReal = inRealPeriod(dateStr);
+              const phase = isReal ? 'menstrual'
+                : (!isHormonalContra && lastPeriod && dateStr >= lastPeriod) ? getPhaseForDate(dateStr, lastPeriod, effectiveCycleLen)
+                : null;
               const isToday = dateStr === todayStr;
-              const isSelected = dateStr === selectedDate;
+              const isSelected = !marking && dateStr === selectedDate;
+              const isMarked = marking && markStart && dateStr >= markStart && dateStr <= (markEnd || markStart);
               return (
                 <TouchableOpacity
                   key={dayNum}
-                  onPress={() => lastPeriod && setSelectedDate(isSelected ? null : dateStr)}
-                  activeOpacity={lastPeriod ? 0.65 : 1}
+                  onPress={() => marking ? handleMarkTap(dateStr) : lastPeriod && setSelectedDate(isSelected ? null : dateStr)}
+                  activeOpacity={(marking || lastPeriod) ? 0.65 : 1}
                   style={[
                     styles.calCell,
                     phase && { backgroundColor: PHASE_BG[phase] },
+                    isFuture && phase && { opacity: 0.55 },
+                    // En modo edición, atenúa todo lo no seleccionado para que
+                    // quede claro qué días formarán la regla al guardar
+                    marking && !isMarked && { opacity: 0.3 },
+                    isMarked && { backgroundColor: '#EF4444', opacity: 1 },
                     isToday && styles.calCellToday,
                     isSelected && styles.calCellSelected,
                   ]}
                 >
-                  <Text style={[styles.calDayNum, phase && { color: PHASE_TEXT[phase] }, isToday && styles.calDayNumToday, isSelected && styles.calDayNumSelected]}>{dayNum}</Text>
+                  <Text style={[
+                    styles.calDayNum,
+                    phase && { color: PHASE_TEXT[phase] },
+                    isMarked && { color: 'white', fontWeight: '700' },
+                    isToday && styles.calDayNumToday,
+                    isSelected && styles.calDayNumSelected,
+                  ]}>{dayNum}</Text>
                 </TouchableOpacity>
               );
             })}
           </View>
 
-          {/* ── Day detail panel ── */}
-          {selectedDate && lastPeriod && (() => {
-            const selPhase = getPhaseForDate(selectedDate, lastPeriod, cycleLen);
+          {/* ── Marcar regla directamente en el calendario ── */}
+          {!marking ? (
+            <TouchableOpacity
+              onPress={() => {
+                setMarking(true); setSelectedDate(null);
+                // Precarga la regla actual para poder ajustarla (reducir/ampliar)
+                setMarkStart(lastPeriod || null);
+                setMarkEnd(periodEnd || null);
+              }}
+              style={{ backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FECACA', borderRadius: 12, padding: 12, alignItems: 'center', marginTop: 12 }}>
+              <Text style={{ color: '#991B1B', fontWeight: '700', fontSize: 13 }}>
+                🩸 {tr('Marcar regla en el calendario', 'Mark period on the calendar', 'Marquer les règles sur le calendrier', 'Segna il ciclo sul calendario')}
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <View style={{ marginTop: 12 }}>
+              <Text style={{ fontSize: 12, color: '#64748B', textAlign: 'center', marginBottom: 10 }}>
+                {!markStart
+                  ? tr('Toca el día de inicio de tu regla', 'Tap the first day of your period', 'Touche le premier jour de tes règles', 'Tocca il primo giorno del tuo ciclo')
+                  : !markEnd
+                  ? tr('Ahora toca el día de fin (o guarda si fue solo un día)', 'Now tap the last day (or save if it was one day)', 'Touche maintenant le dernier jour (ou enregistre si un seul jour)', 'Ora tocca l\'ultimo giorno (o salva se è stato un solo giorno)')
+                  : tr('Toca otro día para ajustar el inicio o el fin, y guarda', 'Tap another day to adjust start or end, then save', 'Touche un autre jour pour ajuster le début ou la fin, puis enregistre', 'Tocca un altro giorno per regolare inizio o fine, poi salva')}
+              </Text>
+              <View style={{ flexDirection: 'row', gap: 8 }}>
+                <TouchableOpacity
+                  onPress={() => { setMarking(false); setMarkStart(null); setMarkEnd(null); }}
+                  style={{ flex: 1, backgroundColor: '#F1F5F9', borderRadius: 12, padding: 12, alignItems: 'center' }}>
+                  <Text style={{ color: '#64748B', fontWeight: '700', fontSize: 13 }}>
+                    {tr('Cancelar', 'Cancel', 'Annuler', 'Annulla')}
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={savePeriodMark} disabled={!markStart}
+                  style={{ flex: 1, backgroundColor: markStart ? '#EF4444' : '#FCA5A5', borderRadius: 12, padding: 12, alignItems: 'center' }}>
+                  <Text style={{ color: 'white', fontWeight: '700', fontSize: 13 }}>
+                    {tr('Guardar regla', 'Save period', 'Enregistrer', 'Salva ciclo')}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          )}
+
+          {/* ── Day detail panel (oculto con anticoncepción hormonal) ── */}
+          {!isHormonalContra && !marking && selectedDate && lastPeriod && (() => {
+            const selPhase = getPhaseForDate(selectedDate, lastPeriod, effectiveCycleLen);
             const diff = Math.floor((new Date(selectedDate + 'T12:00:00') - new Date(lastPeriod + 'T12:00:00')) / 86400000);
-            const selCycleDay = ((diff % cycleLen) + cycleLen) % cycleLen + 1;
+            const selCycleDay = ((diff % effectiveCycleLen) + effectiveCycleLen) % effectiveCycleLen + 1;
             const ph = PHASES[selPhase];
             const phTr = getPhaseDisplay(lang, selPhase, ph);
             const dayLabel = lang === 'en' ? 'Day' : lang === 'fr' ? 'Jour' : 'Día';
@@ -395,8 +608,8 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
         </View>
       )}
 
-      {/* ── FASES ── */}
-      {Object.entries(PHASES).map(([key, ph]) => {
+      {/* ── FASES (ocultas con anticoncepción hormonal: la info de fases no aplica) ── */}
+      {!isHormonalContra && Object.entries(PHASES).map(([key, ph]) => {
         const isA    = key === pi?.phase;
         const isOpen = expandedPhase === key;
         const info   = phaseInfo[key];
@@ -438,86 +651,40 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
       })}
 
       {/* ── SLEEP TRACKER ── */}
-      <SleepCard sleepLog={sleepLog} logSleep={logSleep || (() => {})} lang={lang} />
+      {/* SleepCard movido a Gimnasio > Salud */}
 
-      {/* ── EDITAR CICLO ── */}
-      <View style={[styles.card, { borderWidth:1, borderStyle:'dashed', borderColor:'#CBD5E1' }]}>
-        {!editing ? (
-          <TouchableOpacity onPress={() => setEditing(true)}>
-            <Text style={styles.editBtn}>{cy.editBtn}</Text>
-          </TouchableOpacity>
-        ) : (
-          <View>
-            <Text style={styles.editTitle}>{cy.editTitle}</Text>
+      {/* ── Botón para registrar el día (tracking Clue-style) ── */}
+      <TouchableOpacity
+        style={{ backgroundColor: '#1A56DB', borderRadius: 18, padding: 18, marginBottom: 12, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 3 }}
+        onPress={() => setTrackingOpen(true)}>
+        <Text style={{ color: 'white', fontWeight: '700', fontSize: 15 }}>
+          📝 {lang === 'en' ? 'Log today' : lang === 'fr' ? 'Enregistrer le jour' : lang === 'it' ? 'Registra il giorno' : 'Registrar el día'}
+        </Text>
+        <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, marginTop: 4 }}>
+          {lang === 'en' ? 'Flow, mood, pain, energy…'
+           : lang === 'fr' ? 'Flux, humeur, douleur, énergie…'
+           : lang === 'it' ? 'Flusso, umore, dolore, energia…'
+           : 'Flujo, ánimo, dolor, energía…'}
+        </Text>
+      </TouchableOpacity>
 
-            {/* Period start */}
-            <Text style={styles.editLabel}>{cy.lastPeriodLabel}</Text>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom:16 }}>
-              {periodStartDays.map(d => (
-                <TouchableOpacity key={d} onPress={() => setLastPeriod(d)}
-                  style={[styles.dateBtn, lastPeriod === d && styles.dateBtnActive]}>
-                  <Text style={[styles.dateBtnText, lastPeriod === d && { color:'white' }]}>
-                    {new Date(d+'T12:00:00').toLocaleDateString(dateLocale, { day:'numeric', month:'short' })}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
+      <CycleTrackingModal
+        visible={trackingOpen}
+        onClose={() => setTrackingOpen(false)}
+        lang={lang}
+        cycleLog={profileExtended?.cycleLog || {}}
+        onSave={(date, data) => logCycleDay?.(date, data)}
+        currentPhase={pi?.phase || null}
+      />
 
-            {/* Period end */}
-            {lastPeriod && (
-              <>
-                <View style={styles.periodEndHeader}>
-                  <Text style={styles.editLabel}>{cy.periodEndLabel}</Text>
-                  {periodEnd && (
-                    <TouchableOpacity onPress={() => setPeriodEnd?.(null)}>
-                      <Text style={styles.periodEndClear}>{cy.periodEndClear}</Text>
-                    </TouchableOpacity>
-                  )}
-                </View>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom:16 }}>
-                  {periodEndDays.map(({ str, dayNum }) => (
-                    <TouchableOpacity key={str} onPress={() => setPeriodEnd?.(str)}
-                      style={[styles.dateBtn, styles.dateBtnSmall, periodEnd === str && styles.dateBtnActive]}>
-                      <Text style={[styles.dateBtnText, { fontSize:11 }, periodEnd === str && { color:'white' }]}>
-                        {cy.periodEndDay(dayNum)}
-                      </Text>
-                      <Text style={[styles.dateBtnText, { fontSize:9, opacity: 0.7 }, periodEnd === str && { color:'rgba(255,255,255,0.8)' }]}>
-                        {new Date(str+'T12:00:00').toLocaleDateString(dateLocale, { day:'numeric', month:'short' })}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-              </>
-            )}
-
-            {/* Cycle length */}
-            <Text style={styles.editLabel}>{cy.durationLabel}: <Text style={{ fontWeight:'700' }}>{newLen} {cy.days}</Text></Text>
-            <View style={styles.lenRow}>
-              {[21,24,26,28,30,32,35].map(l => (
-                <TouchableOpacity key={l} onPress={() => setNewLen(l)}
-                  style={[styles.lenBtn, newLen === l && styles.lenBtnActive]}>
-                  <Text style={[styles.lenBtnText, newLen === l && styles.lenBtnTextActive]}>{l}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-
-            <View style={styles.editBtns}>
-              <TouchableOpacity style={styles.cancelBtn} onPress={() => setEditing(false)}>
-                <Text style={styles.cancelText}>{cy.cancel}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.saveBtn}
-                onPress={() => { setCycleLength(newLen); setEditing(false); }}>
-                <Text style={styles.saveText}>{cy.save}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
-      </View>
+      {/* La fecha y duración del ciclo se editan ahora marcando la regla
+          directamente en la vista calendario (🩸 Marcar regla). */}
 
       {/* ── CONSEJOS ── */}
       <TipsCard articles={cicloArticles} lang={lang} />
 
     </ScrollView>
+    </SwipeableTabs>
   );
 }
 
@@ -546,12 +713,12 @@ const styles = StyleSheet.create({
   legendItem: { flexDirection:'row', alignItems:'center', gap:4 },
   legendDot: { width:10, height:10, borderRadius:5 },
   legendText: { fontSize:10, color:'#64748B' },
-  calHeader: { flexDirection:'row', marginBottom:4 },
-  calHeaderText: { flex:1, textAlign:'center', fontSize:11, fontWeight:'700', color:'#94A3B8' },
+  calHeader: { flexDirection:'row', marginBottom:6 },
+  calHeaderText: { flex:1, textAlign:'center', fontSize:12, fontWeight:'700', color:'#94A3B8' },
   calGrid: { flexDirection:'row', flexWrap:'wrap' },
-  calCell: { width:'14.28%', aspectRatio:1, justifyContent:'center', alignItems:'center', borderRadius:8, padding:2 },
+  calCell: { width:'14.28%', aspectRatio:1, justifyContent:'center', alignItems:'center', borderRadius:10, padding:1 },
   calCellToday: { borderWidth:2, borderColor:'#1A56DB' },
-  calDayNum: { fontSize:13, fontWeight:'500', color:'#334155' },
+  calDayNum: { fontSize:15, fontWeight:'500', color:'#334155' },
   calDayNumToday: { fontWeight:'800', color:'#1A56DB' },
   calCellSelected: { borderWidth:2, borderColor:'#1E293B' },
   calDayNumSelected: { fontWeight:'800' },
