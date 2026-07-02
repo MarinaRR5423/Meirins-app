@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import * as Linking from 'expo-linking';
 import { supabase } from '../lib/supabase';
 import T from '../i18n/translations';
@@ -71,43 +71,50 @@ export default function AuthScreen({ lang = 'es' }) {
   );
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <Text style={styles.emoji}>🌙</Text>
-      <Text style={styles.title}>Meirins</Text>
-      <Text style={styles.subtitle}>{mode === 'login' ? t.welcome : t.createAccount}</Text>
+    <KeyboardAvoidingView style={styles.outer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.emoji}>🌙</Text>
+        <Text style={styles.title}>Meirins</Text>
+        <Text style={styles.subtitle}>{mode === 'login' ? t.welcome : t.createAccount}</Text>
 
-      <View style={styles.toggle}>
-        {[{ id: 'login', l: t.login }, { id: 'register', l: t.register }].map(tab => (
-          <TouchableOpacity key={tab.id} style={[styles.toggleBtn, mode === tab.id && styles.toggleActive]}
-            onPress={() => { setMode(tab.id); setError(''); }}>
-            <Text style={[styles.toggleText, mode === tab.id && styles.toggleTextActive]}>{tab.l}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+        <View style={styles.toggle}>
+          {[{ id: 'login', l: t.login }, { id: 'register', l: t.register }].map(tab => (
+            <TouchableOpacity key={tab.id} style={[styles.toggleBtn, mode === tab.id && styles.toggleActive]}
+              onPress={() => { setMode(tab.id); setError(''); }}>
+              <Text style={[styles.toggleText, mode === tab.id && styles.toggleTextActive]}>{tab.l}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
 
-      <TextInput style={styles.input} placeholder="tu@email.com" placeholderTextColor="rgba(255,255,255,0.4)"
-        value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
-      <TextInput style={styles.input} placeholder={t.password} placeholderTextColor="rgba(255,255,255,0.4)"
-        value={password} onChangeText={setPassword} secureTextEntry />
+        <TextInput style={styles.input} placeholder="tu@email.com" placeholderTextColor="rgba(255,255,255,0.4)"
+          value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+        <TextInput style={styles.input} placeholder={t.password} placeholderTextColor="rgba(255,255,255,0.4)"
+          value={password} onChangeText={setPassword} secureTextEntry />
 
-      {error ? <Text style={styles.error}>{error}</Text> : null}
+        {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      <TouchableOpacity style={[styles.btn, loading && styles.btnDisabled]}
-        onPress={mode === 'login' ? handleLogin : handleRegister} disabled={loading}>
-        <Text style={styles.btnText}>{loading ? '...' : mode === 'login' ? t.enter : t.createBtn}</Text>
-      </TouchableOpacity>
-
-      {mode === 'login' && (
-        <TouchableOpacity onPress={handleResetPassword} disabled={loading} style={{ marginTop: 16 }}>
-          <Text style={styles.forgotText}>{t.forgotPassword}</Text>
+        <TouchableOpacity style={[styles.btn, loading && styles.btnDisabled]}
+          onPress={mode === 'login' ? handleLogin : handleRegister} disabled={loading}>
+          <Text style={styles.btnText}>{loading ? '...' : mode === 'login' ? t.enter : t.createBtn}</Text>
         </TouchableOpacity>
-      )}
+
+        {mode === 'login' && (
+          <TouchableOpacity onPress={handleResetPassword} disabled={loading} style={{ marginTop: 16 }}>
+            <Text style={styles.forgotText}>{t.forgotPassword}</Text>
+          </TouchableOpacity>
+        )}
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container:        { flex: 1, backgroundColor: '#0F1F4A', alignItems: 'center', justifyContent: 'center', padding: 28 },
+  outer:            { flex: 1, backgroundColor: '#0F1F4A' },
+  container:        { flexGrow: 1, alignItems: 'center', justifyContent: 'center', padding: 28 },
   emoji:            { fontSize: 56, marginBottom: 10 },
   title:            { fontFamily: 'serif', fontSize: 32, color: 'white', fontWeight: '700', marginBottom: 4 },
   subtitle:         { fontSize: 14, color: 'rgba(255,255,255,0.6)', marginBottom: 28, textAlign: 'center', lineHeight: 22 },

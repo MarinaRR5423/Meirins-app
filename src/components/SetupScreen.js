@@ -17,7 +17,9 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
   const [age, setAge] = useState('');
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
+  const [activityLevel, setActivityLevel] = useState('moderate');
   const [modules, setModules] = useState(['cycle', 'nutrition', 'sport', 'sleep']);
+  const [goals, setGoals] = useState({}); // { cycle: 'track', nutrition: 'lose_weight', sport: 'muscle' }
   const [saving, setSaving] = useState(false);
 
   const toggleModule = (id) => {
@@ -28,6 +30,10 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
     }
   };
 
+  const setGoal = (category, goalId) => {
+    setGoals(prev => ({ ...prev, [category]: prev[category] === goalId ? undefined : goalId }));
+  };
+
   const finish = async () => {
     setSaving(true);
     await onDone({
@@ -35,10 +41,44 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
       age: parseInt(age),
       weight: parseFloat(weight),
       height: parseFloat(height),
+      activityLevel,
       modules,
+      goals,
     });
     setSaving(false);
   };
+
+  // ── Catálogos para multiidioma inline ──────────────────────────────────────
+  const ACTIVITY_OPTS = [
+    { id: 'sedentary', emoji: '🛋️', label: { es: 'Sedentaria',     en: 'Sedentary',  fr: 'Sédentaire',     it: 'Sedentaria'    }, desc: { es: 'Poca o ninguna actividad',     en: 'Little to no activity', fr: 'Peu ou pas d\'activité',    it: 'Poca o nessuna attività' } },
+    { id: 'light',     emoji: '🚶', label: { es: 'Ligera',          en: 'Light',      fr: 'Légère',         it: 'Leggera'       }, desc: { es: 'Caminar, tareas suaves',       en: 'Walking, light chores', fr: 'Marche, tâches légères',    it: 'Camminata, attività leggere' } },
+    { id: 'moderate',  emoji: '🏃', label: { es: 'Moderada',        en: 'Moderate',   fr: 'Modérée',        it: 'Moderata'      }, desc: { es: 'Deporte 3-4 veces/semana',     en: 'Sport 3-4×/week',       fr: 'Sport 3-4×/semaine',         it: 'Sport 3-4 volte/settimana' } },
+    { id: 'active',    emoji: '🏋️', label: { es: 'Activa',          en: 'Active',     fr: 'Active',         it: 'Attiva'        }, desc: { es: 'Deporte 5+ veces/semana',      en: 'Sport 5+ ×/week',       fr: 'Sport 5+ fois/semaine',      it: 'Sport 5+ volte/settimana' } },
+    { id: 'very_active', emoji: '🔥', label: { es: 'Muy activa',     en: 'Very active',fr: 'Très active',    it: 'Molto attiva'  }, desc: { es: 'Atleta, deporte diario intenso',en: 'Athlete, daily intense',fr: 'Athlète, sport quotidien',  it: 'Atleta, sport quotidiano' } },
+  ];
+
+  const GOALS_BY_MODULE = {
+    cycle: [
+      { id: 'track',         emoji: '🌙', label: { es: 'Seguir mi ciclo',        en: 'Track my cycle',       fr: 'Suivre mon cycle',           it: 'Seguire il mio ciclo' },     desc: { es: 'Conocer cada fase',                en: 'Know each phase',               fr: 'Connaître chaque phase',         it: 'Conoscere ogni fase' } },
+      { id: 'reduce_pain',   emoji: '🌸', label: { es: 'Mejorar mis dolores',    en: 'Reduce period pain',   fr: 'Améliorer mes douleurs',     it: 'Migliorare i dolori' },     desc: { es: 'Cólicos, SPM, fatiga',             en: 'Cramps, PMS, fatigue',          fr: 'Crampes, SPM, fatigue',           it: 'Crampi, PMS, fatica' } },
+      { id: 'pregnancy',     emoji: '🤰', label: { es: 'Quedarme embarazada',    en: 'Get pregnant',         fr: 'Tomber enceinte',            it: 'Rimanere incinta' },       desc: { es: 'Identificar tu ventana fértil',    en: 'Identify your fertile window',  fr: 'Identifier la fenêtre fertile', it: 'Identificare la finestra fertile' } },
+    ],
+    nutrition: [
+      { id: 'eat_better',    emoji: '🥗', label: { es: 'Comer mejor',            en: 'Eat better',           fr: 'Mieux manger',               it: 'Mangiare meglio' },        desc: { es: 'Equilibrar mi alimentación',       en: 'Balance my diet',               fr: 'Équilibrer mon alimentation',     it: 'Equilibrare la mia alimentazione' } },
+      { id: 'lose_weight',   emoji: '⚡', label: { es: 'Perder peso',            en: 'Lose weight',          fr: 'Perdre du poids',            it: 'Perdere peso' },           desc: { es: 'Déficit calórico controlado',     en: 'Controlled calorie deficit',     fr: 'Déficit calorique contrôlé',     it: 'Deficit calorico controllato' } },
+      { id: 'gain_weight',   emoji: '💪', label: { es: 'Ganar peso',             en: 'Gain weight',          fr: 'Prendre du poids',           it: 'Aumentare di peso' },     desc: { es: 'Superávit calórico',               en: 'Calorie surplus',                fr: 'Surplus calorique',               it: 'Surplus calorico' } },
+      { id: 'energize',      emoji: '🔋', label: { es: 'Energizarme',            en: 'Get more energy',      fr: 'Plus d\'énergie',             it: 'Più energia' },           desc: { es: 'Para deportistas (>5h/semana)',    en: 'For athletes (>5h/week)',        fr: 'Sportives (>5h/semaine)',        it: 'Per sportive (>5h/settimana)' } },
+    ],
+    sport: [
+      { id: 'competition',   emoji: '🏆', label: { es: 'Competición',            en: 'Competition',          fr: 'Compétition',                it: 'Competizione' },          desc: { es: 'Preparación específica',           en: 'Specific preparation',           fr: 'Préparation spécifique',         it: 'Preparazione specifica' } },
+      { id: 'muscle',        emoji: '💪', label: { es: 'Ganar músculo',          en: 'Build muscle',         fr: 'Prendre du muscle',          it: 'Costruire muscolo' },     desc: { es: 'Fuerza e hipertrofia',             en: 'Strength and hypertrophy',       fr: 'Force et hypertrophie',           it: 'Forza e ipertrofia' } },
+      { id: 'tone',          emoji: '✨', label: { es: 'Afinarme y tonificar',   en: 'Tone up',              fr: 'M\'affiner et tonifier',     it: 'Tonificarmi' },           desc: { es: 'Definición y postura',             en: 'Definition and posture',         fr: 'Définition et posture',           it: 'Definizione e postura' } },
+      { id: 'resume',        emoji: '🌱', label: { es: 'Retomar el deporte',     en: 'Resume sport',         fr: 'Reprendre le sport',         it: 'Riprendere lo sport' },   desc: { es: 'Volver con seguridad',             en: 'Come back safely',               fr: 'Revenir en sécurité',             it: 'Tornare in sicurezza' } },
+    ],
+  };
+
+  // Solo se piden objetivos de los módulos elegidos (excluyendo sueño)
+  const goalModules = modules.filter(m => GOALS_BY_MODULE[m]);
 
   // ─── PASO 0 · Bienvenida ────────────────────────────────────────────────────
   if (step === 0) return (
@@ -69,7 +109,7 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
     <KeyboardAvoidingView style={styles.scrollContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <TouchableOpacity onPress={() => setStep(0)}><Text style={styles.back}>{su.back}</Text></TouchableOpacity>
-        <Text style={styles.stepDots}><Text style={styles.dotActive}>●</Text> ● ●</Text>
+        <Text style={styles.stepDots}><Text style={styles.dotActive}>●</Text> ● ● ●</Text>
         <Text style={styles.stepTitle}>{su.step1Title}</Text>
         <Text style={styles.stepSub}>{su.step1Sub}</Text>
 
@@ -102,6 +142,27 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
           </View>
         ))}
 
+        {/* Nivel de actividad */}
+        <Text style={[styles.inputLabel, { marginTop: 6, marginBottom: 10 }]}>
+          {lang === 'en' ? 'Activity level' : lang === 'fr' ? 'Niveau d\'activité' : lang === 'it' ? 'Livello di attività' : 'Nivel de actividad'}
+        </Text>
+        {ACTIVITY_OPTS.map(opt => {
+          const active = activityLevel === opt.id;
+          return (
+            <TouchableOpacity key={opt.id} onPress={() => setActivityLevel(opt.id)}
+              style={[styles.optionCard, active && styles.optionCardActive]}>
+              <Text style={styles.optionEmoji}>{opt.emoji}</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.optionLabel, active && styles.optionLabelActive]}>{opt.label[lang] || opt.label.es}</Text>
+                <Text style={styles.optionDesc}>{opt.desc[lang] || opt.desc.es}</Text>
+              </View>
+              <View style={[styles.radio, active && styles.radioActive]}>
+                {active && <View style={styles.radioDot} />}
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+
         <TouchableOpacity
           style={[styles.btn, (!age || !weight || !height) && styles.btnDisabled]}
           onPress={() => age && weight && height && setStep(2)}
@@ -116,7 +177,7 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
   if (step === 2) return (
     <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
       <TouchableOpacity onPress={() => setStep(1)}><Text style={styles.back}>{su.back}</Text></TouchableOpacity>
-      <Text style={styles.stepDots}>● <Text style={styles.dotActive}>●</Text> ●</Text>
+      <Text style={styles.stepDots}>● <Text style={styles.dotActive}>●</Text> ● ●</Text>
       <Text style={styles.stepTitle}>{su.modulesTitle}</Text>
       <Text style={styles.stepSub}>{su.modulesSub}</Text>
 
@@ -138,19 +199,97 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
       })}
 
       <TouchableOpacity
-        style={[styles.btn, (saving || modules.length === 0) && styles.btnDisabled]}
-        onPress={finish}
-        disabled={saving || modules.length === 0}>
-        <Text style={styles.btnText}>{saving ? su.saving : su.create}</Text>
+        style={[styles.btn, modules.length === 0 && styles.btnDisabled]}
+        onPress={() => modules.length > 0 && setStep(3)}
+        disabled={modules.length === 0}>
+        <Text style={styles.btnText}>{su.next}</Text>
       </TouchableOpacity>
     </ScrollView>
   );
+
+  // ─── PASO 3 · Objetivos por categoría ───────────────────────────────────────
+  if (step === 3) {
+    const titleTxt = { es: '¿Qué quieres conseguir?', en: 'What\'s your goal?', fr: 'Quel est ton objectif ?', it: 'Qual è il tuo obiettivo?' }[lang] || '¿Qué quieres conseguir?';
+    const subTxt   = { es: 'Elige un objetivo por categoría', en: 'Pick one goal per category', fr: 'Choisis un objectif par catégorie', it: 'Scegli un obiettivo per categoria' }[lang] || 'Elige un objetivo por categoría';
+    const moduleLabels = { cycle: { es: '🌙 Ciclo', en: '🌙 Cycle', fr: '🌙 Cycle', it: '🌙 Ciclo' }, nutrition: { es: '🥗 Nutrición', en: '🥗 Nutrition', fr: '🥗 Nutrition', it: '🥗 Nutrizione' }, sport: { es: '🏋️ Deporte', en: '🏋️ Sport', fr: '🏋️ Sport', it: '🏋️ Sport' } };
+
+    // Validación: cada módulo (excepto sleep) debe tener un objetivo
+    const allGoalsSet = goalModules.every(m => goals[m]);
+
+    return (
+      <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
+        <TouchableOpacity onPress={() => setStep(2)}><Text style={styles.back}>{su.back}</Text></TouchableOpacity>
+        <Text style={styles.stepDots}>● ● <Text style={styles.dotActive}>●</Text> ●</Text>
+        <Text style={styles.stepTitle}>{titleTxt}</Text>
+        <Text style={styles.stepSub}>{subTxt}</Text>
+
+        {goalModules.map(catId => (
+          <View key={catId} style={{ marginBottom: 18 }}>
+            <Text style={[styles.inputLabel, { fontSize: 14, fontWeight: '700', marginBottom: 10 }]}>
+              {moduleLabels[catId][lang] || moduleLabels[catId].es}
+            </Text>
+            {GOALS_BY_MODULE[catId].map(opt => {
+              const active = goals[catId] === opt.id;
+              return (
+                <TouchableOpacity key={opt.id} onPress={() => setGoal(catId, opt.id)}
+                  style={[styles.optionCard, active && styles.optionCardActive]}>
+                  <Text style={styles.optionEmoji}>{opt.emoji}</Text>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.optionLabel, active && styles.optionLabelActive]}>{opt.label[lang] || opt.label.es}</Text>
+                    <Text style={styles.optionDesc}>{opt.desc[lang] || opt.desc.es}</Text>
+                  </View>
+                  <View style={[styles.radio, active && styles.radioActive]}>
+                    {active && <View style={styles.radioDot} />}
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        ))}
+
+        {/* Aviso médico */}
+        <View style={styles.medDisclaimer}>
+          <Text style={styles.medDisclaimerTitle}>
+            ⚕️ {lang === 'en' ? 'Important' : lang === 'fr' ? 'Important' : lang === 'it' ? 'Importante' : 'Importante'}
+          </Text>
+          <Text style={styles.medDisclaimerBody}>
+            {lang === 'en'
+              ? 'Meirins is an information and wellness tool. It does not replace medical, gynaecological or nutritional advice. Consult a healthcare professional for any medical concerns.'
+              : lang === 'fr'
+              ? 'Meirins est un outil d\'information et de bien-être. Il ne remplace pas l\'avis médical, gynécologique ou nutritionnel. Consulte un professionnel de santé pour toute question médicale.'
+              : lang === 'it'
+              ? 'Meirins è uno strumento di informazione e benessere. Non sostituisce il parere medico, ginecologico o nutrizionale. Consulta un professionista per qualsiasi dubbio.'
+              : 'Meirins es una herramienta de información y bienestar. No sustituye el consejo médico, ginecológico ni nutricional. Consulta a un profesional de la salud ante cualquier duda.'}
+          </Text>
+        </View>
+
+        <TouchableOpacity
+          style={[styles.btn, (saving || !allGoalsSet) && styles.btnDisabled]}
+          onPress={finish}
+          disabled={saving || !allGoalsSet}>
+          <Text style={styles.btnText}>
+            {saving
+              ? su.saving
+              : (lang === 'en' ? 'I understand and accept ✨'
+                 : lang === 'fr' ? 'Je comprends et accepte ✨'
+                 : lang === 'it' ? 'Capisco e accetto ✨'
+                 : 'Entiendo y acepto ✨')}
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+    );
+  }
 
   return null;
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0F1F4A', alignItems: 'center', justifyContent: 'center', padding: 28 },
+
+  // Aviso médico
+  medDisclaimer:      { backgroundColor: 'rgba(253,230,138,0.12)', borderWidth: 1, borderColor: 'rgba(253,230,138,0.3)', borderRadius: 14, padding: 14, marginTop: 8, marginBottom: 16 },
+  medDisclaimerTitle: { fontSize: 13, fontWeight: '700', color: '#FCD34D', marginBottom: 6, letterSpacing: 0.3 },
+  medDisclaimerBody:  { fontSize: 12, color: 'rgba(255,255,255,0.8)', lineHeight: 18 },
   langRow: { position: 'absolute', top: 56, right: 24, flexDirection: 'row', gap: 8 },
   langBtn: { padding: 6, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1, borderColor: 'transparent' },
   langBtnActive: { backgroundColor: 'rgba(255,255,255,0.25)', borderColor: 'rgba(255,255,255,0.5)' },
@@ -185,4 +324,9 @@ const styles = StyleSheet.create({
   checkbox: { width: 24, height: 24, borderRadius: 6, borderWidth: 2, borderColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
   checkboxActive: { backgroundColor: 'white', borderColor: 'white' },
   checkmark: { color: '#1A56DB', fontSize: 14, fontWeight: '700' },
+
+  // Radio para selección única (nivel actividad, objetivos)
+  radio:       { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
+  radioActive: { borderColor: 'white' },
+  radioDot:    { width: 10, height: 10, borderRadius: 5, backgroundColor: 'white' },
 });

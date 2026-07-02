@@ -638,35 +638,35 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
       {/* ── LISTE DE COURSES ── */}
       {sub === 'lista' && <>
         <View style={[styles.card, { backgroundColor: BLUE.light }]}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
             <Text style={[styles.sectionTitle, { color: BLUE.primary }]}>{n.weekList}</Text>
-            <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-              <TouchableOpacity
-                onPress={() => {
-                  const lines = Object.entries(finalShopData).map(([cat, items]) => {
-                    const rows = items.map(item => {
-                      const qty = item.qty ?? item.totalQty;
-                      const label = shoppingListFromRecipes ? formatQuantity(qty, item.unit) : formatQty(qty, item.unit, lang);
-                      return `• ${item.name}${label ? ' — ' + label : ''}`;
-                    }).join('\n');
-                    return `${cat}\n${rows}`;
-                  }).join('\n\n');
-                  const shareLabel = lang === 'en' ? 'Shopping list' : lang === 'fr' ? 'Liste de courses' : lang === 'it' ? 'Lista della spesa' : 'Lista de la compra';
-                  Share.share({ message: `🛒 ${shareLabel}\n\n${lines}` });
-                }}
-                style={{ backgroundColor: BLUE.primary, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12 }}>
-                <Text style={{ color: 'white', fontWeight: '700', fontSize: 12 }}>
-                  {lang === 'en' ? '📤 Share' : lang === 'fr' ? '📤 Partager' : lang === 'it' ? '📤 Condividi' : '📤 Compartir'}
-                </Text>
-              </TouchableOpacity>
-              <View style={{ backgroundColor: BLUE.primary, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 12 }}>
-                <Text style={{ color: 'white', fontWeight: '700', fontSize: 12 }}>
-                  {shopItemsCount} {lang === 'en' ? 'items' : lang === 'fr' ? 'articles' : 'productos'}
-                </Text>
-              </View>
+            <TouchableOpacity
+              onPress={() => {
+                const lines = Object.entries(finalShopData).map(([cat, items]) => {
+                  const rows = items.map(item => {
+                    const qty = item.qty ?? item.totalQty;
+                    const label = shoppingListFromRecipes ? formatQuantity(qty, item.unit) : formatQty(qty, item.unit, lang);
+                    return `• ${item.name}${label ? ' — ' + label : ''}`;
+                  }).join('\n');
+                  return `${cat}\n${rows}`;
+                }).join('\n\n');
+                const shareLabel = lang === 'en' ? 'Shopping list' : lang === 'fr' ? 'Liste de courses' : lang === 'it' ? 'Lista della spesa' : 'Lista de la compra';
+                Share.share({ message: `🛒 ${shareLabel}\n\n${lines}` });
+              }}
+              style={{ backgroundColor: BLUE.primary, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12 }}>
+              <Text style={{ color: 'white', fontWeight: '700', fontSize: 12 }}>
+                {lang === 'en' ? '📤 Share' : lang === 'fr' ? '📤 Partager' : lang === 'it' ? '📤 Condividi' : '📤 Compartir'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+            <Text style={styles.listSub}>{n.weekListSub} · {adults} {adults > 1 ? n.adults2 : n.adult}</Text>
+            <View style={{ backgroundColor: BLUE.primary, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 12 }}>
+              <Text style={{ color: 'white', fontWeight: '700', fontSize: 12 }}>
+                {shopItemsCount} {lang === 'en' ? 'items' : lang === 'fr' ? 'articles' : 'productos'}
+              </Text>
             </View>
           </View>
-          <Text style={styles.listSub}>{n.weekListSub} · {adults} {adults > 1 ? n.adults2 : n.adult}</Text>
           <View style={styles.personsRow}>
             {[
               { label: n.adults,   val: adults,   set: setAdults,   min: 1, max: 8, color: BLUE.primary },

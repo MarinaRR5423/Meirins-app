@@ -194,7 +194,7 @@ export async function scheduleWorkoutNotifications(trainDays = [], hour = 8, tex
     promises.push(
       Notifications.scheduleNotificationAsync({
         identifier: `workout-${dateStr}`,
-        content: { title, body, channelId: CHANNEL_WORKOUT },
+        content: { title, body, channelId: CHANNEL_WORKOUT, data: { screen: 'Gimnasio' } },
         trigger,
       })
     );

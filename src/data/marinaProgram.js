@@ -12,8 +12,8 @@ export function getDayType(jsDay) {
 // ── NUTRICIÓN ─────────────────────────────────────────────────────────────────
 
 export const MENU_A = {
-  label: { es: 'Día A', en: 'Day A', fr: 'Jour A' },
-  tag:   { es: 'Lun · Mié · Vie', en: 'Mon · Wed · Fri', fr: 'Lun · Mer · Ven' },
+  label: { es: 'Día A', en: 'Day A', fr: 'Jour A', it: 'Giorno A' },
+  tag:   { es: 'Lun · Mié · Vie', en: 'Mon · Wed · Fri', fr: 'Lun · Mer · Ven', it: 'Lun · Mer · Ven' },
   color: '#DBEAFE',
   textColor: '#1D4ED8',
   meals: [
@@ -25,6 +25,7 @@ export const MENU_A = {
         es: ['150 g de queso fresco 0 % MG', '30 g de copos de avena', '1 cucharadita de semillas de chía', '1 fruta fresca (manzana o plátano)'],
         en: ['150 g 0% fat cottage cheese', '30 g oat flakes', '1 tsp chia seeds', '1 fresh fruit (apple or banana)'],
         fr: ['150 g de fromage blanc 0 % MG', '30 g de flocons d\'avoine', '1 cuillère à café de graines de chia', '1 fruit frais (pomme ou banane)'],
+        it: ['150 g di fiocchi di latte 0% grassi', '30 g di fiocchi d\'avena', '1 cucchiaino di semi di chia', '1 frutto fresco (mela o banana)'],
       },
     },
     {
@@ -35,6 +36,7 @@ export const MENU_A = {
         es: ['1 yogur natural (100 g)', '10 almendras'],
         en: ['1 plain yoghurt (100 g)', '10 almonds'],
         fr: ['1 yaourt nature (100 g)', '10 amandes'],
+        it: ['1 yogurt naturale (100 g)', '10 mandorle'],
       },
     },
     {
@@ -45,6 +47,7 @@ export const MENU_A = {
         es: ['120 g de pechuga de pollo a la plancha', '150 g de verduras cocidas (brócoli, judías verdes)', '100 g de arroz integral cocido', '1 cucharada de aceite de oliva', '1 fruta fresca'],
         en: ['120 g grilled chicken breast', '150 g cooked vegetables (broccoli, green beans)', '100 g cooked brown rice', '1 tbsp olive oil', '1 fresh fruit'],
         fr: ['120 g de blanc de poulet grillé', '150 g de légumes cuits (brocoli, haricots verts)', '100 g de riz complet cuit', '1 cuillère à soupe d\'huile d\'olive', '1 fruit frais'],
+        it: ['120 g di petto di pollo alla griglia', '150 g di verdure cotte (broccoli, fagiolini)', '100 g di riso integrale cotto', '1 cucchiaio di olio d\'oliva', '1 frutto fresco'],
       },
     },
     {
@@ -55,6 +58,7 @@ export const MENU_A = {
         es: ['1 fruta (naranja o pera)', '30 g de queso fresco'],
         en: ['1 fruit (orange or pear)', '30 g cottage cheese'],
         fr: ['1 fruit (orange ou poire)', '30 g de fromage blanc'],
+        it: ['1 frutto (arancia o pera)', '30 g di fiocchi di latte'],
       },
     },
     {
@@ -65,18 +69,21 @@ export const MENU_A = {
         es: ['2 huevos duros o en tortilla', '150 g de verduras variadas (pisto, calabacín salteado)', '50 g de pan integral', '1 cucharadita de aceite de oliva', '1 yogur natural'],
         en: ['2 hard-boiled or scrambled eggs', '150 g mixed vegetables (ratatouille, sautéed courgette)', '50 g wholegrain bread', '1 tsp olive oil', '1 plain yoghurt'],
         fr: ['2 œufs durs ou en omelette', '150 g de légumes variés (ratatouille, courgette sautée)', '50 g de pain complet', '1 cuillère à café d\'huile d\'olive', '1 yaourt nature'],
+        it: ['2 uova sode o strapazzate', '150 g di verdure miste (ratatouille, zucchine saltate)', '50 g di pane integrale', '1 cucchiaino di olio d\'oliva', '1 yogurt naturale'],
       },
       recipe: {
-        title: { es: 'Tortilla de espinacas y tomate', en: 'Spinach and tomato frittata', fr: 'Omelette épinards-tomate' },
+        title: { es: 'Tortilla de espinacas y tomate', en: 'Spinach and tomato frittata', fr: 'Omelette épinards-tomate', it: 'Frittata di spinaci e pomodoro' },
         ingredients: {
           es: ['2 huevos', '1 puñado de espinacas', '1 tomate', 'Hierbas aromáticas', '1 cucharadita de aceite de oliva'],
           en: ['2 eggs', '1 handful of spinach', '1 tomato', 'Aromatic herbs', '1 tsp olive oil'],
           fr: ['2 œufs', '1 poignée d\'épinards', '1 tomate', 'Herbes aromatiques', '1 cuillère à café d\'huile d\'olive'],
+          it: ['2 uova', '1 manciata di spinaci', '1 pomodoro', 'Erbe aromatiche', '1 cucchiaino di olio d\'oliva'],
         },
         steps: {
           es: ['Batir los huevos, salar ligeramente.', 'Saltear las espinacas y el tomate en dados 2 min.', 'Verter los huevos sobre las verduras y cocinar a fuego suave 3 min.', 'Servir con 50 g de pan integral.'],
           en: ['Beat the eggs and season lightly.', 'Sauté the spinach and diced tomato for 2 min.', 'Pour the eggs over the vegetables and cook on low heat for 3 min.', 'Serve with 50 g wholegrain bread.'],
           fr: ['Battre les œufs et saler légèrement.', 'Faire revenir les épinards et la tomate en dés 2 min.', 'Verser les œufs sur les légumes et cuire à feu doux 3 min.', 'Servir avec 50 g de pain complet.'],
+          it: ['Sbattere le uova e salare leggermente.', 'Saltare gli spinaci e il pomodoro a dadini per 2 min.', 'Versare le uova sulle verdure e cuocere a fuoco dolce 3 min.', 'Servire con 50 g di pane integrale.'],
         },
       },
     },
@@ -84,8 +91,8 @@ export const MENU_A = {
 };
 
 export const MENU_B = {
-  label: { es: 'Día B', en: 'Day B', fr: 'Jour B' },
-  tag:   { es: 'Mar · Jue · Sáb', en: 'Tue · Thu · Sat', fr: 'Mar · Jeu · Sam' },
+  label: { es: 'Día B', en: 'Day B', fr: 'Jour B', it: 'Giorno B' },
+  tag:   { es: 'Mar · Jue · Sáb', en: 'Tue · Thu · Sat', fr: 'Mar · Jeu · Sam', it: 'Mar · Gio · Sab' },
   color: '#DCFCE7',
   textColor: '#15803D',
   meals: [
@@ -97,6 +104,7 @@ export const MENU_B = {
         es: ['2 rebanadas de pan integral (50 g)', '30 g de queso fresco', '1 fruta fresca', '1 café o té sin azúcar'],
         en: ['2 slices of wholegrain bread (50 g)', '30 g cottage cheese', '1 fresh fruit', '1 coffee or unsweetened tea'],
         fr: ['2 tranches de pain complet (50 g)', '30 g de fromage blanc', '1 fruit frais', '1 café ou thé sans sucre'],
+        it: ['2 fette di pane integrale (50 g)', '30 g di fiocchi di latte', '1 frutto fresco', '1 caffè o tè senza zucchero'],
       },
     },
     {
@@ -107,6 +115,7 @@ export const MENU_B = {
         es: ['1 fruta (kiwi o mandarina)', '10 nueces'],
         en: ['1 fruit (kiwi or clementine)', '10 walnuts'],
         fr: ['1 fruit (kiwi ou mandarine)', '10 noix'],
+        it: ['1 frutto (kiwi o mandarino)', '10 noci'],
       },
     },
     {
@@ -117,18 +126,21 @@ export const MENU_B = {
         es: ['120 g de filete de pescado (bacalao, salmón o merluza)', '150 g de verduras al vapor (zanahorias, calabacín)', '100 g de quinoa cocida', '1 cucharada de aceite de colza', '1 yogur natural'],
         en: ['120 g fish fillet (cod, salmon or hake)', '150 g steamed vegetables (carrots, courgette)', '100 g cooked quinoa', '1 tbsp rapeseed oil', '1 plain yoghurt'],
         fr: ['120 g de filet de poisson (cabillaud, saumon ou merlu)', '150 g de légumes vapeur (carottes, courgette)', '100 g de quinoa cuit', '1 cuillère à soupe d\'huile de colza', '1 yaourt nature'],
+        it: ['120 g di filetto di pesce (merluzzo, salmone o nasello)', '150 g di verdure al vapore (carote, zucchine)', '100 g di quinoa cotta', '1 cucchiaio di olio di colza', '1 yogurt naturale'],
       },
       recipe: {
-        title: { es: 'Filete de pescado al vapor', en: 'Steamed fish fillet', fr: 'Filet de poisson vapeur' },
+        title: { es: 'Filete de pescado al vapor', en: 'Steamed fish fillet', fr: 'Filet de poisson vapeur', it: 'Filetto di pesce al vapore' },
         ingredients: {
           es: ['120 g de pescado blanco o salmón', 'Zumo de limón', 'Hierbas frescas', '150 g de verduras al vapor'],
           en: ['120 g white fish or salmon', 'Lemon juice', 'Fresh herbs', '150 g steamed vegetables'],
           fr: ['120 g de poisson blanc ou saumon', 'Jus de citron', 'Herbes fraîches', '150 g de légumes vapeur'],
+          it: ['120 g di pesce bianco o salmone', 'Succo di limone', 'Erbe fresche', '150 g di verdure al vapore'],
         },
         steps: {
           es: ['Sazonar el filete con limón y hierbas.', 'Cocinar al vapor 12–15 min según el grosor.', 'Mientras tanto, cocer las verduras al vapor.', 'Servir con 100 g de quinoa cocida y 1 cs de aceite de colza.'],
           en: ['Season the fillet with lemon and herbs.', 'Steam for 12–15 min depending on thickness.', 'Meanwhile, steam the vegetables.', 'Serve with 100 g cooked quinoa and 1 tbsp rapeseed oil.'],
           fr: ['Assaisonner le filet avec citron et herbes.', 'Cuire à la vapeur 12–15 min selon l\'épaisseur.', 'Pendant ce temps, cuire les légumes à la vapeur.', 'Servir avec 100 g de quinoa cuit et 1 cs d\'huile de colza.'],
+          it: ['Condire il filetto con limone ed erbe.', 'Cuocere al vapore 12–15 min secondo lo spessore.', 'Nel frattempo cuocere le verdure al vapore.', 'Servire con 100 g di quinoa cotta e 1 cucchiaio di olio di colza.'],
         },
       },
     },
@@ -140,6 +152,7 @@ export const MENU_B = {
         es: ['1 compota sin azúcar añadido', '1 puñado de almendras (10 g)'],
         en: ['1 sugar-free compote', '1 small handful of almonds (10 g)'],
         fr: ['1 compote sans sucre ajouté', '1 petite poignée d\'amandes (10 g)'],
+        it: ['1 composta senza zuccheri aggiunti', '1 piccola manciata di mandorle (10 g)'],
       },
     },
     {
@@ -150,18 +163,21 @@ export const MENU_B = {
         es: ['100 g de garbanzos o lentejas (cocidos)', '150 g de verduras (salteado variado)', '1 huevo duro', '1 fruta fresca'],
         en: ['100 g cooked chickpeas or lentils', '150 g mixed sautéed vegetables', '1 hard-boiled egg', '1 fresh fruit'],
         fr: ['100 g de pois chiches ou lentilles cuits', '150 g de légumes sautés variés', '1 œuf dur', '1 fruit frais'],
+        it: ['100 g di ceci o lenticchie cotti', '150 g di verdure saltate miste', '1 uovo sodo', '1 frutto fresco'],
       },
       recipe: {
-        title: { es: 'Salteado de verduras y garbanzos', en: 'Chickpea and vegetable stir-fry', fr: 'Sauté de légumes et pois chiches' },
+        title: { es: 'Salteado de verduras y garbanzos', en: 'Chickpea and vegetable stir-fry', fr: 'Sauté de légumes et pois chiches', it: 'Saltato di verdure e ceci' },
         ingredients: {
           es: ['100 g de garbanzos cocidos', '150 g de verduras variadas', 'Especias (comino, pimentón)', '1 cucharadita de aceite de oliva', '1 huevo duro'],
           en: ['100 g cooked chickpeas', '150 g mixed vegetables', 'Spices (cumin, paprika)', '1 tsp olive oil', '1 hard-boiled egg'],
           fr: ['100 g de pois chiches cuits', '150 g de légumes variés', 'Épices (cumin, paprika)', '1 cuillère à café d\'huile d\'olive', '1 œuf dur'],
+          it: ['100 g di ceci cotti', '150 g di verdure miste', 'Spezie (cumino, paprika)', '1 cucchiaino di olio d\'oliva', '1 uovo sodo'],
         },
         steps: {
           es: ['Saltear las verduras en dados 5 min a fuego vivo.', 'Añadir los garbanzos y mezclar.', 'Sazonar con las especias, cocinar 3 min más.', 'Servir con el huevo duro y 1 fruta fresca.'],
           en: ['Sauté the diced vegetables for 5 min over high heat.', 'Add the chickpeas and mix.', 'Season with spices and cook for 3 more min.', 'Serve with the hard-boiled egg and 1 fresh fruit.'],
           fr: ['Faire sauter les légumes en dés 5 min à feu vif.', 'Ajouter les pois chiches et mélanger.', 'Assaisonner avec les épices, cuire 3 min de plus.', 'Servir avec l\'œuf dur et 1 fruit frais.'],
+          it: ['Saltare le verdure a dadini 5 min a fuoco vivo.', 'Aggiungere i ceci e mescolare.', 'Condire con le spezie, cuocere altri 3 min.', 'Servire con l\'uovo sodo e 1 frutto fresco.'],
         },
       },
     },
@@ -169,8 +185,8 @@ export const MENU_B = {
 };
 
 export const MENU_FREE = {
-  label: { es: 'Día libre', en: 'Free day', fr: 'Journée libre' },
-  tag:   { es: 'Domingo', en: 'Sunday', fr: 'Dimanche' },
+  label: { es: 'Día libre', en: 'Free day', fr: 'Journée libre', it: 'Giorno libero' },
+  tag:   { es: 'Domingo', en: 'Sunday', fr: 'Dimanche', it: 'Domenica' },
   color: '#FEF3C7',
   textColor: '#92400E',
   meals: [
@@ -182,6 +198,7 @@ export const MENU_FREE = {
         es: ['Brunch o plato familiar — sin excesos', 'Escucha tu hambre y tus ganas', 'Tómate tu tiempo para disfrutar'],
         en: ['Brunch or family meal — no excess', 'Listen to your hunger and cravings', 'Take your time to enjoy'],
         fr: ['Brunch ou plat familial — sans excès', 'Écoute ta faim et tes envies', 'Prends le temps de savourer'],
+        it: ['Brunch o pasto in famiglia — senza eccessi', 'Ascolta la tua fame e i tuoi desideri', 'Prenditi il tempo per goderti il pasto'],
       },
     },
     {
@@ -192,6 +209,7 @@ export const MENU_FREE = {
         es: ['Frutas frescas de temporada', 'Yogur natural'],
         en: ['Fresh seasonal fruits', 'Plain yoghurt'],
         fr: ['Fruits frais de saison', 'Yaourt nature'],
+        it: ['Frutta fresca di stagione', 'Yogurt naturale'],
       },
     },
     {
@@ -202,6 +220,7 @@ export const MENU_FREE = {
         es: ['Paseo o caminata en la naturaleza', 'Yoga suave o estiramientos', 'Sin obligación — escucha tu cuerpo'],
         en: ['Walk or nature hike', 'Gentle yoga or stretching', 'No obligation — listen to your body'],
         fr: ['Promenade ou marche en nature', 'Yoga doux ou étirements', 'Sans obligation — écoute ton corps'],
+        it: ['Passeggiata o camminata nella natura', 'Yoga dolce o stretching', 'Senza obblighi — ascolta il tuo corpo'],
       },
     },
   ],
@@ -211,6 +230,7 @@ export const TIPS_NUTRI = {
   es: ['Prepara tus comidas con antelación para ahorrar tiempo.', 'Varía las verduras según la temporada.', 'Bebe agua en cada comida.', 'Si tienes hambre, aumenta las verduras o añade una sopa casera.'],
   en: ['Prepare your meals in advance to save time.', 'Vary your vegetables according to the season.', 'Drink water with every meal.', 'If you are hungry, increase the vegetables or add a home-made soup.'],
   fr: ['Prépare tes repas à l\'avance pour gagner du temps.', 'Varie les légumes selon la saison.', 'Bois de l\'eau à chaque repas.', 'Si tu as faim, augmente les légumes ou ajoute une soupe maison.'],
+  it: ['Prepara i pasti in anticipo per risparmiare tempo.', 'Varia le verdure in base alla stagione.', 'Bevi acqua ad ogni pasto.', 'Se hai fame, aumenta le verdure o aggiungi una zuppa fatta in casa.'],
 };
 
 // ── Detect whether a menu/session is the old Supabase flat-string format ────────

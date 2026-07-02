@@ -1331,22 +1331,6 @@ export default function PerfilScreen({ pi, profile, signOut }) {
         </View>
       )}
 
-      {/* ── ASISTENTE IA ── */}
-      <View style={[styles.card, { backgroundColor: BLUE.light, marginTop: 12 }]}>
-        <Text style={[styles.cardTitle, { color: BLUE.primary, marginBottom: 8 }]}>{p.profile.aiAssistant}</Text>
-        <Text style={styles.iaDesc}>{p.profile.aiDesc}</Text>
-        <View style={styles.iaExamples}>
-          {(lang === 'en'
-            ? ['What should I eat before training?', 'Can I do HIIT today?', 'I have cravings, what do I do?']
-            : lang === 'fr'
-            ? ['Que manger avant l\'entraînement ?', 'Puis-je faire du HIIT aujourd\'hui ?', "J'ai des envies, que faire ?"]
-            : ['¿Qué como antes de entrenar?', '¿Puedo hacer HIIT hoy?', 'Tengo antojos, ¿qué hago?']
-          ).map(q => (
-            <View key={q} style={styles.iaQ}><Text style={styles.iaQText}>· {q}</Text></View>
-          ))}
-        </View>
-      </View>
-
       {/* ── IDIOMA ── */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>🌐 {p.profile.language}</Text>

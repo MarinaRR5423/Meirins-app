@@ -214,84 +214,81 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
   );
 })()}
 
-{/* ── SUEÑO ── */}
-{healthData?.lastSleep && (() => {
-  const s = healthData.lastSleep;
-  const sleepTxt = {
-    title:  { es: 'Sueño anoche', en: 'Last night sleep', fr: 'Sommeil cette nuit', it: 'Sonno stanotte' },
-    hours:  { es: 'h de sueño', en: 'h sleep', fr: 'h de sommeil', it: 'h di sonno' },
-    deep:   { es: 'Profundo', en: 'Deep', fr: 'Profond', it: 'Profondo' },
-    rem:    { es: 'REM', en: 'REM', fr: 'REM', it: 'REM' },
-  };
-  const t = (k) => sleepTxt[k][lang] || sleepTxt[k].es;
-  const sleepEmoji = s.duration >= 7 ? '😴' : s.duration >= 6 ? '🌙' : '⚠️';
-  const sleepColor = s.duration >= 7 ? '#0284C7' : s.duration >= 6 ? '#7C3AED' : '#DC2626';
-  return (
-    <View style={[styles.card, { marginBottom: 12, paddingVertical: 10 }]}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-        <Text style={{ fontSize: 20 }}>{sleepEmoji}</Text>
-        <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 11, color: '#94A3B8', fontWeight: '500' }}>{t('title')}</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 3 }}>
-            <Text style={{ fontSize: 22, fontWeight: '700', color: sleepColor }}>{s.duration}</Text>
-            <Text style={{ fontSize: 12, color: '#64748B' }}>{t('hours')}</Text>
-          </View>
-        </View>
-        {(s.deepSleep > 0 || s.remSleep > 0) && (
-          <View style={{ flexDirection: 'row', gap: 8 }}>
-            {s.deepSleep > 0 && (
-              <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 13, fontWeight: '700', color: '#0284C7' }}>{s.deepSleep}h</Text>
-                <Text style={{ fontSize: 9, color: '#94A3B8' }}>{t('deep')}</Text>
-              </View>
-            )}
-            {s.remSleep > 0 && (
-              <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 13, fontWeight: '700', color: '#7C3AED' }}>{s.remSleep}h</Text>
-                <Text style={{ fontSize: 9, color: '#94A3B8' }}>{t('rem')}</Text>
-              </View>
-            )}
-          </View>
-        )}
-      </View>
+{/* ── SUEÑO + NUTRICIÓN lado a lado ── */}
+{(() => {
+  const s = healthData?.lastSleep;
+  const adh = calcAdherence(profile?.profileExtended?.activityLog || {}, 7);
+  const hasNutri = adh.recipesPct != null;
+  const hasWorkout = adh.workoutsPct != null;
+  if (!s && !hasNutri && !hasWorkout) return (
+    <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
+      <TouchableOpacity onPress={() => navigation.navigate('Nutrición')} style={{ flex: 1, backgroundColor: '#F0FDF4', borderRadius: 16, padding: 12, alignItems: 'center',
+        shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 }}>
+        <Text style={{ fontSize: 22, marginBottom: 4 }}>🥗</Text>
+        <Text style={{ fontSize: 13, fontWeight: '700', color: '#16A34A' }}>{sleepTxt.nutri[lang] || sleepTxt.nutri.es}</Text>
+        <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2, textAlign: 'center' }}>
+          {{ es: 'Ver plan →', en: 'View plan →', fr: 'Voir plan →', it: 'Vedi piano →' }[lang] || 'Ver plan →'}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
-})()}
 
-{/* ── ADHERENCIA SEMANAL ── */}
-{(() => {
-  const adh = calcAdherence(profile?.profileExtended?.activityLog || {}, 7);
-  if (adh.recipesTotal === 0 && adh.workoutsTotal === 0) return null;
-  const txt = {
-    title: { es: 'Tu constancia (7 días)', en: 'Your consistency (7 days)', fr: 'Ta constance (7 jours)', it: 'La tua costanza (7 giorni)' },
-    streak:{ es: 'racha', en: 'streak', fr: 'série', it: 'serie' },
-    nutri: { es: 'Nutrición', en: 'Nutrition', fr: 'Nutrition', it: 'Nutrizione' },
-    workout:{es: 'Entreno', en: 'Workout', fr: 'Entraînement', it: 'Allenamento' },
+  const sleepTxt = {
+    title:  { es: 'Sueño', en: 'Sleep', fr: 'Sommeil', it: 'Sonno' },
+    nutri:  { es: 'Nutrición', en: 'Nutrition', fr: 'Nutrition', it: 'Nutrizione' },
+    workout:{ es: 'Entreno', en: 'Workout', fr: 'Entraînement', it: 'Allenamento' },
+    streak: { es: 'racha', en: 'streak', fr: 'série', it: 'serie' },
   };
+  const sleepEmoji = !s ? '🌙' : s.duration >= 7 ? '😴' : s.duration >= 6 ? '🌙' : '⚠️';
+  const sleepColor = !s ? '#94A3B8' : s.duration >= 7 ? '#0284C7' : s.duration >= 6 ? '#7C3AED' : '#DC2626';
+
   return (
-    <View style={styles.card}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
-        <Text style={styles.sectionTitle}>📊 {txt.title[lang] || txt.title.es}</Text>
-        {adh.streak > 0 && (
-          <Text style={{ fontSize: 13, color: '#F59E0B', fontWeight: '700' }}>🔥 {adh.streak} {txt.streak[lang] || txt.streak.es}</Text>
-        )}
-      </View>
-      <View style={{ flexDirection: 'row', gap: 12 }}>
-        {adh.recipesPct != null && (
-          <View style={{ flex: 1, backgroundColor: '#F0FDF4', borderRadius: 12, padding: 12, alignItems: 'center' }}>
-            <Text style={{ fontSize: 24, fontWeight: '800', color: '#16A34A' }}>{adh.recipesPct}%</Text>
-            <Text style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>🥗 {txt.nutri[lang] || txt.nutri.es}</Text>
-            <Text style={{ fontSize: 10, color: '#94A3B8' }}>{adh.recipesDone}/{adh.recipesTotal}</Text>
+    <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
+      {/* Sueño */}
+      {s && (
+        <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 16, padding: 12, alignItems: 'center',
+          shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 }}>
+          <Text style={{ fontSize: 22, marginBottom: 4 }}>{sleepEmoji}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 2 }}>
+            <Text style={{ fontSize: 26, fontWeight: '800', color: sleepColor }}>{s.duration}</Text>
+            <Text style={{ fontSize: 11, color: '#64748B' }}>h</Text>
           </View>
-        )}
-        {adh.workoutsPct != null && (
-          <View style={{ flex: 1, backgroundColor: '#EFF6FF', borderRadius: 12, padding: 12, alignItems: 'center' }}>
-            <Text style={{ fontSize: 24, fontWeight: '800', color: BLUE.primary }}>{adh.workoutsPct}%</Text>
-            <Text style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>🏋️ {txt.workout[lang] || txt.workout.es}</Text>
-            <Text style={{ fontSize: 10, color: '#94A3B8' }}>{adh.workoutsDone}/{adh.workoutsTotal}</Text>
+          <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>{sleepTxt.title[lang] || sleepTxt.title.es}</Text>
+          {(s.deepSleep > 0 || s.remSleep > 0) && (
+            <View style={{ flexDirection: 'row', gap: 6, marginTop: 6 }}>
+              {s.deepSleep > 0 && <Text style={{ fontSize: 10, color: '#0284C7', fontWeight: '600' }}>{s.deepSleep}h deep</Text>}
+              {s.remSleep  > 0 && <Text style={{ fontSize: 10, color: '#7C3AED', fontWeight: '600' }}>{s.remSleep}h rem</Text>}
+            </View>
+          )}
+        </View>
+      )}
+      {/* Nutrición */}
+      {hasNutri && (
+        <View style={{ flex: 1, backgroundColor: '#F0FDF4', borderRadius: 16, padding: 12, alignItems: 'center',
+          shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 }}>
+          <Text style={{ fontSize: 22, marginBottom: 4 }}>🥗</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 1 }}>
+            <Text style={{ fontSize: 26, fontWeight: '800', color: '#16A34A' }}>{adh.recipesPct}</Text>
+            <Text style={{ fontSize: 11, color: '#64748B' }}>%</Text>
           </View>
-        )}
-      </View>
+          <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>{sleepTxt.nutri[lang] || sleepTxt.nutri.es}</Text>
+          <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>{adh.recipesDone}/{adh.recipesTotal}</Text>
+        </View>
+      )}
+      {/* Entreno */}
+      {hasWorkout && (
+        <View style={{ flex: 1, backgroundColor: '#EFF6FF', borderRadius: 16, padding: 12, alignItems: 'center',
+          shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 }}>
+          <Text style={{ fontSize: 22, marginBottom: 4 }}>🏋️</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 1 }}>
+            <Text style={{ fontSize: 26, fontWeight: '800', color: BLUE.primary }}>{adh.workoutsPct}</Text>
+            <Text style={{ fontSize: 11, color: '#64748B' }}>%</Text>
+          </View>
+          <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>{sleepTxt.workout[lang] || sleepTxt.workout.es}</Text>
+          <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>{adh.workoutsDone}/{adh.workoutsTotal}</Text>
+          {adh.streak > 0 && <Text style={{ fontSize: 10, color: '#F59E0B', fontWeight: '700', marginTop: 3 }}>🔥 {adh.streak}</Text>}
+        </View>
+      )}
     </View>
   );
 })()}

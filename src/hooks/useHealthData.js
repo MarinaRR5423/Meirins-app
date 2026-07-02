@@ -290,12 +290,27 @@ export function useHealthData() {
               const rem    = samples.filter(r => r.value === 'REM');
               const inBed  = samples.filter(r => r.value === 'INBED');
               const totalH = Math.round(msRange(asleep) / 360_000) / 10;
+
+              // Hora de acostarse = startDate más temprano de todos los samples de esa noche
+              const allSorted = [...samples].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+              const bedtime = allSorted[0]?.startDate ?? null;
+
+              // Interrupciones = gaps > 5 min entre samples de sueño consecutivos
+              const asleepSorted = [...asleep].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+              let interruptions = 0;
+              for (let i = 1; i < asleepSorted.length; i++) {
+                const gap = new Date(asleepSorted[i].startDate) - new Date(asleepSorted[i - 1].endDate);
+                if (gap > 5 * 60_000) interruptions++;
+              }
+
               return {
                 date,
-                duration:  totalH,
-                deepSleep: Math.round(msRange(deep)  / 360_000) / 10,
-                remSleep:  Math.round(msRange(rem)   / 360_000) / 10,
-                inBed:     Math.round(msRange(inBed) / 360_000) / 10,
+                duration:      totalH,
+                deepSleep:     Math.round(msRange(deep)  / 360_000) / 10,
+                remSleep:      Math.round(msRange(rem)   / 360_000) / 10,
+                inBed:         Math.round(msRange(inBed) / 360_000) / 10,
+                bedtime,
+                interruptions,
               };
             })
             .filter(n => n.duration > 0)

@@ -496,11 +496,19 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
               const dayNum = i + 1;
               const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(dayNum).padStart(2,'0')}`;
               const isFuture = dateStr > todayStr;
-              // Regla real (historial) → rojo; desde el último período → fórmula/pronóstico;
-              // Con anticoncepción hormonal, solo se muestra la regla real (no las fases)
+              // Regla real (historial) → rojo; fases calculadas desde el período más cercano
               const isReal = inRealPeriod(dateStr);
+              // Para fechas pasadas: buscar el inicio de período más reciente <= dateStr
+              const refPeriod = !isHormonalContra
+                ? (() => {
+                    const starts = periods.map(p => p.start?.split('T')[0]).filter(Boolean).sort();
+                    // El período de referencia es el más reciente que sea <= dateStr
+                    const ref = starts.filter(s => s <= dateStr).slice(-1)[0];
+                    return ref || (lastPeriod && dateStr >= lastPeriod ? lastPeriod : null);
+                  })()
+                : null;
               const phase = isReal ? 'menstrual'
-                : (!isHormonalContra && lastPeriod && dateStr >= lastPeriod) ? getPhaseForDate(dateStr, lastPeriod, effectiveCycleLen)
+                : (refPeriod && !isHormonalContra) ? getPhaseForDate(dateStr, refPeriod, effectiveCycleLen)
                 : null;
               const isToday = dateStr === todayStr;
               const isSelected = !marking && dateStr === selectedDate;
@@ -543,13 +551,13 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
                 setMarkStart(lastPeriod || null);
                 setMarkEnd(periodEnd || null);
               }}
-              style={{ backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FECACA', borderRadius: 12, padding: 12, alignItems: 'center', marginTop: 12 }}>
+              style={{ backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FECACA', borderRadius: 12, padding: 12, alignItems: 'center', marginTop: 4 }}>
               <Text style={{ color: '#991B1B', fontWeight: '700', fontSize: 13 }}>
                 🩸 {tr('Marcar regla en el calendario', 'Mark period on the calendar', 'Marquer les règles sur le calendrier', 'Segna il ciclo sul calendario')}
               </Text>
             </TouchableOpacity>
           ) : (
-            <View style={{ marginTop: 12 }}>
+            <View style={{ marginTop: 4 }}>
               <Text style={{ fontSize: 12, color: '#64748B', textAlign: 'center', marginBottom: 10 }}>
                 {!markStart
                   ? tr('Toca el día de inicio de tu regla', 'Tap the first day of your period', 'Touche le premier jour de tes règles', 'Tocca il primo giorno del tuo ciclo')
@@ -716,7 +724,7 @@ const styles = StyleSheet.create({
   calHeader: { flexDirection:'row', marginBottom:6 },
   calHeaderText: { flex:1, textAlign:'center', fontSize:12, fontWeight:'700', color:'#94A3B8' },
   calGrid: { flexDirection:'row', flexWrap:'wrap' },
-  calCell: { width:'14.28%', aspectRatio:1, justifyContent:'center', alignItems:'center', borderRadius:10, padding:1 },
+  calCell: { width:'14.28%', aspectRatio:1, justifyContent:'center', alignItems:'center', borderRadius:10 },
   calCellToday: { borderWidth:2, borderColor:'#1A56DB' },
   calDayNum: { fontSize:15, fontWeight:'500', color:'#334155' },
   calDayNumToday: { fontWeight:'800', color:'#1A56DB' },

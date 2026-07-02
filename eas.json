@@ -1,24 +1,49 @@
 {
   "cli": {
-    "version": ">= 16.0.0"
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
   },
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "ios": {
+        "simulator": false
+      },
+      "env": {
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true"
+      }
     },
     "preview": {
-      "distribution": "internal",
+      "distribution": "store",
       "android": {
         "buildType": "apk"
       },
       "ios": {
-        "simulator": false
+        "autoIncrement": true
+      },
+      "env": {
+        "SENTRY_DISABLE_AUTO_UPLOAD": "true",
+        "EXPO_PUBLIC_POSTHOG_KEY": "phc_BxdWM34zEh9BppzrqzAMxuG9cd839M67RgnED3Kui4RY",
+        "EXPO_PUBLIC_POSTHOG_HOST": "https://eu.i.posthog.com"
       }
     },
-    "production": {}
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "SENTRY_ALLOW_FAILURE": "true",
+        "EXPO_PUBLIC_POSTHOG_KEY": "phc_BxdWM34zEh9BppzrqzAMxuG9cd839M67RgnED3Kui4RY",
+        "EXPO_PUBLIC_POSTHOG_HOST": "https://eu.i.posthog.com"
+      }
+    }
   },
   "submit": {
+    "preview": {
+      "ios": {
+        "appleId": "marina.r.1348@gmail.com",
+        "ascAppId": "6782055959"
+      }
+    },
     "production": {
       "ios": {
         "appleId": "marina.r.1348@gmail.com"

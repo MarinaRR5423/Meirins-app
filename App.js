@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { createNavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, View, ActivityIndicator, Platform } from 'react-native';
+import * as Notifications from 'expo-notifications';
 import * as Linking from 'expo-linking';
+
+const navigationRef = createNavigationContainerRef();
 import * as Localization from 'expo-localization';
 import { useProfile } from './src/hooks/useProfile';
 import { supabase } from './src/lib/supabase';
@@ -111,6 +115,28 @@ function App() {
     return () => sub.remove();
   }, []);
 
+  // Navegación desde notificación tap
+  useEffect(() => {
+    // App abierta desde notificación (estaba cerrada)
+    Notifications.getLastNotificationResponseAsync().then(response => {
+      const screen = response?.notification?.request?.content?.data?.screen;
+      if (screen && navigationRef.isReady()) {
+        navigationRef.navigate(screen);
+      }
+    });
+
+    // App en foreground/background — usuario toca la notificación
+    const sub = Notifications.addNotificationResponseReceivedListener(response => {
+      const screen = response?.notification?.request?.content?.data?.screen;
+      if (screen) {
+        if (navigationRef.isReady()) {
+          navigationRef.navigate(screen);
+        }
+      }
+    });
+    return () => sub.remove();
+  }, []);
+
   // Detector de conexión — ping ligero a Supabase cada 30s
   useEffect(() => {
     if (Platform.OS === 'web') return;
@@ -157,7 +183,7 @@ function App() {
     <PostHogProvider apiKey={process.env.EXPO_PUBLIC_POSTHOG_KEY} options={{ host: process.env.EXPO_PUBLIC_POSTHOG_HOST }}>
     <PostHogBridge />
     <ErrorBoundary>
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       {isOffline && <OfflineBanner lang={lang} />}
       <Tab.Navigator
         screenOptions={{

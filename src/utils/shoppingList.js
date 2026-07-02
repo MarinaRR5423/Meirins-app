@@ -68,6 +68,7 @@ const ADJECTIVES = [
   'laminado', 'laminada', 'laminados', 'laminadas',
   'picado', 'picada', 'picados', 'picadas',
   'fileteado', 'fileteada',
+  'lomo', 'lomos', 'filete', 'filetes',
   'entero', 'entera', 'enteros', 'enteras',
   'medio', 'media', 'temporada',
   'ripe', 'fresh', 'raw', 'cooked', 'grated', 'ground', 'chopped',

@@ -128,6 +128,7 @@ export default function GimnasioScreen({
   const [completedExercises, setCompletedExercises] = useState({});
   const [showVariations, setShowVariations] = useState(false);
   const [expandedWeekDay, setExpandedWeekDay] = useState(null);
+  const [weekOffset, setWeekOffset] = useState(0);  // 0 = semana actual, -1 = semana anterior, etc.
 
   const sessionRunning = resolveSession(program?.sessionRunning, lang, SESSION_RUNNING_STATIC);
   const sessionRenfo   = resolveSession(program?.sessionRenfo,   lang, SESSION_RENFO_STATIC);
@@ -231,6 +232,44 @@ export default function GimnasioScreen({
       log: workoutLog[dateKey], dateKey,
       dayNum: date.getDate(),
       dayLabel: i === 0 ? cm.today : i === 1 ? cm.tomorrow : DAY_LABELS_I18N[dow],
+    };
+  });
+
+  // Semana desplazada para la pestaña "semana" (weekOffset <= 0)
+  const activityLog = profileExtended?.activityLog || {};
+  const offsetDays  = Array.from({ length: 7 }, (_, i) => {
+    const date    = new Date();
+    date.setDate(date.getDate() + weekOffset * 7 + i);
+    const dow     = date.getDay();
+    const dateKey = date.toISOString().split('T')[0];
+    const isPast  = dateKey < todayKey;
+    const isToday = dateKey === todayKey;
+    // Sesión planificada para ese día de la semana
+    let session = personalPlan[dow] ?? null;
+    if (progState && progDays.includes(dow)) {
+      const card = programSessionToCard(progState, lang, progState.done);
+      if (card) session = card;
+    }
+    // Estado del entrenamiento: primero log en memoria (hoy), luego activityLog histórico
+    const memLog      = isToday ? workoutLog[dateKey] : null;
+    const savedStatus = activityLog[dateKey]?.workout;
+    const status      = memLog?.status ?? savedStatus ?? null;
+    // Código de color
+    let dotColor = null;
+    if (session) {
+      if (status === 'done')    dotColor = '#22C55E';  // verde
+      else if (status === 'skipped') dotColor = '#EAB308';  // amarillo
+      else if (isPast)          dotColor = '#EF4444';  // rojo — día de entreno pasado sin marcar
+      // futuro: sin punto
+    } else {
+      dotColor = '#CBD5E1';  // gris — día de descanso
+    }
+    return {
+      date, dow, session,
+      dateKey, dayNum: date.getDate(),
+      dayLabel: isToday ? cm.today : DAY_LABELS_I18N[dow],
+      status, dotColor, isPast, isToday,
+      extraSport: activityLog[dateKey]?.extraSport ?? memLog?.extraSport ?? null,
     };
   });
 
@@ -466,11 +505,38 @@ export default function GimnasioScreen({
 
       {/* ════════════════════════ SEMANA ════════════════════════ */}
       {sub === 'semana' && <>
+        {/* Navegación de semana */}
+        {(() => {
+          const weekStart = offsetDays[0];
+          const weekEnd   = offsetDays[6];
+          const fmt = d => `${d.dayNum} ${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][d.date.getMonth()]}`;
+          return (
+            <View style={styles.weekNav}>
+              <TouchableOpacity onPress={() => { setWeekOffset(o => o - 1); setExpandedWeekDay(null); }}
+                style={styles.weekNavBtn}>
+                <Text style={styles.weekNavArrow}>‹</Text>
+              </TouchableOpacity>
+              <Text style={styles.weekNavLabel}>
+                {weekOffset === 0
+                  ? (g.thisWeek ?? 'Esta semana')
+                  : weekOffset === -1
+                    ? (g.lastWeek ?? 'Semana pasada')
+                    : `${fmt(weekStart)} – ${fmt(weekEnd)}`}
+              </Text>
+              <TouchableOpacity
+                onPress={() => { if (weekOffset < 0) { setWeekOffset(o => o + 1); setExpandedWeekDay(null); } }}
+                style={[styles.weekNavBtn, weekOffset >= 0 && { opacity: 0.3 }]}
+                disabled={weekOffset >= 0}>
+                <Text style={styles.weekNavArrow}>›</Text>
+              </TouchableOpacity>
+            </View>
+          );
+        })()}
+
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>{g.weekPlanning}</Text>
-          {weekDays.map((day, i) => {
-            const st = day.log?.status;
-            const s  = day.session;
+          {offsetDays.map((day, i) => {
+            const s         = day.session;
             const isExpanded = expandedWeekDay === i;
             return (
               <View key={i}>
@@ -478,16 +544,20 @@ export default function GimnasioScreen({
                   onPress={() => s ? setExpandedWeekDay(isExpanded ? null : i) : null}
                   activeOpacity={s ? 0.7 : 1}
                   style={[styles.weekRow, {
-                    backgroundColor: i === 0 ? '#EFF6FF' : isExpanded ? '#F0F9FF' : s ? '#F8FAFC' : 'white',
-                    borderColor: isExpanded ? BLUE.primary : i === 0 ? '#BFDBFE' : '#F1F5F9',
+                    backgroundColor: day.isToday ? '#EFF6FF' : isExpanded ? '#F0F9FF' : s ? '#F8FAFC' : 'white',
+                    borderColor: isExpanded ? BLUE.primary : day.isToday ? '#BFDBFE' : '#F1F5F9',
                     borderWidth: isExpanded ? 1.5 : 1,
                   }]}>
                   <View style={styles.weekDate}>
-                    <Text style={[styles.weekDayLabel, (i === 0 || isExpanded) && { color: BLUE.primary, fontWeight: '700' }]}>
+                    <Text style={[styles.weekDayLabel, (day.isToday || isExpanded) && { color: BLUE.primary, fontWeight: '700' }]}>
                       {day.dayLabel}
                     </Text>
                     <Text style={styles.weekDayNum}>{day.dayNum}</Text>
                   </View>
+                  {/* Punto de color */}
+                  {day.dotColor && (
+                    <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: day.dotColor, marginRight: 6, flexShrink: 0, alignSelf: 'center' }} />
+                  )}
                   <Text style={{ fontSize: 20, flexShrink: 0 }}>{s ? s.ico : '😴'}</Text>
                   <View style={{ flex: 1 }}>
                     <Text style={[styles.weekWorkout,
@@ -496,12 +566,11 @@ export default function GimnasioScreen({
                       {s ? s.name : g.rest}
                     </Text>
                     {s && <Text style={styles.weekDur}>{s.duration}</Text>}
-                    {day.log?.extraSport && <Text style={styles.weekExtra}>+ {day.log.extraSport}{day.log.extraMinutes ? ` · ${day.log.extraMinutes} min` : ''}</Text>}
+                    {day.extraSport && <Text style={styles.weekExtra}>+ {day.extraSport}</Text>}
                   </View>
                   <View style={{ alignItems: 'flex-end', gap: 4 }}>
-                    {st === 'done'    && <Text style={{ color: GREEN.text,  fontWeight: '700', fontSize: 16 }}>✓</Text>}
-                    {st === 'skipped' && <Text style={{ color: RED.text,    fontWeight: '700', fontSize: 16 }}>✗</Text>}
-                    {st === 'extra'   && <Text style={{ fontSize: 16 }}>🏅</Text>}
+                    {day.status === 'done'    && <Text style={{ color: GREEN.text,  fontWeight: '700', fontSize: 16 }}>✓</Text>}
+                    {day.status === 'skipped' && <Text style={{ color: '#EAB308',   fontWeight: '700', fontSize: 16 }}>–</Text>}
                     {s && <Text style={{ fontSize: 11, color: '#94A3B8' }}>{isExpanded ? '▲' : '▼'}</Text>}
                   </View>
                 </TouchableOpacity>
@@ -555,19 +624,19 @@ export default function GimnasioScreen({
       {/* ════════════════════════ SALUD ════════════════════════ */}
       {sub === 'salud' && (
         <>
-          <SleepCard sleepLog={sleepLog} logSleep={logSleep} lang={lang} healthSleep={hd?.lastSleep} />
           <HealthTab
             hl={hl}
             hd={hd}
             lang={lang}
             wLabel={wLabel}
             wEmoji={wEmoji}
+            profileExtended={profileExtended}
+            saveProfileExtended={saveProfileExtended}
           />
+          <SleepCard sleepLog={sleepLog} logSleep={logSleep} lang={lang} healthSleep={hd?.lastSleep} />
+          <TipsCard articles={gymArticles} lang={lang} />
         </>
       )}
-
-      {/* Consejos */}
-      <TipsCard articles={gymArticles} lang={lang} />
 
     </ScrollView>
     </SwipeableTabs>
@@ -575,12 +644,54 @@ export default function GimnasioScreen({
 }
 
 // ─── Health tab ───────────────────────────────────────────────────────────────
-function HealthTab({ hl, hd, lang, wLabel, wEmoji }) {
+function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileExtended }) {
   const {
     isAvailable, isConnected, isLoading, lastSync,
     lastWorkout, recentWorkouts, todayMetrics, lastSleep, sleepHistory,
     requestPermissions, syncData, disconnect,
   } = hd;
+
+  const [identifyingId, setIdentifyingId] = useState(null);
+  const typeOverrides = profileExtended?.workoutTypeOverrides || {};
+
+  const resolveType  = (w) => typeOverrides[w.id] ?? w.type;
+  const resolvedLabel = (w) => {
+    const t = resolveType(w);
+    if (t === 'other') return wLabel(t);
+    const sport = SPORTS_LIST.find(s => s.id === t);
+    return sport ? `${sport.emoji} ${sport.label[lang] || sport.label.es}` : wLabel(t);
+  };
+  const resolvedEmoji = (w) => {
+    const t = resolveType(w);
+    const sport = SPORTS_LIST.find(s => s.id === t);
+    return sport ? sport.emoji : wEmoji(t);
+  };
+
+  const saveTypeOverride = async (workoutId, sportId) => {
+    await saveProfileExtended?.({ workoutTypeOverrides: { ...typeOverrides, [workoutId]: sportId } });
+    setIdentifyingId(null);
+  };
+
+  const SportIdentifyPicker = ({ workoutId }) => (
+    <View style={{ marginTop: 10, padding: 10, backgroundColor: '#F8FAFC', borderRadius: 10 }}>
+      <Text style={{ fontSize: 12, fontWeight: '600', color: '#475569', marginBottom: 8 }}>
+        {{ es: '¿Qué deporte fue?', en: 'What sport was it?', fr: 'Quel sport était-ce ?', it: 'Che sport era?' }[lang] || '¿Qué deporte fue?'}
+      </Text>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+        {SPORTS_LIST.filter(s => s.id !== 'other').map(s => (
+          <TouchableOpacity key={s.id} onPress={() => saveTypeOverride(workoutId, s.id)}
+            style={{ paddingHorizontal: 10, paddingVertical: 6, borderRadius: 50, backgroundColor: '#EFF6FF', borderWidth: 1, borderColor: '#BFDBFE' }}>
+            <Text style={{ fontSize: 12, color: '#1E40AF', fontWeight: '500' }}>{s.emoji} {s.label[lang] || s.label.es}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+      <TouchableOpacity onPress={() => setIdentifyingId(null)} style={{ marginTop: 8 }}>
+        <Text style={{ fontSize: 12, color: '#94A3B8', textAlign: 'center' }}>
+          {{ es: 'Cancelar', en: 'Cancel', fr: 'Annuler', it: 'Annulla' }[lang] || 'Cancelar'}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   // ── Connection card ────────────────────────────────────────────────────────
   const ConnectCard = () => {
@@ -649,6 +760,8 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji }) {
       );
     }
     const w = lastWorkout;
+    const isUnknown = resolveType(w) === 'other';
+    const isIdentifying = identifyingId === w.id;
     return (
       <View style={styles.card}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 }}>
@@ -657,15 +770,29 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji }) {
         </View>
 
         {/* Header */}
-        <View style={styles.workoutHeader}>
-          <Text style={{ fontSize: 36 }}>{wEmoji(w.type)}</Text>
+        <TouchableOpacity
+          activeOpacity={isUnknown ? 0.7 : 1}
+          onPress={() => isUnknown && setIdentifyingId(isIdentifying ? null : w.id)}
+          style={styles.workoutHeader}>
+          <Text style={{ fontSize: 36 }}>{resolvedEmoji(w)}</Text>
           <View style={{ flex: 1 }}>
-            <Text style={styles.workoutName}>{wLabel(w.type)}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Text style={styles.workoutName}>{resolvedLabel(w)}</Text>
+              {isUnknown && (
+                <View style={{ backgroundColor: '#FEF3C7', borderRadius: 50, paddingHorizontal: 8, paddingVertical: 2 }}>
+                  <Text style={{ fontSize: 11, color: '#92400E', fontWeight: '600' }}>
+                    {{ es: 'Identificar', en: 'Identify', fr: 'Identifier', it: 'Identifica' }[lang] || 'Identificar'}
+                  </Text>
+                </View>
+              )}
+            </View>
             <Text style={styles.workoutTime}>
               {fmtTime(w.startTime)}{w.endTime ? ` → ${fmtTime(w.endTime)}` : ''}
             </Text>
           </View>
-        </View>
+        </TouchableOpacity>
+
+        {isIdentifying && <SportIdentifyPicker workoutId={w.id} />}
 
         {/* Metric pills */}
         <View style={styles.metricRow}>
@@ -686,21 +813,38 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji }) {
     return (
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>{hl?.recentSessions}</Text>
-        {rest.map((w, i) => (
-          <View key={i} style={styles.recentRow}>
-            <Text style={{ fontSize: 22, flexShrink: 0 }}>{wEmoji(w.type)}</Text>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.recentName}>{wLabel(w.type)}</Text>
-              <Text style={styles.recentDate}>{fmtDate(w.startTime, lang)}  ·  {fmtTime(w.startTime)}</Text>
+        {rest.map((w, i) => {
+          const isUnknown    = resolveType(w) === 'other';
+          const isIdentifying = identifyingId === w.id;
+          return (
+            <View key={i}>
+              <TouchableOpacity
+                activeOpacity={isUnknown ? 0.7 : 1}
+                onPress={() => isUnknown && setIdentifyingId(isIdentifying ? null : w.id)}
+                style={styles.recentRow}>
+                <Text style={{ fontSize: 22, flexShrink: 0 }}>{resolvedEmoji(w)}</Text>
+                <View style={{ flex: 1 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <Text style={styles.recentName}>{resolvedLabel(w)}</Text>
+                    {isUnknown && (
+                      <View style={{ backgroundColor: '#FEF3C7', borderRadius: 50, paddingHorizontal: 6, paddingVertical: 1 }}>
+                        <Text style={{ fontSize: 10, color: '#92400E', fontWeight: '600' }}>?</Text>
+                      </View>
+                    )}
+                  </View>
+                  <Text style={styles.recentDate}>{fmtDate(w.startTime, lang)}  ·  {fmtTime(w.startTime)}</Text>
+                </View>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <Text style={styles.recentDur}>{w.duration} {hl?.min}</Text>
+                  {w.calories != null && (
+                    <Text style={styles.recentCal}>🔥 {w.calories}</Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+              {isIdentifying && <SportIdentifyPicker workoutId={w.id} />}
             </View>
-            <View style={{ alignItems: 'flex-end' }}>
-              <Text style={styles.recentDur}>{w.duration} {hl?.min}</Text>
-              {w.calories != null && (
-                <Text style={styles.recentCal}>🔥 {w.calories}</Text>
-              )}
-            </View>
-          </View>
-        ))}
+          );
+        })}
       </View>
     );
   };
@@ -728,72 +872,116 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji }) {
 
   // ── Sleep history (7 days) ─────────────────────────────────────────────────
   const SleepCard = () => {
+    const [selectedDate, setSelectedDate] = useState(null);
     const data = sleepHistory?.length > 0 ? sleepHistory : (lastSleep ? [lastSleep] : []);
     if (!data.length) return null;
 
     const maxDur = Math.max(...data.map(n => n.duration), 8);
     const scoreColor = (d) => d >= 7 ? '#16A34A' : d >= 6 ? '#F59E0B' : '#DC2626';
+    const displayed = [...data].reverse(); // oldest → newest left-to-right
+    const selected  = selectedDate ? data.find(n => n.date === selectedDate) ?? data[0] : data[0];
+
+    const labelDur   = { es: 'Duración', en: 'Duration', fr: 'Durée', it: 'Durata' };
+    const labelBed   = { es: 'Acostarse', en: 'Bedtime', fr: 'Coucher', it: 'Andare a letto' };
+    const labelWake  = { es: 'Despertares', en: 'Awakenings', fr: 'Réveils', it: 'Risvegli' };
+    const labelDeep  = { es: 'Profundo', en: 'Deep', fr: 'Profond', it: 'Profondo' };
+    const labelREM   = { es: 'REM', en: 'REM', fr: 'REM', it: 'REM' };
+    const labelInBed = { es: 'En cama', en: 'In bed', fr: 'Au lit', it: 'A letto' };
+    const t = (obj) => obj[lang] ?? obj.es;
 
     return (
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>{hl?.sleepTitle}</Text>
 
-        {/* 7-day bar chart */}
-        <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6, marginBottom: 16, marginTop: 8 }}>
-          {[...data].reverse().map((n, i) => {
-            const barH = Math.max(4, (n.duration / maxDur) * 72);
-            const deepH = n.deepSleep > 0 ? Math.max(2, (n.deepSleep / maxDur) * 72) : 0;
+        {/* 7-day bar chart — tappable */}
+        <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 6, marginBottom: 12, marginTop: 8 }}>
+          {displayed.map((n, i) => {
+            const barH   = Math.max(4, (n.duration / maxDur) * 72);
+            const deepH  = n.deepSleep > 0 ? Math.max(2, (n.deepSleep / maxDur) * 72) : 0;
             const dayLabel = new Date(n.date + 'T12:00:00').toLocaleDateString('default', { weekday: 'narrow' });
-            const isLatest = i === data.length - 1;
+            const isLatest   = i === displayed.length - 1;
+            const isSelected = n.date === (selectedDate ?? data[0].date);
+            const barColor   = isSelected ? '#1A56DB' : isLatest ? '#64748B' : '#94A3B8';
             return (
-              <View key={n.date} style={{ flex: 1, alignItems: 'center' }}>
+              <TouchableOpacity
+                key={n.date}
+                onPress={() => setSelectedDate(n.date === selectedDate ? null : n.date)}
+                activeOpacity={0.7}
+                style={{ flex: 1, alignItems: 'center' }}
+              >
                 <Text style={{ fontSize: 9, color: scoreColor(n.duration), fontWeight: '700', marginBottom: 2 }}>
                   {n.duration}h
                 </Text>
-                <View style={{ width: '100%', height: 72, justifyContent: 'flex-end', backgroundColor: '#F1F5F9', borderRadius: 6, overflow: 'hidden' }}>
-                  <View style={{ width: '100%', height: barH, backgroundColor: isLatest ? '#1A56DB' : '#94A3B8', borderRadius: 6 }} />
+                <View style={{ width: '100%', height: 72, justifyContent: 'flex-end', backgroundColor: '#F1F5F9', borderRadius: 6, overflow: 'hidden',
+                  borderWidth: isSelected ? 1.5 : 0, borderColor: '#1A56DB' }}>
+                  <View style={{ width: '100%', height: barH, backgroundColor: barColor, borderRadius: 6 }} />
                   {deepH > 0 && (
                     <View style={{ position: 'absolute', bottom: 0, width: '100%', height: deepH, backgroundColor: '#0284C7', borderRadius: 6 }} />
                   )}
                 </View>
-                <Text style={{ fontSize: 9, color: isLatest ? '#1A56DB' : '#94A3B8', marginTop: 3, fontWeight: isLatest ? '700' : '400' }}>
+                <Text style={{ fontSize: 9, color: isSelected ? '#1A56DB' : '#94A3B8', marginTop: 3, fontWeight: isSelected ? '700' : '400' }}>
                   {dayLabel}
                 </Text>
-              </View>
+              </TouchableOpacity>
             );
           })}
         </View>
 
-        {/* Legend */}
-        <View style={{ flexDirection: 'row', gap: 12, marginBottom: 14 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#1A56DB' }} />
-            <Text style={{ fontSize: 10, color: '#64748B' }}>Total</Text>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-            <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#0284C7' }} />
-            <Text style={{ fontSize: 10, color: '#64748B' }}>{hl?.deepSleep ?? 'Profundo'}</Text>
-          </View>
-        </View>
-
-        {/* Last night detail */}
-        {data[0] && (
-          <>
-            <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4, marginBottom: 10 }}>
-              <Text style={styles.sleepHours}>{data[0].duration}</Text>
+        {/* Detail panel for selected day */}
+        {selected && (
+          <View style={{ backgroundColor: '#F8FAFF', borderRadius: 14, padding: 14, marginBottom: 10 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4, marginBottom: 12 }}>
+              <Text style={styles.sleepHours}>{selected.duration}</Text>
               <Text style={styles.sleepUnit}>h</Text>
-              <Text style={styles.sleepDate}> · {fmtDate(data[0].date + 'T00:00:00', lang)}</Text>
+              <Text style={styles.sleepDate}> · {fmtDate(selected.date + 'T00:00:00', lang)}</Text>
             </View>
-            <View style={styles.metricRow}>
-              {data[0].deepSleep > 0 && <MetricPill icon="🌑" label={hl?.deepSleep ?? 'Profundo'} value={`${data[0].deepSleep} h`} color="#4F46E5" />}
-              {data[0].remSleep  > 0 && <MetricPill icon="🌙" label={hl?.remSleep  ?? 'REM'}      value={`${data[0].remSleep} h`}  color="#7C3AED" />}
-              {data[0].inBed     > 0 && <MetricPill icon="🛏"  label={hl?.inBed    ?? 'En cama'}  value={`${data[0].inBed} h`}     color="#64748B" />}
+
+            {/* Row 1: Duración + Acostarse + Despertares */}
+            <View style={{ flexDirection: 'row', gap: 8, marginBottom: 8 }}>
+              <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: '800', color: scoreColor(selected.duration) }}>{selected.duration}h</Text>
+                <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>{t(labelDur)}</Text>
+              </View>
+              <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: '700', color: '#1E293B' }}>
+                  {selected.bedtime ? fmtTime(selected.bedtime) : '—'}
+                </Text>
+                <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>🌙 {t(labelBed)}</Text>
+              </View>
+              <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: '800', color: (selected.interruptions ?? 0) === 0 ? '#16A34A' : (selected.interruptions ?? 0) <= 2 ? '#F59E0B' : '#DC2626' }}>
+                  {selected.interruptions ?? 0}
+                </Text>
+                <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>⚡ {t(labelWake)}</Text>
+              </View>
             </View>
-          </>
+
+            {/* Row 2: Profundo + REM + En cama */}
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              {selected.deepSleep > 0 && (
+                <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, alignItems: 'center' }}>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: '#4F46E5' }}>{selected.deepSleep}h</Text>
+                  <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>🌑 {t(labelDeep)}</Text>
+                </View>
+              )}
+              {selected.remSleep > 0 && (
+                <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, alignItems: 'center' }}>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: '#7C3AED' }}>{selected.remSleep}h</Text>
+                  <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>🌙 {t(labelREM)}</Text>
+                </View>
+              )}
+              {selected.inBed > 0 && (
+                <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, alignItems: 'center' }}>
+                  <Text style={{ fontSize: 15, fontWeight: '700', color: '#64748B' }}>{selected.inBed}h</Text>
+                  <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>🛏 {t(labelInBed)}</Text>
+                </View>
+              )}
+            </View>
+          </View>
         )}
 
         {!isConnected && (
-          <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 10, fontStyle: 'italic' }}>
+          <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 4, fontStyle: 'italic' }}>
             Datos guardados · Reconecta Apple Health para actualizar
           </Text>
         )}
@@ -803,11 +991,11 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji }) {
 
   return (
     <>
-      <ConnectCard />
+      <MetricsCard />
       <LastWorkoutCard />
       <RecentWorkoutsCard />
-      <MetricsCard />
       <SleepCard />
+      <ConnectCard />
     </>
   );
 }
@@ -924,6 +1112,12 @@ const styles = StyleSheet.create({
   dashedBtnText: { fontSize: 13, color: '#64748B' },
   restTitle: { fontSize: 16, fontWeight: '700', color: '#1E293B', marginBottom: 8 },
   restSub: { fontSize: 13, color: '#64748B', lineHeight: 20, textAlign: 'center' },
+
+  // week navigation
+  weekNav:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, paddingHorizontal: 4 },
+  weekNavBtn:   { padding: 8 },
+  weekNavArrow: { fontSize: 28, color: BLUE.primary, fontWeight: '700', lineHeight: 32 },
+  weekNavLabel: { fontSize: 14, fontWeight: '600', color: '#1E293B' },
 
   // week
   weekRow: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 10, borderRadius: 12, borderWidth: 1, marginBottom: 6 },
