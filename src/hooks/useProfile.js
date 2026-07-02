@@ -195,11 +195,11 @@ export const useProfile = () => {
   };
 
   const logSleep = async (entry) => {
-    // entry: { date: 'YYYY-MM-DD', hours: 7.5, quality: 3 }
     const existing = profileExtended?.sleepLog || [];
     const filtered = existing.filter(e => e.date !== entry.date);
-    const updated  = [entry, ...filtered].slice(0, 60); // keep 60 days max
+    const updated  = [entry, ...filtered].slice(0, 60);
     await saveProfileExtended({ sleepLog: updated });
+    trackEvent(Events.SLEEP_LOGGED, { hours: entry.hours, quality: entry.quality });
   };
 
   // ─── Favoritos ───────────────────────────────────────────────────────────────
@@ -223,11 +223,11 @@ export const useProfile = () => {
   const skipRecipe = async (mealType, recipeId) => {
     const today = new Date().toISOString().split('T')[0];
     const skipped = profileExtended?.skippedToday || {};
-    // Resetea si es un día nuevo
     const todayBlock = skipped.date === today ? skipped : { date: today };
     const mealList = todayBlock[mealType] || [];
     todayBlock[mealType] = [...mealList, recipeId];
     await saveProfileExtended({ skippedToday: todayBlock });
+    trackEvent(Events.RECIPE_SKIPPED, { mealType, recipeId });
   };
 
   const skipWorkout = async (workoutId) => {
@@ -236,22 +236,24 @@ export const useProfile = () => {
     const todayBlock = skipped.date === today ? skipped : { date: today, ids: [] };
     todayBlock.ids = [...(todayBlock.ids || []), workoutId];
     await saveProfileExtended({ skippedTodayWorkout: todayBlock });
+    trackEvent(Events.WORKOUT_SKIPPED, { workoutId });
   };
 
   // ─── Log de actividad ───────────────────────────────────────────────────────
   const logRecipeDone = async (mealType, status) => {
-    // status: 'done' | 'skipped'
     const today = new Date().toISOString().split('T')[0];
     const log = profileExtended?.activityLog || {};
     const day = log[today] || {};
     const meals = { ...(day.recipes || {}), [mealType]: status };
     await saveProfileExtended({ activityLog: { ...log, [today]: { ...day, recipes: meals } } });
+    trackEvent(Events.RECIPE_MARKED_DONE, { mealType, status });
   };
 
   // ─── Cycle tracking diario ──────────────────────────────────────────────────
   const logCycleDay = async (dateStr, data) => {
     const cycleLog = profileExtended?.cycleLog || {};
     await saveProfileExtended({ cycleLog: { ...cycleLog, [dateStr]: data } });
+    trackEvent(Events.CYCLE_DATE_SET, { date: dateStr });
   };
 
   const logWorkoutDone = async (status) => {
@@ -259,16 +261,17 @@ export const useProfile = () => {
     const log = profileExtended?.activityLog || {};
     const day = log[today] || {};
     await saveProfileExtended({ activityLog: { ...log, [today]: { ...day, workout: status } } });
+    trackEvent(Events.WORKOUT_COMPLETED, { status, date: today });
   };
 
   const logWeight = async (entry) => {
-    // entry: { date: 'YYYY-MM-DD', weight: 65.2 }
     const existing = profileExtended?.weightLog || [];
     const filtered = existing.filter(e => e.date !== entry.date);
     const updated  = [entry, ...filtered]
       .sort((a, b) => b.date.localeCompare(a.date))
-      .slice(0, 104); // keep ~2 years (weekly entries)
+      .slice(0, 104);
     await saveProfileExtended({ weightLog: updated });
+    trackEvent(Events.WEIGHT_LOGGED, { weight: entry.weight, date: entry.date });
   };
 
   const signOut = async () => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, ScrollView, TouchableOpacity,
   TextInput, StyleSheet, ActivityIndicator, Platform,
@@ -22,6 +22,7 @@ import { buildPersonalizedWeekPlan } from '../utils/workoutEngine';
 import { ARTICLES } from '../data/articles';
 import TipsCard from '../components/TipsCard';
 import SwipeableTabs from '../components/SwipeableTabs';
+import { trackScreen, trackEvent, Events } from '../lib/analytics';
 
 const GYM_ARTICLE_IDS = ['cycle-training', 'pcos-hormones'];
 const gymArticles = ARTICLES.filter(a => GYM_ARTICLE_IDS.includes(a.id));
@@ -122,6 +123,7 @@ export default function GimnasioScreen({
   toggleFavoriteWorkout, skipWorkout, logWorkoutDone,
   sleepLog = [], logSleep,
 }) {
+  useEffect(() => { trackScreen('Gimnasio', { phase: pi?.phase }); }, []);
   const [sub, setSub] = useState('hoy');
   const [addingSport, setAddingSport] = useState(false);
   const [workoutLog, setWorkoutLog] = useState({});

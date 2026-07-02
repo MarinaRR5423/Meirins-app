@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import T from '../i18n/translations';
+import { trackEvent, Events } from '../lib/analytics';
 
 const LANG_OPTIONS = [
   { code: 'es', flag: '🇪🇸' },
@@ -13,6 +14,14 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
   const su = (T[lang] || T.es).setup;
 
   const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    trackEvent(Events.ONBOARDING_STARTED);
+  }, []);
+
+  useEffect(() => {
+    trackEvent(Events.ONBOARDING_STEP_VIEW, { step });
+  }, [step]);
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
   const [weight, setWeight] = useState('');
@@ -45,6 +54,7 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
       modules,
       goals,
     });
+    trackEvent(Events.ONBOARDING_COMPLETED, { modules, activityLevel, goals });
     setSaving(false);
   };
 

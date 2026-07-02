@@ -16,6 +16,7 @@ import { filterMealsByFasting } from '../utils/fastingMeals';
 import { useRecipes } from '../hooks/useRecipes';
 import { getRecipesForMeal, appMealToDbMealType, recipeToMealCard, getDailyRecipe } from '../utils/recipeEngine';
 import { buildShoppingList, formatQuantity, countItems } from '../utils/shoppingList';
+import { trackScreen } from '../lib/analytics';
 
 const NUTRI_ARTICLE_IDS = ['nutrition-menstrual', 'endometriosis-nutrition', 'pcos-hormones', 'pregnancy-nutrition'];
 const nutriArticles = ARTICLES.filter(a => NUTRI_ARTICLE_IDS.includes(a.id));
@@ -200,6 +201,7 @@ function MealCard({ meal, expanded, onToggle, onRecipe, seeRecipeLabel, mealLabe
 }
 
 export default function NutriScreen({ pi, program, lang = 'es', goal, activityLevel, dietary, profileExtended, saveAll, saveProfileExtended, age, weight, height, trainDays, toggleFavoriteRecipe, skipRecipe, logRecipeDone }) {
+  useEffect(() => { trackScreen('Nutrición', { phase: pi?.phase, goal }); }, []);
   const [sub, setSub] = useState('plan');
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);

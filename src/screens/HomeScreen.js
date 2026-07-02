@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { PHASES } from '../data/phases';
@@ -11,10 +11,12 @@ import { buildPersonalizedWeekPlan } from '../utils/workoutEngine';
 import { getActiveProgramState, getProgramDays, programSessionToCard } from '../data/trainingPrograms';
 import EmptyState from '../components/EmptyState';
 import { calcAdherence } from '../utils/adherenceStats';
+import { trackScreen } from '../lib/analytics';
 
 const BLUE = { primary: '#1A56DB', light: '#EFF6FF', mid: 'rgba(26,86,219,0.10)' };
 const HORMONAL_CONTRA = ['pill', 'hormonal_iud', 'ring', 'patch', 'implant'];
 export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
+  useEffect(() => { trackScreen('Home', { phase: pi?.phase }); }, []);
   const { phaseData } = usePhaseData(pi?.phase, lang);
   const baseD = phaseData;
   const d = baseD ? getPhaseDisplay(lang, pi?.phase, baseD) : null;

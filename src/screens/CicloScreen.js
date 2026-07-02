@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { PHASES } from '../data/phases';
 import T, { getPhaseDisplay, getDayLetters } from '../i18n/translations';
@@ -7,6 +7,7 @@ import TipsCard from '../components/TipsCard';
 import { CicloSetupCard, CicloHealthCard } from '../components/TabSetupCard';
 import CycleTrackingModal from '../components/CycleTrackingModal';
 import SwipeableTabs from '../components/SwipeableTabs';
+import { trackScreen } from '../lib/analytics';
 
 const CICLO_ARTICLE_IDS = ['sleep-cycle', 'cycle-training'];
 const cicloArticles = ARTICLES.filter(a => CICLO_ARTICLE_IDS.includes(a.id));
@@ -215,6 +216,7 @@ function SleepCard({ sleepLog, logSleep, lang }) {
 
 // ─── Main component ────────────────────────────────────────────────────────────
 export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLength, periodEnd, setPeriodEnd, sleepLog = [], logSleep, lang = 'es', profileExtended, saveProfileExtended, logCycleDay }) {
+  useEffect(() => { trackScreen('Ciclo', { phase: pi?.phase }); }, []);
   const [trackingOpen, setTrackingOpen] = useState(false);
   const [view, setView]              = useState('calendar'); // 'calendar' | 'wheel'
   const [expandedPhase, setExpanded] = useState(pi?.phase || null);

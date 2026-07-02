@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, TextInput, LayoutAnimation, Platform, UIManager, Dimensions, ActivityIndicator } from 'react-native';
 import T, { LANGUAGES, t } from '../i18n/translations';
 import ProgressChart from '../components/ProgressChart';
@@ -8,6 +8,7 @@ import { syncNotifications, cancelAllMeirinsNotifications } from '../utils/notif
 import { ALL_MEALS, MEAL_LABELS, getActiveMeals } from '../utils/fastingMeals';
 import { Linking, Image, Alert } from 'react-native';
 import { PRIVACY_URL, TERMS_URL, SUPPORT_EMAIL } from '../lib/legalLinks';
+import { trackScreen } from '../lib/analytics';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -143,6 +144,7 @@ function ChipRow({ items }) {
 }
 
 export default function PerfilScreen({ pi, profile, signOut }) {
+  useEffect(() => { trackScreen('Perfil'); }, []);
   const ext = profile?.profileExtended || {};
 
   // Language — read from profile_extended, default es
