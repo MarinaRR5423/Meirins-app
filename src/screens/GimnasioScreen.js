@@ -129,8 +129,20 @@ export default function GimnasioScreen({
   const [workoutLog, setWorkoutLog] = useState({});
   const [completedExercises, setCompletedExercises] = useState({});
   const [showVariations, setShowVariations] = useState(false);
-  const [expandedWeekDay, setExpandedWeekDay] = useState(null);
+  const [weekAction, setWeekAction] = useState(null); // { dateKey, step:'main'|'sport' }
   const [weekOffset, setWeekOffset] = useState(0);  // 0 = semana actual, -1 = semana anterior, etc.
+
+  const saveActivityDay = async (dateKey, data) => {
+    const existing = profileExtended?.activityLog || {};
+    await saveProfileExtended?.({
+      activityLog: { ...existing, [dateKey]: { ...(existing[dateKey] || {}), ...data } },
+    });
+  };
+  const clearActivityDay = async (dateKey) => {
+    const copy = { ...(profileExtended?.activityLog || {}) };
+    delete copy[dateKey];
+    await saveProfileExtended?.({ activityLog: copy });
+  };
 
   const sessionRunning = resolveSession(program?.sessionRunning, lang, SESSION_RUNNING_STATIC);
   const sessionRenfo   = resolveSession(program?.sessionRenfo,   lang, SESSION_RENFO_STATIC);
@@ -239,9 +251,16 @@ export default function GimnasioScreen({
 
   // Semana desplazada para la pestaña "semana" (weekOffset <= 0)
   const activityLog = profileExtended?.activityLog || {};
+  // Lunes de la semana con weekOffset (0 = semana actual, -1 = anterior…)
+  const thisMonday = (() => {
+    const t = new Date();
+    const d = t.getDay();
+    t.setDate(t.getDate() + (d === 0 ? -6 : 1 - d) + weekOffset * 7);
+    return t;
+  })();
   const offsetDays  = Array.from({ length: 7 }, (_, i) => {
-    const date    = new Date();
-    date.setDate(date.getDate() + weekOffset * 7 + i);
+    const date    = new Date(thisMonday);
+    date.setDate(thisMonday.getDate() + i);
     const dow     = date.getDay();
     const dateKey = date.toISOString().split('T')[0];
     const isPast  = dateKey < todayKey;
@@ -514,7 +533,7 @@ export default function GimnasioScreen({
           const fmt = d => `${d.dayNum} ${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][d.date.getMonth()]}`;
           return (
             <View style={styles.weekNav}>
-              <TouchableOpacity onPress={() => { setWeekOffset(o => o - 1); setExpandedWeekDay(null); }}
+              <TouchableOpacity onPress={() => { setWeekOffset(o => o - 1); setWeekAction(null); }}
                 style={styles.weekNavBtn}>
                 <Text style={styles.weekNavArrow}>‹</Text>
               </TouchableOpacity>
@@ -523,12 +542,13 @@ export default function GimnasioScreen({
                   ? (g.thisWeek ?? 'Esta semana')
                   : weekOffset === -1
                     ? (g.lastWeek ?? 'Semana pasada')
-                    : `${fmt(weekStart)} – ${fmt(weekEnd)}`}
+                    : weekOffset === 1
+                      ? ({ es: 'Semana siguiente', en: 'Next week', fr: 'Semaine prochaine', it: 'Settimana prossima' }[lang] || 'Semana siguiente')
+                      : `${fmt(weekStart)} – ${fmt(weekEnd)}`}
               </Text>
               <TouchableOpacity
-                onPress={() => { if (weekOffset < 0) { setWeekOffset(o => o + 1); setExpandedWeekDay(null); } }}
-                style={[styles.weekNavBtn, weekOffset >= 0 && { opacity: 0.3 }]}
-                disabled={weekOffset >= 0}>
+                onPress={() => { setWeekOffset(o => o + 1); setWeekAction(null); }}
+                style={styles.weekNavBtn}>
                 <Text style={styles.weekNavArrow}>›</Text>
               </TouchableOpacity>
             </View>
@@ -538,13 +558,15 @@ export default function GimnasioScreen({
         <View style={styles.card}>
           <Text style={styles.sectionTitle}>{g.weekPlanning}</Text>
           {offsetDays.map((day, i) => {
-            const s         = day.session;
-            const isExpanded = expandedWeekDay === i;
+            const s          = day.session;
+            const isExpanded = weekAction?.dateKey === day.dateKey;
+            const logEntry   = (profileExtended?.activityLog || {})[day.dateKey] || {};
+            const logged     = logEntry.workout; // 'done'|'skipped'|'rest'|'extra'|undefined
             return (
               <View key={i}>
                 <TouchableOpacity
-                  onPress={() => s ? setExpandedWeekDay(isExpanded ? null : i) : null}
-                  activeOpacity={s ? 0.7 : 1}
+                  onPress={() => setWeekAction(isExpanded ? null : { dateKey: day.dateKey, step: 'main' })}
+                  activeOpacity={0.7}
                   style={[styles.weekRow, {
                     backgroundColor: day.isToday ? '#EFF6FF' : isExpanded ? '#F0F9FF' : s ? '#F8FAFC' : 'white',
                     borderColor: isExpanded ? BLUE.primary : day.isToday ? '#BFDBFE' : '#F1F5F9',
@@ -556,52 +578,96 @@ export default function GimnasioScreen({
                     </Text>
                     <Text style={styles.weekDayNum}>{day.dayNum}</Text>
                   </View>
-                  {/* Punto de color */}
                   {day.dotColor && (
                     <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: day.dotColor, marginRight: 6, flexShrink: 0, alignSelf: 'center' }} />
                   )}
-                  <Text style={{ fontSize: 20, flexShrink: 0 }}>{s ? s.ico : '😴'}</Text>
+                  <Text style={{ fontSize: 20, flexShrink: 0 }}>
+                    {logged === 'done' || logged === 'extra' ? (logEntry.extraSport ? '🏅' : (s?.ico ?? '✅')) : logged === 'skipped' ? '😴' : s ? s.ico : '😴'}
+                  </Text>
                   <View style={{ flex: 1 }}>
                     <Text style={[styles.weekWorkout,
                       { color: s ? '#1E293B' : '#CBD5E1', fontWeight: s ? '600' : '400' }]}
                       numberOfLines={1}>
                       {s ? s.name : g.rest}
                     </Text>
-                    {s && <Text style={styles.weekDur}>{s.duration}</Text>}
-                    {day.extraSport && <Text style={styles.weekExtra}>+ {day.extraSport}</Text>}
+                    {s && !logged && <Text style={styles.weekDur}>{s.duration}</Text>}
+                    {(logEntry.extraSport) && (
+                      <Text style={styles.weekExtra}>
+                        + {logEntry.extraSport}{logEntry.extraMinutes ? ` · ${logEntry.extraMinutes} min` : ''}
+                      </Text>
+                    )}
                   </View>
                   <View style={{ alignItems: 'flex-end', gap: 4 }}>
-                    {day.status === 'done'    && <Text style={{ color: GREEN.text,  fontWeight: '700', fontSize: 16 }}>✓</Text>}
-                    {day.status === 'skipped' && <Text style={{ color: '#EAB308',   fontWeight: '700', fontSize: 16 }}>–</Text>}
-                    {s && <Text style={{ fontSize: 11, color: '#94A3B8' }}>{isExpanded ? '▲' : '▼'}</Text>}
+                    {(logged === 'done' || logged === 'extra') && <Text style={{ color: GREEN.text, fontWeight: '700', fontSize: 16 }}>✓</Text>}
+                    {logged === 'skipped' && <Text style={{ color: '#EAB308', fontWeight: '700', fontSize: 16 }}>–</Text>}
+                    <Text style={{ fontSize: 11, color: '#94A3B8' }}>{isExpanded ? '▲' : '✏️'}</Text>
                   </View>
                 </TouchableOpacity>
 
-                {isExpanded && s && (
+                {isExpanded && (
                   <View style={[styles.weekDetail, { borderColor: BLUE.primary }]}>
-                    {s.type === 'running' && s.phases?.map((phase, pi) => (
-                      <View key={pi} style={styles.phaseRow}>
-                        <View style={[styles.phaseNum, { backgroundColor: pi === 1 ? BLUE.primary : '#F1F5F9' }]}>
-                          <Text style={[styles.phaseNumText, { color: pi === 1 ? 'white' : '#94A3B8' }]}>{pi + 1}</Text>
-                        </View>
-                        <View style={{ flex: 1 }}>
-                          <View style={styles.phaseHeader}>
-                            <Text style={styles.phaseLabel}>{phase.label}</Text>
-                            <Text style={styles.phaseDur}>{phase.duration}</Text>
+                    {weekAction.step === 'main' && (
+                      <View>
+                        {/* Current logged status */}
+                        {logged && (
+                          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, paddingBottom: 10, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' }}>
+                            <Text style={{ fontSize: 13, fontWeight: '600',
+                              color: (logged === 'done' || logged === 'extra') ? GREEN.text : logged === 'skipped' ? '#EAB308' : '#64748B' }}>
+                              {(logged === 'done' || logged === 'extra')
+                                ? `✓ ${lang === 'en' ? 'Logged' : 'Registrado'}${logEntry.extraSport ? ` · ${logEntry.extraSport}${logEntry.extraMinutes ? ` ${logEntry.extraMinutes} min` : ''}` : ''}`
+                                : `😴 ${lang === 'en' ? 'Rest' : 'Descanso'}`}
+                            </Text>
+                            <TouchableOpacity onPress={async () => { await clearActivityDay(day.dateKey); setWeekAction(null); }}>
+                              <Text style={{ fontSize: 12, color: '#94A3B8' }}>{lang === 'en' ? 'Clear' : 'Borrar'}</Text>
+                            </TouchableOpacity>
                           </View>
-                          <Text style={styles.phaseDetail}>{phase.detail}</Text>
+                        )}
+                        {/* Action buttons */}
+                        <View style={{ gap: 8 }}>
+                          {s && (
+                            <TouchableOpacity
+                              onPress={async () => { await saveActivityDay(day.dateKey, { workout: 'done' }); setWeekAction(null); }}
+                              style={{ padding: 11, borderRadius: 14, backgroundColor: '#F0FDF4', borderWidth: 1, borderColor: '#86EFAC', alignItems: 'center' }}>
+                              <Text style={{ fontSize: 13, fontWeight: '700', color: GREEN.text }}>
+                                ✓ {lang === 'en' ? 'I did it' : 'Lo hice'}
+                              </Text>
+                            </TouchableOpacity>
+                          )}
+                          <TouchableOpacity
+                            onPress={() => setWeekAction(prev => ({ ...prev, step: 'sport' }))}
+                            style={{ padding: 11, borderRadius: 14, backgroundColor: BLUE.light, borderWidth: 1, borderColor: '#BFDBFE', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, fontWeight: '700', color: BLUE.primary }}>
+                              🏅 {lang === 'en' ? 'Add sport' : 'Añadir deporte'}
+                            </Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity
+                            onPress={async () => { await saveActivityDay(day.dateKey, { workout: 'skipped' }); setWeekAction(null); }}
+                            style={{ padding: 11, borderRadius: 14, backgroundColor: '#FEF9F0', borderWidth: 1, borderColor: '#FDE68A', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, fontWeight: '700', color: '#92400E' }}>
+                              😴 {lang === 'en' ? 'Rest day' : 'Descansé'}
+                            </Text>
+                          </TouchableOpacity>
                         </View>
                       </View>
-                    ))}
-                    {s.type === 'renfo' && s.exercises?.map((ex, ei) => (
-                      <View key={ei} style={styles.weekExRow}>
-                        <View style={styles.weekExNum}>
-                          <Text style={styles.weekExNumText}>{ei + 1}</Text>
-                        </View>
-                        <Text style={styles.weekExName}>{ex.name}</Text>
-                        <Text style={styles.weekExReps}>{ex.sets}×{ex.reps || ex.dur}</Text>
+                    )}
+                    {weekAction.step === 'sport' && (
+                      <View>
+                        <TouchableOpacity
+                          onPress={() => setWeekAction(prev => ({ ...prev, step: 'main' }))}
+                          style={{ marginBottom: 8 }}>
+                          <Text style={{ fontSize: 12, color: '#94A3B8' }}>← {lang === 'en' ? 'Back' : 'Volver'}</Text>
+                        </TouchableOpacity>
+                        <ExtraSportPicker
+                          lang={lang}
+                          g={g}
+                          onPick={async (sport, minutes) => {
+                            const status = s ? 'done' : 'extra';
+                            await saveActivityDay(day.dateKey, { workout: status, extraSport: sport, extraMinutes: minutes || null });
+                            setWeekAction(null);
+                          }}
+                        />
                       </View>
-                    ))}
+                    )}
                   </View>
                 )}
               </View>
@@ -654,7 +720,20 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
   } = hd;
 
   const [identifyingId, setIdentifyingId] = useState(null);
-  const typeOverrides = profileExtended?.workoutTypeOverrides || {};
+  const [editingDurationId, setEditingDurationId] = useState(null);
+  const [durationInput, setDurationInput] = useState('');
+  const typeOverrides     = profileExtended?.workoutTypeOverrides     || {};
+  const durationOverrides = profileExtended?.workoutDurationOverrides || {};
+
+  const resolveDuration = (w) => durationOverrides[w.id] ?? w.duration ?? null;
+
+  const saveDurationOverride = async (workoutId) => {
+    const mins = parseInt(durationInput, 10);
+    if (!mins || mins <= 0) { setEditingDurationId(null); return; }
+    await saveProfileExtended?.({ workoutDurationOverrides: { ...durationOverrides, [workoutId]: mins } });
+    setEditingDurationId(null);
+    setDurationInput('');
+  };
 
   const resolveType  = (w) => typeOverrides[w.id] ?? w.type;
   const resolvedLabel = (w) => {
@@ -764,6 +843,8 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
     const w = lastWorkout;
     const isUnknown = resolveType(w) === 'other';
     const isIdentifying = identifyingId === w.id;
+    const dur = resolveDuration(w);
+    const isEditingDur = editingDurationId === w.id;
     return (
       <View style={styles.card}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 }}>
@@ -772,33 +853,53 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
         </View>
 
         {/* Header */}
-        <TouchableOpacity
-          activeOpacity={isUnknown ? 0.7 : 1}
-          onPress={() => isUnknown && setIdentifyingId(isIdentifying ? null : w.id)}
-          style={styles.workoutHeader}>
+        <View style={styles.workoutHeader}>
           <Text style={{ fontSize: 36 }}>{resolvedEmoji(w)}</Text>
           <View style={{ flex: 1 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-              <Text style={styles.workoutName}>{resolvedLabel(w)}</Text>
-              {isUnknown && (
-                <View style={{ backgroundColor: '#FEF3C7', borderRadius: 50, paddingHorizontal: 8, paddingVertical: 2 }}>
-                  <Text style={{ fontSize: 11, color: '#92400E', fontWeight: '600' }}>
-                    {{ es: 'Identificar', en: 'Identify', fr: 'Identifier', it: 'Identifica' }[lang] || 'Identificar'}
-                  </Text>
-                </View>
-              )}
+            <Text style={styles.workoutName}>{resolvedLabel(w)}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 2 }}>
+              <Text style={styles.workoutTime}>{fmtTime(w.startTime)}{w.endTime ? ` → ${fmtTime(w.endTime)}` : ''}</Text>
+              {dur != null && <Text style={{ fontSize: 13, fontWeight: '700', color: BLUE.primary }}>⏱ {dur} {hl?.min}</Text>}
             </View>
-            <Text style={styles.workoutTime}>
-              {fmtTime(w.startTime)}{w.endTime ? ` → ${fmtTime(w.endTime)}` : ''}
-            </Text>
           </View>
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              const opening = !(isIdentifying || isEditingDur);
+              setIdentifyingId(opening ? w.id : null);
+              setEditingDurationId(opening ? w.id : null);
+              setDurationInput(dur != null ? String(dur) : '');
+            }}
+            style={{ padding: 6 }}>
+            <Text style={{ fontSize: 18 }}>{(isIdentifying || isEditingDur) ? '✕' : '✏️'}</Text>
+          </TouchableOpacity>
+        </View>
 
         {isIdentifying && <SportIdentifyPicker workoutId={w.id} />}
 
-        {/* Metric pills */}
+        {isEditingDur && (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 10, padding: 10, backgroundColor: '#F8FAFC', borderRadius: 10 }}>
+            <TextInput
+              style={{ flex: 1, borderWidth: 1, borderColor: '#BFDBFE', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, fontSize: 15, color: '#1E293B', backgroundColor: 'white' }}
+              keyboardType="number-pad"
+              placeholder={{ es: 'Minutos', en: 'Minutes', fr: 'Minutes', it: 'Minuti' }[lang] || 'Minutos'}
+              value={durationInput}
+              onChangeText={setDurationInput}
+              maxLength={3}
+              autoFocus
+            />
+            <Text style={{ fontSize: 13, color: '#64748B' }}>{hl?.min}</Text>
+            <TouchableOpacity onPress={() => saveDurationOverride(w.id)}
+              style={{ backgroundColor: BLUE.primary, paddingHorizontal: 14, paddingVertical: 7, borderRadius: 8 }}>
+              <Text style={{ color: 'white', fontWeight: '700', fontSize: 13 }}>✓</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setEditingDurationId(null)}>
+              <Text style={{ fontSize: 13, color: '#94A3B8' }}>✕</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Metric pills — duración ya visible en header, se omite aquí */}
         <View style={styles.metricRow}>
-          <MetricPill icon="⏱" label={hl?.duration} value={w.duration != null ? `${w.duration} ${hl?.min}` : '—'} />
           {w.avgHR     != null && <MetricPill icon="❤️" label={hl?.avgHR}    value={`${w.avgHR} ${hl?.bpm}`}  color="#EF4444" />}
           {w.maxHR     != null && <MetricPill icon="🔺" label={hl?.maxHR}    value={`${w.maxHR} ${hl?.bpm}`}  color="#EF4444" />}
           {w.calories  != null && <MetricPill icon="🔥" label={hl?.calories} value={`${w.calories} kcal`}     color="#F97316" />}
@@ -808,48 +909,6 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
     );
   };
 
-  // ── Recent workouts list ───────────────────────────────────────────────────
-  const RecentWorkoutsCard = () => {
-    if (!isConnected || !recentWorkouts?.length || recentWorkouts.length < 2) return null;
-    const rest = recentWorkouts.slice(1, 7); // skip first (already shown as lastWorkout)
-    return (
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>{hl?.recentSessions}</Text>
-        {rest.map((w, i) => {
-          const isUnknown    = resolveType(w) === 'other';
-          const isIdentifying = identifyingId === w.id;
-          return (
-            <View key={i}>
-              <TouchableOpacity
-                activeOpacity={isUnknown ? 0.7 : 1}
-                onPress={() => isUnknown && setIdentifyingId(isIdentifying ? null : w.id)}
-                style={styles.recentRow}>
-                <Text style={{ fontSize: 22, flexShrink: 0 }}>{resolvedEmoji(w)}</Text>
-                <View style={{ flex: 1 }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                    <Text style={styles.recentName}>{resolvedLabel(w)}</Text>
-                    {isUnknown && (
-                      <View style={{ backgroundColor: '#FEF3C7', borderRadius: 50, paddingHorizontal: 6, paddingVertical: 1 }}>
-                        <Text style={{ fontSize: 10, color: '#92400E', fontWeight: '600' }}>?</Text>
-                      </View>
-                    )}
-                  </View>
-                  <Text style={styles.recentDate}>{fmtDate(w.startTime, lang)}  ·  {fmtTime(w.startTime)}</Text>
-                </View>
-                <View style={{ alignItems: 'flex-end' }}>
-                  <Text style={styles.recentDur}>{w.duration} {hl?.min}</Text>
-                  {w.calories != null && (
-                    <Text style={styles.recentCal}>🔥 {w.calories}</Text>
-                  )}
-                </View>
-              </TouchableOpacity>
-              {isIdentifying && <SportIdentifyPicker workoutId={w.id} />}
-            </View>
-          );
-        })}
-      </View>
-    );
-  };
 
   // ── Today's metrics ────────────────────────────────────────────────────────
   const MetricsCard = () => {
@@ -995,7 +1054,6 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
     <>
       <MetricsCard />
       <LastWorkoutCard />
-      <RecentWorkoutsCard />
       <SleepCard />
       <ConnectCard />
     </>

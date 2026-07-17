@@ -10,6 +10,7 @@ export default function AuthScreen({ lang = 'es' }) {
   const [mode, setMode] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [confirmed, setConfirmed] = useState(false);
@@ -92,8 +93,14 @@ export default function AuthScreen({ lang = 'es' }) {
 
         <TextInput style={styles.input} placeholder="tu@email.com" placeholderTextColor="rgba(255,255,255,0.4)"
           value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
-        <TextInput style={styles.input} placeholder={t.password} placeholderTextColor="rgba(255,255,255,0.4)"
-          value={password} onChangeText={setPassword} secureTextEntry />
+        <View style={{ position: 'relative' }}>
+          <TextInput style={[styles.input, { paddingRight: 44 }]} placeholder={t.password} placeholderTextColor="rgba(255,255,255,0.4)"
+            value={password} onChangeText={setPassword} secureTextEntry={!showPassword} />
+          <TouchableOpacity onPress={() => setShowPassword(v => !v)}
+            style={{ position: 'absolute', right: 12, top: 0, bottom: 0, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 18 }}>{showPassword ? '🙈' : '👁️'}</Text>
+          </TouchableOpacity>
+        </View>
 
         {error ? <Text style={styles.error}>{error}</Text> : null}
 

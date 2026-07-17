@@ -17,6 +17,7 @@ import { useRecipes } from '../hooks/useRecipes';
 import { getRecipesForMeal, appMealToDbMealType, recipeToMealCard, getDailyRecipe } from '../utils/recipeEngine';
 import { buildShoppingList, formatQuantity, countItems } from '../utils/shoppingList';
 import { trackScreen } from '../lib/analytics';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NUTRI_ARTICLE_IDS = ['nutrition-menstrual', 'endometriosis-nutrition', 'pcos-hormones', 'pregnancy-nutrition'];
 const nutriArticles = ARTICLES.filter(a => NUTRI_ARTICLE_IDS.includes(a.id));
@@ -203,6 +204,22 @@ function MealCard({ meal, expanded, onToggle, onRecipe, seeRecipeLabel, mealLabe
 export default function NutriScreen({ pi, program, lang = 'es', goal, activityLevel, dietary, profileExtended, saveAll, saveProfileExtended, age, weight, height, trainDays, toggleFavoriteRecipe, skipRecipe, logRecipeDone }) {
   useEffect(() => { trackScreen('Nutrición', { phase: pi?.phase, goal }); }, []);
   const [sub, setSub] = useState('plan');
+  const [weekOffset, setWeekOffset] = useState(0);
+  const [checkedItems, setCheckedItems] = useState({});
+
+  // Cargar checks guardados al cambiar de semana
+  useEffect(() => {
+    const key = `shopChecks_${weekOffset}`;
+    AsyncStorage.getItem(key).then(val => {
+      setCheckedItems(val ? JSON.parse(val) : {});
+    });
+  }, [weekOffset]);
+
+  // Guardar checks cuando cambian
+  useEffect(() => {
+    const key = `shopChecks_${weekOffset}`;
+    AsyncStorage.setItem(key, JSON.stringify(checkedItems));
+  }, [checkedItems, weekOffset]);
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [openM, setOpenM] = useState(null);
@@ -322,29 +339,36 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
       : lang === 'it'
       ? ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab']
       : ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    // Semana Lun→Dom: buscar el lunes de la semana con offset
+    const today = new Date();
+    const todayDow = today.getDay(); // 0=Dom, 1=Lun…
+    const daysToMonday = todayDow === 0 ? -6 : 1 - todayDow;
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + daysToMonday + weekOffset * 7);
     return Array.from({ length: 7 }, (_, i) => {
-      const date    = new Date(); date.setDate(date.getDate() + i);
+      const date    = new Date(monday); date.setDate(monday.getDate() + i);
       const dateStr = date.toISOString().split('T')[0];
       const dow     = date.getDay();
+      const isToday = dateStr === today.toISOString().split('T')[0];
       const type    = getDayType(dow);
       const baseMenu = type === 'A' ? menuA : type === 'B' ? menuB : menuFree;
       const filtered = {
         ...baseMenu,
         meals: filterMealsByFasting(baseMenu.meals || [], fastingProtocol, mealsActive),
       };
-      // Personalizar cada día con su variedad rotativa
       const menu = allRecipes?.length
         ? { ...filtered, meals: buildPersonalizedMeals(filtered.meals, dateStr) }
         : filtered;
       return {
-        label: i === 0 ? cm.today : i === 1 ? cm.tomorrow : names[dow],
+        label: isToday ? cm.today : names[dow],
         dayNum: date.getDate(),
         menu,
         type,
         dateStr,
+        isToday,
       };
     });
-  }, [fastingProtocol, mealsActive, allRecipes, userProfile, pi?.phase, lang]);
+  }, [fastingProtocol, mealsActive, allRecipes, userProfile, pi?.phase, lang, weekOffset]);
 
   const weekDays = useMemo(() => {
     if (!pi) return [];
@@ -592,11 +616,36 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
 
       {/* ── SEMAINE ── */}
       {sub === 'semana' && <>
+        {/* Navegación de semana */}
+        {(() => {
+          const first = weekMenuDays[0];
+          const last  = weekMenuDays[6];
+          const fmt = d => `${d.dayNum} ${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][new Date(d.dateStr).getMonth()]}`;
+          const label = weekOffset === 0
+            ? (lang === 'en' ? 'This week' : lang === 'fr' ? 'Cette semaine' : lang === 'it' ? 'Questa settimana' : 'Esta semana')
+            : weekOffset === -1
+              ? (lang === 'en' ? 'Last week' : lang === 'fr' ? 'Semaine dernière' : lang === 'it' ? 'Settimana scorsa' : 'Semana pasada')
+              : weekOffset === 1
+                ? (lang === 'en' ? 'Next week' : lang === 'fr' ? 'Semaine prochaine' : lang === 'it' ? 'Settimana prossima' : 'Semana siguiente')
+                : (first && last ? `${fmt(first)} – ${fmt(last)}` : '');
+          return (
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, paddingHorizontal: 4 }}>
+              <TouchableOpacity onPress={() => { setWeekOffset(o => o - 1); setOpenD(null); }} style={{ padding: 8 }}>
+                <Text style={{ fontSize: 28, color: BLUE.primary, fontWeight: '700', lineHeight: 32 }}>‹</Text>
+              </TouchableOpacity>
+              <Text style={{ fontSize: 14, fontWeight: '600', color: '#1E293B' }}>{label}</Text>
+              <TouchableOpacity onPress={() => { setWeekOffset(o => o + 1); setOpenD(null); }} style={{ padding: 8 }}>
+                <Text style={{ fontSize: 28, color: BLUE.primary, fontWeight: '700', lineHeight: 32 }}>›</Text>
+              </TouchableOpacity>
+            </View>
+          );
+        })()}
+
         {weekMenuDays.map((day, i) => (
-          <View key={i} style={[styles.card, i === 0 && { borderWidth: 2, borderColor: BLUE.primary }]}>
+          <View key={i} style={[styles.card, day.isToday && { borderWidth: 2, borderColor: BLUE.primary }]}>
             <TouchableOpacity style={styles.dayRow} onPress={() => setOpenD(openD === i ? null : i)}>
               <View style={styles.dayDate}>
-                <Text style={[styles.dayLabel, i === 0 && { color: BLUE.primary, fontWeight: '700' }]}>{day.label}</Text>
+                <Text style={[styles.dayLabel, day.isToday && { color: BLUE.primary, fontWeight: '700' }]}>{day.label}</Text>
                 <Text style={styles.dayNum}>{day.dayNum}</Text>
               </View>
               {profileExtended?.batchCooking && (
@@ -606,7 +655,10 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
               )}
               <View style={{ flex: 1, marginLeft: 8 }}>
                 <Text style={styles.dayMeals} numberOfLines={1}>
-                  {day.menu.meals.slice(0, 2).map(m => m.ico + ' ' + getMealLabel(lang, m.label)).join(' · ')}
+                  {day.menu.meals.slice(0, 2).map(m => {
+                    const name = m.title || m.items?.[0] || '';
+                    return m.ico + ' ' + (name || getMealLabel(lang, m.label));
+                  }).join(' · ')}
                 </Text>
               </View>
               <Text style={styles.chevron}>{openD === i ? '▲' : '▼'}</Text>
@@ -614,23 +666,24 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
 
             {openD === i && (
               <View style={styles.mealDetail}>
-                {day.menu.meals.map((meal, j) => (
-                  <View key={meal.id} style={{ marginBottom: 12 }}>
-                    <Text style={[styles.mealTag, { color: profileExtended?.batchCooking ? day.menu.textColor : BLUE.primary, marginBottom: 4 }]}>{meal.ico} {getMealLabel(lang, meal.label)}</Text>
-                    {meal.items.map((it, k) => (
-                      <View key={k} style={styles.listRow}>
-                        <View style={styles.dot} />
-                        <Text style={styles.listText}>{it}</Text>
-                      </View>
-                    ))}
-                    {meal.recipe && (
-                      <TouchableOpacity style={[styles.recipeBtn, { marginTop: 8 }]}
-                        onPress={() => setRecipe({ ...meal.recipe, mealLabel: meal.label })}>
-                        <Text style={styles.recipeBtnText}>{n.seeRecipeShort}</Text>
+                {day.menu.meals.map((meal, j) => {
+                  const dishName = meal.title || meal.items?.[0] || '';
+                  const canOpen  = !!meal.recipe;
+                  return (
+                    <View key={meal.id} style={{ marginBottom: 12 }}>
+                      <Text style={[styles.mealTag, { color: profileExtended?.batchCooking ? day.menu.textColor : BLUE.primary, marginBottom: 2 }]}>
+                        {meal.ico} {getMealLabel(lang, meal.label)}
+                      </Text>
+                      <TouchableOpacity disabled={!canOpen}
+                        onPress={() => setRecipe({ ...meal.recipe, mealLabel: meal.label, title: dishName, emoji: meal.ico, macros: meal.macros, _recipeId: meal._recipeId })}
+                        activeOpacity={canOpen ? 0.7 : 1}>
+                        <Text style={[styles.mealTitle, { fontSize: 14, color: canOpen ? BLUE.primary : '#1E293B', textDecorationLine: canOpen ? 'underline' : 'none' }]}>
+                          {dishName || getMealLabel(lang, meal.label)}{canOpen ? ' →' : ''}
+                        </Text>
                       </TouchableOpacity>
-                    )}
-                  </View>
-                ))}
+                    </View>
+                  );
+                })}
               </View>
             )}
           </View>
@@ -639,6 +692,24 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
 
       {/* ── LISTE DE COURSES ── */}
       {sub === 'lista' && <>
+        {/* Navegación semanas */}
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 4, marginBottom: 8 }}>
+          <TouchableOpacity onPress={() => setWeekOffset(w => w - 1)} style={{ padding: 8 }}>
+            <Text style={{ fontSize: 20, color: BLUE.primary }}>‹</Text>
+          </TouchableOpacity>
+          <Text style={{ fontSize: 13, fontWeight: '600', color: '#1E293B' }}>
+            {weekOffset === 0
+              ? (lang === 'en' ? 'This week' : lang === 'fr' ? 'Cette semaine' : lang === 'it' ? 'Questa settimana' : 'Esta semana')
+              : weekOffset === -1
+              ? (lang === 'en' ? 'Last week' : lang === 'fr' ? 'Semaine passée' : lang === 'it' ? 'Settimana scorsa' : 'Semana pasada')
+              : weekOffset === 1
+              ? (lang === 'en' ? 'Next week' : lang === 'fr' ? 'Semaine prochaine' : lang === 'it' ? 'Settimana prossima' : 'Semana siguiente')
+              : (weekOffset > 0 ? `+${weekOffset}` : weekOffset) + (lang === 'en' ? ' weeks' : ' semanas')}
+          </Text>
+          <TouchableOpacity onPress={() => setWeekOffset(w => w + 1)} style={{ padding: 8 }}>
+            <Text style={{ fontSize: 20, color: BLUE.primary }}>›</Text>
+          </TouchableOpacity>
+        </View>
         <View style={[styles.card, { backgroundColor: BLUE.light }]}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
             <Text style={[styles.sectionTitle, { color: BLUE.primary }]}>{n.weekList}</Text>
@@ -700,14 +771,18 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
               const qty  = item.qty ?? item.totalQty;
               const unit = item.unit;
               const qtyLabel = shoppingListFromRecipes ? formatQuantity(qty, unit) : formatQty(qty, unit, lang);
+              const itemKey = item.key || item.name;
+              const checked = !!checkedItems[itemKey];
               return (
-                <View key={item.key || item.name} style={styles.shopRow}>
+                <TouchableOpacity key={itemKey} style={styles.shopRow} onPress={() => setCheckedItems(prev => ({ ...prev, [itemKey]: !prev[itemKey] }))} activeOpacity={0.7}>
                   <View style={styles.shopLeft}>
-                    <View style={styles.checkbox} />
-                    <Text style={styles.shopName}>{item.name}</Text>
+                    <View style={[styles.checkbox, checked && { backgroundColor: '#1A56DB', borderColor: '#1A56DB' }]}>
+                      {checked && <Text style={{ color: '#fff', fontSize: 12, lineHeight: 16, textAlign: 'center' }}>✓</Text>}
+                    </View>
+                    <Text style={[styles.shopName, checked && { textDecorationLine: 'line-through', color: '#94A3B8' }]}>{item.name}</Text>
                   </View>
-                  <Text style={styles.shopQty}>{qtyLabel}</Text>
-                </View>
+                  <Text style={[styles.shopQty, checked && { color: '#94A3B8' }]}>{qtyLabel}</Text>
+                </TouchableOpacity>
               );
             })}
           </View>

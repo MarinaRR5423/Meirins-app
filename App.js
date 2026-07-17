@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, View, ActivityIndicator, Platform } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
 import * as Linking from 'expo-linking';
 
@@ -179,6 +180,7 @@ function App() {
   if (!setupDone) return <ErrorBoundary><SetupScreen onDone={profile.handleSetupDone} lang={setupLang} onLangChange={setSetupLang} /></ErrorBoundary>;
 
   return (
+    <SafeAreaProvider>
     <GestureHandlerRootView style={{ flex: 1 }}>
     <PostHogProvider apiKey={process.env.EXPO_PUBLIC_POSTHOG_KEY} options={{ host: process.env.EXPO_PUBLIC_POSTHOG_HOST }}>
     <PostHogBridge />
@@ -188,10 +190,12 @@ function App() {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarStyle: { backgroundColor: 'white', borderTopColor: '#E2E8F0', paddingBottom: 20, height: 70 },
+          tabBarStyle: { backgroundColor: 'white', borderTopColor: '#E2E8F0' },
           tabBarActiveTintColor: '#1A56DB',
           tabBarInactiveTintColor: '#94A3B8',
           tabBarLabelStyle: { fontSize: 10, fontWeight: '600' },
+          lazy: true,
+          freezeOnBlur: true,
         }}>
         <Tab.Screen name="Inicio" options={{ tabBarLabel: tabs.home, tabBarIcon: () => <Text style={{ fontSize: 20 }}>🏠</Text> }}>
           {() => <HomeScreen lang={lang} pi={pi} healthData={healthData} profile={{
@@ -204,7 +208,7 @@ function App() {
         <Tab.Screen name="Ciclo" options={{ tabBarLabel: tabs.cycle, tabBarIcon: () => <Text style={{ fontSize: 20 }}>🌙</Text> }}>
           {() => <CicloScreen lang={lang} pi={pi} lastPeriod={lastPeriod} setLastPeriod={profile.setLastPeriod} setCycleLength={profile.setCycleLength} periodEnd={periodEnd} setPeriodEnd={profile.setPeriodEnd} sleepLog={sleepLog} logSleep={profile.logSleep} profileExtended={profile.profileExtended} saveProfileExtended={profile.saveProfileExtended} logCycleDay={profile.logCycleDay} />}
         </Tab.Screen>
-        <Tab.Screen name="Nutrición" options={{ tabBarLabel: tabs.nutri, tabBarIcon: () => <Text style={{ fontSize: 20 }}>🥗</Text> }}>
+        <Tab.Screen name="Nutrición" options={{ tabBarLabel: tabs.nutri, tabBarIcon: () => <Text style={{ fontSize: 20 }}>🥗</Text>, unmountOnBlur: true }}>
           {() => <NutriScreen lang={lang} pi={pi} program={programData}
             goal={profile.goal} activityLevel={profile.activityLevel} dietary={profile.dietary}
             profileExtended={profile.profileExtended}
@@ -215,7 +219,7 @@ function App() {
             skipRecipe={profile.skipRecipe}
             logRecipeDone={profile.logRecipeDone} />}
         </Tab.Screen>
-        <Tab.Screen name="Gimnasio" options={{ tabBarLabel: tabs.gym, tabBarIcon: () => <Text style={{ fontSize: 20 }}>🏋️</Text> }}>
+        <Tab.Screen name="Gimnasio" options={{ tabBarLabel: tabs.gym, tabBarIcon: () => <Text style={{ fontSize: 20 }}>🏋️</Text>, unmountOnBlur: true }}>
           {() => <GimnasioScreen lang={lang} pi={pi} trainDays={profile.trainDays} setTrainDays={profile.setTrainDays} program={programData} healthData={healthData} goal={profile.goal}
             profileExtended={profile.profileExtended} saveProfileExtended={profile.saveProfileExtended}
             toggleFavoriteWorkout={profile.toggleFavoriteWorkout}
@@ -243,6 +247,7 @@ function App() {
     </ErrorBoundary>
     </PostHogProvider>
     </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }
 export default wrapWithSentry(App);

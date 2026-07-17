@@ -16,21 +16,25 @@
     },
     "preview": {
       "distribution": "store",
-      "android": {
-        "buildType": "apk"
-      },
       "ios": {
         "autoIncrement": true
       },
+      "android": {
+        "autoIncrement": true
+      },
       "env": {
-        "SENTRY_DISABLE_AUTO_UPLOAD": "true",
         "EXPO_PUBLIC_POSTHOG_KEY": "phc_BxdWM34zEh9BppzrqzAMxuG9cd839M67RgnED3Kui4RY",
-        "EXPO_PUBLIC_POSTHOG_HOST": "https://eu.i.posthog.com"
+        "EXPO_PUBLIC_POSTHOG_HOST": "https://eu.i.posthog.com",
+        "SENTRY_ORG": "marina-k0",
+        "SENTRY_PROJECT": "react-native",
+        "SENTRY_ALLOW_FAILURE": "true"
       }
     },
     "production": {
       "autoIncrement": true,
       "env": {
+        "SENTRY_ORG": "marina-k0",
+        "SENTRY_PROJECT": "react-native",
         "SENTRY_ALLOW_FAILURE": "true",
         "EXPO_PUBLIC_POSTHOG_KEY": "phc_BxdWM34zEh9BppzrqzAMxuG9cd839M67RgnED3Kui4RY",
         "EXPO_PUBLIC_POSTHOG_HOST": "https://eu.i.posthog.com"

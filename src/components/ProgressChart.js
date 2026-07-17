@@ -10,17 +10,17 @@
  *   width     number                                ancho total del SVG
  */
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import Svg, {
   Path, Polyline, Circle, Line, Defs,
   LinearGradient, Stop, Text as SvgText,
 } from 'react-native-svg';
 
-const SCREEN_W  = Dimensions.get('window').width;
 const PAD = { top: 24, bottom: 28, left: 38, right: 14 };
 
 export default function ProgressChart({ data, color = '#1A56DB', unit = 'kg', goal, width }) {
-  const W = width || SCREEN_W - 56;
+  const { width: screenW } = useWindowDimensions();
+  const W = width || (screenW > 0 ? screenW - 56 : 320);
   const H = 160;
 
   if (!data || data.length < 2) {

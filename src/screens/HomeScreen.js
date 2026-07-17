@@ -222,6 +222,12 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
   const adh = calcAdherence(profile?.profileExtended?.activityLog || {}, 7);
   const hasNutri = adh.recipesPct != null;
   const hasWorkout = adh.workoutsPct != null;
+  const sleepTxt = {
+    title:  { es: 'Sueño', en: 'Sleep', fr: 'Sommeil', it: 'Sonno' },
+    nutri:  { es: 'Nutrición', en: 'Nutrition', fr: 'Nutrition', it: 'Nutrizione' },
+    workout:{ es: 'Entreno', en: 'Workout', fr: 'Entraînement', it: 'Allenamento' },
+    streak: { es: 'racha', en: 'streak', fr: 'série', it: 'serie' },
+  };
   if (!s && !hasNutri && !hasWorkout) return (
     <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
       <TouchableOpacity onPress={() => navigation.navigate('Nutrición')} style={{ flex: 1, backgroundColor: '#F0FDF4', borderRadius: 16, padding: 12, alignItems: 'center',
@@ -235,12 +241,6 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
     </View>
   );
 
-  const sleepTxt = {
-    title:  { es: 'Sueño', en: 'Sleep', fr: 'Sommeil', it: 'Sonno' },
-    nutri:  { es: 'Nutrición', en: 'Nutrition', fr: 'Nutrition', it: 'Nutrizione' },
-    workout:{ es: 'Entreno', en: 'Workout', fr: 'Entraînement', it: 'Allenamento' },
-    streak: { es: 'racha', en: 'streak', fr: 'série', it: 'serie' },
-  };
   const sleepEmoji = !s ? '🌙' : s.duration >= 7 ? '😴' : s.duration >= 6 ? '🌙' : '⚠️';
   const sleepColor = !s ? '#94A3B8' : s.duration >= 7 ? '#0284C7' : s.duration >= 6 ? '#7C3AED' : '#DC2626';
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Modal, SafeAreaView } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Modal, SafeAreaView, Platform, StatusBar } from 'react-native';
 import { ARTICLES, ARTICLE_CATEGORIES } from '../data/articles';
 import T from '../i18n/translations';
 
@@ -27,7 +27,7 @@ function ArticleModal({ article, lang, tips, onClose }) {
   const cat = ARTICLE_CATEGORIES[article.category];
   const body = article.body[lang] || article.body.es;
   return (
-    <Modal visible animationType="slide" presentationStyle="pageSheet">
+    <Modal visible animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose} statusBarTranslucent>
       <SafeAreaView style={styles.modal}>
         <View style={styles.modalHeader}>
           <TouchableOpacity onPress={onClose} style={styles.backBtn}>
@@ -37,7 +37,7 @@ function ArticleModal({ article, lang, tips, onClose }) {
             <Text style={[styles.catChipText, { color: cat.color }]}>{cat.icon}</Text>
           </View>
         </View>
-        <ScrollView style={styles.modalScroll} contentContainerStyle={styles.modalContent} showsVerticalScrollIndicator={false}>
+        <ScrollView style={styles.modalScroll} contentContainerStyle={styles.modalContent} showsVerticalScrollIndicator={false} nestedScrollEnabled>
           <Text style={styles.modalIcon}>{article.icon}</Text>
           <Text style={styles.modalTitle}>{article.title[lang] || article.title.es}</Text>
           <Text style={styles.modalMeta}>⏱ {article.readTime} {tips.readTime} · {cat.icon} {article.category}</Text>
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   cardReadTime: { fontSize: 11, color: '#94A3B8' },
 
   // Modal
-  modal: { flex: 1, backgroundColor: '#FAFCFF' },
+  modal: { flex: 1, backgroundColor: '#FAFCFF', paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
   modalHeader: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 20, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F1F5F9',

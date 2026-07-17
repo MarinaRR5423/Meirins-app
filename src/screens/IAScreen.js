@@ -156,6 +156,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
   const [editFitness,      setEditFitness]      = useState(ext.fitnessLevel   || '');
   const [editGym,          setEditGym]          = useState(ext.gymAccess      || '');
   const [editDiet,         setEditDiet]         = useState(ext.diet              || '');
+  const [editDietMod,      setEditDietMod]      = useState(ext.dietModifiers     || []);
   const [editFasting,      setEditFasting]      = useState(ext.fastingProtocol  || '');
   const [editMealsActive,  setEditMealsActive]  = useState(ext.mealsActive      || null);
   const [editAllergies,    setEditAllergies]    = useState(ext.allergies      || []);
@@ -676,6 +677,20 @@ export default function PerfilScreen({ pi, profile, signOut }) {
                 editFasting ? getDiet(editFasting)?.name?.[lang] : null,
               ].filter(Boolean).join('  +  ') || '—'}
             />
+            {editDietMod.length > 0 && (
+              <View>
+                <Text style={styles.subLabel}>⚙️ {lang === 'en' ? 'Modifiers' : lang === 'fr' ? 'Modificateurs' : lang === 'it' ? 'Modificatori' : 'Modificadores'}</Text>
+                <ChipRow items={editDietMod.map(m => {
+                  const MOD_LABELS = {
+                    gluten_free:       { es: '🌾 Sin gluten',       en: '🌾 Gluten-free',       fr: '🌾 Sans gluten',       it: '🌾 Senza glutine' },
+                    lactose_free:      { es: '🥛 Sin lactosa',      en: '🥛 Lactose-free',      fr: '🥛 Sans lactose',      it: '🥛 Senza lattosio' },
+                    low_fodmap:        { es: '🫘 Low FODMAP',       en: '🫘 Low FODMAP',        fr: '🫘 Low FODMAP',        it: '🫘 Low FODMAP' },
+                    anti_inflammatory: { es: '🌿 Antiinflamatoria', en: '🌿 Anti-inflammatory', fr: '🌿 Anti-inflammatoire', it: '🌿 Antinfiammatoria' },
+                  };
+                  return MOD_LABELS[m]?.[lang] || m;
+                })} />
+              </View>
+            )}
             {editAllergies.length > 0 && (
               <View>
                 <Text style={[styles.subLabel, { color: '#EF4444' }]}>{p.profile.allergies}</Text>

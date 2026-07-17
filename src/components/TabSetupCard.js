@@ -99,7 +99,7 @@ function DayPicker({ trainDays, onToggle, dayLetters }) {
 
 function SetupModal({ visible, onClose, title, children }) {
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
+    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
       <SafeAreaView style={s.modal}>
         <View style={s.modalHeader}>
           <Text style={s.modalTitle}>{title}</Text>
@@ -363,6 +363,7 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
   const [open, setOpen]                 = useState(false);
   const [localDiet, setLocalDiet]       = useState(profileExtended?.diet            || '');
   const [localFasting, setFasting]      = useState(profileExtended?.fastingProtocol || '');
+  const [localModifiers, setModifiers]  = useState(profileExtended?.dietModifiers   || []);
   const [localMealsActive, setMealsAct] = useState(profileExtended?.mealsActive     || null);
   const [localAllergies, setAllergies]  = useState(profileExtended?.allergies       || []);
   const [localDislikes, setDislikes]    = useState(profileExtended?.foodDislikes    || []);
@@ -383,6 +384,7 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
     await saveProfileExtended({
       diet: localDiet,
       fastingProtocol: localFasting,
+      dietModifiers: localModifiers,
       mealsActive: localMealsActive,
       allergies: localAllergies,
       foodDislikes: localDislikes,
@@ -412,6 +414,7 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
     const cur = profileExtended || {};
     setLocalDiet(cur.diet || '');
     setFasting(cur.fastingProtocol || '');
+    setModifiers(cur.dietModifiers || []);
     setMealsAct(cur.mealsActive || null);
     setAllergies(cur.allergies || []);
     setDislikes(cur.foodDislikes || []);
@@ -492,6 +495,33 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
             );
           })}
         </>}
+
+        {/* ── MODIFICADORES DE DIETA ── */}
+        <Text style={[s.secLabel, { marginTop: 20 }]}>
+          {lang === 'en' ? '⚙️ DIETARY MODIFIERS (OPTIONAL)'
+           : lang === 'fr' ? '⚙️ MODIFICATEURS ALIMENTAIRES (OPTIONNEL)'
+           : lang === 'it' ? '⚙️ MODIFICATORI DIETETICI (OPZIONALE)'
+           : '⚙️ MODIFICADORES DE DIETA (OPCIONAL)'}
+        </Text>
+        <Text style={s.secSub}>
+          {lang === 'en' ? 'Combine with any diet. Only recipes that meet ALL selected filters will be shown.'
+           : lang === 'fr' ? 'Combinables avec n\'importe quel régime. Seules les recettes qui respectent TOUS les filtres seront affichées.'
+           : lang === 'it' ? 'Combinabili con qualsiasi dieta. Verranno mostrate solo le ricette che rispettano TUTTI i filtri selezionati.'
+           : 'Combinables con cualquier dieta. Solo se mostrarán recetas que cumplan TODOS los filtros seleccionados.'}
+        </Text>
+        <View style={s.chips}>
+          {[
+            { v: 'gluten_free',       l: { es: '🌾 Sin gluten',       en: '🌾 Gluten-free',       fr: '🌾 Sans gluten',        it: '🌾 Senza glutine' } },
+            { v: 'lactose_free',      l: { es: '🥛 Sin lactosa',      en: '🥛 Lactose-free',      fr: '🥛 Sans lactose',       it: '🥛 Senza lattosio' } },
+            { v: 'low_fodmap',        l: { es: '🫘 Low FODMAP',       en: '🫘 Low FODMAP',        fr: '🫘 Low FODMAP',         it: '🫘 Low FODMAP' } },
+            { v: 'anti_inflammatory', l: { es: '🌿 Antiinflamatoria', en: '🌿 Anti-inflammatory', fr: '🌿 Anti-inflammatoire',  it: '🌿 Antinfiammatoria' } },
+          ].map(o => (
+            <Chip key={o.v}
+              label={o.l[lang] || o.l.es}
+              selected={localModifiers.includes(o.v)}
+              onPress={() => toggleArr(localModifiers, setModifiers, o.v)} />
+          ))}
+        </View>
 
         {/* ── COMIDAS DEL DÍA ── */}
         <Text style={[s.secLabel, { marginTop: 20 }]}>

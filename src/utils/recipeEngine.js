@@ -31,12 +31,20 @@ export function appMealToDbMealType(appMealId) {
 //   - Es compatible con la dieta (o si la dieta tiene tag específico)
 //   - No está marcada como "avoid_for" para alguna condición/etapa
 
+// Mapeo de ID de modificador → campo booleano en la receta (Supabase)
+const MODIFIER_FIELD = {
+  gluten_free:       'gluten_free',
+  lactose_free:      'dairy_free',
+  low_fodmap:        'low_fodmap',
+  anti_inflammatory: 'anti_inflammatory',
+};
+
 function isHardCompatible(recipe, profile) {
   const allergies    = profile.allergies || [];
-  const dislikes     = profile.foodDislikes || [];
   const diet         = normalizeDietId(profile.diet || '');
   const conditions   = profile.conditions || [];
   const lifeStage    = profile.lifeStage || null;
+  const modifiers    = profile.dietModifiers || [];
 
   // 0. Skipped hoy — duro
   if (profile.skippedRecipeIds?.includes(recipe.id)) return false;
@@ -52,7 +60,13 @@ function isHardCompatible(recipe, profile) {
     if (!recipe.diets.includes(diet)) return false;
   }
 
-  // 3. Avoid_for — duro
+  // 3. Modificadores — duro: la receta debe cumplir TODOS los seleccionados
+  for (const mod of modifiers) {
+    const field = MODIFIER_FIELD[mod];
+    if (field && recipe[field] === false) return false;
+  }
+
+  // 4. Avoid_for — duro
   if (recipe.avoid_for?.length > 0) {
     if (lifeStage && recipe.avoid_for.includes(lifeStage)) return false;
     if (conditions.some(c => recipe.avoid_for.includes(c))) return false;

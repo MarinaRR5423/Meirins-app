@@ -14,17 +14,27 @@
 // Fracciones unicode → decimal
 const UNICODE_FRACTIONS = { '½': 0.5, '¼': 0.25, '¾': 0.75, '⅓': 0.333, '⅔': 0.667 };
 
-// Palabras que indican que el item NO es un ingrediente (consejos de estilo de vida)
+// Palabras que indican que el item NO es un ingrediente (consejos de estilo de vida o instrucciones)
 const NON_FOOD_WORDS = [
   'yoga', 'estiramientos', 'paseo', 'caminata', 'obligaci', 'disfrutar', 'escucha',
   'brunch', 'senderismo', 'plato familiar', 'hambre', 'ganas', 'savourer', 'prenditi',
   'sin exceso', 'sin oblig', 'tómate', 'tomate tu', 'listen', 'ascolta', 'écoute',
   'natación', 'natacion', 'deporte', 'entrena', 'correr', 'bicicleta', 'pilates',
   'meditaci', 'respiraci', 'descanso activo', 'actividad',
+  // instrucciones de preparación que no son ingredientes
+  'para la salsa', 'para el aderezo', 'para servir', 'para decorar', 'para acompañar',
+  'al gusto', 'opcional', 'to taste', 'to serve', 'for the sauce', 'for serving',
+  'pour la sauce', 'pour servir', 'per la salsa', 'per servire',
 ];
+
+// Prefijos que indican nota de preparación, no ingrediente
+const PREP_PREFIXES = ['para ', 'for ', 'pour ', 'per ', 'to serve', 'al gusto'];
+
 function isFood(raw) {
+  if (!raw || raw.length < 2) return false;
   if (raw.includes('—') || raw.includes('--')) return false;
-  const lower = raw.toLowerCase();
+  const lower = raw.toLowerCase().trim();
+  if (PREP_PREFIXES.some(p => lower.startsWith(p))) return false;
   return !NON_FOOD_WORDS.some(w => lower.includes(w));
 }
 
@@ -73,11 +83,18 @@ const ADJECTIVES = [
   'medio', 'media', 'temporada',
   'ripe', 'fresh', 'raw', 'cooked', 'grated', 'ground', 'chopped',
   'natural', 'whole', 'smoked', 'firm', 'pure', 'large', 'small', 'thin',
+  // cortes y formatos
+  'espirale', 'espiral', 'espirales', 'bastone', 'bastones', 'juliana',
+  'brunoise', 'mirepoix', 'chiffonade', 'carpaccio',
+  // tamaños parciales
+  'pequeñ',
+  // partes de ajo
+  'diente', 'dientes',
 ];
 
 const PARTICLES_TO_STRIP = [
+  /\((?:[^)]*)\)?/g,      // paréntesis (cerrados o no): "(para la salsa" también
   /\b(de|del|de la|de los|de las|en|con|sin|y|o|al)\b/g,
-  /\((?:[^)]*)\)/g, // texto entre paréntesis
 ];
 
 // ── Categorías ────────────────────────────────────────────────────────────────
@@ -231,19 +248,28 @@ function parseQty(text) {
   return { qty: 1, unit: 'unidad', rest: t };
 }
 
+// Palabras que solas no son un ingrediente válido
+const STOP_WORDS = new Set(['de','del','la','las','los','el','en','con','sin','y','o','al','a','para','un','una','unos','unas','su','sus']);
+
 function normalizeName(name) {
   let n = name.toLowerCase().trim();
+  // Quitar todo desde "para " en adelante (notas de preparación inline)
+  n = n.replace(/\s+para\s+.*/i, '');
+  // Quitar todo desde ":" en adelante (instrucciones)
+  n = n.replace(/:.*/g, '');
   PARTICLES_TO_STRIP.forEach(re => { n = n.replace(re, ' '); });
   ADJECTIVES.forEach(adj => {
     const re = new RegExp(`\\b${adj}\\b`, 'gi');
     n = n.replace(re, '');
   });
   // Quita comas y signos
-  n = n.replace(/[,.;:]/g, ' ');
+  n = n.replace(/[,.;:\/\\]/g, ' ');
   // Espacios duplicados
   n = n.replace(/\s+/g, ' ').trim();
-  // Singulariza cada palabra para fusionar "zanahorias" con "zanahoria"
+  // Singulariza cada palabra
   n = n.split(' ').map(singularize).join(' ').trim();
+  // Si solo queda una stop word o cadena vacía → inválido
+  if (!n || n.split(' ').every(w => STOP_WORDS.has(w))) return '';
   return n;
 }
 
@@ -282,38 +308,49 @@ export function formatQuantity(qty, unit) {
  * @returns {Object}            { categoria: [ { name, qty, unit, key } ] }
  */
 export function buildShoppingList(meals, servings = 1) {
-  const items = {};
+  // items keyed por nombre normalizado solo (para fusionar independientemente de unidad)
+  const byName = {};
 
   meals.forEach(meal => {
     (meal.items || []).forEach(ingredient => {
-      // Separar por comas si hay varios (ej: "Sal, pimienta")
+      if (!ingredient || typeof ingredient !== 'string') return;
+
+      // Separar por comas solo cuando tras la coma viene letra (no número ni espacio+número)
+      // Esto evita cortar "sal, 1 cdta pimienta" mal
       const parts = ingredient.split(/,\s*(?=[a-zA-ZáéíóúñÁÉÍÓÚÑ])/);
 
       parts.forEach(part => {
         const cleaned = part.trim();
-        if (!cleaned) return;
-        if (!isFood(cleaned)) return; // filtra consejos de estilo de vida
+        if (!cleaned || cleaned.length < 2) return;
+        if (!isFood(cleaned)) return;
 
         const { qty, unit, rest } = parseQty(cleaned);
         const name = normalizeName(rest);
-        if (!name) return;
+        if (!name || name.length < 2) return;
 
-        // Clave para agrupar: nombre normalizado + unidad
-        const key = `${name}__${unit}`;
-        if (!items[key]) {
-          items[key] = { name: capitalize(name), qty: 0, unit };
+        const existing = byName[name];
+        if (!existing) {
+          byName[name] = { name: capitalize(name), qty: qty * servings, unit };
+        } else if (existing.unit === unit) {
+          existing.qty += qty * servings;
+        } else if (existing.unit === 'unidad' && unit !== 'unidad') {
+          existing.unit = unit;
+          existing.qty  = qty * servings;
+        } else if (unit === 'unidad') {
+          // ya tenemos medida concreta, ignorar
+        } else {
+          existing.qty += qty * servings;
         }
-        items[key].qty += qty * servings;
       });
     });
   });
 
   // Agrupar por categoría
   const grouped = {};
-  Object.entries(items).forEach(([key, item]) => {
+  Object.values(byName).forEach(item => {
     const cat = categorize(item.name);
     if (!grouped[cat]) grouped[cat] = [];
-    grouped[cat].push({ ...item, key });
+    grouped[cat].push({ ...item, key: item.name });
   });
 
   // Ordenar items dentro de cada categoría

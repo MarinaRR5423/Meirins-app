@@ -43,7 +43,7 @@ export default function TipsCard({ articles = [], lang = 'es' }) {
 
       {/* ── Full article modal ── */}
       {open && (
-        <Modal visible animationType="slide" presentationStyle="pageSheet">
+        <Modal visible animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setOpen(null)}>
           <SafeAreaView style={styles.modal}>
             <View style={styles.modalHeader}>
               <TouchableOpacity onPress={() => setOpen(null)} style={styles.backBtn}>

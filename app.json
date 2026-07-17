@@ -20,19 +20,27 @@
         "NSCalendarsUsageDescription": "Meirins adds your scheduled workouts to your calendar so you never miss a session.",
         "NSPhotoLibraryUsageDescription": "Meirins needs access to your photos to let you choose a profile picture.",
         "NSCameraUsageDescription": "Meirins needs access to your camera to take a profile picture.",
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSHealthShareUsageDescription": "Meirins reads your workouts, sleep and activity data to personalise your training and nutrition plan.",
+        "NSHealthUpdateUsageDescription": "Meirins does not write any data to Apple Health."
+      },
+      "entitlements": {
+        "com.apple.developer.healthkit": true,
+        "com.apple.developer.healthkit.background-delivery": true
       }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#080d2b"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.marina13.meirins",
+      "versionCode": 3,
       "intentFilters": []
     },
     "plugins": [
+      "@sentry/react-native",
       [
         "expo-notifications",
         {
@@ -51,7 +59,8 @@
           }
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      "react-native-health"
     ],
     "web": {
       "favicon": "./assets/favicon.png"

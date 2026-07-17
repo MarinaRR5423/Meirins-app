@@ -132,7 +132,7 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
       )}
 
       {/* ── Modal: catálogo / detalle / programa activo ── */}
-      <Modal visible={open} animationType="slide" presentationStyle="pageSheet">
+      <Modal visible={open} animationType="slide" presentationStyle="pageSheet" onRequestClose={() => { setOpen(false); setDetail(null); }}>
         <SafeAreaView style={st.modal}>
           <View style={st.modalHeader}>
             {detail ? (
