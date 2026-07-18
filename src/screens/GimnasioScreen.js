@@ -3,6 +3,7 @@ import {
   View, Text, ScrollView, TouchableOpacity,
   TextInput, StyleSheet, ActivityIndicator, Platform,
 } from 'react-native';
+import { TouchableOpacity as GHTouchable } from 'react-native-gesture-handler';
 import T, { getDayLabels } from '../i18n/translations';
 import { GymSetupCard, SPORTS_LIST } from '../components/TabSetupCard';
 import ProgramsCard from '../components/ProgramsCard';
@@ -564,7 +565,7 @@ export default function GimnasioScreen({
             const logged     = logEntry.workout; // 'done'|'skipped'|'rest'|'extra'|undefined
             return (
               <View key={i}>
-                <TouchableOpacity
+                <GHTouchable
                   onPress={() => setWeekAction(isExpanded ? null : { dateKey: day.dateKey, step: 'main' })}
                   activeOpacity={0.7}
                   style={[styles.weekRow, {
@@ -602,13 +603,12 @@ export default function GimnasioScreen({
                     {logged === 'skipped' && <Text style={{ color: '#EAB308', fontWeight: '700', fontSize: 16 }}>–</Text>}
                     <Text style={{ fontSize: 11, color: '#94A3B8' }}>{isExpanded ? '▲' : '✏️'}</Text>
                   </View>
-                </TouchableOpacity>
+                </GHTouchable>
 
                 {isExpanded && (
                   <View style={[styles.weekDetail, { borderColor: BLUE.primary }]}>
                     {weekAction.step === 'main' && (
                       <View>
-                        {/* Current logged status */}
                         {logged && (
                           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, paddingBottom: 10, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' }}>
                             <Text style={{ fontSize: 13, fontWeight: '600',
@@ -617,46 +617,45 @@ export default function GimnasioScreen({
                                 ? `✓ ${lang === 'en' ? 'Logged' : 'Registrado'}${logEntry.extraSport ? ` · ${logEntry.extraSport}${logEntry.extraMinutes ? ` ${logEntry.extraMinutes} min` : ''}` : ''}`
                                 : `😴 ${lang === 'en' ? 'Rest' : 'Descanso'}`}
                             </Text>
-                            <TouchableOpacity onPress={async () => { await clearActivityDay(day.dateKey); setWeekAction(null); }}>
+                            <GHTouchable onPress={async () => { await clearActivityDay(day.dateKey); setWeekAction(null); }}>
                               <Text style={{ fontSize: 12, color: '#94A3B8' }}>{lang === 'en' ? 'Clear' : 'Borrar'}</Text>
-                            </TouchableOpacity>
+                            </GHTouchable>
                           </View>
                         )}
-                        {/* Action buttons */}
                         <View style={{ gap: 8 }}>
                           {s && (
-                            <TouchableOpacity
+                            <GHTouchable
                               onPress={async () => { await saveActivityDay(day.dateKey, { workout: 'done' }); setWeekAction(null); }}
                               style={{ padding: 11, borderRadius: 14, backgroundColor: '#F0FDF4', borderWidth: 1, borderColor: '#86EFAC', alignItems: 'center' }}>
                               <Text style={{ fontSize: 13, fontWeight: '700', color: GREEN.text }}>
                                 ✓ {lang === 'en' ? 'I did it' : 'Lo hice'}
                               </Text>
-                            </TouchableOpacity>
+                            </GHTouchable>
                           )}
-                          <TouchableOpacity
+                          <GHTouchable
                             onPress={() => setWeekAction(prev => ({ ...prev, step: 'sport' }))}
                             style={{ padding: 11, borderRadius: 14, backgroundColor: BLUE.light, borderWidth: 1, borderColor: '#BFDBFE', alignItems: 'center' }}>
                             <Text style={{ fontSize: 13, fontWeight: '700', color: BLUE.primary }}>
                               🏅 {lang === 'en' ? 'Add sport' : 'Añadir deporte'}
                             </Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
+                          </GHTouchable>
+                          <GHTouchable
                             onPress={async () => { await saveActivityDay(day.dateKey, { workout: 'skipped' }); setWeekAction(null); }}
                             style={{ padding: 11, borderRadius: 14, backgroundColor: '#FEF9F0', borderWidth: 1, borderColor: '#FDE68A', alignItems: 'center' }}>
                             <Text style={{ fontSize: 13, fontWeight: '700', color: '#92400E' }}>
                               😴 {lang === 'en' ? 'Rest day' : 'Descansé'}
                             </Text>
-                          </TouchableOpacity>
+                          </GHTouchable>
                         </View>
                       </View>
                     )}
                     {weekAction.step === 'sport' && (
                       <View>
-                        <TouchableOpacity
+                        <GHTouchable
                           onPress={() => setWeekAction(prev => ({ ...prev, step: 'main' }))}
                           style={{ marginBottom: 8 }}>
                           <Text style={{ fontSize: 12, color: '#94A3B8' }}>← {lang === 'en' ? 'Back' : 'Volver'}</Text>
-                        </TouchableOpacity>
+                        </GHTouchable>
                         <ExtraSportPicker
                           lang={lang}
                           g={g}

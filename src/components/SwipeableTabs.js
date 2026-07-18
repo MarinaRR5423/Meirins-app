@@ -21,9 +21,9 @@ const FAIL_RATIO      = 1.6;    // si dy supera dx × este ratio, falla → Scro
 
 export default function SwipeableTabs({ tabs, current, onChange, children, style }) {
   const pan = Gesture.Pan()
-    // Activa solo cuando el movimiento es claramente horizontal
-    .activeOffsetX([-15, 15])
-    .failOffsetY([-15, 15])
+    // Umbral alto para no interferir con taps en Android (RNGH v2)
+    .activeOffsetX([-30, 30])
+    .failOffsetY([-10, 10])
     .onEnd((e) => {
       if (Math.abs(e.translationX) < SWIPE_THRESHOLD) return;
       if (Math.abs(e.translationY) > Math.abs(e.translationX) * FAIL_RATIO) return;
