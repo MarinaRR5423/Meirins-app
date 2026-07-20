@@ -9,14 +9,10 @@ export function usePhaseData(phase, lang = 'es') {
   useEffect(() => {
     if (!phase) return;
 
-    // Always load static data immediately
     setPhaseData(PHASES[phase]);
-
-    // Only enrich from Supabase when language is Spanish — Supabase content is in ES only
-    if (lang !== 'es') return;
-
     setLoading(true);
-    fetchPhaseData(phase, PHASES[phase])
+
+    fetchPhaseData(phase, PHASES[phase], lang)
       .then(enriched => setPhaseData(enriched))
       .catch(() => setPhaseData(PHASES[phase]))
       .finally(() => setLoading(false));

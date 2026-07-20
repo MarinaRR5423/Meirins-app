@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Modal, SafeAreaView, Platform, StatusBar } from 'react-native';
 import { ARTICLES, ARTICLE_CATEGORIES } from '../data/articles';
+import { fetchArticles } from '../data/dataService';
 import T from '../i18n/translations';
 
 function ArticleCard({ article, lang, onPress }) {
@@ -56,11 +57,18 @@ export default function ConsejosScreen({ lang = 'es' }) {
   const tips = (T[lang] || T.es).tips;
   const [activeCategory, setActiveCategory] = useState('all');
   const [openArticle, setOpenArticle]       = useState(null);
+  const [articles, setArticles]             = useState(ARTICLES);
+
+  useEffect(() => {
+    fetchArticles()
+      .then(remote => { if (remote?.length) setArticles(remote); })
+      .catch(() => {});
+  }, []);
 
   const categories = ['all', ...Object.keys(ARTICLE_CATEGORIES)];
   const filtered = activeCategory === 'all'
-    ? ARTICLES
-    : ARTICLES.filter(a => a.category === activeCategory);
+    ? articles
+    : articles.filter(a => a.category === activeCategory);
 
   return (
     <View style={styles.container}>

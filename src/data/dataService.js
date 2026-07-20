@@ -149,20 +149,93 @@ export function mapSessionsToWeek(sessions) {
   }));
 }
 
+// ── ARTÍCULOS ──────────────────────────────────────────────────────────────────
+
+// Carga los artículos de Supabase. Devuelve array en el mismo formato que ARTICLES local.
+export async function fetchArticles() {
+  try {
+    const { data, error } = await supabase
+      .from('articles')
+      .select('*')
+      .eq('active', true)
+      .order('sort_order');
+
+    if (error || !data?.length) return null;
+
+    return data.map(a => ({
+      id: a.id,
+      category: a.category,
+      icon: a.icon,
+      readTime: a.read_time,
+      title:   { es: a.title_es,   en: a.title_en,   fr: a.title_fr   },
+      summary: { es: a.summary_es, en: a.summary_en, fr: a.summary_fr },
+      body:    { es: a.body_es,    en: a.body_en,    fr: a.body_fr    },
+    }));
+  } catch (e) {
+    console.error('fetchArticles error:', e);
+    return null;
+  }
+}
+
+// ── METADATOS DE FASE ──────────────────────────────────────────────────────────
+
+// Carga metadatos de fase de Supabase (tagline, desc, tip, kcal en los 3 idiomas).
+export async function fetchPhaseMeta(phase) {
+  try {
+    const { data, error } = await supabase
+      .from('phase_meta')
+      .select('*')
+      .eq('id', phase)
+      .single();
+
+    if (error || !data) return null;
+
+    return {
+      emoji:        data.emoji,
+      color:        data.color,
+      light:        data.color_light,
+      mid:          data.color_mid,
+      tagline:      { es: data.tagline_es, en: data.tagline_en, fr: data.tagline_fr },
+      desc:         { es: data.desc_es,    en: data.desc_en,    fr: data.desc_fr    },
+      focus:        data.focus,
+      kcal:         { es: data.kcal_es,    en: data.kcal_en,    fr: data.kcal_fr    },
+      intensity:    data.intensity,
+      intensityPct: data.intensity_pct,
+      tip:          { es: data.tip_es,     en: data.tip_en,     fr: data.tip_fr     },
+    };
+  } catch (e) {
+    console.error('fetchPhaseMeta error:', e);
+    return null;
+  }
+}
+
 // ── HOOK COMBINADO ─────────────────────────────────────────────────────────────
 
-// Carga recetas y sesiones para una fase, con fallback a datos estáticos
-export async function fetchPhaseData(phase, staticPhaseData) {
-  const [recipes, sessions] = await Promise.all([
+// Carga recetas, sesiones y metadatos para una fase, con fallback a datos estáticos
+export async function fetchPhaseData(phase, staticPhaseData, lang = 'es') {
+  const [recipes, sessions, meta] = await Promise.all([
     fetchRecipesByPhase(phase),
     fetchWorkoutSessionsByPhase(phase),
+    fetchPhaseMeta(phase),
   ]);
 
   const meals = mapRecipesToMeals(recipes);
   const week = mapSessionsToWeek(sessions);
 
+  // Apply multilingual meta if available
+  const metaOverrides = meta ? {
+    tagline:      meta.tagline?.[lang] || meta.tagline?.es || staticPhaseData.tagline,
+    desc:         meta.desc?.[lang]    || meta.desc?.es    || staticPhaseData.desc,
+    kcal:         meta.kcal?.[lang]    || meta.kcal?.es    || staticPhaseData.kcal,
+    tip:          meta.tip?.[lang]     || meta.tip?.es     || staticPhaseData.tip,
+    focus:        meta.focus           || staticPhaseData.focus,
+    intensity:    meta.intensity       || staticPhaseData.intensity,
+    intensityPct: meta.intensityPct    ?? staticPhaseData.intensityPct,
+  } : {};
+
   return {
     ...staticPhaseData,
+    ...metaOverrides,
     meals: meals || staticPhaseData.meals,
     week: week || staticPhaseData.week,
   };
