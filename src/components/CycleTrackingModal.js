@@ -34,7 +34,7 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
 
   const todayStr = new Date().toISOString().split('T')[0];
 
-  const toggleOption = (catId, optId, multi) => {
+  const toggleOption = async (catId, optId, multi) => {
     let isSelecting = false;
     if (multi) {
       const current = dayData[catId] || [];
@@ -50,7 +50,7 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
     }
     // Muestra pop-up educativo al seleccionar (no al deseleccionar)
     if (isSelecting) {
-      const insight = getInsight(catId, optId, currentPhase, lang);
+      const insight = await getInsight(catId, optId, currentPhase, lang);
       if (insight) setActiveInsight({ catId, optId, ...insight });
       else setActiveInsight(null);
     } else {

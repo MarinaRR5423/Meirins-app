@@ -177,6 +177,36 @@ export async function fetchArticles() {
   }
 }
 
+// ── SYMPTOM INSIGHTS ──────────────────────────────────────────────────────────
+
+// Carga un insight de síntoma de Supabase. Devuelve { why, helps } o null.
+export async function fetchSymptomInsight(category, symptom, phase, lang = 'es') {
+  try {
+    const { data, error } = await supabase
+      .from('symptom_insights')
+      .select('why_es,why_en,why_fr,why_it,helps_es,helps_en,helps_fr,helps_it')
+      .eq('category', category)
+      .eq('symptom', symptom)
+      .eq('phase', phase)
+      .maybeSingle();
+
+    if (error || !data) {
+      // Fallback: try 'default' phase
+      if (phase !== 'default') return fetchSymptomInsight(category, symptom, 'default', lang);
+      return null;
+    }
+
+    const l = ['es', 'en', 'fr', 'it'].includes(lang) ? lang : 'es';
+    return {
+      why:   data[`why_${l}`]   || data.why_es   || '',
+      helps: data[`helps_${l}`] || data.helps_es || '',
+    };
+  } catch (e) {
+    console.error('fetchSymptomInsight error:', e);
+    return null;
+  }
+}
+
 // ── METADATOS DE FASE ──────────────────────────────────────────────────────────
 
 // Carga metadatos de fase de Supabase (tagline, desc, tip, kcal en los 3 idiomas).

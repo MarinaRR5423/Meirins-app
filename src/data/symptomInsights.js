@@ -672,10 +672,10 @@ export const SYMPTOM_INSIGHTS = {
 };
 
 /**
- * Obtiene el insight para un síntoma en una fase concreta.
- * Devuelve { why, helps } en el idioma indicado, o null si no hay dato.
+ * Obtiene el insight para un síntoma en una fase concreta desde datos locales.
+ * Usado como fallback cuando Supabase no está disponible.
  */
-export function getInsight(categoryId, optionId, phase, lang = 'es') {
+export function getInsightLocal(categoryId, optionId, phase, lang = 'es') {
   const cat = SYMPTOM_INSIGHTS[categoryId];
   if (!cat) return null;
   const opt = cat[optionId];
@@ -686,4 +686,17 @@ export function getInsight(categoryId, optionId, phase, lang = 'es') {
     why:   entry.why?.[lang]   || entry.why?.es   || '',
     helps: entry.helps?.[lang] || entry.helps?.es  || '',
   };
+}
+
+/**
+ * Obtiene el insight desde Supabase con fallback a datos locales.
+ * Uso asíncrono: const insight = await getInsight(cat, symptom, phase, lang)
+ */
+export async function getInsight(categoryId, optionId, phase, lang = 'es') {
+  try {
+    const { fetchSymptomInsight } = await import('./dataService');
+    const remote = await fetchSymptomInsight(categoryId, optionId, phase, lang);
+    if (remote) return remote;
+  } catch (_) {}
+  return getInsightLocal(categoryId, optionId, phase, lang);
 }
