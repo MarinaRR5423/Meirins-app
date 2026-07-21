@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, View, ActivityIndicator, Platform } from 'react-native';
+import { Home, Moon, Salad, Dumbbell, User } from 'lucide-react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
 import * as Linking from 'expo-linking';
@@ -197,7 +198,7 @@ function App() {
           lazy: true,
           freezeOnBlur: true,
         }}>
-        <Tab.Screen name="Inicio" options={{ tabBarLabel: tabs.home, tabBarIcon: () => <Text style={{ fontSize: 20 }}>🏠</Text> }}>
+        <Tab.Screen name="Inicio" options={{ tabBarLabel: tabs.home, tabBarIcon: ({ color, size }) => <Home color={color} size={size} /> }}>
           {() => <HomeScreen lang={lang} pi={pi} healthData={healthData} profile={{
             age: profile.age, weight: profile.weight, height: profile.height,
             activityLevel: profile.activityLevel, goal: profile.goal,
@@ -205,10 +206,10 @@ function App() {
             profileExtended: profile.profileExtended,
           }} />}
         </Tab.Screen>
-        <Tab.Screen name="Ciclo" options={{ tabBarLabel: tabs.cycle, tabBarIcon: () => <Text style={{ fontSize: 20 }}>🌙</Text> }}>
+        <Tab.Screen name="Ciclo" options={{ tabBarLabel: tabs.cycle, tabBarIcon: ({ color, size }) => <Moon color={color} size={size} /> }}>
           {() => <CicloScreen lang={lang} pi={pi} lastPeriod={lastPeriod} setLastPeriod={profile.setLastPeriod} setCycleLength={profile.setCycleLength} periodEnd={periodEnd} setPeriodEnd={profile.setPeriodEnd} sleepLog={sleepLog} logSleep={profile.logSleep} profileExtended={profile.profileExtended} saveProfileExtended={profile.saveProfileExtended} logCycleDay={profile.logCycleDay} />}
         </Tab.Screen>
-        <Tab.Screen name="Nutrición" options={{ tabBarLabel: tabs.nutri, tabBarIcon: () => <Text style={{ fontSize: 20 }}>🥗</Text>, unmountOnBlur: true }}>
+        <Tab.Screen name="Nutrición" options={{ tabBarLabel: tabs.nutri, tabBarIcon: ({ color, size }) => <Salad color={color} size={size} />, unmountOnBlur: true }}>
           {() => <NutriScreen lang={lang} pi={pi} program={programData}
             goal={profile.goal} activityLevel={profile.activityLevel} dietary={profile.dietary}
             profileExtended={profile.profileExtended}
@@ -219,7 +220,7 @@ function App() {
             skipRecipe={profile.skipRecipe}
             logRecipeDone={profile.logRecipeDone} />}
         </Tab.Screen>
-        <Tab.Screen name="Gimnasio" options={{ tabBarLabel: tabs.gym, tabBarIcon: () => <Text style={{ fontSize: 20 }}>🏋️</Text>, unmountOnBlur: true }}>
+        <Tab.Screen name="Gimnasio" options={{ tabBarLabel: tabs.gym, tabBarIcon: ({ color, size }) => <Dumbbell color={color} size={size} />, unmountOnBlur: true }}>
           {() => <GimnasioScreen lang={lang} pi={pi} trainDays={profile.trainDays} setTrainDays={profile.setTrainDays} program={programData} healthData={healthData} goal={profile.goal}
             profileExtended={profile.profileExtended} saveProfileExtended={profile.saveProfileExtended}
             toggleFavoriteWorkout={profile.toggleFavoriteWorkout}
@@ -227,7 +228,7 @@ function App() {
             logWorkoutDone={profile.logWorkoutDone}
             sleepLog={sleepLog} logSleep={profile.logSleep} />}
         </Tab.Screen>
-        <Tab.Screen name="Perfil" options={{ tabBarLabel: tabs.profile, tabBarIcon: () => <Text style={{ fontSize: 20 }}>👤</Text> }}>
+        <Tab.Screen name="Perfil" options={{ tabBarLabel: tabs.profile, tabBarIcon: ({ color, size }) => <User color={color} size={size} /> }}>
           {() => <PerfilScreen pi={pi} profile={{
             age: profile.age,
             weight: profile.weight,

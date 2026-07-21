@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { CYCLE_CATEGORIES } from '../data/cycleTracking';
 import { getInsight } from '../data/symptomInsights';
+import { X } from 'lucide-react-native';
 
 const BLUE = '#1A56DB';
 
@@ -78,7 +79,7 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
         {/* Header */}
         <View style={s.header}>
           <TouchableOpacity onPress={onClose} style={s.closeBtn}>
-            <Text style={s.closeTxt}>✕</Text>
+            <X size={20} color="#64748B" />
           </TouchableOpacity>
           <Text style={s.title}>{txt.title[lang] || txt.title.es}</Text>
           <View style={{ width: 32 }} />
@@ -143,7 +144,7 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
                   {{ es: '¿Por qué ocurre?', en: 'Why does this happen?', fr: 'Pourquoi cela se produit ?', it: 'Perché succede?' }[lang] || '¿Por qué ocurre?'}
                 </Text>
                 <TouchableOpacity onPress={() => setActiveInsight(null)} style={s.insightClose}>
-                  <Text style={s.insightCloseTxt}>✕</Text>
+                  <X size={12} color="#3B82F6" />
                 </TouchableOpacity>
               </View>
               <Text style={s.insightWhy}>{activeInsight.why}</Text>

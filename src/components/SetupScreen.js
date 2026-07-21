@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { Check } from 'lucide-react-native';
 import T from '../i18n/translations';
 import { trackEvent, Events } from '../lib/analytics';
 
@@ -202,7 +203,7 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
               <Text style={styles.optionDesc}>{opt.desc}</Text>
             </View>
             <View style={[styles.checkbox, active && styles.checkboxActive]}>
-              {active && <Text style={styles.checkmark}>✓</Text>}
+              {active && <Check size={14} color="white" />}
             </View>
           </TouchableOpacity>
         );

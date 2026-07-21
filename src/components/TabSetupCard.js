@@ -8,6 +8,7 @@ import {
   View, Text, TouchableOpacity, StyleSheet, ScrollView,
   TextInput, Modal, SafeAreaView, Platform,
 } from 'react-native';
+import { Check, X, ChevronRight } from 'lucide-react-native';
 import T from '../i18n/translations';
 import RangeCalendar from './RangeCalendar';
 import TrainerCard from './TrainerCard';
@@ -64,7 +65,7 @@ function OptionCard({ label, desc, icon, selected, onPress }) {
         <Text style={[s.optLabel, selected && s.optLabelActive]}>{label}</Text>
         {desc ? <Text style={s.optDesc}>{desc}</Text> : null}
       </View>
-      {selected && <Text style={s.check}>✓</Text>}
+      {selected && <Check size={16} color="#1A56DB" />}
     </TouchableOpacity>
   );
 }
@@ -104,7 +105,7 @@ function SetupModal({ visible, onClose, title, children }) {
         <View style={s.modalHeader}>
           <Text style={s.modalTitle}>{title}</Text>
           <TouchableOpacity onPress={onClose} style={s.closeBtn}>
-            <Text style={s.closeTxt}>✕</Text>
+            <X size={20} color="#64748B" />
           </TouchableOpacity>
         </View>
         <ScrollView contentContainerStyle={s.modalBody} keyboardShouldPersistTaps="handled">
@@ -177,7 +178,7 @@ export function CicloSetupCard({ lang, lastPeriod, setLastPeriod, cycleLength, s
           <Text style={s.bannerTitle}>{txt.bannerTitle}</Text>
           <Text style={s.bannerSub}>{txt.bannerSub}</Text>
         </View>
-        <Text style={s.bannerArrow}>→</Text>
+        <ChevronRight size={20} color="#1A56DB" />
       </TouchableOpacity>
 
       <SetupModal visible={open} onClose={() => setOpen(false)} title={txt.modalTitle}>
@@ -296,7 +297,7 @@ export function CicloHealthCard({ lang, profileExtended, saveProfileExtended }) 
           <Text style={[s.bannerTitle, { color: '#9F1239' }]}>{txt.bannerTitle}</Text>
           <Text style={[s.bannerSub, { color: '#FB7185' }]}>{txt.bannerSub}</Text>
         </View>
-        <Text style={[s.bannerArrow, { color: '#9F1239' }]}>→</Text>
+        <ChevronRight size={20} color="#9F1239" />
       </TouchableOpacity>
 
       <SetupModal visible={open} onClose={() => setOpen(false)} title={txt.modalTitle}>
@@ -438,7 +439,7 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
           </Text>
           <Text style={[s.bannerSub, { color: '#4ADE80' }]}>{lang === 'en' ? 'Diet, fasting, meals and supplements' : lang === 'fr' ? 'Régime, jeûne, repas et compléments' : lang === 'it' ? 'Dieta, digiuno, pasti e integratori' : 'Dieta, ayuno, comidas y complementos'}</Text>
         </View>
-        <Text style={[s.bannerArrow, { color: '#166534' }]}>{hasNutriData ? '✏️' : '→'}</Text>
+        {hasNutriData ? <Text style={{ fontSize: 18 }}>✏️</Text> : <ChevronRight size={20} color="#166534" />}
       </TouchableOpacity>
 
       <SetupModal visible={open} onClose={() => setOpen(false)}
@@ -828,7 +829,7 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
           </Text>
           <Text style={[s.bannerSub, { color: '#818CF8' }]}>{lang === 'en' ? 'Days, level, location and goal' : lang === 'fr' ? 'Jours, niveau, lieu et objectif' : lang === 'it' ? 'Giorni, livello, luogo e obiettivo' : 'Días, nivel, lugar y objetivo'}</Text>
         </View>
-        <Text style={[s.bannerArrow, { color: '#312E81' }]}>{hasGymData ? '✏️' : '→'}</Text>
+        {hasGymData ? <Text style={{ fontSize: 18 }}>✏️</Text> : <ChevronRight size={20} color="#312E81" />}
       </TouchableOpacity>
 
       <SetupModal visible={open} onClose={() => setOpen(false)}

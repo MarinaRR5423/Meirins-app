@@ -16,6 +16,7 @@
  */
 import React, { useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 
 const DEFAULT_COLOR = '#EF4444';
 
@@ -81,11 +82,11 @@ export default function RangeCalendar({ start, end, onChange, color = DEFAULT_CO
       {/* Header con navegación */}
       <View style={s.header}>
         <TouchableOpacity onPress={goPrev} disabled={!canGoPrev} style={[s.navBtn, !canGoPrev && { opacity: 0.3 }]}>
-          <Text style={s.navTxt}>‹</Text>
+          <ChevronLeft size={20} color={color} />
         </TouchableOpacity>
         <Text style={s.title}>{monthName.charAt(0).toUpperCase() + monthName.slice(1)}</Text>
         <TouchableOpacity onPress={goNext} disabled={!canGoNext} style={[s.navBtn, !canGoNext && { opacity: 0.3 }]}>
-          <Text style={s.navTxt}>›</Text>
+          <ChevronRight size={20} color={color} />
         </TouchableOpacity>
       </View>
 

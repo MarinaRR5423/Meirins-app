@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView, SafeAreaView, StyleSheet } from 'react-native';
+import { ChevronRight } from 'lucide-react-native';
 import { ARTICLE_CATEGORIES } from '../data/articles';
 import T from '../i18n/translations';
 
@@ -35,7 +36,7 @@ export default function TipsCard({ articles = [], lang = 'es' }) {
                 <Text style={styles.summary} numberOfLines={1}>{article.summary[lang] || article.summary.es}</Text>
                 <Text style={styles.meta}>⏱ {article.readTime} {tips.readTime} · {c.icon}</Text>
               </View>
-              <Text style={styles.chevron}>›</Text>
+              <ChevronRight size={20} color="#94A3B8" />
             </TouchableOpacity>
           );
         })}

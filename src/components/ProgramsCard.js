@@ -9,6 +9,7 @@
  */
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { X, ChevronRight, ChevronLeft, Check } from 'lucide-react-native';
 import {
   PROGRAMS, totalSessions, getSession, formatSession, sessionMinutes,
   LEVEL_LABEL, isRecommended,
@@ -109,9 +110,10 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
               ))}
 
               <TouchableOpacity style={[st.doneBtn, saving && { opacity: 0.6 }]} onPress={completeSession} disabled={saving}>
-                <Text style={st.doneBtnTxt}>
-                  ✓ {tr('Sesión completada', 'Session done', 'Séance terminée', 'Sessione completata')}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Check size={16} color="white" />
+                  <Text style={st.doneBtnTxt}>{tr('Sesión completada', 'Session done', 'Séance terminée', 'Sessione completata')}</Text>
+                </View>
               </TouchableOpacity>
             </>
           )}
@@ -127,7 +129,7 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
               {tr('9 planes guiados: correr, nadar, fuerza…', '9 guided plans: run, swim, strength…', '9 plans guidés : courir, nager, force…', '9 piani guidati: correre, nuotare, forza…')}
             </Text>
           </View>
-          <Text style={st.bannerArrow}>→</Text>
+          <ChevronRight size={20} color="#1A56DB" />
         </TouchableOpacity>
       )}
 
@@ -136,8 +138,9 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
         <SafeAreaView style={st.modal}>
           <View style={st.modalHeader}>
             {detail ? (
-              <TouchableOpacity onPress={() => setDetail(null)}>
-                <Text style={st.backTxt}>← {tr('Programas', 'Programmes', 'Programmes', 'Programmi')}</Text>
+              <TouchableOpacity onPress={() => setDetail(null)} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                <ChevronLeft size={18} color="#1A56DB" />
+                <Text style={st.backTxt}>{tr('Programas', 'Programmes', 'Programmes', 'Programmi')}</Text>
               </TouchableOpacity>
             ) : (
               <Text style={st.modalTitle}>
@@ -145,7 +148,7 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
               </Text>
             )}
             <TouchableOpacity onPress={() => { setOpen(false); setDetail(null); }} style={st.closeBtn}>
-              <Text style={st.closeTxt}>✕</Text>
+              <X size={20} color="#64748B" />
             </TouchableOpacity>
           </View>
 
@@ -211,13 +214,13 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
                             <Text style={st.progName}>{L(p.name)}</Text>
                             {rec && <Text style={st.recBadge}>{tr('Para ti', 'For you', 'Pour toi', 'Per te')}</Text>}
                             {isActive && <Text style={st.activeBadge}>{tr('En curso', 'Active', 'En cours', 'In corso')}</Text>}
-                            {isDone && !isActive && <Text style={st.doneBadge}>✓ {tr('Completado', 'Done', 'Terminé', 'Completato')}</Text>}
+                            {isDone && !isActive && <View style={[st.doneBadge, { flexDirection: 'row', alignItems: 'center', gap: 3 }]}><Check size={11} color="#16A34A" /><Text style={st.doneBadgeTxt}>{tr('Completado', 'Done', 'Terminé', 'Completato')}</Text></View>}
                           </View>
                           <Text style={st.progMeta}>
                             {p.weeks.length} {tr('semanas', 'weeks', 'semaines', 'settimane')} · {p.spw}×/{tr('sem', 'wk', 'sem', 'sett')} · {L(LEVEL_LABEL[p.level])}
                           </Text>
                         </View>
-                        <Text style={st.progArrow}>›</Text>
+                        <ChevronRight size={20} color="#94A3B8" />
                       </TouchableOpacity>
                     );
                   })}
@@ -277,7 +280,8 @@ const st = StyleSheet.create({
   progArrow:     { fontSize: 20, color: 'rgba(255,255,255,0.4)' },
   recBadge:      { fontSize: 10, fontWeight: '700', color: '#312E81', backgroundColor: '#A5B4FC', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 50, overflow: 'hidden' },
   activeBadge:   { fontSize: 10, fontWeight: '700', color: 'white', backgroundColor: BLUE, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 50, overflow: 'hidden' },
-  doneBadge:     { fontSize: 10, fontWeight: '700', color: '#065F46', backgroundColor: '#6EE7B7', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 50, overflow: 'hidden' },
+  doneBadge:     { backgroundColor: '#6EE7B7', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 50, overflow: 'hidden' },
+  doneBadgeTxt:  { fontSize: 10, fontWeight: '700', color: '#065F46' },
   abandonBtn:    { padding: 10, marginBottom: 10 },
   abandonTxt:    { fontSize: 12, color: '#FCA5A5', textAlign: 'center', textDecorationLine: 'underline' },
 

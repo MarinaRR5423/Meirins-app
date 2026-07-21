@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { ChevronRight, ChevronLeft } from 'lucide-react-native';
 import { PHASES } from '../data/phases';
 import T, { getPhaseDisplay, getDayLetters } from '../i18n/translations';
 import { ARTICLES } from '../data/articles';
@@ -441,14 +442,14 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, flex: 1 }}>
               <TouchableOpacity onPress={() => setCalOffset(o => Math.max(-24, o - 1))}
                 style={{ paddingHorizontal: 10, paddingVertical: 4 }}>
-                <Text style={{ fontSize: 20, color: '#1A56DB', fontWeight: '700' }}>‹</Text>
+                <ChevronLeft size={20} color="#1A56DB" />
               </TouchableOpacity>
               <Text style={[styles.cardTitle, { flex: 1, textAlign: 'center' }]}>
                 {monthName.charAt(0).toUpperCase() + monthName.slice(1)}
               </Text>
               <TouchableOpacity onPress={() => setCalOffset(o => Math.min(6, o + 1))}
                 style={{ paddingHorizontal: 10, paddingVertical: 4 }}>
-                <Text style={{ fontSize: 20, color: '#1A56DB', fontWeight: '700' }}>›</Text>
+                <ChevronRight size={20} color="#1A56DB" />
               </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={() => setView('wheel')} style={styles.viewToggleBtn}>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, TextInput, LayoutAnimation, Platform, UIManager, Dimensions, ActivityIndicator } from 'react-native';
+import { Check, ChevronRight } from 'lucide-react-native';
 import T, { LANGUAGES, t } from '../i18n/translations';
 import ProgressChart from '../components/ProgressChart';
 import { syncWeekToCalendar, removeAllCalendarEvents, exportWeekICS, IS_EXPO_GO, getWorkoutForDate } from '../utils/calendarSync';
@@ -726,7 +727,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
                     <Text style={[styles.optLabel, editGoals.includes(o.v) && { color: BLUE.primary, fontWeight: '700' }]}>{o.l}</Text>
                     {o.d ? <Text style={{ fontSize: 11, color: '#94A3B8' }}>{o.d}</Text> : null}
                   </View>
-                  {editGoals.includes(o.v) && <Text style={{ color: BLUE.primary, fontWeight: '700' }}>✓</Text>}
+                  {editGoals.includes(o.v) && <Check size={16} color={BLUE.primary} />}
                 </TouchableOpacity>
               ))}
             </>}
@@ -872,7 +873,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
                     setEditTarget(false);
                   }
                 }}>
-                  <Text style={styles.targetSaveTxt}>✓</Text>
+                  <Check size={16} color="white" />
                 </TouchableOpacity>
               </View>
             )}
@@ -1377,7 +1378,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
           <Text style={styles.legalLabel}>
             {lang === 'en' ? 'Privacy policy' : lang === 'fr' ? 'Politique de confidentialité' : lang === 'it' ? 'Privacy policy' : 'Política de privacidad'}
           </Text>
-          <Text style={styles.legalArrow}>→</Text>
+          <ChevronRight size={18} color="#94A3B8" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.legalLink} onPress={() => Linking.openURL(TERMS_URL)}>
@@ -1385,7 +1386,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
           <Text style={styles.legalLabel}>
             {lang === 'en' ? 'Terms of use' : lang === 'fr' ? 'Conditions d\'utilisation' : lang === 'it' ? 'Termini di utilizzo' : 'Términos de uso'}
           </Text>
-          <Text style={styles.legalArrow}>→</Text>
+          <ChevronRight size={18} color="#94A3B8" />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.legalLink} onPress={() => Linking.openURL(`mailto:${SUPPORT_EMAIL}?subject=Meirins%20support`)}>
@@ -1393,7 +1394,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
           <Text style={styles.legalLabel}>
             {lang === 'en' ? 'Contact support' : lang === 'fr' ? 'Contacter le support' : lang === 'it' ? 'Contatta il supporto' : 'Contactar con soporte'}
           </Text>
-          <Text style={styles.legalArrow}>→</Text>
+          <ChevronRight size={18} color="#94A3B8" />
         </TouchableOpacity>
 
         <Text style={styles.legalVersion}>Meirins · v1.0.0</Text>

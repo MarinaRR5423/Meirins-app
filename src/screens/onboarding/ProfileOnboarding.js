@@ -3,6 +3,7 @@ import {
   View, Text, ScrollView, TouchableOpacity, StyleSheet,
   SafeAreaView, TextInput, KeyboardAvoidingView, Platform,
 } from 'react-native';
+import { Check } from 'lucide-react-native';
 import T from '../../i18n/translations';
 
 const TOTAL = 5;
@@ -61,7 +62,7 @@ function CardOption({ icon, label, description, selected, onPress }) {
         <Text style={[s.cardLabel, selected && s.cardLabelSelected]}>{label}</Text>
         {description ? <Text style={[s.cardDesc, selected && s.cardDescSelected]}>{description}</Text> : null}
       </View>
-      {selected && <Text style={s.cardCheck}>✓</Text>}
+      {selected && <Check size={16} color="#1A56DB" />}
     </TouchableOpacity>
   );
 }

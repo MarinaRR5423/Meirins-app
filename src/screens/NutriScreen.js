@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Share } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Share, Modal, TextInput } from 'react-native';
+import { Check, X, ChevronRight, ChevronLeft } from 'lucide-react-native';
 import SwipeableTabs from '../components/SwipeableTabs';
 import T, { getMealLabel, getPhaseDisplay } from '../i18n/translations';
 import { PHASES } from '../data/phases';
@@ -18,97 +19,12 @@ import { getRecipesForMeal, appMealToDbMealType, recipeToMealCard, getDailyRecip
 import { buildShoppingList, formatQuantity, countItems } from '../utils/shoppingList';
 import { trackScreen } from '../lib/analytics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import WaterCard from '../components/WaterCard';
 
 const NUTRI_ARTICLE_IDS = ['nutrition-menstrual', 'endometriosis-nutrition', 'pcos-hormones', 'pregnancy-nutrition'];
 const nutriArticles = ARTICLES.filter(a => NUTRI_ARTICLE_IDS.includes(a.id));
 
 const BLUE = { primary: '#1A56DB', light: '#EFF6FF', mid: 'rgba(26,86,219,0.10)' };
-const WATER_GOAL = 8;
-const ML_PER_GLASS = 250;
-
-function WaterCard({ lang }) {
-  const n = (T[lang] || T.es).nutri;
-  const w = n.water;
-  const todayStr = new Date().toISOString().split('T')[0];
-  const [count, setCount]       = useState(0);
-  const [dateKey, setDateKey]   = useState(todayStr);
-
-  // Auto-reset at midnight
-  useEffect(() => {
-    if (dateKey !== todayStr) { setDateKey(todayStr); setCount(0); }
-  }, [todayStr]);
-
-  const ml     = count * ML_PER_GLASS;
-  const goalMl = WATER_GOAL * ML_PER_GLASS;
-  const pct    = Math.min(1, ml / goalMl);
-  const done   = count >= WATER_GOAL;
-
-  const handleBubble = (i) => {
-    // Tap filled → remove from that glass onward; tap empty → fill up to it
-    setCount(i < count ? i : i + 1);
-  };
-
-  return (
-    <View style={wStyles.card}>
-      {/* Header */}
-      <View style={wStyles.header}>
-        <Text style={wStyles.title}>{w.title}</Text>
-        <Text style={[wStyles.mlText, done && { color: '#16A34A' }]}>
-          {done ? w.done : `${ml} / ${goalMl} ${w.ml}`}
-        </Text>
-      </View>
-
-      {/* Bubble row */}
-      <View style={wStyles.bubblesRow}>
-        {Array.from({ length: WATER_GOAL }, (_, i) => {
-          const filled = i < count;
-          return (
-            <TouchableOpacity key={i} onPress={() => handleBubble(i)} activeOpacity={0.7}
-              style={[wStyles.bubble, filled ? wStyles.bubbleFilled : wStyles.bubbleEmpty]}>
-              <Text style={[wStyles.bubbleEmoji, !filled && { opacity: 0.2 }]}>💧</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      {/* Progress bar */}
-      <View style={wStyles.progressBg}>
-        <View style={[wStyles.progressFill, { width: `${pct * 100}%`, backgroundColor: done ? '#16A34A' : BLUE.primary }]} />
-      </View>
-
-      {/* Footer */}
-      <View style={wStyles.footer}>
-        <Text style={wStyles.footerText}>{count} / {WATER_GOAL} {w.glasses} · {w.goal}</Text>
-        {count > 0 && (
-          <TouchableOpacity onPress={() => setCount(0)}>
-            <Text style={wStyles.resetText}>{w.reset}</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    </View>
-  );
-}
-
-const wStyles = StyleSheet.create({
-  card: {
-    backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
-  },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
-  title: { fontSize: 14, fontWeight: '700', color: '#1E293B' },
-  mlText: { fontSize: 12, fontWeight: '700', color: '#1A56DB' },
-  bubblesRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
-  bubble: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
-  bubbleFilled: { backgroundColor: '#DBEAFE' },
-  bubbleEmpty: { borderWidth: 1.5, borderColor: '#CBD5E1', backgroundColor: '#F8FAFC' },
-  bubbleEmoji: { fontSize: 18 },
-  progressBg: { height: 6, borderRadius: 3, backgroundColor: '#F1F5F9', marginBottom: 10, overflow: 'hidden' },
-  progressFill: { height: '100%', borderRadius: 3 },
-  footer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  footerText: { fontSize: 11, color: '#64748B' },
-  resetText: { fontSize: 11, color: '#94A3B8', fontWeight: '600' },
-});
 
 function buildShopping(weekDays, adults, children, lang = 'es') {
   const portions = adults + children * 0.6;
@@ -172,10 +88,10 @@ function MealCard({ meal, expanded, onToggle, onRecipe, seeRecipeLabel, mealLabe
           {onLogStatus && (
             <>
               <TouchableOpacity onPress={() => onLogStatus('done')} style={[styles.actionBtn, logStatus === 'done' && styles.actionBtnDone]}>
-                <Text style={styles.actionTxt}>✓</Text>
+                <Check size={16} color="white" />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => onLogStatus('skipped')} style={[styles.actionBtn, logStatus === 'skipped' && styles.actionBtnSkip]}>
-                <Text style={styles.actionTxt}>✗</Text>
+                <X size={16} color="white" />
               </TouchableOpacity>
             </>
           )}
@@ -227,6 +143,30 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
   const [openPlan, setOpenPlan] = useState(0);
   const [recipe, setRecipe] = useState(null);
   const [altMeal, setAltMeal] = useState({});
+  // Extras de calorías
+  const todayExtrasKey = `extra_foods_${new Date().toISOString().split('T')[0]}`;
+  const [extras, setExtras] = useState([]);
+  const [showAddExtra, setShowAddExtra] = useState(false);
+  const [extraName, setExtraName] = useState('');
+  const [extraKcalStr, setExtraKcalStr] = useState('');
+
+  useEffect(() => {
+    AsyncStorage.getItem(todayExtrasKey).then(v => { if (v) try { setExtras(JSON.parse(v)); } catch {} });
+  }, [todayExtrasKey]);
+
+  const saveExtras = (newExtras) => {
+    setExtras(newExtras);
+    AsyncStorage.setItem(todayExtrasKey, JSON.stringify(newExtras));
+  };
+
+  const addExtra = () => {
+    const kcal = parseInt(extraKcalStr, 10);
+    if (!extraName.trim() || !kcal) return;
+    saveExtras([...extras, { name: extraName.trim(), kcal }]);
+    setExtraName(''); setExtraKcalStr(''); setShowAddExtra(false);
+  };
+
+  const removeExtra = (i) => saveExtras(extras.filter((_, idx) => idx !== i));
   const { phaseData } = usePhaseData(pi?.phase);
   const d = phaseData;
   const totalPeople = adults + children;
@@ -235,6 +175,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
 
   // ── Calorías personalizadas ─────────────────────────────────────────────────
   const cals = calcCalories({ weight, height, age, activityLevel, goal, trainDays }, pi?.phase);
+  // Calculado tarde (después de todayMenu) — se usa sólo en el render, no aquí
 
   // ── Dieta desde Supabase ─────────────────────────────────────────────────────
   const { getDiet } = useDiets(lang);
@@ -460,7 +401,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
               <TouchableOpacity
                 onPress={() => logRecipeDone(recipe.mealId || recipe.mealLabel, 'done')}
                 style={{ flex: 1, padding: 14, borderRadius: 14, backgroundColor: '#16A34A', alignItems: 'center' }}>
-                <Text style={{ fontSize: 22 }}>✓</Text>
+                <Check size={22} color="white" />
                 <Text style={{ fontSize: 11, color: 'white', marginTop: 4, fontWeight: '600' }}>
                   {lang === 'en' ? 'Mark as eaten' : lang === 'fr' ? 'Marquer comme mangé' : 'Comido'}
                 </Text>
@@ -495,7 +436,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
   }
 
   return (
-    <SwipeableTabs tabs={['plan', 'semana', 'lista']} current={sub} onChange={setSub}>
+    <SwipeableTabs tabs={['plan', 'semana', 'lista', 'favoritos']} current={sub} onChange={setSub}>
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
       <NutriSetupCard lang={lang} profileExtended={profileExtended} goal={goal}
@@ -531,7 +472,12 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
       )}
 
       <View style={styles.tabRow}>
-        {[{ id: 'plan', l: n.myPlan }, { id: 'semana', l: n.week }, { id: 'lista', l: n.list }].map(t => (
+        {[
+          { id: 'plan',      l: n.myPlan },
+          { id: 'semana',    l: n.week },
+          { id: 'lista',     l: n.list },
+          { id: 'favoritos', l: { es: '❤️ Favs', en: '❤️ Favs', fr: '❤️ Favs', it: '❤️ Fav' }[lang] || '❤️ Favs' },
+        ].map(t => (
           <TouchableOpacity key={t.id} onPress={() => setSub(t.id)}
             style={[styles.tab, sub === t.id && styles.tabActive]}>
             <Text style={[styles.tabText, sub === t.id && styles.tabTextActive]}>{t.l}</Text>
@@ -564,6 +510,47 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
           )}
         </View>
 
+        {/* ── TRACKER CALORÍAS ── */}
+        {cals && (() => {
+          const consumedFromMeals = todayMenu.meals
+            .filter(m => todayActivityRecipes[m.id] === 'done' && m.macros?.kcal)
+            .reduce((s, m) => s + m.macros.kcal, 0);
+          const consumedFromExtras = extras.reduce((s, e) => s + (e.kcal || 0), 0);
+          const consumed = consumedFromMeals + consumedFromExtras;
+          const remaining = Math.max(0, cals.total - consumed);
+          const pct = Math.min(1, consumed / cals.total);
+          const over = consumed > cals.total;
+          const barColor = over ? '#EF4444' : pct > 0.85 ? '#F59E0B' : '#16A34A';
+          const lbl = { es: ['Calorías de hoy', 'Consumidas', 'Restantes', 'Superado en'],
+                        en: ['Today\'s calories', 'Consumed', 'Remaining', 'Over by'],
+                        fr: ['Calories du jour', 'Consommées', 'Restantes', 'Dépassé de'],
+                        it: ['Calorie di oggi', 'Consumate', 'Rimanenti', 'Superato di'] }[lang] || [];
+          return (
+            <View style={styles.calCard}>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                <Text style={styles.calTitle}>🔥 {lbl[0]}</Text>
+                <Text style={{ fontSize: 11, color: '#94A3B8' }}>{cals.total} kcal objetivo</Text>
+              </View>
+              <View style={styles.calBarBg}>
+                <View style={[styles.calBarFill, { width: `${pct * 100}%`, backgroundColor: barColor }]} />
+              </View>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+                <View style={styles.calStat}>
+                  <Text style={[styles.calStatNum, { color: barColor }]}>{consumed}</Text>
+                  <Text style={styles.calStatLbl}>{lbl[1]}</Text>
+                </View>
+                <View style={[styles.calDivider]} />
+                <View style={styles.calStat}>
+                  <Text style={[styles.calStatNum, { color: over ? '#EF4444' : '#1E293B' }]}>
+                    {over ? `+${consumed - cals.total}` : remaining}
+                  </Text>
+                  <Text style={styles.calStatLbl}>{over ? lbl[3] : lbl[2]}</Text>
+                </View>
+              </View>
+            </View>
+          );
+        })()}
+
         {/* Repas du jour */}
         {todayMenu.meals.map((meal, i) => (
           <MealCard
@@ -581,6 +568,29 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
             logStatus={todayActivityRecipes[meal.id]}
           />
         ))}
+
+        {/* ── EXTRAS ── */}
+        <View style={styles.extrasCard}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: extras.length ? 10 : 0 }}>
+            <Text style={styles.calTitle}>
+              {{ es: '➕ Otras comidas', en: '➕ Other foods', fr: '➕ Autres aliments', it: '➕ Altro cibo' }[lang] || '➕ Otras comidas'}
+            </Text>
+            <TouchableOpacity onPress={() => setShowAddExtra(true)} style={styles.addExtraBtn}>
+              <Text style={styles.addExtraBtnTxt}>
+                {{ es: '+ Añadir', en: '+ Add', fr: '+ Ajouter', it: '+ Aggiungi' }[lang] || '+ Añadir'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          {extras.map((e, i) => (
+            <View key={i} style={styles.extraRow}>
+              <Text style={styles.extraName}>{e.name}</Text>
+              <Text style={styles.extraKcal}>🔥 {e.kcal} kcal</Text>
+              <TouchableOpacity onPress={() => removeExtra(i)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                <Text style={{ fontSize: 16, color: '#CBD5E1' }}>✕</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+        </View>
 
         {/* Conseils */}
         <View style={styles.card}>
@@ -610,8 +620,6 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
           </View>
         )}
 
-        {/* ── AGUA ── */}
-        <WaterCard lang={lang} />
       </>}
 
       {/* ── SEMAINE ── */}
@@ -631,11 +639,11 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
           return (
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, paddingHorizontal: 4 }}>
               <TouchableOpacity onPress={() => { setWeekOffset(o => o - 1); setOpenD(null); }} style={{ padding: 8 }}>
-                <Text style={{ fontSize: 28, color: BLUE.primary, fontWeight: '700', lineHeight: 32 }}>‹</Text>
+                <ChevronLeft size={28} color={BLUE.primary} />
               </TouchableOpacity>
               <Text style={{ fontSize: 14, fontWeight: '600', color: '#1E293B' }}>{label}</Text>
               <TouchableOpacity onPress={() => { setWeekOffset(o => o + 1); setOpenD(null); }} style={{ padding: 8 }}>
-                <Text style={{ fontSize: 28, color: BLUE.primary, fontWeight: '700', lineHeight: 32 }}>›</Text>
+                <ChevronRight size={28} color={BLUE.primary} />
               </TouchableOpacity>
             </View>
           );
@@ -695,7 +703,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
         {/* Navegación semanas */}
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 4, marginBottom: 8 }}>
           <TouchableOpacity onPress={() => setWeekOffset(w => w - 1)} style={{ padding: 8 }}>
-            <Text style={{ fontSize: 20, color: BLUE.primary }}>‹</Text>
+            <ChevronLeft size={20} color={BLUE.primary} />
           </TouchableOpacity>
           <Text style={{ fontSize: 13, fontWeight: '600', color: '#1E293B' }}>
             {weekOffset === 0
@@ -707,7 +715,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
               : (weekOffset > 0 ? `+${weekOffset}` : weekOffset) + (lang === 'en' ? ' weeks' : ' semanas')}
           </Text>
           <TouchableOpacity onPress={() => setWeekOffset(w => w + 1)} style={{ padding: 8 }}>
-            <Text style={{ fontSize: 20, color: BLUE.primary }}>›</Text>
+            <ChevronRight size={20} color={BLUE.primary} />
           </TouchableOpacity>
         </View>
         <View style={[styles.card, { backgroundColor: BLUE.light }]}>
@@ -777,7 +785,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
                 <TouchableOpacity key={itemKey} style={styles.shopRow} onPress={() => setCheckedItems(prev => ({ ...prev, [itemKey]: !prev[itemKey] }))} activeOpacity={0.7}>
                   <View style={styles.shopLeft}>
                     <View style={[styles.checkbox, checked && { backgroundColor: '#1A56DB', borderColor: '#1A56DB' }]}>
-                      {checked && <Text style={{ color: '#fff', fontSize: 12, lineHeight: 16, textAlign: 'center' }}>✓</Text>}
+                      {checked && <Check size={12} color="#fff" />}
                     </View>
                     <Text style={[styles.shopName, checked && { textDecorationLine: 'line-through', color: '#94A3B8' }]}>{item.name}</Text>
                   </View>
@@ -850,10 +858,80 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
         </View>
       )}
 
+      {/* ── FAVORITOS ── */}
+      {sub === 'favoritos' && (() => {
+        const favIds = profileExtended?.favoriteRecipes || [];
+        const favRecipes = (allRecipes || []).filter(r => favIds.includes(r.id));
+        const emptyTxt = { es: 'Aún no tienes favoritos', en: 'No favourites yet', fr: 'Pas encore de favoris', it: 'Ancora nessun preferito' };
+        const hintTxt  = { es: 'Pulsa ❤️ en cualquier receta para guardarla aquí.', en: 'Tap ❤️ on any recipe to save it here.', fr: 'Appuie sur ❤️ sur une recette pour la sauvegarder ici.', it: 'Tocca ❤️ su una ricetta per salvarla qui.' };
+        if (!favRecipes.length) return (
+          <View style={{ alignItems: 'center', paddingTop: 48, paddingHorizontal: 24 }}>
+            <Text style={{ fontSize: 40, marginBottom: 12 }}>🤍</Text>
+            <Text style={{ fontSize: 16, fontWeight: '700', color: '#1E293B', marginBottom: 8, textAlign: 'center' }}>{emptyTxt[lang] || emptyTxt.es}</Text>
+            <Text style={{ fontSize: 13, color: '#94A3B8', textAlign: 'center', lineHeight: 20 }}>{hintTxt[lang] || hintTxt.es}</Text>
+          </View>
+        );
+        return favRecipes.map(r => {
+          const card = recipeToMealCard(r, lang);
+          if (!card) return null;
+          return (
+            <View key={r.id} style={styles.card}>
+              <TouchableOpacity style={styles.mealRow}
+                onPress={() => setRecipe({ ...card.recipe, mealLabel: card.label, title: card.title, emoji: card.ico, macros: card.macros, _recipeId: r.id })}>
+                <Text style={styles.mealIco}>{card.ico}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.mealTitle}>{card.title}</Text>
+                  {card.macros?.kcal != null && (
+                    <Text style={styles.mealMacros}>🔥 {card.macros.kcal} kcal · 🥩 {card.macros.protein}g · 🌾 {card.macros.carbs}g · 🫒 {card.macros.fat}g</Text>
+                  )}
+                </View>
+                <TouchableOpacity onPress={() => toggleFavoriteRecipe && toggleFavoriteRecipe(r.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                  <Text style={{ fontSize: 20 }}>❤️</Text>
+                </TouchableOpacity>
+              </TouchableOpacity>
+            </View>
+          );
+        });
+      })()}
+
       {/* ── CONSEJOS ── */}
       <TipsCard articles={nutriArticles} lang={lang} />
 
     </ScrollView>
+
+    {/* ── MODAL AÑADIR EXTRA ── */}
+    <Modal visible={showAddExtra} animationType="slide" transparent onRequestClose={() => setShowAddExtra(false)}>
+      <TouchableOpacity style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.35)' }} activeOpacity={1} onPress={() => setShowAddExtra(false)} />
+      <View style={styles.extraModal}>
+        <View style={styles.extraModalHandle} />
+        <Text style={styles.extraModalTitle}>
+          {{ es: 'Añadir comida', en: 'Add food', fr: 'Ajouter un aliment', it: 'Aggiungi cibo' }[lang] || 'Añadir comida'}
+        </Text>
+        <TextInput
+          style={styles.extraInput}
+          placeholder={{ es: 'Nombre (ej. Croissant)', en: 'Name (e.g. Croissant)', fr: 'Nom (ex. Croissant)', it: 'Nome (es. Croissant)' }[lang] || 'Nombre'}
+          placeholderTextColor="#94A3B8"
+          value={extraName}
+          onChangeText={setExtraName}
+        />
+        <TextInput
+          style={styles.extraInput}
+          placeholder="kcal"
+          placeholderTextColor="#94A3B8"
+          keyboardType="numeric"
+          value={extraKcalStr}
+          onChangeText={setExtraKcalStr}
+        />
+        <TouchableOpacity
+          onPress={addExtra}
+          style={[styles.addExtraBtn, { marginTop: 4, paddingVertical: 14, borderRadius: 14, alignItems: 'center', opacity: (extraName.trim() && extraKcalStr) ? 1 : 0.4 }]}>
+          <Text style={[styles.addExtraBtnTxt, { fontSize: 15 }]}>
+            {{ es: 'Guardar', en: 'Save', fr: 'Enregistrer', it: 'Salva' }[lang] || 'Guardar'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </Modal>
+
     </SwipeableTabs>
   );
 }
@@ -946,4 +1024,25 @@ const styles = StyleSheet.create({
   checkbox: { width: 18, height: 18, borderRadius: 4, borderWidth: 1.5, borderColor: '#1A56DB', flexShrink: 0 },
   shopName: { fontSize: 13, color: '#334155' },
   shopQty: { fontSize: 13, fontWeight: '600', color: '#1A56DB', flexShrink: 0, marginLeft: 8 },
+  // Calorie tracker
+  calCard:     { backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
+  calTitle:    { fontSize: 14, fontWeight: '700', color: '#1E293B' },
+  calBarBg:    { height: 10, backgroundColor: '#F1F5F9', borderRadius: 5, overflow: 'hidden' },
+  calBarFill:  { height: '100%', borderRadius: 5 },
+  calStat:     { flex: 1, alignItems: 'center' },
+  calStatNum:  { fontSize: 24, fontWeight: '800' },
+  calStatLbl:  { fontSize: 11, color: '#94A3B8', marginTop: 2 },
+  calDivider:  { width: 1, backgroundColor: '#F1F5F9', marginVertical: 4 },
+  // Extras
+  extrasCard:    { backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
+  addExtraBtn:   { backgroundColor: '#1A56DB', paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20 },
+  addExtraBtnTxt:{ color: 'white', fontSize: 13, fontWeight: '700' },
+  extraRow:      { flexDirection: 'row', alignItems: 'center', paddingVertical: 8, borderTopWidth: 1, borderTopColor: '#F1F5F9', gap: 8 },
+  extraName:     { flex: 1, fontSize: 13, color: '#334155' },
+  extraKcal:     { fontSize: 12, color: '#F59E0B', fontWeight: '700' },
+  // Modal extras
+  extraModal:      { backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, paddingBottom: 40, gap: 12 },
+  extraModalHandle:{ width: 36, height: 4, backgroundColor: '#E2E8F0', borderRadius: 2, alignSelf: 'center', marginBottom: 8 },
+  extraModalTitle: { fontSize: 17, fontWeight: '700', color: '#1E293B', marginBottom: 4 },
+  extraInput:      { borderWidth: 1.5, borderColor: '#E2E8F0', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, color: '#1E293B' },
 });

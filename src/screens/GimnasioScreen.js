@@ -3,6 +3,7 @@ import {
   View, Text, ScrollView, TouchableOpacity,
   TextInput, StyleSheet, ActivityIndicator, Platform,
 } from 'react-native';
+import { Check, X, ChevronRight, ChevronLeft } from 'lucide-react-native';
 import { TouchableOpacity as GHTouchable } from 'react-native-gesture-handler';
 import T, { getDayLabels } from '../i18n/translations';
 import { GymSetupCard, SPORTS_LIST } from '../components/TabSetupCard';
@@ -81,7 +82,7 @@ function ExtraSportPicker({ lang, g, onPick }) {
       </View>
       <TouchableOpacity onPress={() => setSport(null)} style={{ marginTop: 8 }}>
         <Text style={{ fontSize: 12, color: '#94A3B8', textAlign: 'center' }}>
-          ← {tr('Cambiar deporte', 'Change sport', 'Changer de sport', 'Cambia sport')}
+          {tr('Cambiar deporte', 'Change sport', 'Changer de sport', 'Cambia sport')}
         </Text>
       </TouchableOpacity>
     </View>
@@ -347,7 +348,7 @@ export default function GimnasioScreen({
                 {hd.lastWorkout.calories ? `  ·  🔥 ${hd.lastWorkout.calories} kcal` : ''}
               </Text>
             </View>
-            <Text style={{ fontSize: 16 }}>✓</Text>
+            <Check size={16} color={GREEN.text} />
           </View>
         )}
 
@@ -417,7 +418,7 @@ export default function GimnasioScreen({
                   <TouchableOpacity key={i} onPress={() => toggleExercise(i)}
                     style={[styles.exRow, done && styles.exRowDone]}>
                     <View style={[styles.exNum, done && styles.exNumDone]}>
-                      <Text style={[styles.exNumText, done && { color: 'white' }]}>{done ? '✓' : i + 1}</Text>
+                      {done ? <Check size={14} color="white" /> : <Text style={styles.exNumText}>{i + 1}</Text>}
                     </View>
                     <View style={{ flex: 1 }}>
                       <Text style={[styles.exName, done && styles.exNameDone]}>{ex.name}</Text>
@@ -536,7 +537,7 @@ export default function GimnasioScreen({
             <View style={styles.weekNav}>
               <TouchableOpacity onPress={() => { setWeekOffset(o => o - 1); setWeekAction(null); }}
                 style={styles.weekNavBtn}>
-                <Text style={styles.weekNavArrow}>‹</Text>
+                <ChevronLeft size={20} color="#1A56DB" />
               </TouchableOpacity>
               <Text style={styles.weekNavLabel}>
                 {weekOffset === 0
@@ -550,7 +551,7 @@ export default function GimnasioScreen({
               <TouchableOpacity
                 onPress={() => { setWeekOffset(o => o + 1); setWeekAction(null); }}
                 style={styles.weekNavBtn}>
-                <Text style={styles.weekNavArrow}>›</Text>
+                <ChevronRight size={20} color="#1A56DB" />
               </TouchableOpacity>
             </View>
           );
@@ -599,7 +600,7 @@ export default function GimnasioScreen({
                     )}
                   </View>
                   <View style={{ alignItems: 'flex-end', gap: 4 }}>
-                    {(logged === 'done' || logged === 'extra') && <Text style={{ color: GREEN.text, fontWeight: '700', fontSize: 16 }}>✓</Text>}
+                    {(logged === 'done' || logged === 'extra') && <Check size={16} color={GREEN.text} />}
                     {logged === 'skipped' && <Text style={{ color: '#EAB308', fontWeight: '700', fontSize: 16 }}>–</Text>}
                     <Text style={{ fontSize: 11, color: '#94A3B8' }}>{isExpanded ? '▲' : '✏️'}</Text>
                   </View>
@@ -654,7 +655,7 @@ export default function GimnasioScreen({
                         <GHTouchable
                           onPress={() => setWeekAction(prev => ({ ...prev, step: 'main' }))}
                           style={{ marginBottom: 8 }}>
-                          <Text style={{ fontSize: 12, color: '#94A3B8' }}>← {lang === 'en' ? 'Back' : 'Volver'}</Text>
+                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}><ChevronLeft size={14} color="#94A3B8" /><Text style={{ fontSize: 12, color: '#94A3B8' }}>{lang === 'en' ? 'Back' : 'Volver'}</Text></View>
                         </GHTouchable>
                         <ExtraSportPicker
                           lang={lang}
@@ -869,7 +870,7 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
               setDurationInput(dur != null ? String(dur) : '');
             }}
             style={{ padding: 6 }}>
-            <Text style={{ fontSize: 18 }}>{(isIdentifying || isEditingDur) ? '✕' : '✏️'}</Text>
+            {(isIdentifying || isEditingDur) ? <X size={18} color="#64748B" /> : <Text style={{ fontSize: 18 }}>✏️</Text>}
           </TouchableOpacity>
         </View>
 
@@ -889,10 +890,10 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
             <Text style={{ fontSize: 13, color: '#64748B' }}>{hl?.min}</Text>
             <TouchableOpacity onPress={() => saveDurationOverride(w.id)}
               style={{ backgroundColor: BLUE.primary, paddingHorizontal: 14, paddingVertical: 7, borderRadius: 8 }}>
-              <Text style={{ color: 'white', fontWeight: '700', fontSize: 13 }}>✓</Text>
+              <Check size={16} color="white" />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setEditingDurationId(null)}>
-              <Text style={{ fontSize: 13, color: '#94A3B8' }}>✕</Text>
+              <X size={16} color="#94A3B8" />
             </TouchableOpacity>
           </View>
         )}
