@@ -27,6 +27,25 @@ const nutriArticles = ARTICLES.filter(a => NUTRI_ARTICLE_IDS.includes(a.id));
 
 const BLUE = { primary: '#1A56DB', light: '#EFF6FF', mid: 'rgba(26,86,219,0.10)' };
 
+// Batch cooking: tipos de día (estructura sin comidas — contenido viene de Supabase)
+function getDayType(jsDay) {
+  if (jsDay === 0) return 'free';
+  if ([1, 3, 5].includes(jsDay)) return 'A';
+  return 'B';
+}
+const DAY_TYPES = {
+  A:    { key: 'A',    color: '#DBEAFE', textColor: '#1D4ED8' },
+  B:    { key: 'B',    color: '#DCFCE7', textColor: '#15803D' },
+  free: { key: 'free', color: '#FEF3C7', textColor: '#92400E' },
+};
+function getDayTypeLabels(lang) {
+  return {
+    A:    { label: lang === 'en' ? 'Day A' : lang === 'fr' ? 'Jour A' : lang === 'it' ? 'Giorno A' : 'Día A',    tag: lang === 'en' ? 'Mon · Wed · Fri' : lang === 'fr' ? 'Lun · Mer · Ven' : lang === 'it' ? 'Lun · Mer · Ven' : 'Lun · Mié · Vie' },
+    B:    { label: lang === 'en' ? 'Day B' : lang === 'fr' ? 'Jour B' : lang === 'it' ? 'Giorno B' : 'Día B',    tag: lang === 'en' ? 'Tue · Thu · Sat' : lang === 'fr' ? 'Mar · Jeu · Sam' : lang === 'it' ? 'Mar · Gio · Sab' : 'Mar · Jue · Sáb' },
+    free: { label: lang === 'en' ? 'Free day' : lang === 'fr' ? 'Journée libre' : lang === 'it' ? 'Giorno libero' : 'Día libre', tag: lang === 'en' ? 'Sunday' : lang === 'fr' ? 'Dimanche' : lang === 'it' ? 'Domenica' : 'Domingo' },
+  };
+}
+
 function buildShopping(weekDays, adults, children, lang = 'es') {
   const portions = adults + children * 0.6;
   const pDays = {};
@@ -296,12 +315,14 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
         ? buildPersonalizedMeals(filteredSlots, dateStr)
         : filteredSlots.map(s => ({ ...s, title: null, items: [], _personalized: false }));
       const menu = { meals };
+      const dayType = DAY_TYPES[getDayType(dow)];
       return {
         label: isToday ? cm.today : names[dow],
         dayNum: date.getDate(),
         menu,
         dateStr,
         isToday,
+        dayType,
       };
     });
   }, [fastingProtocol, mealsActive, allRecipes, userProfile, pi?.phase, lang, weekOffset]);
@@ -576,6 +597,21 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
           ))}
         </View>
 
+        {/* Tipos de día — solo visible con batch cooking activo */}
+        {profileExtended?.batchCooking && (() => {
+          const dtl = getDayTypeLabels(lang);
+          return (
+            <View style={[styles.card, { backgroundColor: '#F8FAFC' }]}>
+              <Text style={styles.sectionTitle}>{n.dayTypes}</Text>
+              {['A', 'B', 'free'].map(key => (
+                <View key={key} style={[styles.dayTypeRow, { backgroundColor: DAY_TYPES[key].color }]}>
+                  <Text style={[styles.dayTypeLabel, { color: DAY_TYPES[key].textColor }]}>{dtl[key].label}</Text>
+                  <Text style={[styles.dayTypeTag,   { color: DAY_TYPES[key].textColor }]}>{dtl[key].tag}</Text>
+                </View>
+              ))}
+            </View>
+          );
+        })()}
 
       </>}
 
@@ -615,6 +651,11 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
                 <Text style={[styles.dayLabel, day.isToday && { color: BLUE.primary, fontWeight: '700' }]}>{day.label}</Text>
                 <Text style={styles.dayNum}>{day.dayNum}</Text>
               </View>
+              {profileExtended?.batchCooking && day.dayType && (
+                <View style={[styles.dayTypeBadge, { backgroundColor: day.dayType.color }]}>
+                  <Text style={[styles.dayTypeBadgeText, { color: day.dayType.textColor }]}>{getDayTypeLabels(lang)[day.dayType.key]?.label}</Text>
+                </View>
+              )}
               <View style={{ flex: 1, marginLeft: 8 }}>
                 <Text style={styles.dayMeals} numberOfLines={1}>
                   {day.menu.meals.slice(0, 2).map(m => {
@@ -633,7 +674,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
                   const canOpen  = !!meal.recipe;
                   return (
                     <View key={meal.id} style={{ marginBottom: 12 }}>
-                      <Text style={[styles.mealTag, { color: BLUE.primary, marginBottom: 2 }]}>
+                      <Text style={[styles.mealTag, { color: profileExtended?.batchCooking && day.dayType ? day.dayType.textColor : BLUE.primary, marginBottom: 2 }]}>
                         {meal.ico} {getMealLabel(lang, meal.label)}
                       </Text>
                       <TouchableOpacity disabled={!canOpen}
