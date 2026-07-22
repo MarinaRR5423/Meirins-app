@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, Switch } from 'react-native';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, Switch, Animated } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Settings } from 'lucide-react-native';
@@ -17,6 +17,26 @@ import { trackScreen } from '../lib/analytics';
 import WaterCard from '../components/WaterCard';
 
 const BLUE = { primary: '#1A56DB', light: '#EFF6FF', mid: 'rgba(26,86,219,0.10)' };
+
+function WidgetWrap({ id, widgets, editMode, onLongPress, onRemove, wiggleRotate, children }) {
+  if (!widgets[id]) return null;
+  return (
+    <TouchableOpacity activeOpacity={1} onLongPress={onLongPress} delayLongPress={400}>
+      <Animated.View style={editMode ? { transform: [{ rotate: wiggleRotate }] } : undefined}>
+        {children}
+        {editMode && (
+          <TouchableOpacity style={wwStyles.xBadge} onPress={() => onRemove(id)} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
+            <Text style={wwStyles.xBadgeTxt}>✕</Text>
+          </TouchableOpacity>
+        )}
+      </Animated.View>
+    </TouchableOpacity>
+  );
+}
+const wwStyles = StyleSheet.create({
+  xBadge: { position: 'absolute', top: -6, left: -6, width: 22, height: 22, borderRadius: 11, backgroundColor: '#1E293B', justifyContent: 'center', alignItems: 'center', zIndex: 10, borderWidth: 2, borderColor: 'white' },
+  xBadgeTxt: { fontSize: 10, color: 'white', fontWeight: '700', lineHeight: 12 },
+});
 const HORMONAL_CONTRA = ['pill', 'hormonal_iud', 'ring', 'patch', 'implant'];
 const WIDGETS_KEY = 'home_widgets_v1';
 
@@ -128,6 +148,27 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
 
   const { widgets, toggle } = useHomeWidgets();
   const [showCustomize, setShowCustomize] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+
+  const wiggleAnim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    if (editMode) {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(wiggleAnim, { toValue: 1, duration: 80, useNativeDriver: true }),
+          Animated.timing(wiggleAnim, { toValue: -1, duration: 80, useNativeDriver: true }),
+          Animated.timing(wiggleAnim, { toValue: 0, duration: 80, useNativeDriver: true }),
+        ])
+      ).start();
+    } else {
+      wiggleAnim.stopAnimation();
+      wiggleAnim.setValue(0);
+    }
+  }, [editMode]);
+
+  const wiggleRotate = wiggleAnim.interpolate({ inputRange: [-1, 1], outputRange: ['-2.5deg', '2.5deg'] });
+  const enterEdit = useCallback(() => setEditMode(true), []);
+  const ww = { widgets, editMode, onLongPress: enterEdit, onRemove: toggle, wiggleRotate };
 
   const customizeTxt = {
     title:  { es: 'Personalizar inicio', en: 'Customize home',   fr: 'Personnaliser', it: 'Personalizza' },
@@ -169,9 +210,15 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
           </Text>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
-          <TouchableOpacity onPress={() => setShowCustomize(true)} style={styles.customizeBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Settings size={16} color="rgba(255,255,255,0.85)" />
-          </TouchableOpacity>
+          {editMode ? (
+            <TouchableOpacity onPress={() => setEditMode(false)} style={styles.doneBadge} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Text style={styles.doneBadgeTxt}>{customizeTxt.done[lang] || 'Hecho'}</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={() => setShowCustomize(true)} style={styles.customizeBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Settings size={16} color="rgba(255,255,255,0.85)" />
+            </TouchableOpacity>
+          )}
           <View style={styles.dayBadge}>
             <Text style={styles.dayNum}>{pi?.day}</Text>
             <Text style={styles.dayLabel}>{h.cycleDay}</Text>
@@ -191,7 +238,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
       <ScrollView style={styles.scroll} contentContainerStyle={{ padding: 14, paddingBottom: 30 }}>
 
         {/* ── CICLO ── */}
-        {widgets.cycle && (
+        <WidgetWrap {...ww} id="cycle">
           <View style={styles.card}>
             <View style={styles.cardRow}>
               <Text style={styles.cardLabel}>{h.yourCycle}</Text>
@@ -222,7 +269,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
               </>
             )}
           </View>
-        )}
+        </WidgetWrap>
 
         {/* ── INTENSIDAD + SESIÓN ── */}
         <View style={styles.grid}>
@@ -236,7 +283,8 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
             </View>
           )}
           {widgets.session && (
-            <TouchableOpacity onPress={() => navigation.navigate('Gimnasio')} style={[styles.card, styles.gridCard]}>
+            <TouchableOpacity onPress={() => editMode ? setEditMode(false) : navigation.navigate('Gimnasio')} onLongPress={() => setEditMode(true)} delayLongPress={400} style={[styles.card, styles.gridCard]}>
+              {editMode && <TouchableOpacity style={wwStyles.xBadge} onPress={() => toggle('session')} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}><Text style={wwStyles.xBadgeTxt}>✕</Text></TouchableOpacity>}
               <Text style={styles.cardLabel}>{h.sessionToday}</Text>
               <Text style={{ fontSize: 22 }}>{todaySession?.ico ?? '😴'}</Text>
               <Text style={styles.sessionName}>{todaySession?.name ?? (lang === 'en' ? 'Rest' : lang === 'fr' ? 'Repos' : 'Descanso')}</Text>
@@ -261,23 +309,26 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
           const streakColor = adh.streak >= 14 ? '#7C3AED' : adh.streak >= 7 ? '#D97706' : '#1A56DB';
           const streakBg = adh.streak >= 14 ? 'rgba(124,58,237,0.07)' : adh.streak >= 7 ? 'rgba(217,119,6,0.07)' : 'rgba(26,86,219,0.07)';
           return (
-            <View style={[styles.card, { marginBottom: 12, borderLeftWidth: 3, borderLeftColor: streakColor }]}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 12, color: '#94A3B8', fontWeight: '500', marginBottom: 2 }}>{streakTxt.title[lang] || streakTxt.title.es}</Text>
-                  <Text style={{ fontSize: 13, color: '#475569', lineHeight: 18 }}>{msg[lang] || msg.es}</Text>
+            <TouchableOpacity activeOpacity={1} onLongPress={() => setEditMode(true)} delayLongPress={400}>
+              <Animated.View style={[styles.card, { marginBottom: 12, borderLeftWidth: 3, borderLeftColor: streakColor }, editMode ? { transform: [{ rotate: wiggleRotate }] } : undefined]}>
+                {editMode && <TouchableOpacity style={wwStyles.xBadge} onPress={() => toggle('streak')} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}><Text style={wwStyles.xBadgeTxt}>✕</Text></TouchableOpacity>}
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 12, color: '#94A3B8', fontWeight: '500', marginBottom: 2 }}>{streakTxt.title[lang] || streakTxt.title.es}</Text>
+                    <Text style={{ fontSize: 13, color: '#475569', lineHeight: 18 }}>{msg[lang] || msg.es}</Text>
+                  </View>
+                  <View style={{ backgroundColor: streakBg, borderRadius: 14, padding: 12, alignItems: 'center', minWidth: 64 }}>
+                    <Text style={{ fontSize: 26, fontWeight: '800', color: streakColor, lineHeight: 30 }}>{adh.streak}</Text>
+                    <Text style={{ fontSize: 10, color: streakColor, marginTop: 1 }}>🔥 {streakTxt.days[lang] || streakTxt.days.es}</Text>
+                  </View>
                 </View>
-                <View style={{ backgroundColor: streakBg, borderRadius: 14, padding: 12, alignItems: 'center', minWidth: 64 }}>
-                  <Text style={{ fontSize: 26, fontWeight: '800', color: streakColor, lineHeight: 30 }}>{adh.streak}</Text>
-                  <Text style={{ fontSize: 10, color: streakColor, marginTop: 1 }}>🔥 {streakTxt.days[lang] || streakTxt.days.es}</Text>
-                </View>
-              </View>
-            </View>
+              </Animated.View>
+            </TouchableOpacity>
           );
         })()}
 
         {/* ── SUEÑO + NUTRICIÓN + ENTRENO ── */}
-        {widgets.stats && (() => {
+        {widgets.stats && (() => { // eslint-disable-line no-unused-expressions
           const s = healthData?.lastSleep;
           const adh = calcAdherence(profile?.profileExtended?.activityLog || {}, 7);
           const hasNutri = adh.recipesPct != null;
@@ -350,31 +401,33 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
         })()}
 
         {/* ── HIDRATACIÓN ── */}
-        {widgets.hydration && <WaterCard lang={lang} />}
+        <WidgetWrap {...ww} id="hydration"><WaterCard lang={lang} /></WidgetWrap>
 
         {/* ── CALORÍAS ── */}
         {widgets.calories && cals && (
-          <View style={styles.card}>
-            <Text style={styles.sectionTitle}>{h.caloriesGoal}</Text>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 32, fontWeight: '700', color: d?.color }}>{cals.total}</Text>
-                <Text style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>{h.kcalPhase}</Text>
-              </View>
-              <View style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 20, fontWeight: '600', color: '#475569' }}>{cals.tdee}</Text>
-                <Text style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>{h.kcalMaint}</Text>
-              </View>
-              <View style={{ backgroundColor: d?.mid, borderRadius: 10, padding: 10, alignItems: 'center' }}>
-                <Text style={{ fontSize: 13, fontWeight: '700', color: d?.color }}>{d?.kcal?.split('·')[0]}</Text>
+          <WidgetWrap {...ww} id="calories">
+            <View style={styles.card}>
+              <Text style={styles.sectionTitle}>{h.caloriesGoal}</Text>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <View style={{ alignItems: 'center' }}>
+                  <Text style={{ fontSize: 32, fontWeight: '700', color: d?.color }}>{cals.total}</Text>
+                  <Text style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>{h.kcalPhase}</Text>
+                </View>
+                <View style={{ alignItems: 'center' }}>
+                  <Text style={{ fontSize: 20, fontWeight: '600', color: '#475569' }}>{cals.tdee}</Text>
+                  <Text style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>{h.kcalMaint}</Text>
+                </View>
+                <View style={{ backgroundColor: d?.mid, borderRadius: 10, padding: 10, alignItems: 'center' }}>
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: d?.color }}>{d?.kcal?.split('·')[0]}</Text>
+                </View>
               </View>
             </View>
-          </View>
+          </WidgetWrap>
         )}
 
         {/* ── NUTRICIÓN DEL DÍA ── */}
-        {widgets.nutrition && (
-          <TouchableOpacity onPress={() => navigation.navigate('Nutrición')} style={styles.card}>
+        <WidgetWrap {...ww} id="nutrition">
+          <TouchableOpacity onPress={() => !editMode && navigation.navigate('Nutrición')} style={styles.card}>
             <Text style={styles.sectionTitle}>{h.nutritionToday}</Text>
             <View style={styles.tags}>
               {d?.focus?.map(f => <View key={f} style={styles.tag}><Text style={styles.tagLabel}>{f}</Text></View>)}
@@ -384,15 +437,15 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
               <Text style={styles.highlightSub}>{getMealLabel(lang, d?.meals?.[0]?.t)} · {d?.meals?.[0]?.items?.slice(0,2).join(' · ')}</Text>
             </View>
           </TouchableOpacity>
-        )}
+        </WidgetWrap>
 
         {/* ── CONSEJO ── */}
-        {widgets.tip && (
+        <WidgetWrap {...ww} id="tip">
           <View style={styles.card}>
             <Text style={styles.sectionTitle}>{h.phaseTip}</Text>
             <Text style={styles.tip}>"{d?.tip}"</Text>
           </View>
-        )}
+        </WidgetWrap>
       </ScrollView>
 
       {/* ── MODAL PERSONALIZAR ── */}
@@ -464,6 +517,8 @@ const styles = StyleSheet.create({
   highlightTitle: { fontSize: 13, fontWeight: '600', color: '#1E293B' },
   highlightSub: { fontSize: 12, color: '#64748B', marginTop: 2 },
   tip: { fontSize: 13, color: '#475569', lineHeight: 22, fontStyle: 'italic' },
+  doneBadge: { marginTop: 6, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 6, borderWidth: 1, borderColor: 'rgba(255,255,255,0.4)' },
+  doneBadgeTxt: { color: 'white', fontSize: 13, fontWeight: '700' },
   // Modal
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' },
   modalSheet: { backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingBottom: 40, maxHeight: '75%' },

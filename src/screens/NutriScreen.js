@@ -592,17 +592,6 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
           ))}
         </View>
 
-        {/* Conseils */}
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>{n.tips}</Text>
-          {tipsNutri.map((tip, i) => (
-            <View key={i} style={styles.listRow}>
-              <View style={styles.dot} />
-              <Text style={styles.listText}>{tip}</Text>
-            </View>
-          ))}
-        </View>
-
         {/* Type de journée info — solo en modo batch cooking */}
         {profileExtended?.batchCooking && (
           <View style={[styles.card, { backgroundColor: '#F8FAFC' }]}>
@@ -648,6 +637,8 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
             </View>
           );
         })()}
+
+        <TipsCard articles={nutriArticles} lang={lang} />
 
         {weekMenuDays.map((day, i) => (
           <View key={i} style={[styles.card, day.isToday && { borderWidth: 2, borderColor: BLUE.primary }]}>
@@ -894,8 +885,6 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
         });
       })()}
 
-      {/* ── CONSEJOS ── */}
-      <TipsCard articles={nutriArticles} lang={lang} />
 
     </ScrollView>
 

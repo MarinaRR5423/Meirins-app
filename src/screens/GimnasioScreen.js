@@ -687,6 +687,8 @@ export default function GimnasioScreen({
             </View>
           ))}
         </View>
+
+        <TipsCard articles={gymArticles} lang={lang} />
       </>}
 
       {/* ════════════════════════ SALUD ════════════════════════ */}
@@ -702,7 +704,6 @@ export default function GimnasioScreen({
             saveProfileExtended={saveProfileExtended}
           />
           <SleepCard sleepLog={sleepLog} logSleep={logSleep} lang={lang} healthSleep={hd?.lastSleep} />
-          <TipsCard articles={gymArticles} lang={lang} />
         </>
       )}
 
