@@ -20,6 +20,7 @@ import { buildShoppingList, formatQuantity, countItems } from '../utils/shopping
 import { trackScreen } from '../lib/analytics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import WaterCard from '../components/WaterCard';
+import { calcMealMacros } from '../utils/nutritionRules';
 
 const NUTRI_ARTICLE_IDS = ['nutrition-menstrual', 'endometriosis-nutrition', 'pcos-hormones', 'pregnancy-nutrition'];
 const nutriArticles = ARTICLES.filter(a => NUTRI_ARTICLE_IDS.includes(a.id));
@@ -269,8 +270,15 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
     if (!base.meals?.length) {
       console.warn('[NutriScreen] empty_menu_detected', { phase: pi?.phase, fastingProtocol, lang });
     }
-    return base;
-  }, [allRecipes, recipesLoading, userProfile, pi?.phase, lang, todayMenuFiltered]);
+    // Inyectar macros en comidas estáticas (sin receta personalizada)
+    const totalKcal = cals?.total;
+    const mealsWithMacros = base.meals?.map(meal => {
+      if (meal.macros?.kcal != null) return meal; // ya tiene macros (receta Supabase)
+      const computed = calcMealMacros(meal.id, totalKcal);
+      return computed ? { ...meal, macros: computed } : meal;
+    });
+    return { ...base, meals: mealsWithMacros || base.meals };
+  }, [allRecipes, recipesLoading, userProfile, pi?.phase, lang, todayMenuFiltered, cals?.total]);
 
   const weekMenuDays = useMemo(() => {
     const names = lang === 'fr'
