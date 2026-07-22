@@ -1,17 +1,8 @@
 // ─── Programa personalizado de Marina (Alan, abril 2026) ──────────────────────
-// 1600 kcal/día · pérdida de peso · 4 días de entrenamiento/semana
 
-// Dom=0, Lun=1, Mar=2, Mié=3, Jue=4, Vie=5, Sáb=6
-// Tipo A: Lun(1) Mié(3) Vie(5) · Tipo B: Mar(2) Jue(4) Sáb(6) · Libre: Dom(0)
-export function getDayType(jsDay) {
-  if (jsDay === 0) return 'free';
-  if ([1, 3, 5].includes(jsDay)) return 'A';
-  return 'B';
-}
+// ── NUTRICIÓN (menús estáticos eliminados — contenido 100% desde Supabase) ─────
 
-// ── NUTRICIÓN ─────────────────────────────────────────────────────────────────
-
-export const MENU_A = {
+const MENU_A_UNUSED = {
   label: { es: 'Día A', en: 'Day A', fr: 'Jour A', it: 'Giorno A' },
   tag:   { es: 'Lun · Mié · Vie', en: 'Mon · Wed · Fri', fr: 'Lun · Mer · Ven', it: 'Lun · Mer · Ven' },
   color: '#DBEAFE',
@@ -92,7 +83,7 @@ export const MENU_A = {
   ],
 };
 
-export const MENU_B = {
+const MENU_B_UNUSED = {
   label: { es: 'Día B', en: 'Day B', fr: 'Jour B', it: 'Giorno B' },
   tag:   { es: 'Mar · Jue · Sáb', en: 'Tue · Thu · Sat', fr: 'Mar · Jeu · Sam', it: 'Mar · Gio · Sab' },
   color: '#DCFCE7',
@@ -190,7 +181,7 @@ export const MENU_B = {
   ],
 };
 
-export const MENU_FREE = {
+const MENU_FREE_UNUSED = {
   label: { es: 'Día libre', en: 'Free day', fr: 'Journée libre', it: 'Giorno libero' },
   tag:   { es: 'Domingo', en: 'Sunday', fr: 'Dimanche', it: 'Domenica' },
   color: '#FEF3C7',
@@ -256,36 +247,6 @@ function loc(field, lang) {
   return field[lang] ?? field.es ?? field;
 }
 
-// resolveMenu: handles three cases:
-//   1. Multilingual object (static file) → flatten to lang
-//   2. Flat strings already in user's lang (from program_content table) → return as-is
-//   3. Null/undefined → fall back to staticMenu
-export function resolveMenu(supaMenu, lang, staticMenu) {
-  const menu = supaMenu ?? (staticMenu ?? null);
-  if (!menu) return null;
-  // Case 2: flat strings from program_content (label is a string, not a legacy issue)
-  // Distinguish from truly legacy by checking: if meals[0].items is already an array of strings
-  const firstMeal = menu.meals?.[0];
-  const isFlat = firstMeal && Array.isArray(firstMeal.items) &&
-                 typeof firstMeal.items[0] === 'string';
-  if (isFlat) return menu; // already correct language, nothing to resolve
-  // Case 1: multilingual object (static file) → flatten
-  return {
-    ...menu,
-    label: loc(menu.label, lang),
-    tag:   loc(menu.tag,   lang),
-    meals: menu.meals.map(meal => ({
-      ...meal,
-      items: loc(meal.items, lang),
-      recipe: meal.recipe ? {
-        ...meal.recipe,
-        title:       loc(meal.recipe.title,       lang),
-        ingredients: loc(meal.recipe.ingredients, lang),
-        steps:       loc(meal.recipe.steps,       lang),
-      } : undefined,
-    })),
-  };
-}
 
 export function resolveTips(tips, lang) {
   if (!tips) return tips;

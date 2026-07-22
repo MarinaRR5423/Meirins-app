@@ -6,7 +6,7 @@ import T, { getMealLabel, getPhaseDisplay } from '../i18n/translations';
 import { PHASES } from '../data/phases';
 import { INGREDIENTS, formatQty, locName, locCat } from '../data/ingredients';
 import { usePhaseData } from '../hooks/usePhaseData';
-import { getDayType, MENU_A, MENU_B, MENU_FREE, TIPS_NUTRI, resolveMenu, resolveTips } from '../data/marinaProgram';
+import { TIPS_NUTRI, resolveTips } from '../data/marinaProgram';
 import { ARTICLES } from '../data/articles';
 import TipsCard from '../components/TipsCard';
 import { NutriSetupCard } from '../components/TabSetupCard';
@@ -192,23 +192,21 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
     lang,
   );
 
-  // resolveMenu detects old Supabase flat-string format and falls back to the
-  // multilingual static file automatically, so content is always translated.
-  const menuA     = resolveMenu(program?.menuA,     lang, MENU_A);
-  const menuB     = resolveMenu(program?.menuB,     lang, MENU_B);
-  const menuFree  = resolveMenu(program?.menuFree,  lang, MENU_FREE);
   const tipsNutri = resolveTips(program?.tipsNutri ?? TIPS_NUTRI, lang);
 
-  const todayType = getDayType(new Date().getDay());
-  const todayMenuBase = todayType === 'A' ? menuA : todayType === 'B' ? menuB : menuFree;
+  // Slots de comida — estructura fija, contenido 100% desde Supabase
+  const MEAL_SLOTS = [
+    { id: 'desayuno',     ico: '🌅', label: 'breakfast' },
+    { id: 'snack_manana', ico: '🍎', label: 'morning_snack' },
+    { id: 'almuerzo',     ico: '☀️', label: 'lunch' },
+    { id: 'snack_tarde',  ico: '🍊', label: 'afternoon_snack' },
+    { id: 'cena',         ico: '🌙', label: 'dinner' },
+  ];
 
   // Filtrar comidas según protocolo de ayuno
   const fastingProtocol  = profileExtended?.fastingProtocol || null;
   const mealsActive      = profileExtended?.mealsActive     || null;
-  const todayMenuFiltered = {
-    ...todayMenuBase,
-    meals: filterMealsByFasting(todayMenuBase.meals || [], fastingProtocol, mealsActive),
-  };
+  const activeSlots = filterMealsByFasting(MEAL_SLOTS, fastingProtocol, mealsActive);
 
   // ── Recetas personalizadas desde Supabase ────────────────────────────────────
   const { recipes: allRecipes, loading: recipesLoading } = useRecipes();
@@ -243,16 +241,16 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
   // Hoy en formato YYYY-MM-DD para rotación diaria
   const todayStr = new Date().toISOString().split('T')[0];
 
-  // Reemplaza cada comida con la receta del día (rota entre las top 5)
-  const buildPersonalizedMeals = (baseMeals, dateStr) => {
-    return (baseMeals || []).map(originalMeal => {
-      const dbMealType = appMealToDbMealType(originalMeal.id);
+  // Construye las comidas del día desde Supabase puro
+  const buildPersonalizedMeals = (slots, dateStr) => {
+    return (slots || []).map(slot => {
+      const dbMealType = appMealToDbMealType(slot.id);
       const recipe     = getDailyRecipe(allRecipes, userProfile, pi?.phase, dbMealType, dateStr);
-      if (!recipe) return originalMeal;
+      if (!recipe) return { ...slot, title: null, items: [], _personalized: false };
       const card = recipeToMealCard(recipe, lang);
-      if (!card) return originalMeal;
+      if (!card) return { ...slot, title: null, items: [], _personalized: false };
       return {
-        ...originalMeal,
+        ...slot,
         ico:    card.ico,
         title:  card.title,
         items:  card.items,
@@ -265,14 +263,14 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
   };
 
   const todayMenu = useMemo(() => {
-    const base = (!allRecipes?.length || recipesLoading)
-      ? todayMenuFiltered
-      : { ...todayMenuFiltered, meals: buildPersonalizedMeals(todayMenuFiltered.meals, todayStr) };
-    if (!base.meals?.length) {
+    const meals = allRecipes?.length
+      ? buildPersonalizedMeals(activeSlots, todayStr)
+      : activeSlots.map(s => ({ ...s, title: null, items: [], _personalized: false }));
+    if (!meals.length) {
       console.warn('[NutriScreen] empty_menu_detected', { phase: pi?.phase, fastingProtocol, lang });
     }
-    return base;
-  }, [allRecipes, recipesLoading, userProfile, pi?.phase, lang, todayMenuFiltered]);
+    return { meals };
+  }, [allRecipes, recipesLoading, userProfile, pi?.phase, lang, activeSlots]);
 
   const weekMenuDays = useMemo(() => {
     const names = lang === 'fr'
@@ -293,20 +291,15 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
       const dateStr = date.toISOString().split('T')[0];
       const dow     = date.getDay();
       const isToday = dateStr === today.toISOString().split('T')[0];
-      const type    = getDayType(dow);
-      const baseMenu = type === 'A' ? menuA : type === 'B' ? menuB : menuFree;
-      const filtered = {
-        ...baseMenu,
-        meals: filterMealsByFasting(baseMenu.meals || [], fastingProtocol, mealsActive),
-      };
-      const menu = allRecipes?.length
-        ? { ...filtered, meals: buildPersonalizedMeals(filtered.meals, dateStr) }
-        : filtered;
+      const filteredSlots = filterMealsByFasting(MEAL_SLOTS, fastingProtocol, mealsActive);
+      const meals = allRecipes?.length
+        ? buildPersonalizedMeals(filteredSlots, dateStr)
+        : filteredSlots.map(s => ({ ...s, title: null, items: [], _personalized: false }));
+      const menu = { meals };
       return {
         label: isToday ? cm.today : names[dow],
         dayNum: date.getDate(),
         menu,
-        type,
         dateStr,
         isToday,
       };
@@ -489,27 +482,16 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
 
       {/* ── MON PLAN ── */}
       {sub === 'plan' && <>
-        {/* Bannière du jour — solo muestra rotación A/B/Free si batchCooking está activo */}
-        <View style={[styles.card, { backgroundColor: profileExtended?.batchCooking ? todayMenu.color : BLUE.light }]}>
+        <View style={[styles.card, { backgroundColor: BLUE.light }]}>
           <View style={styles.planHeader}>
             <View style={{ flex: 1 }}>
-              <Text style={[styles.planTag, { color: profileExtended?.batchCooking ? todayMenu.textColor : BLUE.primary }]}>
-                {cm.today.toUpperCase()}{profileExtended?.batchCooking ? ` · ${todayMenu.tag}` : ''}
-              </Text>
-              <Text style={[styles.planTitle, { color: profileExtended?.batchCooking ? todayMenu.textColor : BLUE.primary }]}>
-                {profileExtended?.batchCooking ? todayMenu.label : (lang === 'en' ? 'Your menu' : lang === 'fr' ? 'Ton menu' : lang === 'it' ? 'Il tuo menù' : 'Tu menú')}
+              <Text style={[styles.planTag, { color: BLUE.primary }]}>{cm.today.toUpperCase()}</Text>
+              <Text style={[styles.planTitle, { color: BLUE.primary }]}>
+                {lang === 'en' ? 'Your menu' : lang === 'fr' ? 'Ton menu' : lang === 'it' ? 'Il tuo menù' : 'Tu menú'}
                 {cals ? ` · ${cals.total} kcal` : ''}
               </Text>
             </View>
-            {profileExtended?.batchCooking && (
-              <Text style={{ fontSize: 28 }}>{todayType === 'free' ? '😊' : todayType === 'A' ? '🐔' : '🐟'}</Text>
-            )}
           </View>
-          {profileExtended?.batchCooking && (
-            <Text style={[styles.planSub, { color: todayMenu.textColor }]}>
-              {todayType === 'A' ? n.dayADesc : todayType === 'B' ? n.dayBDesc : n.dayFreeDesc}
-            </Text>
-          )}
         </View>
 
         {/* ── TRACKER CALORÍAS ── */}
@@ -594,22 +576,6 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
           ))}
         </View>
 
-        {/* Type de journée info — solo en modo batch cooking */}
-        {profileExtended?.batchCooking && (
-          <View style={[styles.card, { backgroundColor: '#F8FAFC' }]}>
-            <Text style={styles.sectionTitle}>{n.dayTypes}</Text>
-            {[menuA, menuB].map(menu => (
-              <View key={menu.label} style={[styles.dayTypeRow, { backgroundColor: menu.color }]}>
-                <Text style={[styles.dayTypeLabel, { color: menu.textColor }]}>{menu.label}</Text>
-                <Text style={[styles.dayTypeTag, { color: menu.textColor }]}>{menu.tag}</Text>
-              </View>
-            ))}
-            <View style={[styles.dayTypeRow, { backgroundColor: menuFree.color ?? MENU_FREE.color }]}>
-              <Text style={[styles.dayTypeLabel, { color: menuFree.textColor ?? MENU_FREE.textColor }]}>{menuFree.label}</Text>
-              <Text style={[styles.dayTypeTag, { color: menuFree.textColor ?? MENU_FREE.textColor }]}>{menuFree.tag}</Text>
-            </View>
-          </View>
-        )}
 
       </>}
 
@@ -649,11 +615,6 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
                 <Text style={[styles.dayLabel, day.isToday && { color: BLUE.primary, fontWeight: '700' }]}>{day.label}</Text>
                 <Text style={styles.dayNum}>{day.dayNum}</Text>
               </View>
-              {profileExtended?.batchCooking && (
-                <View style={[styles.dayTypeBadge, { backgroundColor: day.menu.color }]}>
-                  <Text style={[styles.dayTypeBadgeText, { color: day.menu.textColor }]}>{day.menu.label}</Text>
-                </View>
-              )}
               <View style={{ flex: 1, marginLeft: 8 }}>
                 <Text style={styles.dayMeals} numberOfLines={1}>
                   {day.menu.meals.slice(0, 2).map(m => {
@@ -672,7 +633,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
                   const canOpen  = !!meal.recipe;
                   return (
                     <View key={meal.id} style={{ marginBottom: 12 }}>
-                      <Text style={[styles.mealTag, { color: profileExtended?.batchCooking ? day.menu.textColor : BLUE.primary, marginBottom: 2 }]}>
+                      <Text style={[styles.mealTag, { color: BLUE.primary, marginBottom: 2 }]}>
                         {meal.ico} {getMealLabel(lang, meal.label)}
                       </Text>
                       <TouchableOpacity disabled={!canOpen}
