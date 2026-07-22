@@ -21,11 +21,12 @@ export const MENU_A = {
       id: 'desayuno',
       ico: '🌅',
       label: 'Desayuno',
+      // Target 320 kcal · HC 40g · PRT 16g · Grasas 11g (20% de 1600 kcal)
       items: {
-        es: ['150 g de queso fresco 0 % MG', '30 g de copos de avena', '1 cucharadita de semillas de chía', '1 fruta fresca (manzana o plátano)'],
-        en: ['150 g 0% fat cottage cheese', '30 g oat flakes', '1 tsp chia seeds', '1 fresh fruit (apple or banana)'],
-        fr: ['150 g de fromage blanc 0 % MG', '30 g de flocons d\'avoine', '1 cuillère à café de graines de chia', '1 fruit frais (pomme ou banane)'],
-        it: ['150 g di fiocchi di latte 0% grassi', '30 g di fiocchi d\'avena', '1 cucchiaino di semi di chia', '1 frutto fresco (mela o banana)'],
+        es: ['150 g de queso fresco 0 % MG', '20 g de copos de avena', '1 cucharadita de semillas de chía', '1 fruta pequeña (manzana pequeña o kiwi)'],
+        en: ['150 g 0% fat cottage cheese', '20 g oat flakes', '1 tsp chia seeds', '1 small fruit (small apple or kiwi)'],
+        fr: ['150 g de fromage blanc 0 % MG', '20 g de flocons d\'avoine', '1 cuillère à café de graines de chia', '1 petit fruit (petite pomme ou kiwi)'],
+        it: ['150 g di fiocchi di latte 0% grassi', '20 g di fiocchi d\'avena', '1 cucchiaino di semi di chia', '1 frutto piccolo (mela piccola o kiwi)'],
       },
     },
     {
@@ -54,11 +55,12 @@ export const MENU_A = {
       id: 'snack_tarde',
       ico: '🍊',
       label: 'Snack de la tarde',
+      // Target 160 kcal · HC 20g · PRT 8g · Grasas 5g (10% de 1600 kcal)
       items: {
-        es: ['1 fruta (naranja o pera)', '30 g de queso fresco'],
-        en: ['1 fruit (orange or pear)', '30 g cottage cheese'],
-        fr: ['1 fruit (orange ou poire)', '30 g de fromage blanc'],
-        it: ['1 frutto (arancia o pera)', '30 g di fiocchi di latte'],
+        es: ['1 fruta mediana (naranja o pera)', '80 g de yogur griego 0 % MG'],
+        en: ['1 medium fruit (orange or pear)', '80 g 0% Greek yoghurt'],
+        fr: ['1 fruit moyen (orange ou poire)', '80 g de yaourt grec 0 % MG'],
+        it: ['1 frutto medio (arancia o pera)', '80 g di yogurt greco 0% grassi'],
       },
     },
     {
@@ -100,22 +102,24 @@ export const MENU_B = {
       id: 'desayuno',
       ico: '🌅',
       label: 'Desayuno',
+      // Target 320 kcal · HC 40g · PRT 16g · Grasas 11g (20% de 1600 kcal)
       items: {
-        es: ['2 rebanadas de pan integral (50 g)', '30 g de queso fresco', '1 fruta fresca', '1 café o té sin azúcar'],
-        en: ['2 slices of wholegrain bread (50 g)', '30 g cottage cheese', '1 fresh fruit', '1 coffee or unsweetened tea'],
-        fr: ['2 tranches de pain complet (50 g)', '30 g de fromage blanc', '1 fruit frais', '1 café ou thé sans sucre'],
-        it: ['2 fette di pane integrale (50 g)', '30 g di fiocchi di latte', '1 frutto fresco', '1 caffè o tè senza zucchero'],
+        es: ['2 rebanadas de pan integral (50 g)', '2 huevos revueltos', '1 fruta fresca pequeña', '1 café o té sin azúcar'],
+        en: ['2 slices of wholegrain bread (50 g)', '2 scrambled eggs', '1 small fresh fruit', '1 coffee or unsweetened tea'],
+        fr: ['2 tranches de pain complet (50 g)', '2 œufs brouillés', '1 petit fruit frais', '1 café ou thé sans sucre'],
+        it: ['2 fette di pane integrale (50 g)', '2 uova strapazzate', '1 piccolo frutto fresco', '1 caffè o tè senza zucchero'],
       },
     },
     {
       id: 'snack_manana',
       ico: '🥝',
       label: 'Snack de la mañana',
+      // Target 160 kcal · HC 20g · PRT 8g · Grasas 5g (10% de 1600 kcal)
       items: {
-        es: ['1 fruta (kiwi o mandarina)', '10 nueces'],
-        en: ['1 fruit (kiwi or clementine)', '10 walnuts'],
-        fr: ['1 fruit (kiwi ou mandarine)', '10 noix'],
-        it: ['1 frutto (kiwi o mandarino)', '10 noci'],
+        es: ['1 fruta (kiwi o mandarina)', '6 nueces'],
+        en: ['1 fruit (kiwi or clementine)', '6 walnuts'],
+        fr: ['1 fruit (kiwi ou mandarine)', '6 noix'],
+        it: ['1 frutto (kiwi o mandarino)', '6 noci'],
       },
     },
     {
@@ -148,22 +152,24 @@ export const MENU_B = {
       id: 'snack_tarde',
       ico: '🫐',
       label: 'Snack de la tarde',
+      // Target 160 kcal · HC 20g · PRT 8g · Grasas 5g (10% de 1600 kcal)
       items: {
-        es: ['1 compota sin azúcar añadido', '1 puñado de almendras (10 g)'],
-        en: ['1 sugar-free compote', '1 small handful of almonds (10 g)'],
-        fr: ['1 compote sans sucre ajouté', '1 petite poignée d\'amandes (10 g)'],
-        it: ['1 composta senza zuccheri aggiunti', '1 piccola manciata di mandorle (10 g)'],
+        es: ['1 compota sin azúcar añadido', '80 g de yogur griego 0 % MG', '10 g de almendras'],
+        en: ['1 sugar-free compote', '80 g 0% Greek yoghurt', '10 g almonds'],
+        fr: ['1 compote sans sucre ajouté', '80 g de yaourt grec 0 % MG', '10 g d\'amandes'],
+        it: ['1 composta senza zuccheri aggiunti', '80 g di yogurt greco 0% grassi', '10 g di mandorle'],
       },
     },
     {
       id: 'cena',
       ico: '🌙',
       label: 'Cena',
+      // Target 400 kcal · HC 50g · PRT 20g · Grasas 13g (25% de 1600 kcal)
       items: {
-        es: ['100 g de garbanzos o lentejas (cocidos)', '150 g de verduras (salteado variado)', '1 huevo duro', '1 fruta fresca'],
-        en: ['100 g cooked chickpeas or lentils', '150 g mixed sautéed vegetables', '1 hard-boiled egg', '1 fresh fruit'],
-        fr: ['100 g de pois chiches ou lentilles cuits', '150 g de légumes sautés variés', '1 œuf dur', '1 fruit frais'],
-        it: ['100 g di ceci o lenticchie cotti', '150 g di verdure saltate miste', '1 uovo sodo', '1 frutto fresco'],
+        es: ['100 g de garbanzos o lentejas (cocidos)', '150 g de verduras salteadas', '1 huevo duro', '40 g de pan integral', '1 cucharadita de aceite de oliva'],
+        en: ['100 g cooked chickpeas or lentils', '150 g mixed sautéed vegetables', '1 hard-boiled egg', '40 g wholegrain bread', '1 tsp olive oil'],
+        fr: ['100 g de pois chiches ou lentilles cuits', '150 g de légumes sautés variés', '1 œuf dur', '40 g de pain complet', '1 c. à café d\'huile d\'olive'],
+        it: ['100 g di ceci o lenticchie cotti', '150 g di verdure saltate miste', '1 uovo sodo', '40 g di pane integrale', '1 cucchiaino di olio d\'oliva'],
       },
       recipe: {
         title: { es: 'Salteado de verduras y garbanzos', en: 'Chickpea and vegetable stir-fry', fr: 'Sauté de légumes et pois chiches', it: 'Saltato di verdure e ceci' },

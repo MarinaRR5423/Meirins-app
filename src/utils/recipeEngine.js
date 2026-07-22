@@ -8,6 +8,7 @@
  */
 
 import { normalizeDietId } from '../hooks/useDiets';
+import { MEAL_ENERGY_PCT, MEAL_MACRO_PCT } from './nutritionRules';
 
 // IDs internos de meal_type en Supabase vs ID usado en la app
 const MEAL_TYPE_MAP = {
@@ -23,6 +24,63 @@ const MEAL_TYPE_MAP = {
  */
 export function appMealToDbMealType(appMealId) {
   return MEAL_TYPE_MAP[appMealId] || appMealId;
+}
+
+// Mapa inverso: db meal_type → app meal id
+const DB_TO_APP_MEAL = {
+  breakfast:       'desayuno',
+  morning_snack:   'snack_manana',
+  lunch:           'almuerzo',
+  afternoon_snack: 'snack_tarde',
+  dinner:          'cena',
+};
+
+// Tolerancia ±20% sobre el target de kcal del slot
+const KCAL_TOLERANCE = 0.20;
+// Tolerancia ±25% sobre el target de cada macro (en gramos)
+const MACRO_TOLERANCE = 0.25;
+
+/**
+ * Comprueba si los macros reales de una receta cumplen las reglas nutricionales
+ * para su slot de comida, dado el total diario de kcal de la usuaria.
+ *
+ * Si la receta no tiene macros almacenados o el totalDailyKcal no está disponible,
+ * se permite por defecto (no se descarta).
+ */
+function isMacroCompliant(recipe, dbMealType, totalDailyKcal) {
+  if (!totalDailyKcal || !recipe.kcal) return true;
+  const appId = DB_TO_APP_MEAL[dbMealType];
+  if (!appId) return true;
+
+  const energyPct = MEAL_ENERGY_PCT[appId];
+  const macroPct  = MEAL_MACRO_PCT[appId];
+  if (!energyPct || !macroPct) return true;
+
+  // Targets absolutos para esta usuaria
+  const targetKcal    = totalDailyKcal * energyPct;
+  const targetCarbs   = (totalDailyKcal * macroPct.carbs)   / 4;  // g
+  const targetProtein = (totalDailyKcal * macroPct.protein) / 4;  // g
+  const targetFat     = (totalDailyKcal * macroPct.fat)     / 9;  // g
+
+  // Verificar kcal
+  if (recipe.kcal < targetKcal * (1 - KCAL_TOLERANCE) ||
+      recipe.kcal > targetKcal * (1 + KCAL_TOLERANCE)) return false;
+
+  // Verificar macros si están disponibles
+  if (recipe.carbs_g != null) {
+    if (recipe.carbs_g < targetCarbs * (1 - MACRO_TOLERANCE) ||
+        recipe.carbs_g > targetCarbs * (1 + MACRO_TOLERANCE)) return false;
+  }
+  if (recipe.protein_g != null) {
+    if (recipe.protein_g < targetProtein * (1 - MACRO_TOLERANCE) ||
+        recipe.protein_g > targetProtein * (1 + MACRO_TOLERANCE)) return false;
+  }
+  if (recipe.fat_g != null) {
+    if (recipe.fat_g < targetFat * (1 - MACRO_TOLERANCE) ||
+        recipe.fat_g > targetFat * (1 + MACRO_TOLERANCE)) return false;
+  }
+
+  return true;
 }
 
 // ── 1. FILTRADO DURO ────────────────────────────────────────────────────────
@@ -138,11 +196,26 @@ function scoreRecipe(recipe, profile, phase) {
 export function getRecipesForMeal(recipes, profile, phase, mealType) {
   if (!recipes?.length) return [];
 
-  return recipes
+  const totalDailyKcal = profile.totalDailyKcal || null;
+
+  const compliant = recipes
     .filter(r => r.meal_type === mealType)
     .filter(r => isHardCompatible(r, profile))
+    .filter(r => isMacroCompliant(r, mealType, totalDailyKcal))
     .map(r => ({ ...r, _score: scoreRecipe(r, profile, phase) }))
     .sort((a, b) => b._score - a._score);
+
+  // Si ninguna receta cumple las reglas nutricionales, permitir todas las compatibles
+  // (mejor mostrar algo que nada, pero sin recetas inapropiadas por alergia/dieta)
+  if (!compliant.length) {
+    return recipes
+      .filter(r => r.meal_type === mealType)
+      .filter(r => isHardCompatible(r, profile))
+      .map(r => ({ ...r, _score: scoreRecipe(r, profile, phase) }))
+      .sort((a, b) => b._score - a._score);
+  }
+
+  return compliant;
 }
 
 /**
