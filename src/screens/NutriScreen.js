@@ -20,7 +20,7 @@ import { buildShoppingList, formatQuantity, countItems } from '../utils/shopping
 import { trackScreen } from '../lib/analytics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import WaterCard from '../components/WaterCard';
-import { calcMealMacros } from '../utils/nutritionRules';
+import { calcMealMacros, calcMealMacrosByDbType } from '../utils/nutritionRules';
 
 const NUTRI_ARTICLE_IDS = ['nutrition-menstrual', 'endometriosis-nutrition', 'pcos-hormones', 'pregnancy-nutrition'];
 const nutriArticles = ARTICLES.filter(a => NUTRI_ARTICLE_IDS.includes(a.id));
@@ -270,12 +270,11 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
     if (!base.meals?.length) {
       console.warn('[NutriScreen] empty_menu_detected', { phase: pi?.phase, fastingProtocol, lang });
     }
-    // Inyectar macros en comidas estáticas (sin receta personalizada)
+    // Las reglas nutricionales son normativas: siempre aplican sobre cualquier receta
     const totalKcal = cals?.total;
     const mealsWithMacros = base.meals?.map(meal => {
-      if (meal.macros?.kcal != null) return meal; // ya tiene macros (receta Supabase)
-      const computed = calcMealMacros(meal.id, totalKcal);
-      return computed ? { ...meal, macros: computed } : meal;
+      const normative = calcMealMacros(meal.id, totalKcal);
+      return normative ? { ...meal, macros: normative } : meal;
     });
     return { ...base, meals: mealsWithMacros || base.meals };
   }, [allRecipes, recipesLoading, userProfile, pi?.phase, lang, todayMenuFiltered, cals?.total]);
@@ -305,9 +304,15 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
         ...baseMenu,
         meals: filterMealsByFasting(baseMenu.meals || [], fastingProtocol, mealsActive),
       };
-      const menu = allRecipes?.length
-        ? { ...filtered, meals: buildPersonalizedMeals(filtered.meals, dateStr) }
-        : filtered;
+      const rawMeals = allRecipes?.length
+        ? buildPersonalizedMeals(filtered.meals, dateStr)
+        : filtered.meals;
+      const totalKcal = cals?.total;
+      const normMeals = rawMeals?.map(meal => {
+        const normative = calcMealMacros(meal.id, totalKcal);
+        return normative ? { ...meal, macros: normative } : meal;
+      });
+      const menu = { ...filtered, meals: normMeals || filtered.meals };
       return {
         label: isToday ? cm.today : names[dow],
         dayNum: date.getDate(),
@@ -317,7 +322,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
         isToday,
       };
     });
-  }, [fastingProtocol, mealsActive, allRecipes, userProfile, pi?.phase, lang, weekOffset]);
+  }, [fastingProtocol, mealsActive, allRecipes, userProfile, pi?.phase, lang, weekOffset, cals?.total]);
 
   const weekDays = useMemo(() => {
     if (!pi) return [];
@@ -873,15 +878,17 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
         return favRecipes.map(r => {
           const card = recipeToMealCard(r, lang);
           if (!card) return null;
+          // Macros normativos según el slot de la receta y las kcal de la usuaria
+          const normativeMacros = calcMealMacrosByDbType(r.meal_type, cals?.total) || card.macros;
           return (
             <View key={r.id} style={styles.card}>
               <TouchableOpacity style={styles.mealRow}
-                onPress={() => setRecipe({ ...card.recipe, mealLabel: card.label, title: card.title, emoji: card.ico, macros: card.macros, _recipeId: r.id })}>
+                onPress={() => setRecipe({ ...card.recipe, mealLabel: card.label, title: card.title, emoji: card.ico, macros: normativeMacros, _recipeId: r.id })}>
                 <Text style={styles.mealIco}>{card.ico}</Text>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.mealTitle}>{card.title}</Text>
-                  {card.macros?.kcal != null && (
-                    <Text style={styles.mealMacros}>🔥 {card.macros.kcal} kcal · 🥩 {card.macros.protein}g · 🌾 {card.macros.carbs}g · 🫒 {card.macros.fat}g</Text>
+                  {normativeMacros?.kcal != null && (
+                    <Text style={styles.mealMacros}>🔥 {normativeMacros.kcal} kcal · 🥩 {normativeMacros.protein}g · 🌾 {normativeMacros.carbs}g · 🫒 {normativeMacros.fat}g</Text>
                   )}
                 </View>
                 <TouchableOpacity onPress={() => toggleFavoriteRecipe && toggleFavoriteRecipe(r.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>

@@ -35,6 +35,23 @@ export const MEAL_MACRO_PCT = {
   cena:         { carbs: 0.125,  protein: 0.05, fat: 0.075 },
 };
 
+// Mapa de meal_type de Supabase → id de comida de la app
+const DB_MEAL_TO_APP_ID = {
+  breakfast:        'desayuno',
+  morning_snack:    'snack_manana',
+  lunch:            'almuerzo',
+  afternoon_snack:  'snack_tarde',
+  dinner:           'cena',
+};
+
+/**
+ * Calcula los macros normativos a partir del meal_type de Supabase.
+ */
+export function calcMealMacrosByDbType(dbMealType, totalDailyKcal) {
+  const appId = DB_MEAL_TO_APP_ID[dbMealType];
+  return calcMealMacros(appId, totalDailyKcal);
+}
+
 /**
  * Calcula los macros de una comida a partir del total diario de kcal.
  * Devuelve null si el mealId no está en las reglas o si no hay totalKcal.
