@@ -642,8 +642,6 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
           );
         })()}
 
-        <TipsCard articles={nutriArticles} lang={lang} />
-
         {weekMenuDays.map((day, i) => (
           <View key={i} style={[styles.card, day.isToday && { borderWidth: 2, borderColor: BLUE.primary }]}>
             <TouchableOpacity style={styles.dayRow} onPress={() => setOpenD(openD === i ? null : i)}>
@@ -691,6 +689,8 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
             )}
           </View>
         ))}
+
+        <TipsCard articles={nutriArticles} lang={lang} />
       </>}
 
       {/* ── LISTE DE COURSES ── */}
