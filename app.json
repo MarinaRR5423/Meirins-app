@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "meirins",
+    "name": "Blumm",
     "slug": "meirins",
     "scheme": "meirins",
     "version": "1.0.0",
@@ -11,18 +11,18 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#F5C400"
     },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.marina13.meirins",
       "infoPlist": {
-        "NSCalendarsUsageDescription": "Meirins adds your scheduled workouts to your calendar so you never miss a session.",
-        "NSPhotoLibraryUsageDescription": "Meirins needs access to your photos to let you choose a profile picture.",
-        "NSCameraUsageDescription": "Meirins needs access to your camera to take a profile picture.",
+        "NSCalendarsUsageDescription": "Blumm adds your scheduled workouts to your calendar so you never miss a session.",
+        "NSPhotoLibraryUsageDescription": "Blumm needs access to your photos to let you choose a profile picture.",
+        "NSCameraUsageDescription": "Blumm needs access to your camera to take a profile picture.",
         "ITSAppUsesNonExemptEncryption": false,
-        "NSHealthShareUsageDescription": "Meirins reads your workouts, sleep and activity data to personalise your training and nutrition plan.",
-        "NSHealthUpdateUsageDescription": "Meirins does not write any data to Apple Health."
+        "NSHealthShareUsageDescription": "Blumm reads your workouts, sleep and activity data to personalise your training and nutrition plan.",
+        "NSHealthUpdateUsageDescription": "Blumm does not write any data to Apple Health."
       },
       "entitlements": {
         "com.apple.developer.healthkit": true,
@@ -32,7 +32,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#080d2b"
+        "backgroundColor": "#F5C400"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.marina13.meirins",
