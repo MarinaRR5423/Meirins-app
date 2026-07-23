@@ -35,10 +35,10 @@ const DB_TO_APP_MEAL = {
   dinner:          'cena',
 };
 
-// Tolerancia ±20% sobre el target de kcal del slot
-const KCAL_TOLERANCE = 0.20;
-// Tolerancia ±25% sobre el target de cada macro (en gramos)
-const MACRO_TOLERANCE = 0.25;
+// Tolerancia ±30% sobre el target de kcal del slot (orientativo)
+const KCAL_TOLERANCE = 0.30;
+// Tolerancia ±35% sobre el target de cada macro (en gramos, orientativo)
+const MACRO_TOLERANCE = 0.35;
 
 /**
  * Comprueba si los macros reales de una receta cumplen las reglas nutricionales
@@ -47,7 +47,10 @@ const MACRO_TOLERANCE = 0.25;
  * Si la receta no tiene macros almacenados o el totalDailyKcal no está disponible,
  * se permite por defecto (no se descarta).
  */
-function isMacroCompliant(recipe, dbMealType, totalDailyKcal) {
+function isMacroCompliant(recipe, dbMealType, totalDailyKcal, diet) {
+  // Reglas de macros solo aplican a dieta estándar
+  const standardDiets = ['standard', 'intuitive_eating', null, '', undefined];
+  if (!standardDiets.includes(diet)) return true;
   if (!totalDailyKcal || !recipe.kcal) return true;
   const appId = DB_TO_APP_MEAL[dbMealType];
   if (!appId) return true;
@@ -201,7 +204,7 @@ export function getRecipesForMeal(recipes, profile, phase, mealType) {
   const compliant = recipes
     .filter(r => r.meal_type === mealType)
     .filter(r => isHardCompatible(r, profile))
-    .filter(r => isMacroCompliant(r, mealType, totalDailyKcal))
+    .filter(r => isMacroCompliant(r, mealType, totalDailyKcal, profile.diet))
     .map(r => ({ ...r, _score: scoreRecipe(r, profile, phase) }))
     .sort((a, b) => b._score - a._score);
 
