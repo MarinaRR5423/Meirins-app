@@ -11,7 +11,7 @@ export const LANGUAGES = [
 const T = {
   // ─────────────────────────── ESPAÑOL ────────────────────────────────────────
   es: {
-    tabs: { home: 'Inicio', cycle: 'Ciclo', nutri: 'Nutrición', gym: 'Gimnasio', tips: 'Consejos', profile: 'Perfil' },
+    tabs: { home: 'Inicio', cycle: 'Ciclo', nutri: 'Nutrición', gym: 'Entrenamiento', tips: 'Consejos', profile: 'Perfil' },
 
     common: {
       today: 'Hoy', tomorrow: 'Mañana', save: 'Guardar', cancel: 'Cancelar',
@@ -489,7 +489,7 @@ const T = {
 
   // ─────────────────────────── ENGLISH ────────────────────────────────────────
   en: {
-    tabs: { home: 'Home', cycle: 'Cycle', nutri: 'Nutrition', gym: 'Gym', tips: 'Tips', profile: 'Profile' },
+    tabs: { home: 'Home', cycle: 'Cycle', nutri: 'Nutrition', gym: 'Training', tips: 'Tips', profile: 'Profile' },
 
     common: {
       today: 'Today', tomorrow: 'Tomorrow', save: 'Save', cancel: 'Cancel',
@@ -1038,7 +1038,7 @@ const T = {
 
   // ─────────────────────────── FRANÇAIS ───────────────────────────────────────
   fr: {
-    tabs: { home: 'Accueil', cycle: 'Cycle', nutri: 'Nutrition', gym: 'Sport', tips: 'Conseils', profile: 'Profil' },
+    tabs: { home: 'Accueil', cycle: 'Cycle', nutri: 'Nutrition', gym: 'Entraînement', tips: 'Conseils', profile: 'Profil' },
 
     common: {
       today: 'Aujourd\'hui', tomorrow: 'Demain', save: 'Enregistrer', cancel: 'Annuler',
@@ -1587,7 +1587,7 @@ const T = {
 
   // ─────────────────────────── ITALIANO ───────────────────────────────────────
   it: {
-    tabs: { home: 'Home', cycle: 'Ciclo', nutri: 'Nutrizione', gym: 'Palestra', tips: 'Consigli', profile: 'Profilo' },
+    tabs: { home: 'Home', cycle: 'Ciclo', nutri: 'Nutrizione', gym: 'Allenamento', tips: 'Consigli', profile: 'Profilo' },
 
     common: {
       today: 'Oggi', tomorrow: 'Domani', save: 'Salva', cancel: 'Annulla',

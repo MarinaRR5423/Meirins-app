@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, View, ActivityIndicator, Platform } from 'react-native';
-import { Home, Moon, Salad, Dumbbell, User } from 'lucide-react-native';
+import { Home, Moon, Salad, Footprints, User } from 'lucide-react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
 import * as Linking from 'expo-linking';
@@ -220,7 +220,7 @@ function App() {
             skipRecipe={profile.skipRecipe}
             logRecipeDone={profile.logRecipeDone} />}
         </Tab.Screen>
-        <Tab.Screen name="Gimnasio" options={{ tabBarLabel: tabs.gym, tabBarIcon: ({ color, size }) => <Dumbbell color={color} size={size} />, unmountOnBlur: true }}>
+        <Tab.Screen name="Gimnasio" options={{ tabBarLabel: tabs.gym, tabBarIcon: ({ color, size }) => <Footprints color={color} size={size} />, unmountOnBlur: true }}>
           {() => <GimnasioScreen lang={lang} pi={pi} trainDays={profile.trainDays} setTrainDays={profile.setTrainDays} program={programData} healthData={healthData} goal={profile.goal}
             profileExtended={profile.profileExtended} saveProfileExtended={profile.saveProfileExtended}
             toggleFavoriteWorkout={profile.toggleFavoriteWorkout}
