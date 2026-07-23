@@ -13,9 +13,9 @@ export default function Loading({ variant = 'inline', label, color }) {
   if (variant === 'fullscreen') {
     return (
       <View style={s.fullscreen}>
-        <Text style={s.fsEmoji}>🌙</Text>
-        <Text style={s.fsBrand}>MEIRINS</Text>
-        <ActivityIndicator color="white" size="large" />
+        <Text style={s.fsEmoji}>🌻</Text>
+        <Text style={s.fsBrand}>Blumm</Text>
+        <ActivityIndicator color="#1A1A1A" size="large" />
         {label && <Text style={s.fsLabel}>{label}</Text>}
       </View>
     );
@@ -39,10 +39,10 @@ export default function Loading({ variant = 'inline', label, color }) {
 }
 
 const s = StyleSheet.create({
-  fullscreen: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0F1F4A' },
+  fullscreen: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5C400' },
   fsEmoji:    { fontSize: 48, marginBottom: 16 },
-  fsBrand:    { color: 'white', fontSize: 18, fontWeight: '700', letterSpacing: 1.5, marginBottom: 18 },
-  fsLabel:    { color: 'rgba(255,255,255,0.7)', fontSize: 13, marginTop: 12 },
+  fsBrand:    { color: '#1A1A1A', fontSize: 18, fontWeight: '700', letterSpacing: 1.5, marginBottom: 18 },
+  fsLabel:    { color: 'rgba(0,0,0,0.5)', fontSize: 13, marginTop: 12 },
 
   inline:      { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 16, justifyContent: 'center' },
   inlineLabel: { fontSize: 13, color: '#64748B' },
