@@ -40,3 +40,6 @@ yarn-error.*
 /ios
 /android
 .env
+
+# raw USDA data dump (not needed for app build)
+/scripts/FoodData_Central_csv_2024-10-31/
