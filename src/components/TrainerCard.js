@@ -3,9 +3,8 @@ import {
   View, Text, TextInput, TouchableOpacity,
   ActivityIndicator, StyleSheet, Alert,
 } from 'react-native';
+import { ArrowRight } from 'lucide-react-native';
 import { useTrainerConnection } from '../hooks/useTrainerConnection';
-
-const BLUE = { primary: '#1A56DB', light: '#EFF6FF', border: '#BFDBFE' };
 
 export default function TrainerCard({ lang = 'es' }) {
   const [code, setCode] = useState('');
@@ -125,6 +124,7 @@ export default function TrainerCard({ lang = 'es' }) {
       {!showInput ? (
         <TouchableOpacity style={styles.enterBtn} onPress={() => setShowInput(true)}>
           <Text style={styles.enterBtnText}>{i18n.enter}</Text>
+          <ArrowRight size={20} color="#0A0A0A" />
         </TouchableOpacity>
       ) : (
         <View style={{ gap: 8 }}>
@@ -161,42 +161,24 @@ export default function TrainerCard({ lang = 'es' }) {
 }
 
 const styles = StyleSheet.create({
-  card: {
-    backgroundColor: 'white',
-    borderRadius: 18,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1.5,
-    borderColor: '#BFDBFE',
-    shadowColor: '#1A56DB',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  header: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 12 },
+  card: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 12 },
+  header: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 16 },
   icon: { fontSize: 28, flexShrink: 0 },
-  title: { fontSize: 14, fontWeight: '700', color: '#1E293B', marginBottom: 4 },
-  sub: { fontSize: 12, color: '#64748B', lineHeight: 18 },
+  title: { fontSize: 16, fontWeight: '700', color: '#171717', marginBottom: 4 },
+  sub: { fontSize: 12, color: '#525252', lineHeight: 18 },
   enterBtn: {
-    borderWidth: 1.5,
-    borderStyle: 'dashed',
-    borderColor: '#1A56DB',
-    borderRadius: 12,
-    padding: 12,
-    alignItems: 'center',
+    backgroundColor: 'white', borderRadius: 16, height: 48,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 12,
   },
-  enterBtnText: { fontSize: 13, color: '#1A56DB', fontWeight: '600' },
+  enterBtnText: { fontSize: 16, color: '#737373' },
   input: {
-    borderWidth: 1,
-    borderColor: '#BFDBFE',
     borderRadius: 12,
     padding: 12,
     fontSize: 16,
     fontWeight: '700',
-    color: '#1E293B',
+    color: '#0A0A0A',
     letterSpacing: 2,
-    backgroundColor: '#F8FBFF',
+    backgroundColor: '#FAFAFA',
     textAlign: 'center',
   },
   errorText: { fontSize: 12, color: '#DC2626', textAlign: 'center' },
@@ -205,24 +187,23 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 12,
     borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
+    backgroundColor: 'white',
     alignItems: 'center',
   },
-  cancelBtnText: { fontSize: 13, color: '#64748B', fontWeight: '600' },
+  cancelBtnText: { fontSize: 13, color: '#525252', fontWeight: '600' },
   connectBtn: {
     flex: 2,
     padding: 12,
     borderRadius: 12,
-    backgroundColor: '#1A56DB',
+    backgroundColor: '#171717',
     alignItems: 'center',
   },
   connectBtnText: { fontSize: 13, color: 'white', fontWeight: '700' },
   // connected state
   connectedRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  dot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#16A34A', flexShrink: 0 },
-  connectedLabel: { fontSize: 10, fontWeight: '700', color: '#16A34A', letterSpacing: 0.6, marginBottom: 2 },
-  trainerName: { fontSize: 15, fontWeight: '700', color: '#1E293B' },
-  trainerSpecialty: { fontSize: 12, color: '#64748B', marginTop: 2 },
-  disconnectText: { fontSize: 12, color: '#94A3B8', textDecorationLine: 'underline' },
+  dot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#49CF38', flexShrink: 0 },
+  connectedLabel: { fontSize: 10, fontWeight: '700', color: '#0B1F08', letterSpacing: 0.6, marginBottom: 2 },
+  trainerName: { fontSize: 15, fontWeight: '700', color: '#0A0A0A' },
+  trainerSpecialty: { fontSize: 12, color: '#525252', marginTop: 2 },
+  disconnectText: { fontSize: 12, color: '#737373', textDecorationLine: 'underline' },
 });

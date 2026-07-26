@@ -98,8 +98,9 @@ const orbitStyles = StyleSheet.create({
 });
 
 // ─── Calendar helpers ──────────────────────────────────────────────────────────
-const PHASE_BG   = { menstrual:'#FECACA', follicular:'#BFDBFE', ovulation:'#FDE68A', luteal:'#DDD6FE' };
-const PHASE_TEXT = { menstrual:'#991B1B', follicular:'#1E40AF', ovulation:'#92400E', luteal:'#5B21B6' };
+// Paleta Azote (tags-stack del diseño): menstrual=verde, folicular=morado, ovulación=amarillo, lútea=naranja
+const PHASE_BG   = { menstrual:'#B6ECAF', follicular:'#D9BCE9', ovulation:'#FFEA9B', luteal:'#FFBF9B' };
+const PHASE_TEXT = { menstrual:'#0B1F08', follicular:'#180D1E', ovulation:'#261E01', luteal:'#260E01' };
 
 function getPhaseForDate(dateStr, lastPeriodStr, cycleLen) {
   if (!lastPeriodStr) return null;
@@ -437,19 +438,19 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
 
       {/* ── CALENDAR VIEW ── */}
       {view === 'calendar' && (
-        <View style={[styles.card, { paddingHorizontal: 8 }]}>
+        <View style={[styles.card, styles.calendarCard]}>
           <View style={styles.cardHeader}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, flex: 1 }}>
               <TouchableOpacity onPress={() => setCalOffset(o => Math.max(-24, o - 1))}
                 style={{ paddingHorizontal: 10, paddingVertical: 4 }}>
-                <ChevronLeft size={20} color="#1A56DB" />
+                <ChevronLeft size={20} color="#171717" />
               </TouchableOpacity>
               <Text style={[styles.cardTitle, { flex: 1, textAlign: 'center' }]}>
                 {monthName.charAt(0).toUpperCase() + monthName.slice(1)}
               </Text>
               <TouchableOpacity onPress={() => setCalOffset(o => Math.min(6, o + 1))}
                 style={{ paddingHorizontal: 10, paddingVertical: 4 }}>
-                <ChevronRight size={20} color="#1A56DB" />
+                <ChevronRight size={20} color="#171717" />
               </TouchableOpacity>
             </View>
             <TouchableOpacity onPress={() => setView('wheel')} style={styles.viewToggleBtn}>
@@ -478,9 +479,8 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
               {Object.keys(PHASE_BG).map(k => {
                 const phTr = getPhaseDisplay(lang, k, PHASES[k]);
                 return (
-                  <View key={k} style={styles.legendItem}>
-                    <View style={[styles.legendDot, { backgroundColor: PHASE_BG[k] }]} />
-                    <Text style={styles.legendText}>{PHASES[k]?.emoji} {phTr.name}</Text>
+                  <View key={k} style={[styles.legendTag, { backgroundColor: PHASE_BG[k] }]}>
+                    <Text style={[styles.legendTagText, { color: PHASE_TEXT[k] }]}>{phTr.name}</Text>
                   </View>
                 );
               })}
@@ -554,8 +554,8 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
                 setMarkStart(lastPeriod || null);
                 setMarkEnd(periodEnd || null);
               }}
-              style={{ backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FECACA', borderRadius: 12, padding: 12, alignItems: 'center', marginTop: 4 }}>
-              <Text style={{ color: '#991B1B', fontWeight: '700', fontSize: 13 }}>
+              style={{ backgroundColor: 'white', borderWidth: 1, borderColor: '#171717', borderRadius: 12, padding: 12, alignItems: 'center', marginTop: 4 }}>
+              <Text style={{ color: '#171717', fontWeight: '700', fontSize: 13 }}>
                 🩸 {tr('Marcar regla en el calendario', 'Mark period on the calendar', 'Marquer les règles sur le calendrier', 'Segna il ciclo sul calendario')}
               </Text>
             </TouchableOpacity>
@@ -619,6 +619,54 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
         </View>
       )}
 
+      {/* ── Registrar el día (tracking Clue-style) ── */}
+      <View style={styles.logDayCard}>
+        <View style={styles.logDayHeader}>
+          <Text style={styles.logDayHeaderTxt}>
+            + {tr('Registro', 'Log', 'Journal', 'Registro')}
+          </Text>
+          <ChevronRight size={16} color="#261E01" />
+        </View>
+        <Text style={styles.logDayTitle}>
+          {tr('No te olvides de registrar tu día', "Don't forget to log your day", "N'oublie pas d'enregistrer ta journée", 'Non dimenticare di registrare la tua giornata')}
+        </Text>
+        <Text style={styles.logDaySub}>
+          {tr(
+            'Te ayudará a establecer patrones y ser consciente de tu estado anímico en las diferentes fases',
+            'It will help you spot patterns and stay aware of your mood across phases',
+            'Cela t\'aidera à repérer des schémas et à être consciente de ton humeur selon les phases',
+            'Ti aiuterà a individuare pattern ed essere consapevole del tuo umore nelle diverse fasi',
+          )}
+        </Text>
+        <TouchableOpacity style={styles.logDayBtn} onPress={() => setTrackingOpen(true)} activeOpacity={0.85}>
+          <Text style={styles.logDayBtnTxt}>
+            {tr('Registra tu día', 'Log your day', 'Enregistre ta journée', 'Registra la tua giornata')}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* ── Información de las fases (tarjetas horizontales, mismos datos que el acordeón de abajo) ── */}
+      {!isHormonalContra && (
+        <View style={styles.phaseInfoCard}>
+          <Text style={styles.phaseInfoTitle}>{tr('Información de las fases', 'Phase information', 'Infos sur les phases', 'Informazioni sulle fasi')}</Text>
+          <Text style={styles.phaseInfoSub}>{tr('Toca una fase para ver más detalle', 'Tap a phase to see more detail', 'Touche une phase pour plus de détails', 'Tocca una fase per maggiori dettagli')}</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
+            {Object.entries(PHASES).map(([key, ph]) => {
+              const phTr = getPhaseDisplay(lang, key, ph);
+              return (
+                <TouchableOpacity key={key} style={styles.phaseInfoItem} onPress={() => setExpanded(key)} activeOpacity={0.85}>
+                  <View style={[styles.phaseInfoImg, { backgroundColor: PHASE_BG[key] }]}>
+                    <Text style={styles.phaseInfoEmoji}>{ph.emoji}</Text>
+                  </View>
+                  <Text style={styles.phaseInfoName}>{phTr.name}</Text>
+                  <Text style={styles.phaseInfoDays}>{pDays[key]}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+      )}
+
       {/* ── FASES (ocultas con anticoncepción hormonal: la info de fases no aplica) ── */}
       {!isHormonalContra && Object.entries(PHASES).map(([key, ph]) => {
         const isA    = key === pi?.phase;
@@ -664,21 +712,6 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
       {/* ── SLEEP TRACKER ── */}
       {/* SleepCard movido a Gimnasio > Salud */}
 
-      {/* ── Botón para registrar el día (tracking Clue-style) ── */}
-      <TouchableOpacity
-        style={{ backgroundColor: '#1A56DB', borderRadius: 18, padding: 18, marginBottom: 12, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8, elevation: 3 }}
-        onPress={() => setTrackingOpen(true)}>
-        <Text style={{ color: 'white', fontWeight: '700', fontSize: 15 }}>
-          📝 {lang === 'en' ? 'Log today' : lang === 'fr' ? 'Enregistrer le jour' : lang === 'it' ? 'Registra il giorno' : 'Registrar el día'}
-        </Text>
-        <Text style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, marginTop: 4 }}>
-          {lang === 'en' ? 'Flow, mood, pain, energy…'
-           : lang === 'fr' ? 'Flux, humeur, douleur, énergie…'
-           : lang === 'it' ? 'Flusso, umore, dolore, energia…'
-           : 'Flujo, ánimo, dolor, energía…'}
-        </Text>
-      </TouchableOpacity>
-
       <CycleTrackingModal
         visible={trackingOpen}
         onClose={() => setTrackingOpen(false)}
@@ -692,7 +725,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
           directamente en la vista calendario (🩸 Marcar regla). */}
 
       {/* ── CONSEJOS ── */}
-      <TipsCard articles={cicloArticles} lang={lang} />
+      <TipsCard articles={cicloArticles} lang={lang} variant="azote" />
 
     </ScrollView>
     </SwipeableTabs>
@@ -719,18 +752,27 @@ const styles = StyleSheet.create({
   viewToggleBtn: { backgroundColor:'#F0F4FA', borderRadius:20, paddingHorizontal:12, paddingVertical:6, borderWidth:1, borderColor:'#E2E8F0' },
   viewToggleBtnText: { fontSize:15 },
 
+  // Registrar el día — tarjeta amarilla (Azote)
+  logDayCard: { backgroundColor:'#FECA04', borderRadius:24, padding:16, marginBottom:12 },
+  logDayHeader: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginBottom:16 },
+  logDayHeaderTxt: { fontSize:12, fontWeight:'600', color:'#261E01' },
+  logDayTitle: { fontSize:26, fontWeight:'800', color:'#261E01', lineHeight:30, marginBottom:8 },
+  logDaySub: { fontSize:14, color:'#261E01', lineHeight:20, marginBottom:20 },
+  logDayBtn: { backgroundColor:'#0A0A0A', height:48, borderRadius:12, alignItems:'center', justifyContent:'center', width:'100%' },
+  logDayBtnTxt: { color:'#FAFAFA', fontWeight:'700', fontSize:16 },
+
   // Calendar
-  legend: { flexDirection:'row', flexWrap:'wrap', gap:8, marginBottom:12 },
-  legendItem: { flexDirection:'row', alignItems:'center', gap:4 },
-  legendDot: { width:10, height:10, borderRadius:5 },
-  legendText: { fontSize:10, color:'#64748B' },
+  calendarCard: { backgroundColor:'#F5F5F5', borderRadius:32, paddingHorizontal:8, shadowOpacity:0, elevation:0 },
+  legend: { flexDirection:'row', flexWrap:'wrap', gap:4, marginBottom:12 },
+  legendTag: { height:24, paddingHorizontal:8, borderRadius:8, justifyContent:'center', alignItems:'center' },
+  legendTagText: { fontSize:10, fontWeight:'600', letterSpacing:0.3, textTransform:'uppercase' },
   calHeader: { flexDirection:'row', marginBottom:6 },
   calHeaderText: { flex:1, textAlign:'center', fontSize:12, fontWeight:'700', color:'#94A3B8' },
   calGrid: { flexDirection:'row', flexWrap:'wrap' },
-  calCell: { width:'14.28%', aspectRatio:1, justifyContent:'center', alignItems:'center', borderRadius:10 },
-  calCellToday: { borderWidth:2, borderColor:'#1A56DB' },
+  calCell: { width:'14.28%', aspectRatio:1, justifyContent:'center', alignItems:'center', borderRadius:4 },
+  calCellToday: { borderWidth:2, borderColor:'#171717' },
   calDayNum: { fontSize:15, fontWeight:'500', color:'#334155' },
-  calDayNumToday: { fontWeight:'800', color:'#1A56DB' },
+  calDayNumToday: { fontWeight:'800', color:'#171717' },
   calCellSelected: { borderWidth:2, borderColor:'#1E293B' },
   calDayNumSelected: { fontWeight:'800' },
   noDataNote: { fontSize:12, color:'#94A3B8', textAlign:'center', marginTop:8, lineHeight:18 },
@@ -772,6 +814,16 @@ const styles = StyleSheet.create({
   avgBadge: { backgroundColor:'#EFF6FF', paddingHorizontal:10, paddingVertical:4, borderRadius:10 },
   avgText: { fontSize:11, color:'#1A56DB', fontWeight:'700' },
   noDataText: { fontSize:12, color:'#94A3B8', textAlign:'center', marginTop:8 },
+
+  // Información de las fases — tarjetas horizontales
+  phaseInfoCard: { backgroundColor:'#F5F5F5', borderRadius:24, padding:16, marginBottom:12 },
+  phaseInfoTitle: { fontSize:20, fontWeight:'800', color:'#0A0A0A', marginBottom:4 },
+  phaseInfoSub: { fontSize:14, color:'#525252', marginBottom:16 },
+  phaseInfoItem: { width:160 },
+  phaseInfoImg: { width:160, height:160, borderRadius:12, alignItems:'center', justifyContent:'center', marginBottom:8 },
+  phaseInfoEmoji: { fontSize:56 },
+  phaseInfoName: { fontSize:16, fontWeight:'800', color:'#0A0A0A' },
+  phaseInfoDays: { fontSize:13, color:'#525252', marginTop:2 },
 
   // Phase cards
   phaseRow: { flexDirection:'row', justifyContent:'space-between', alignItems:'center' },

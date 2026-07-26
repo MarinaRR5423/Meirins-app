@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text, View, ActivityIndicator, Platform } from 'react-native';
+import { Text, View, ActivityIndicator, Platform, StyleSheet } from 'react-native';
+import Loading from './src/components/Loading';
 import { Home, Moon, Salad, Footprints, User } from 'lucide-react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
@@ -25,6 +26,8 @@ import { useHealthData } from './src/hooks/useHealthData';
 import { PostHogProvider, usePostHog } from 'posthog-react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ErrorBoundary from './src/components/ErrorBoundary';
+import FloatingTabBar from './src/components/FloatingTabBar';
+import ProfileAvatarButton from './src/components/ProfileAvatarButton';
 import { initAnalytics, wrapWithSentry, trackEvent, identifyUser, setPostHogClient, Events } from './src/lib/analytics';
 
 // Conector entre el contexto de PostHog y nuestro módulo analytics.js
@@ -37,8 +40,6 @@ function PostHogBridge() {
 const Tab = createBottomTabNavigator();
 
 // ─── Detectar idioma del dispositivo ──────────────────────────────────────────
-// Mapea el locale del sistema (ej: 'fr-FR', 'en-US', 'es-ES') a uno de los
-// 3 idiomas soportados. Si no hay coincidencia, usa inglés por defecto.
 function getDeviceLang() {
   const supported = ['es', 'en', 'fr', 'it'];
   const locales = Localization.getLocales?.() ?? [];
@@ -47,6 +48,16 @@ function getDeviceLang() {
     if (supported.includes(code)) return code;
   }
   return 'en';
+}
+
+// Detecta si el dispositivo usa sistema imperial (EE.UU., UK, etc.)
+function getDeviceUnitSystem() {
+  const locales = Localization.getLocales?.() ?? [];
+  const imperialRegions = ['US', 'GB', 'LR', 'MM'];
+  for (const locale of locales) {
+    if (imperialRegions.includes(locale.regionCode?.toUpperCase())) return 'imperial';
+  }
+  return 'metric';
 }
 
 // ─── Handle email confirmation deep link ───────────────────────────────────────
@@ -98,6 +109,7 @@ function App() {
   const profile    = useProfile();
   const healthData = useHealthData();
   const [setupLang, setSetupLang] = React.useState(getDeviceLang);
+  const [setupUnits, setSetupUnits] = React.useState(getDeviceUnitSystem);
   const [isOffline, setIsOffline] = useState(false);
 
   // Analytics init (no-op si no está configurado)
@@ -117,8 +129,9 @@ function App() {
     return () => sub.remove();
   }, []);
 
-  // Navegación desde notificación tap
+  // Navegación desde notificación tap (no soportado en web)
   useEffect(() => {
+    if (Platform.OS === 'web') return;
     // App abierta desde notificación (estaba cerrada)
     Notifications.getLastNotificationResponseAsync().then(response => {
       const screen = response?.notification?.request?.content?.data?.screen;
@@ -159,6 +172,9 @@ function App() {
   const tabs = (T[lang] || T.es).tabs;
   const { periodEnd, sleepLog, programContent } = profile;
   const pi = lastPeriod ? getPhaseInfo(lastPeriod, cycleLength, periodEnd) : null;
+  const enabledTabs = profile.profileExtended?.enabledTabs;
+  const handleToggleTab = (key, value) =>
+    profile.saveProfileExtended({ enabledTabs: { ...(profile.profileExtended?.enabledTabs || {}), [key]: value } });
 
   // Pick the right language column from program_content table.
   // For non-ES langs, fall back to null (→ static multilingual menus) instead
@@ -168,17 +184,21 @@ function App() {
     : null;
 
   if (authState === 'loading' || (authState === 'authenticated' && !profileLoaded)) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0F1F4A' }}>
-        <Text style={{ fontSize: 48, marginBottom: 16 }}>🌙</Text>
-        <Text style={{ color: 'white', fontSize: 18, fontWeight: '700', letterSpacing: 1.5, marginBottom: 18 }}>MEIRINS</Text>
-        <ActivityIndicator color="white" size="large" />
-      </View>
-    );
+    return <Loading variant="fullscreen" />;
   }
 
   if (authState === 'unauthenticated') return <ErrorBoundary><AuthScreen lang={setupLang} /></ErrorBoundary>;
-  if (!setupDone) return <ErrorBoundary><SetupScreen onDone={profile.handleSetupDone} lang={setupLang} onLangChange={setSetupLang} /></ErrorBoundary>;
+  if (!setupDone) return (
+    <ErrorBoundary>
+      <SetupScreen
+        onDone={(data) => profile.handleSetupDone({ ...data, lang: setupLang, unitSystem: setupUnits })}
+        lang={setupLang}
+        onLangChange={setSetupLang}
+        unitSystem={setupUnits}
+        onUnitSystemChange={setSetupUnits}
+      />
+    </ErrorBoundary>
+  );
 
   return (
     <SafeAreaProvider>
@@ -191,15 +211,14 @@ function App() {
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarStyle: { backgroundColor: 'white', borderTopColor: '#E2E8F0' },
-          tabBarActiveTintColor: '#1A56DB',
-          tabBarInactiveTintColor: '#94A3B8',
-          tabBarLabelStyle: { fontSize: 10, fontWeight: '600' },
           lazy: true,
           freezeOnBlur: true,
-        }}>
+        }}
+        tabBar={(props) => (
+          <FloatingTabBar {...props} enabledTabs={enabledTabs} onToggleTab={handleToggleTab} lang={lang} />
+        )}>
         <Tab.Screen name="Inicio" options={{ tabBarLabel: tabs.home, tabBarIcon: ({ color, size }) => <Home color={color} size={size} /> }}>
-          {() => <HomeScreen lang={lang} pi={pi} healthData={healthData} profile={{
+          {() => <HomeScreen lang={lang} pi={pi} healthData={healthData} logCycleDay={profile.logCycleDay} logRecipeDone={profile.logRecipeDone} profile={{
             age: profile.age, weight: profile.weight, height: profile.height,
             activityLevel: profile.activityLevel, goal: profile.goal,
             trainDays: profile.trainDays,
@@ -244,6 +263,7 @@ function App() {
           }} signOut={profile.signOut} />}
         </Tab.Screen>
       </Tab.Navigator>
+      <ProfileAvatarButton navigationRef={navigationRef} />
     </NavigationContainer>
     </ErrorBoundary>
     </PostHogProvider>

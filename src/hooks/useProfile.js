@@ -133,7 +133,7 @@ export const useProfile = () => {
     if (Object.keys(overrides).length) await saveProfile(overrides);
   };
 
-  const handleSetupDone = async ({ name: n, age: a, weight: w, height: h, activityLevel: al, modules: m, goals: g }) => {
+  const handleSetupDone = async ({ name: n, age: a, weight: w, height: h, activityLevel: al, modules: m, goals: g, lang: l, unitSystem: us }) => {
     setAge(a); setWeight(w); setHeight(h);
     if (al) setActivityLevel(al);
 
@@ -153,6 +153,8 @@ export const useProfile = () => {
       modules: m,
       goals: g || {},
       profileOnboardingComplete: true,
+      ...(l  ? { language: l }    : {}),
+      ...(us ? { unitSystem: us } : {}),
     };
     setProfileExtended(extended);
     await supabase.from('profiles').upsert({

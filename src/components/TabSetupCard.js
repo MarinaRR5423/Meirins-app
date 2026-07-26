@@ -8,7 +8,7 @@ import {
   View, Text, TouchableOpacity, StyleSheet, ScrollView,
   TextInput, Modal, SafeAreaView, Platform,
 } from 'react-native';
-import { Check, X, ChevronRight } from 'lucide-react-native';
+import { Check, X, ChevronRight, Calendar, CalendarDays } from 'lucide-react-native';
 import T from '../i18n/translations';
 import RangeCalendar from './RangeCalendar';
 import TrainerCard from './TrainerCard';
@@ -56,7 +56,21 @@ const BG   = '#0F1F4A';
 
 // ─── Componentes internos ─────────────────────────────────────────────────────
 
-function OptionCard({ label, desc, icon, selected, onPress }) {
+function OptionCard({ label, desc, icon, selected, onPress, variant = 'default' }) {
+  if (variant === 'azote') {
+    return (
+      <TouchableOpacity onPress={onPress}
+        style={[s.optCardAzote, selected && s.optCardAzoteActive]} activeOpacity={0.8}>
+        <View style={{ flex: 1 }}>
+          <Text style={s.optLabelAzote}>{label}</Text>
+          {desc ? <Text style={s.optDescAzote}>{desc}</Text> : null}
+        </View>
+        <View style={[s.radioBase, selected && s.radioBaseActive]}>
+          {selected && <View style={s.radioDot} />}
+        </View>
+      </TouchableOpacity>
+    );
+  }
   return (
     <TouchableOpacity onPress={onPress}
       style={[s.optCard, selected && s.optCardActive]} activeOpacity={0.8}>
@@ -70,7 +84,14 @@ function OptionCard({ label, desc, icon, selected, onPress }) {
   );
 }
 
-function Chip({ label, selected, onPress, danger }) {
+function Chip({ label, selected, onPress, danger, variant = 'default' }) {
+  if (variant === 'azote') {
+    return (
+      <TouchableOpacity onPress={onPress} style={[s.chipAzote, selected && s.chipAzoteActive]}>
+        <Text style={[s.chipAzoteLabel, selected && s.chipAzoteLabelActive]}>{label}</Text>
+      </TouchableOpacity>
+    );
+  }
   return (
     <TouchableOpacity onPress={onPress}
       style={[s.chip, selected && (danger ? s.chipDanger : s.chipActive)]}>
@@ -79,7 +100,22 @@ function Chip({ label, selected, onPress, danger }) {
   );
 }
 
-function DayPicker({ trainDays, onToggle, dayLetters }) {
+function DayPicker({ trainDays, onToggle, dayLetters, variant = 'default' }) {
+  if (variant === 'azote') {
+    return (
+      <View style={s.daysRowAzote}>
+        {[0, 1, 2, 3, 4, 5, 6].map(d => {
+          const on = trainDays.includes(d);
+          return (
+            <TouchableOpacity key={d} onPress={() => onToggle(d)}
+              style={[s.dayBtnAzote, on && s.dayBtnAzoteActive]}>
+              <Text style={[s.dayLetterAzote, on && s.dayLetterAzoteActive]}>{dayLetters[d]}</Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+    );
+  }
   return (
     <View style={s.daysRow}>
       {[0, 1, 2, 3, 4, 5, 6].map(d => {
@@ -98,14 +134,15 @@ function DayPicker({ trainDays, onToggle, dayLetters }) {
 
 // ─── Modal de contenido ───────────────────────────────────────────────────────
 
-function SetupModal({ visible, onClose, title, children }) {
+function SetupModal({ visible, onClose, title, children, variant = 'default' }) {
+  const azote = variant === 'azote';
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
-      <SafeAreaView style={s.modal}>
-        <View style={s.modalHeader}>
-          <Text style={s.modalTitle}>{title}</Text>
-          <TouchableOpacity onPress={onClose} style={s.closeBtn}>
-            <X size={20} color="#64748B" />
+      <SafeAreaView style={[s.modal, azote && s.modalAzote]}>
+        <View style={[s.modalHeader, azote && s.modalHeaderAzote]}>
+          <Text style={[s.modalTitle, azote && s.modalTitleAzote]}>{title}</Text>
+          <TouchableOpacity onPress={onClose} style={[s.closeBtn, azote && s.closeBtnAzote]}>
+            <X size={16} color={azote ? '#0A0A0A' : '#64748B'} />
           </TouchableOpacity>
         </View>
         <ScrollView contentContainerStyle={s.modalBody} keyboardShouldPersistTaps="handled">
@@ -149,8 +186,9 @@ export function CicloSetupCard({ lang, lastPeriod, setLastPeriod, cycleLength, s
   if (lastPeriod) return null;
 
   const txt = {
-    bannerTitle: { es: 'Configura tu ciclo', en: 'Configure your cycle', fr: 'Configure ton cycle', it: 'Configura il tuo ciclo' }[lang] || 'Configura tu ciclo',
-    bannerSub:   { es: 'Tu último período y salud menstrual', en: 'Your last period & menstrual health', fr: 'Tes dernières règles et santé menstruelle', it: 'Il tuo ultimo ciclo e salute mestruale' }[lang] || 'Tu último período y salud menstrual',
+    emptyTitle: { es: 'Registra tu primer ciclo', en: 'Log your first cycle', fr: 'Enregistre ton premier cycle', it: 'Registra il tuo primo ciclo' }[lang] || 'Registra tu primer ciclo',
+    emptySub:   { es: 'Añade la fecha de tu último período y desbloquea tu programa personalizado', en: 'Add the date of your last period to unlock your personalised programme', fr: 'Ajoute la date de tes dernières règles pour débloquer ton programme personnalisé', it: 'Aggiungi la data del tuo ultimo ciclo per sbloccare il tuo programma personalizzato' }[lang] || 'Añade la fecha de tu último período y desbloquea tu programa personalizado',
+    emptyCta:   { es: 'Registrar', en: 'Log it', fr: 'Enregistrer', it: 'Registra' }[lang] || 'Registrar',
     modalTitle:  { es: '🌙 Tu ciclo', en: '🌙 Your cycle', fr: '🌙 Ton cycle', it: '🌙 Il tuo ciclo' }[lang] || '🌙 Tu ciclo',
     yesLabel:    ob?.yes  || 'Sí',
     noLabel:     ob?.no   || 'No',
@@ -172,86 +210,82 @@ export function CicloSetupCard({ lang, lastPeriod, setLastPeriod, cycleLength, s
 
   return (
     <>
-      <TouchableOpacity style={s.banner} onPress={openModal} activeOpacity={0.85}>
-        <Text style={s.bannerEmoji}>🌙</Text>
-        <View style={{ flex: 1 }}>
-          <Text style={s.bannerTitle}>{txt.bannerTitle}</Text>
-          <Text style={s.bannerSub}>{txt.bannerSub}</Text>
+      <View style={s.cicloEmptyCard}>
+        <View style={s.cicloEmptyAvatar}>
+          <Calendar size={22} color="white" strokeWidth={2.2} />
         </View>
-        <ChevronRight size={20} color="#1A56DB" />
-      </TouchableOpacity>
+        <Text style={s.cicloEmptyTitle}>{txt.emptyTitle}</Text>
+        <Text style={s.cicloEmptySub}>{txt.emptySub}</Text>
+        <TouchableOpacity style={s.cicloEmptyBtn} onPress={openModal} activeOpacity={0.85}>
+          <Text style={s.cicloEmptyBtnTxt}>{txt.emptyCta}</Text>
+        </TouchableOpacity>
+      </View>
 
-      <SetupModal visible={open} onClose={() => setOpen(false)} title={txt.modalTitle}>
+      <SetupModal visible={open} onClose={() => setOpen(false)} title={txt.modalTitle} variant="azote">
 
         {/* ── Calendario de período (inicio + fin) ── */}
-        <Text style={s.secLabel}>
-          {lang === 'en' ? 'YOUR LAST PERIOD'
-           : lang === 'fr' ? 'TES DERNIÈRES RÈGLES'
-           : lang === 'it' ? 'IL TUO ULTIMO CICLO'
-           : 'TU ÚLTIMO PERÍODO'}
+        <Text style={s.secLabelAzote}>
+          {lang === 'en' ? 'Your last period'
+           : lang === 'fr' ? 'Tes dernières règles'
+           : lang === 'it' ? 'Il tuo ultimo ciclo'
+           : 'Tu último período'}
         </Text>
         <RangeCalendar
           start={rangeStart}
           end={rangeEnd}
           onChange={(st, en) => { setRangeStart(st); setRangeEnd(en); }}
-          color="#EF4444"
+          color="#49CF38"
           lang={lang}
         />
 
-        {/* ── Divider ── */}
-        <View style={[s.divider, { marginVertical: 18 }]} />
-
         {/* ── Etapa vital ── */}
-        <Text style={s.secLabel}>
-          {lang === 'en' ? 'YOUR LIFE STAGE'
-           : lang === 'fr' ? 'TA PHASE DE VIE'
-           : lang === 'it' ? 'LA TUA FASE DI VITA'
-           : 'TU ETAPA VITAL'}
+        <Text style={[s.secLabelAzote, { marginTop: 28 }]}>
+          {lang === 'en' ? 'Your life stage'
+           : lang === 'fr' ? 'Ta phase de vie'
+           : lang === 'it' ? 'La tua fase di vita'
+           : 'Tu etapa vital'}
         </Text>
-        {LIFE_STAGES_NEW.map(o => (
-          <OptionCard key={o.v} label={tr(o.l, lang)} selected={lifeStage === o.v} onPress={() => setLifeStage(o.v)} />
-        ))}
+        <View style={{ gap: 2 }}>
+          {LIFE_STAGES_NEW.map(o => (
+            <OptionCard key={o.v} variant="azote" label={tr(o.l, lang)} selected={lifeStage === o.v} onPress={() => setLifeStage(o.v)} />
+          ))}
+        </View>
         {lifeStage === 'pregnant' && ob?.pregnantBanner &&
           <Text style={s.pregnantBanner}>{ob.pregnantBanner}</Text>}
 
         {/* ── Condiciones ── */}
         {ob?.conditions && <>
-          <Text style={[s.secLabel, { marginTop: 20 }]}>{ob.conditionsLabel}</Text>
+          <Text style={[s.secLabelAzote, { marginTop: 24 }]}>{ob.conditionsLabel}</Text>
           <View style={s.chips}>
             {ob.conditions.map(o => (
-              <Chip key={o.v} label={o.l} selected={conditions.includes(o.v)} onPress={() => toggleCondition(o.v)} />
+              <Chip key={o.v} variant="azote" label={o.l} selected={conditions.includes(o.v)} onPress={() => toggleCondition(o.v)} />
             ))}
           </View>
         </>}
 
         {/* ── Contracepción ── */}
-        <Text style={[s.secLabel, { marginTop: 20 }]}>
-          {lang === 'en' ? 'CONTRACEPTION'
-           : lang === 'fr' ? 'CONTRACEPTION'
-           : lang === 'it' ? 'CONTRACCEZIONE'
-           : 'CONTRACEPCIÓN'}
+        <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
+          {lang === 'en' ? 'Contraception'
+           : lang === 'fr' ? 'Contraception'
+           : lang === 'it' ? 'Contraccezione'
+           : 'Contracepción'}
         </Text>
-        <Text style={s.secSub}>
-          {lang === 'en' ? 'Do you use any?' : lang === 'fr' ? 'En utilises-tu une ?' : lang === 'it' ? 'Ne usi una?' : '¿Usas alguna?'}
-        </Text>
-        <View style={s.yesNoRow}>
-          <TouchableOpacity style={[s.yesNoBtn, contraUse === true  && s.yesNoBtnActive]} onPress={() => setContraUse(true)}>
-            <Text style={[s.yesNoTxt, contraUse === true  && s.yesNoTxtActive]}>{txt.yesLabel}</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[s.yesNoBtn, contraUse === false && s.yesNoBtnActive]} onPress={() => { setContraUse(false); setContraType(''); }}>
-            <Text style={[s.yesNoTxt, contraUse === false && s.yesNoTxtActive]}>{txt.noLabel}</Text>
-          </TouchableOpacity>
+        <View style={{ gap: 2 }}>
+          <OptionCard variant="azote" label={txt.yesLabel} selected={contraUse === true} onPress={() => setContraUse(true)} />
+          <OptionCard variant="azote" label={txt.noLabel} selected={contraUse === false} onPress={() => { setContraUse(false); setContraType(''); }} />
         </View>
         {contraUse === true && (
           <View style={[s.chips, { marginTop: 10 }]}>
             {CONTRA_OPTIONS_NEW.map(o => (
-              <Chip key={o.v} label={tr(o.l, lang)} selected={contraType === o.v} onPress={() => setContraType(o.v)} />
+              <Chip key={o.v} variant="azote" label={tr(o.l, lang)} selected={contraType === o.v} onPress={() => setContraType(o.v)} />
             ))}
           </View>
         )}
 
-        <TouchableOpacity style={[s.saveBtn, (!canSave || saving) && { opacity: 0.45 }]} onPress={save} disabled={!canSave || saving}>
-          <Text style={s.saveBtnTxt}>{saving ? '…' : (p.common?.save || 'Guardar')}</Text>
+        <TouchableOpacity
+          style={[s.saveBtnAzote, (!canSave || saving) && { opacity: 0.45 }]}
+          onPress={save} disabled={!canSave || saving}>
+          <Text style={s.saveBtnAzoteTxt}>{saving ? '…' : (p.common?.save || 'Guardar')}</Text>
         </TouchableOpacity>
       </SetupModal>
     </>
@@ -356,6 +390,7 @@ export function CicloHealthCard({ lang, profileExtended, saveProfileExtended }) 
 export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExtended, activityLevel, goal, dietary }) {
   const p    = T[lang] || T.es;
   const ob   = p.onboarding;
+  const L    = (es, en, fr, it) => ({ es, en, fr, it }[lang] || es);
 
   // 19 dietas + ayunos desde Supabase
   const { diets: allDiets, dietsByCategory } = useDiets(lang);
@@ -427,27 +462,48 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
     setOpen(true);
   };
 
+  const emptyTxt = {
+    title: L('Configura tu nutrición', 'Set up your nutrition', 'Configure ta nutrition', 'Configura la tua nutrizione'),
+    sub:   L('Configura tus preferencias para que nos podamos adaptar a tus necesidades y gustos',
+             'Set your preferences so we can adapt to your needs and tastes',
+             'Configure tes préférences pour qu\'on puisse s\'adapter à tes besoins et goûts',
+             'Configura le tue preferenze così possiamo adattarci alle tue esigenze e gusti'),
+    cta:   L('Configurar nutrición', 'Set up nutrition', 'Configurer la nutrition', 'Configura nutrizione'),
+  };
+
   return (
     <>
-      <TouchableOpacity style={[s.banner, { borderColor: '#22C55E22', backgroundColor: '#F0FDF4' }]} onPress={openModal} activeOpacity={0.85}>
-        <Text style={s.bannerEmoji}>🥗</Text>
-        <View style={{ flex: 1 }}>
-          <Text style={[s.bannerTitle, { color: '#166534' }]}>
-            {hasNutriData
-              ? (lang === 'en' ? 'Edit your nutrition' : lang === 'fr' ? 'Modifie ta nutrition' : lang === 'it' ? 'Modifica la tua nutrizione' : 'Editar tu nutrición')
-              : (lang === 'en' ? 'Set up your nutrition' : lang === 'fr' ? 'Configure ta nutrition' : lang === 'it' ? 'Configura la tua nutrizione' : 'Configura tu nutrición')}
-          </Text>
-          <Text style={[s.bannerSub, { color: '#4ADE80' }]}>{lang === 'en' ? 'Diet, fasting, meals and supplements' : lang === 'fr' ? 'Régime, jeûne, repas et compléments' : lang === 'it' ? 'Dieta, digiuno, pasti e integratori' : 'Dieta, ayuno, comidas y complementos'}</Text>
+      {!hasNutriData ? (
+        <View style={s.gymEmptyCard}>
+          <View style={[s.gymEmptyAvatar, { backgroundColor: '#49CF38' }]}>
+            <Text style={{ fontSize: 22 }}>🥗</Text>
+          </View>
+          <Text style={s.gymEmptyTitle}>{emptyTxt.title}</Text>
+          <Text style={s.gymEmptySub}>{emptyTxt.sub}</Text>
+          <TouchableOpacity style={s.gymEmptyBtn} onPress={openModal} activeOpacity={0.85}>
+            <Text style={s.gymEmptyBtnTxt}>{emptyTxt.cta}</Text>
+          </TouchableOpacity>
         </View>
-        {hasNutriData ? <Text style={{ fontSize: 18 }}>✏️</Text> : <ChevronRight size={20} color="#166534" />}
-      </TouchableOpacity>
+      ) : (
+        <TouchableOpacity style={s.gymEditBanner} onPress={openModal} activeOpacity={0.85}>
+          <View style={{ flex: 1 }}>
+            <Text style={s.gymEditBannerTitle}>
+              {L('Editar tu nutrición', 'Edit your nutrition', 'Modifie ta nutrition', 'Modifica la tua nutrizione')}
+            </Text>
+            <Text style={s.gymEditBannerSub}>
+              {L('Dieta, ayuno, comidas y complementos', 'Diet, fasting, meals and supplements', 'Régime, jeûne, repas et compléments', 'Dieta, digiuno, pasti e integratori')}
+            </Text>
+          </View>
+          <ChevronRight size={20} color="#0A0A0A" />
+        </TouchableOpacity>
+      )}
 
-      <SetupModal visible={open} onClose={() => setOpen(false)}
-        title={lang === 'en' ? '🥗 Nutrition setup' : lang === 'fr' ? '🥗 Nutrition' : lang === 'it' ? '🥗 Nutrizione' : '🥗 Tu nutrición'}>
+      <SetupModal visible={open} onClose={() => setOpen(false)} variant="azote"
+        title={lang === 'en' ? 'Nutrition setup' : lang === 'fr' ? 'Nutrition' : lang === 'it' ? 'Nutrizione' : 'Nutrición'}>
 
         {/* ── DIETA BASE (19 opciones agrupadas) ── */}
-        <Text style={s.secLabel}>
-          {lang === 'en' ? 'YOUR DIET' : lang === 'fr' ? 'TON RÉGIME' : lang === 'it' ? 'LA TUA DIETA' : 'TU DIETA'}
+        <Text style={s.secLabelAzote}>
+          {lang === 'en' ? 'Your diet' : lang === 'fr' ? 'Ton régime' : lang === 'it' ? 'La tua dieta' : 'Tu dieta'}
         </Text>
         {allDiets.length > 0
           ? Object.entries(dietsByCategory)
@@ -457,54 +513,58 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
                 return (
                   <View key={cat} style={{ marginBottom: 6 }}>
                     <Text style={s.dietCatLabel}>{catInfo.icon} {catInfo.label[lang] || catInfo.label.es}</Text>
-                    {catDiets.map(d => {
-                      const sel = normalizeDietId(localDiet) === d.id;
-                      return (
-                        <OptionCard key={d.id} icon={d.icon} label={d.name[lang] || d.name.es}
-                          selected={sel} onPress={() => setLocalDiet(sel ? '' : d.id)} />
-                      );
-                    })}
+                    <View style={{ gap: 2 }}>
+                      {catDiets.map(d => {
+                        const sel = normalizeDietId(localDiet) === d.id;
+                        return (
+                          <OptionCard key={d.id} variant="azote" label={`${d.icon} ${d.name[lang] || d.name.es}`}
+                            selected={sel} onPress={() => setLocalDiet(sel ? '' : d.id)} />
+                        );
+                      })}
+                    </View>
                   </View>
                 );
               })
           : (ob?.diets || []).map(o => (
-              <OptionCard key={o.v} icon={o.ico} label={o.l} desc={o.d}
+              <OptionCard key={o.v} variant="azote" label={`${o.ico} ${o.l}`} desc={o.d}
                 selected={localDiet === o.v} onPress={() => setLocalDiet(o.v)} />
             ))
         }
 
         {/* ── PROTOCOLO DE AYUNO (opcional, combinable) ── */}
         {dietsByCategory?.['fasting']?.length > 0 && <>
-          <Text style={[s.secLabel, { marginTop: 20 }]}>
-            ⏰ {lang === 'en' ? 'FASTING PROTOCOL (OPTIONAL)'
-                : lang === 'fr' ? 'PROTOCOLE DE JEÛNE (OPTIONNEL)'
-                : lang === 'it' ? 'PROTOCOLLO DI DIGIUNO (OPZIONALE)'
-                : 'PROTOCOLO DE AYUNO (OPCIONAL)'}
+          <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
+            {lang === 'en' ? 'Fasting protocol (optional)'
+                : lang === 'fr' ? 'Protocole de jeûne (optionnel)'
+                : lang === 'it' ? 'Protocollo di digiuno (opzionale)'
+                : 'Protocolo de ayuno (opcional)'}
           </Text>
-          <Text style={s.secSub}>
+          <Text style={[s.secSub, { color: '#737373', marginTop: -6 }]}>
             {lang === 'en' ? 'Combinable with any diet above'
              : lang === 'fr' ? 'Combinable avec n\'importe quel régime'
              : 'Combinable con cualquier dieta'}
           </Text>
-          {dietsByCategory['fasting'].map(d => {
-            const sel = localFasting === d.id;
-            const fw  = d.fasting_window;
-            return (
-              <OptionCard key={d.id} icon={d.icon} label={d.name[lang] || d.name.es}
-                desc={fw?.eating_hours ? `🍽 ${fw.eating_hours}h · 🚫 ${fw.fasting_hours}h` : undefined}
-                selected={sel} onPress={() => setFasting(sel ? '' : d.id)} />
-            );
-          })}
+          <View style={{ gap: 2 }}>
+            {dietsByCategory['fasting'].map(d => {
+              const sel = localFasting === d.id;
+              const fw  = d.fasting_window;
+              return (
+                <OptionCard key={d.id} variant="azote" label={`${d.icon} ${d.name[lang] || d.name.es}`}
+                  desc={fw?.eating_hours ? `🍽 ${fw.eating_hours}h · 🚫 ${fw.fasting_hours}h` : undefined}
+                  selected={sel} onPress={() => setFasting(sel ? '' : d.id)} />
+              );
+            })}
+          </View>
         </>}
 
         {/* ── MODIFICADORES DE DIETA ── */}
-        <Text style={[s.secLabel, { marginTop: 20 }]}>
-          {lang === 'en' ? '⚙️ DIETARY MODIFIERS (OPTIONAL)'
-           : lang === 'fr' ? '⚙️ MODIFICATEURS ALIMENTAIRES (OPTIONNEL)'
-           : lang === 'it' ? '⚙️ MODIFICATORI DIETETICI (OPZIONALE)'
-           : '⚙️ MODIFICADORES DE DIETA (OPCIONAL)'}
+        <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
+          {lang === 'en' ? 'Dietary modifiers (optional)'
+           : lang === 'fr' ? 'Modificateurs alimentaires (optionnel)'
+           : lang === 'it' ? 'Modificatori dietetici (opzionale)'
+           : 'Modificadores de dieta (opcional)'}
         </Text>
-        <Text style={s.secSub}>
+        <Text style={[s.secSub, { color: '#737373', marginTop: -6 }]}>
           {lang === 'en' ? 'Combine with any diet. Only recipes that meet ALL selected filters will be shown.'
            : lang === 'fr' ? 'Combinables avec n\'importe quel régime. Seules les recettes qui respectent TOUS les filtres seront affichées.'
            : lang === 'it' ? 'Combinabili con qualsiasi dieta. Verranno mostrate solo le ricette che rispettano TUTTI i filtri selezionati.'
@@ -517,7 +577,7 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
             { v: 'low_fodmap',        l: { es: '🫘 Low FODMAP',       en: '🫘 Low FODMAP',        fr: '🫘 Low FODMAP',         it: '🫘 Low FODMAP' } },
             { v: 'anti_inflammatory', l: { es: '🌿 Antiinflamatoria', en: '🌿 Anti-inflammatory', fr: '🌿 Anti-inflammatoire',  it: '🌿 Antinfiammatoria' } },
           ].map(o => (
-            <Chip key={o.v}
+            <Chip key={o.v} variant="azote"
               label={o.l[lang] || o.l.es}
               selected={localModifiers.includes(o.v)}
               onPress={() => toggleArr(localModifiers, setModifiers, o.v)} />
@@ -525,10 +585,10 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
         </View>
 
         {/* ── COMIDAS DEL DÍA ── */}
-        <Text style={[s.secLabel, { marginTop: 20 }]}>
-          🍽️ {lang === 'en' ? 'MEALS YOU DO' : lang === 'fr' ? 'REPAS QUE TU FAIS' : lang === 'it' ? 'PASTI CHE FAI' : 'COMIDAS QUE HACES'}
+        <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
+          {lang === 'en' ? 'Meals you do' : lang === 'fr' ? 'Repas que tu fais' : lang === 'it' ? 'Pasti che fai' : 'Comidas que haces'}
         </Text>
-        <Text style={s.secSub}>
+        <Text style={[s.secSub, { color: '#737373', marginTop: -6 }]}>
           {localFasting && !usingCustom
             ? (lang === 'en' ? 'Auto-set by your fasting. Tap to customise.' : 'Definido por tu ayuno. Toca para personalizar.')
             : (lang === 'en' ? 'Untick the meals you skip.' : 'Desmarca las comidas que te saltas.')}
@@ -538,7 +598,7 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
             const sel = currentMeals.includes(mealId);
             const label = MEAL_LABELS[mealId][lang] || MEAL_LABELS[mealId].es;
             return (
-              <Chip key={mealId} label={`${sel ? '✓ ' : ''}${label}`} selected={sel}
+              <Chip key={mealId} variant="azote" label={`${sel ? '✓ ' : ''}${label}`} selected={sel}
                 onPress={() => toggleMeal(mealId)} />
             );
           })}
@@ -546,9 +606,9 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
 
         {/* ── ALERGIAS ── */}
         {ob?.allergies && <>
-          <Text style={[s.secLabel, { marginTop: 20, color: '#FCA5A5' }]}>{ob.allergyLabel}</Text>
+          <Text style={[s.secLabelAzote, { marginTop: 24 }]}>{ob.allergyLabel}</Text>
           <View style={s.chips}>
-            {ob.allergies.map(o => <Chip key={o.v} label={o.l} danger
+            {ob.allergies.map(o => <Chip key={o.v} variant="azote" label={o.l} danger
               selected={localAllergies.includes(o.v)}
               onPress={() => toggleArr(localAllergies, setAllergies, o.v)} />)}
           </View>
@@ -556,9 +616,9 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
 
         {/* ── ALIMENTOS QUE NO TE GUSTAN ── */}
         {ob?.dislikes && <>
-          <Text style={[s.secLabel, { marginTop: 20 }]}>{ob.dislikesLabel}</Text>
+          <Text style={[s.secLabelAzote, { marginTop: 24 }]}>{ob.dislikesLabel}</Text>
           <View style={s.chips}>
-            {ob.dislikes.map(o => <Chip key={o.v} label={o.l}
+            {ob.dislikes.map(o => <Chip key={o.v} variant="azote" label={o.l}
               selected={localDislikes.includes(o.v)}
               onPress={() => toggleArr(localDislikes, setDislikes, o.v)} />)}
           </View>
@@ -566,49 +626,45 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
 
         {/* ── TIEMPO DE COCINA ── */}
         {ob?.cooking && <>
-          <Text style={[s.secLabel, { marginTop: 20 }]}>{ob.cookingLabel}</Text>
-          {ob.cooking.map(o => <OptionCard key={o.v} label={o.l}
-            selected={localCooking === o.v} onPress={() => setCooking(o.v)} />)}
+          <Text style={[s.secLabelAzote, { marginTop: 24 }]}>{ob.cookingLabel}</Text>
+          <View style={{ gap: 2 }}>
+            {ob.cooking.map(o => <OptionCard key={o.v} variant="azote" label={o.l}
+              selected={localCooking === o.v} onPress={() => setCooking(o.v)} />)}
+          </View>
         </>}
 
         {/* ── PRESUPUESTO SEMANAL ── */}
         {ob?.budgets && <>
-          <Text style={[s.secLabel, { marginTop: 20 }]}>{ob.budgetLabel}</Text>
-          {ob.budgets.map(o => <OptionCard key={o.v} label={o.l}
-            selected={localBudget === o.v} onPress={() => setBudget(o.v)} />)}
+          <Text style={[s.secLabelAzote, { marginTop: 24 }]}>{ob.budgetLabel}</Text>
+          <View style={{ gap: 2 }}>
+            {ob.budgets.map(o => <OptionCard key={o.v} variant="azote" label={o.l}
+              selected={localBudget === o.v} onPress={() => setBudget(o.v)} />)}
+          </View>
         </>}
 
         {/* ── BATCH COOKING ── */}
-        <Text style={[s.secLabel, { marginTop: 20 }]}>
-          📅 {lang === 'en' ? 'BATCH COOKING' : lang === 'fr' ? 'BATCH COOKING' : lang === 'it' ? 'BATCH COOKING' : 'BATCH COOKING'}
+        <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
+          {lang === 'en' ? 'Batch cooking' : 'Batch cooking'}
         </Text>
-        <Text style={s.secSub}>
+        <Text style={[s.secSub, { color: '#737373', marginTop: -6 }]}>
           {lang === 'en' ? 'Rotate menus A/B/Free for meal-prep cooking'
            : lang === 'fr' ? 'Rotation de menus A/B/Libre pour batch cooking'
            : lang === 'it' ? 'Rotazione menù A/B/Libero per batch cooking'
            : 'Rotación de menús A/B/Libre para cocinar por lotes'}
         </Text>
-        <View style={s.yesNoRow}>
-          <TouchableOpacity style={[s.yesNoBtn, !localBatch && s.yesNoBtnActive]} onPress={() => setBatch(false)}>
-            <Text style={[s.yesNoTxt, !localBatch && s.yesNoTxtActive]}>
-              {lang === 'en' ? 'No' : lang === 'fr' ? 'Non' : 'No'}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[s.yesNoBtn, localBatch && s.yesNoBtnActive]} onPress={() => setBatch(true)}>
-            <Text style={[s.yesNoTxt, localBatch && s.yesNoTxtActive]}>
-              {lang === 'en' ? 'Yes' : lang === 'fr' ? 'Oui' : 'Sí'}
-            </Text>
-          </TouchableOpacity>
+        <View style={{ gap: 2 }}>
+          <OptionCard variant="azote" label={lang === 'en' ? 'Yes' : lang === 'fr' ? 'Oui' : 'Sí'} selected={localBatch} onPress={() => setBatch(true)} />
+          <OptionCard variant="azote" label={lang === 'en' ? 'No' : lang === 'fr' ? 'Non' : 'No'} selected={!localBatch} onPress={() => setBatch(false)} />
         </View>
 
         {/* ── COMPLEMENTOS ALIMENTARIOS ── */}
-        <Text style={[s.secLabel, { marginTop: 20 }]}>
-          {lang === 'en' ? '💊 SUPPLEMENTS'
-           : lang === 'fr' ? '💊 COMPLÉMENTS ALIMENTAIRES'
-           : lang === 'it' ? '💊 INTEGRATORI'
-           : '💊 COMPLEMENTOS ALIMENTARIOS'}
+        <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
+          {lang === 'en' ? 'Supplements'
+           : lang === 'fr' ? 'Compléments alimentaires'
+           : lang === 'it' ? 'Integratori'
+           : 'Complementos alimentarios'}
         </Text>
-        <Text style={s.secSub}>
+        <Text style={[s.secSub, { color: '#737373', marginTop: -6 }]}>
           {lang === 'en' ? 'Do you take any? Select all that apply.'
            : lang === 'fr' ? 'En prends-tu ? Sélectionne tout ce qui s\'applique.'
            : lang === 'it' ? 'Ne prendi qualcuno? Seleziona tutti.'
@@ -616,10 +672,10 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
         </Text>
         <View style={s.chips}>
           {SUPPLEMENTS_OPTIONS.map(o => (
-            <Chip key={o.v} label={tr(o.l, lang)} selected={localSupps.includes(o.v)}
+            <Chip key={o.v} variant="azote" label={tr(o.l, lang)} selected={localSupps.includes(o.v)}
               onPress={() => toggleArr(localSupps, setSupps, o.v)} />
           ))}
-          <Chip
+          <Chip variant="azote"
             label={lang === 'en' ? '➕ Other' : lang === 'fr' ? '➕ Autre' : lang === 'it' ? '➕ Altro' : '➕ Otros'}
             selected={localSupps.includes('other')}
             onPress={() => toggleArr(localSupps, setSupps, 'other')}
@@ -627,20 +683,20 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
         </View>
         {localSupps.includes('other') && (
           <TextInput
-            style={s.otherInput}
+            style={s.otherInputAzote}
             value={localSuppsOther}
             onChangeText={setSuppsOther}
             placeholder={lang === 'en' ? 'Which one(s)? Separate by commas'
               : lang === 'fr' ? 'Lequel/lesquels ? Séparés par virgules'
               : lang === 'it' ? 'Quale/quali? Separati da virgole'
               : '¿Cuáles? Separados por comas'}
-            placeholderTextColor="rgba(255,255,255,0.3)"
+            placeholderTextColor="#A3A3A3"
             multiline
           />
         )}
 
-        <TouchableOpacity style={[s.saveBtn, saving && { opacity: 0.6 }]} onPress={save} disabled={saving}>
-          <Text style={s.saveBtnTxt}>{saving ? '…' : (p.common.save || 'Guardar')}</Text>
+        <TouchableOpacity style={[s.saveBtnAzote, saving && { opacity: 0.45 }]} onPress={save} disabled={saving}>
+          <Text style={s.saveBtnAzoteTxt}>{saving ? '…' : (p.common.save || 'Guardar')}</Text>
         </TouchableOpacity>
       </SetupModal>
     </>
@@ -817,27 +873,48 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
     setOpen(true);
   };
 
+  const emptyTxt = {
+    title: L('Plan de entrenamiento', 'Training plan', 'Plan d\'entraînement', 'Piano di allenamento'),
+    sub:   L('Configura tus preferencias para que nos podamos adaptar a tus necesidades y gustos',
+             'Set your preferences so we can adapt to your needs and tastes',
+             'Configure tes préférences pour qu\'on puisse s\'adapter à tes besoins et goûts',
+             'Configura le tue preferenze così possiamo adattarci alle tue esigenze e gusti'),
+    cta:   L('Configurar entrenamiento', 'Set up training', 'Configurer l\'entraînement', 'Configura allenamento'),
+  };
+
   return (
     <>
-      <TouchableOpacity style={[s.banner, { borderColor: '#6366F122', backgroundColor: '#EEF2FF' }]} onPress={openModal} activeOpacity={0.85}>
-        <Text style={s.bannerEmoji}>🏋️</Text>
-        <View style={{ flex: 1 }}>
-          <Text style={[s.bannerTitle, { color: '#312E81' }]}>
-            {hasGymData
-              ? (lang === 'en' ? 'Edit your training' : lang === 'fr' ? 'Modifie ton entraînement' : lang === 'it' ? 'Modifica il tuo allenamento' : 'Editar tu entrenamiento')
-              : (lang === 'en' ? 'Set up your training' : lang === 'fr' ? 'Configure ton entraînement' : lang === 'it' ? 'Configura il tuo allenamento' : 'Configura tu entrenamiento')}
-          </Text>
-          <Text style={[s.bannerSub, { color: '#818CF8' }]}>{lang === 'en' ? 'Days, level, location and goal' : lang === 'fr' ? 'Jours, niveau, lieu et objectif' : lang === 'it' ? 'Giorni, livello, luogo e obiettivo' : 'Días, nivel, lugar y objetivo'}</Text>
+      {!hasGymData ? (
+        <View style={s.gymEmptyCard}>
+          <View style={s.gymEmptyAvatar}>
+            <CalendarDays size={22} color="white" strokeWidth={2.2} />
+          </View>
+          <Text style={s.gymEmptyTitle}>{emptyTxt.title}</Text>
+          <Text style={s.gymEmptySub}>{emptyTxt.sub}</Text>
+          <TouchableOpacity style={s.gymEmptyBtn} onPress={openModal} activeOpacity={0.85}>
+            <Text style={s.gymEmptyBtnTxt}>{emptyTxt.cta}</Text>
+          </TouchableOpacity>
         </View>
-        {hasGymData ? <Text style={{ fontSize: 18 }}>✏️</Text> : <ChevronRight size={20} color="#312E81" />}
-      </TouchableOpacity>
+      ) : (
+        <TouchableOpacity style={s.gymEditBanner} onPress={openModal} activeOpacity={0.85}>
+          <View style={{ flex: 1 }}>
+            <Text style={s.gymEditBannerTitle}>
+              {L('Editar tu entrenamiento', 'Edit your training', 'Modifie ton entraînement', 'Modifica il tuo allenamento')}
+            </Text>
+            <Text style={s.gymEditBannerSub}>
+              {L('Días, nivel, lugar y objetivo', 'Days, level, location and goal', 'Jours, niveau, lieu et objectif', 'Giorni, livello, luogo e obiettivo')}
+            </Text>
+          </View>
+          <ChevronRight size={20} color="#0A0A0A" />
+        </TouchableOpacity>
+      )}
 
-      <SetupModal visible={open} onClose={() => setOpen(false)}
-        title={lang === 'en' ? '🏋️ Training setup' : lang === 'fr' ? '🏋️ Entraînement' : lang === 'it' ? '🏋️ Allenamento' : '🏋️ Tu entrenamiento'}>
+      <SetupModal visible={open} onClose={() => setOpen(false)} variant="azote"
+        title={lang === 'en' ? 'Training setup' : lang === 'fr' ? 'Entraînement' : lang === 'it' ? 'Allenamento' : 'Ejercicio'}>
 
-        <Text style={s.secLabel}>{(p.setup?.step6Title || '¿CUÁNDO ENTRENAS?').toUpperCase()}</Text>
-        <Text style={s.secSub}>{maxLabel}</Text>
-        <DayPicker trainDays={localDays} onToggle={toggleDay} dayLetters={DAY_LETTERS} />
+        <Text style={s.secLabelAzote}>{p.setup?.step6Title || '¿Cuándo entrenas?'}</Text>
+        <Text style={[s.secSub, { color: '#737373', marginTop: -6 }]}>{maxLabel}</Text>
+        <DayPicker trainDays={localDays} onToggle={toggleDay} dayLetters={DAY_LETTERS} variant="azote" />
 
         {/* Opción "sin días fijos" */}
         <TouchableOpacity
@@ -850,63 +927,69 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
         </TouchableOpacity>
 
         {ob?.fitness && <>
-          <Text style={[s.secLabel, { marginTop: 24 }]}>{ob.fitnessLabel}</Text>
-          {ob.fitness.map(o => <OptionCard key={o.v} icon={o.ico} label={o.l} desc={o.d} selected={localFitness === o.v} onPress={() => setLocalFitness(o.v)} />)}
+          <Text style={[s.secLabelAzote, { marginTop: 28 }]}>{ob.fitnessLabel}</Text>
+          <View style={{ gap: 2 }}>
+            {ob.fitness.map(o => <OptionCard key={o.v} variant="azote" label={o.l} desc={o.d} selected={localFitness === o.v} onPress={() => setLocalFitness(o.v)} />)}
+          </View>
         </>}
 
         {ob?.gymOptions && <>
-          <Text style={[s.secLabel, { marginTop: 20 }]}>{ob.gymLabel}</Text>
-          <Text style={s.secSub}>{L('Puedes elegir varios', 'You can pick several', 'Tu peux en choisir plusieurs', 'Puoi sceglierne più di uno')}</Text>
-          {ob.gymOptions.map(o => <OptionCard key={o.v} icon={o.ico} label={o.l} selected={localGym.includes(o.v)} onPress={() => toggleGym(o.v)} />)}
+          <Text style={[s.secLabelAzote, { marginTop: 24 }]}>{ob.gymLabel}</Text>
+          <Text style={[s.secSub, { color: '#737373', marginTop: -6 }]}>{L('Puedes elegir varios', 'You can pick several', 'Tu peux en choisir plusieurs', 'Puoi sceglierne più di uno')}</Text>
+          <View style={s.chips}>
+            {ob.gymOptions.map(o => <Chip key={o.v} variant="azote" label={`${o.ico} ${o.l}`} selected={localGym.includes(o.v)} onPress={() => toggleGym(o.v)} />)}
+          </View>
         </>}
 
         {/* ── Objetivo deportivo (editable, viene del paso 3 del onboarding) ── */}
-        <Text style={[s.secLabel, { marginTop: 24 }]}>
-          {L('🎯 TU OBJETIVO DEPORTIVO', '🎯 YOUR SPORT GOAL', '🎯 TON OBJECTIF SPORTIF', '🎯 IL TUO OBIETTIVO SPORTIVO')}
+        <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
+          {L('Tu objetivo deportivo', 'Your sport goal', 'Ton objectif sportif', 'Il tuo obiettivo sportivo')}
         </Text>
-        {SPORT_GOALS.map(o => (
-          <OptionCard key={o.id} icon={o.emoji}
-            label={o.label[lang] || o.label.es} desc={o.desc[lang] || o.desc.es}
-            selected={sportGoal === o.id} onPress={() => setSportGoal(o.id)} />
-        ))}
+        <View style={{ gap: 2 }}>
+          {SPORT_GOALS.map(o => (
+            <OptionCard key={o.id} variant="azote"
+              label={`${o.emoji} ${o.label[lang] || o.label.es}`} desc={o.desc[lang] || o.desc.es}
+              selected={sportGoal === o.id} onPress={() => setSportGoal(o.id)} />
+          ))}
+        </View>
 
         {/* ── Objetivo: COMPETICIÓN ── */}
         {sportGoal === 'competition' && <>
-          <Text style={[s.secLabel, { marginTop: 24 }]}>
-            {L('🏆 ¿PARA QUÉ COMPETICIÓN TE PREPARAS?', '🏆 WHICH COMPETITION ARE YOU TRAINING FOR?', '🏆 POUR QUELLE COMPÉTITION TE PRÉPARES-TU ?', '🏆 PER QUALE COMPETIZIONE TI PREPARI?')}
+          <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
+            {L('¿Para qué competición te preparas?', 'Which competition are you training for?', 'Pour quelle compétition te prépares-tu ?', 'Per quale competizione ti prepari?')}
           </Text>
           <View style={s.chips}>
             {COMP_SPORTS.map(o => (
-              <Chip key={o.id} label={`${o.emoji} ${o.label[lang] || o.label.es}`}
+              <Chip key={o.id} variant="azote" label={`${o.emoji} ${o.label[lang] || o.label.es}`}
                 selected={compSport === o.id} onPress={() => setCompSport(o.id)} />
             ))}
           </View>
           {compSport === 'other' && (
-            <TextInput style={s.otherInput} value={compSportOther} onChangeText={setCompSportOther}
+            <TextInput style={s.otherInputAzote} value={compSportOther} onChangeText={setCompSportOther}
               placeholder={L('¿Qué deporte?', 'Which sport?', 'Quel sport ?', 'Quale sport?')}
-              placeholderTextColor="rgba(255,255,255,0.3)" />
+              placeholderTextColor="#A3A3A3" />
           )}
 
-          <Text style={[s.secLabel, { marginTop: 20 }]}>
-            {L('📅 DÍA DE LA COMPETICIÓN', '📅 COMPETITION DAY', '📅 JOUR DE LA COMPÉTITION', '📅 GIORNO DELLA COMPETIZIONE')}
+          <Text style={[s.secLabelAzote, { marginTop: 20 }]}>
+            {L('Día de la competición', 'Competition day', 'Jour de la compétition', 'Giorno della competizione')}
           </Text>
-          <TextInput style={s.otherInput} value={compDate} onChangeText={setCompDate}
+          <TextInput style={s.otherInputAzote} value={compDate} onChangeText={setCompDate}
             placeholder={L('DD/MM/AAAA', 'DD/MM/YYYY', 'JJ/MM/AAAA', 'GG/MM/AAAA')}
-            placeholderTextColor="rgba(255,255,255,0.3)" />
+            placeholderTextColor="#A3A3A3" />
 
-          <Text style={[s.secLabel, { marginTop: 20 }]}>
-            {L('📏 DISTANCIA', '📏 DISTANCE', '📏 DISTANCE', '📏 DISTANZA')}
+          <Text style={[s.secLabelAzote, { marginTop: 20 }]}>
+            {L('Distancia', 'Distance', 'Distance', 'Distanza')}
           </Text>
-          <TextInput style={s.otherInput} value={compDistance} onChangeText={setCompDistance}
+          <TextInput style={s.otherInputAzote} value={compDistance} onChangeText={setCompDistance}
             placeholder={L('Ej: 21 km, sprint, olímpico…', 'E.g.: 21 km, sprint, olympic…', 'Ex : 21 km, sprint, olympique…', 'Es: 21 km, sprint, olimpico…')}
-            placeholderTextColor="rgba(255,255,255,0.3)" />
+            placeholderTextColor="#A3A3A3" />
 
-          <Text style={[s.secLabel, { marginTop: 20 }]}>
-            {L('📊 NIVEL ACTUAL EN ESTE DEPORTE', '📊 CURRENT LEVEL IN THIS SPORT', '📊 NIVEAU ACTUEL DANS CE SPORT', '📊 LIVELLO ATTUALE IN QUESTO SPORT')}
+          <Text style={[s.secLabelAzote, { marginTop: 20 }]}>
+            {L('Nivel actual en este deporte', 'Current level in this sport', 'Niveau actuel dans ce sport', 'Livello attuale in questo sport')}
           </Text>
           <View style={s.chips}>
             {COMP_LEVELS.map(o => (
-              <Chip key={o.id} label={`${o.emoji} ${o.label[lang] || o.label.es}`}
+              <Chip key={o.id} variant="azote" label={`${o.emoji} ${o.label[lang] || o.label.es}`}
                 selected={compLevel === o.id} onPress={() => setCompLevel(o.id)} />
             ))}
           </View>
@@ -914,64 +997,66 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
 
         {/* ── Objetivo: RETOMAR EL DEPORTE ── */}
         {sportGoal === 'resume' && <>
-          <Text style={[s.secLabel, { marginTop: 24 }]}>
-            {L('⏱️ ¿CUÁNDO FUE TU ÚLTIMA SESIÓN DE DEPORTE?', '⏱️ WHEN WAS YOUR LAST SPORT SESSION?', '⏱️ QUAND ÉTAIT TA DERNIÈRE SÉANCE DE SPORT ?', '⏱️ QUANDO È STATA LA TUA ULTIMA SESSIONE DI SPORT?')}
+          <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
+            {L('¿Cuándo fue tu última sesión de deporte?', 'When was your last sport session?', 'Quand était ta dernière séance de sport ?', 'Quando è stata la tua ultima sessione di sport?')}
           </Text>
-          {LAST_SESSION_OPTIONS.map(o => (
-            <OptionCard key={o.id} icon="🗓️" label={o.label[lang] || o.label.es}
-              selected={lastSession === o.id} onPress={() => setLastSession(o.id)} />
-          ))}
+          <View style={{ gap: 2 }}>
+            {LAST_SESSION_OPTIONS.map(o => (
+              <OptionCard key={o.id} variant="azote" label={o.label[lang] || o.label.es}
+                selected={lastSession === o.id} onPress={() => setLastSession(o.id)} />
+            ))}
+          </View>
 
-          <Text style={[s.secLabel, { marginTop: 20 }]}>
-            {L('🩹 ¿HAS TENIDO ALGUNA LESIÓN EN PARTICULAR?', '🩹 HAVE YOU HAD ANY PARTICULAR INJURY?', '🩹 AS-TU EU UNE BLESSURE EN PARTICULIER ?', '🩹 HAI AVUTO QUALCHE INFORTUNIO IN PARTICOLARE?')}
+          <Text style={[s.secLabelAzote, { marginTop: 20 }]}>
+            {L('¿Has tenido alguna lesión en particular?', 'Have you had any particular injury?', 'As-tu eu une blessure en particulier ?', 'Hai avuto qualche infortunio in particolare?')}
           </Text>
           <View style={s.chips}>
-            <Chip label={L('Sí', 'Yes', 'Oui', 'Sì')} selected={hadInjury === 'yes'} onPress={() => setHadInjury('yes')} />
-            <Chip label={L('No', 'No', 'Non', 'No')} selected={hadInjury === 'no'} onPress={() => setHadInjury('no')} />
+            <Chip variant="azote" label={L('Sí', 'Yes', 'Oui', 'Sì')} selected={hadInjury === 'yes'} onPress={() => setHadInjury('yes')} />
+            <Chip variant="azote" label={L('No', 'No', 'Non', 'No')} selected={hadInjury === 'no'} onPress={() => setHadInjury('no')} />
           </View>
           {hadInjury === 'yes' && (
-            <TextInput style={s.otherInput} value={injuryDetail} onChangeText={setInjuryDetail}
+            <TextInput style={s.otherInputAzote} value={injuryDetail} onChangeText={setInjuryDetail}
               placeholder={L('¿Cuál? Ej: rodilla, espalda…', 'Which one? E.g.: knee, back…', 'Laquelle ? Ex : genou, dos…', 'Quale? Es: ginocchio, schiena…')}
-              placeholderTextColor="rgba(255,255,255,0.3)" multiline />
+              placeholderTextColor="#A3A3A3" multiline />
           )}
         </>}
 
         {/* ── Preguntas comunes (retomar / ganar músculo / tonificar) ── */}
         {(sportGoal === 'resume' || sportGoal === 'muscle' || sportGoal === 'tone') && <>
-          <Text style={[s.secLabel, { marginTop: 24 }]}>
-            {L('🏃 ¿QUÉ DEPORTE REALIZAS?', '🏃 WHAT SPORT DO YOU DO?', '🏃 QUEL SPORT PRATIQUES-TU ?', '🏃 CHE SPORT FAI?')}
+          <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
+            {L('¿Qué deporte realizas?', 'What sport do you do?', 'Quel sport pratiques-tu ?', 'Che sport fai?')}
           </Text>
-          <Text style={s.secSub}>{L('Puedes elegir varios', 'You can pick several', 'Tu peux en choisir plusieurs', 'Puoi sceglierne più di uno')}</Text>
+          <Text style={[s.secSub, { color: '#737373', marginTop: -6 }]}>{L('Puedes elegir varios', 'You can pick several', 'Tu peux en choisir plusieurs', 'Puoi sceglierne più di uno')}</Text>
           <View style={s.chips}>
             {SPORTS_LIST.map(o => (
-              <Chip key={o.id} label={`${o.emoji} ${o.label[lang] || o.label.es}`}
+              <Chip key={o.id} variant="azote" label={`${o.emoji} ${o.label[lang] || o.label.es}`}
                 selected={currentSports.includes(o.id)} onPress={() => toggleSport(o.id)} />
             ))}
           </View>
           {currentSports.includes('other') && (
-            <TextInput style={s.otherInput} value={currentSportOther} onChangeText={setCurrentSportOther}
+            <TextInput style={s.otherInputAzote} value={currentSportOther} onChangeText={setCurrentSportOther}
               placeholder={L('¿Cuál? Separados por comas', 'Which one(s)? Separate by commas', 'Lequel/lesquels ? Séparés par virgules', 'Quale/quali? Separati da virgole')}
-              placeholderTextColor="rgba(255,255,255,0.3)" />
+              placeholderTextColor="#A3A3A3" />
           )}
 
-          <Text style={[s.secLabel, { marginTop: 20 }]}>
-            {L('✨ ¿TE GUSTARÍA EMPEZAR UN NUEVO DEPORTE?', '✨ WOULD YOU LIKE TO START A NEW SPORT?', '✨ AIMERAIS-TU COMMENCER UN NOUVEAU SPORT ?', '✨ TI PIACEREBBE INIZIARE UN NUOVO SPORT?')}
+          <Text style={[s.secLabelAzote, { marginTop: 20 }]}>
+            {L('¿Te gustaría empezar un nuevo deporte?', 'Would you like to start a new sport?', 'Aimerais-tu commencer un nouveau sport ?', 'Ti piacerebbe iniziare un nuovo sport?')}
           </Text>
           <View style={s.chips}>
-            <Chip label={L('Sí', 'Yes', 'Oui', 'Sì')} selected={wantNewSport === 'yes'} onPress={() => setWantNewSport('yes')} />
-            <Chip label={L('No', 'No', 'Non', 'No')} selected={wantNewSport === 'no'} onPress={() => setWantNewSport('no')} />
+            <Chip variant="azote" label={L('Sí', 'Yes', 'Oui', 'Sì')} selected={wantNewSport === 'yes'} onPress={() => setWantNewSport('yes')} />
+            <Chip variant="azote" label={L('No', 'No', 'Non', 'No')} selected={wantNewSport === 'no'} onPress={() => setWantNewSport('no')} />
           </View>
           {wantNewSport === 'yes' && (
-            <TextInput style={s.otherInput} value={newSportDetail} onChangeText={setNewSportDetail}
+            <TextInput style={s.otherInputAzote} value={newSportDetail} onChangeText={setNewSportDetail}
               placeholder={L('¿Cuál te llama?', 'Which one appeals to you?', 'Lequel te tente ?', 'Quale ti attira?')}
-              placeholderTextColor="rgba(255,255,255,0.3)" />
+              placeholderTextColor="#A3A3A3" />
           )}
         </>}
 
         <TrainerCard lang={lang} />
 
-        <TouchableOpacity style={[s.saveBtn, saving && { opacity: 0.6 }]} onPress={save} disabled={saving}>
-          <Text style={s.saveBtnTxt}>{saving ? '…' : (p.common.save || 'Guardar')}</Text>
+        <TouchableOpacity style={[s.saveBtnAzote, saving && { opacity: 0.45 }]} onPress={save} disabled={saving}>
+          <Text style={s.saveBtnAzoteTxt}>{saving ? '…' : (p.common.save || 'Guardar')}</Text>
         </TouchableOpacity>
       </SetupModal>
     </>
@@ -991,6 +1076,61 @@ const s = StyleSheet.create({
   bannerSub:   { fontSize: 12, color: '#3B82F6' },
   bannerArrow: { fontSize: 18, color: '#1E3A8A', fontWeight: '700' },
 
+  // Ciclo — tarjeta de estado vacío (Azote redesign)
+  cicloEmptyCard: {
+    backgroundColor: '#FAFAFA', borderRadius: 24, padding: 20,
+    marginBottom: 12, borderWidth: 1, borderColor: '#E5E5E5',
+    alignItems: 'center',
+  },
+  cicloEmptyAvatar: {
+    width: 48, height: 48, borderRadius: 16, backgroundColor: '#49CF38',
+    alignItems: 'center', justifyContent: 'center', marginBottom: 16,
+  },
+  cicloEmptyTitle: {
+    fontSize: 20, fontWeight: '800', color: '#171717',
+    textAlign: 'center', marginBottom: 8,
+  },
+  cicloEmptySub: {
+    fontSize: 14, color: '#525252', textAlign: 'center',
+    lineHeight: 20, marginBottom: 20,
+  },
+  cicloEmptyBtn: {
+    backgroundColor: '#171717', borderRadius: 12, height: 48,
+    alignItems: 'center', justifyContent: 'center', width: '100%',
+  },
+  cicloEmptyBtnTxt: { color: '#FAFAFA', fontWeight: '700', fontSize: 16 },
+
+  // Ejercicio — tarjeta de estado vacío (Azote redesign)
+  gymEmptyCard: {
+    backgroundColor: '#FAFAFA', borderRadius: 24, padding: 20,
+    marginBottom: 12, borderWidth: 1, borderColor: '#E5E5E5',
+    alignItems: 'center',
+  },
+  gymEmptyAvatar: {
+    width: 48, height: 48, borderRadius: 16, backgroundColor: '#429FE7',
+    alignItems: 'center', justifyContent: 'center', marginBottom: 16,
+  },
+  gymEmptyTitle: {
+    fontSize: 20, fontWeight: '800', color: '#171717',
+    textAlign: 'center', marginBottom: 8,
+  },
+  gymEmptySub: {
+    fontSize: 14, color: '#525252', textAlign: 'center',
+    lineHeight: 20, marginBottom: 20,
+  },
+  gymEmptyBtn: {
+    backgroundColor: '#171717', borderRadius: 12, height: 48,
+    alignItems: 'center', justifyContent: 'center', width: '100%',
+  },
+  gymEmptyBtnTxt: { color: '#FAFAFA', fontWeight: '700', fontSize: 16 },
+  gymEditBanner: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    backgroundColor: '#FAFAFA', borderRadius: 24, padding: 16,
+    marginBottom: 12, borderWidth: 1, borderColor: '#E5E5E5',
+  },
+  gymEditBannerTitle: { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 2 },
+  gymEditBannerSub:   { fontSize: 12, color: '#525252' },
+
   // Modal
   modal:       { flex: 1, backgroundColor: BG },
   modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)' },
@@ -998,6 +1138,26 @@ const s = StyleSheet.create({
   closeBtn:    { width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.15)', justifyContent: 'center', alignItems: 'center' },
   closeTxt:    { color: 'white', fontSize: 14, fontWeight: '600' },
   modalBody:   { padding: 20, paddingBottom: 60 },
+
+  // Modal — variant "azote" (Ciclo)
+  modalAzote:       { backgroundColor: 'white' },
+  modalHeaderAzote: { borderBottomColor: '#F1F5F9' },
+  modalTitleAzote:  { color: '#0A0A0A', fontWeight: '800' },
+  closeBtnAzote:    { backgroundColor: '#F5F5F5' },
+  secLabelAzote:    { fontSize: 16, fontWeight: '700', color: '#171717', marginBottom: 10 },
+  optCardAzote:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, backgroundColor: '#FAFAFA', borderRadius: 24, padding: 16, minHeight: 56, borderWidth: 1, borderColor: 'transparent' },
+  optCardAzoteActive: { backgroundColor: '#F5F5F5', borderColor: '#262626' },
+  optLabelAzote:      { fontSize: 16, color: '#0A0A0A' },
+  optDescAzote:       { fontSize: 12, color: '#737373', marginTop: 2 },
+  radioBase:       { width: 20, height: 20, borderRadius: 10, borderWidth: 1, borderColor: '#737373', backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
+  radioBaseActive: { backgroundColor: '#262626', borderColor: '#262626' },
+  radioDot:        { width: 8, height: 8, borderRadius: 4, backgroundColor: 'white' },
+  chipAzote:            { height: 40, paddingHorizontal: 8, borderRadius: 16, backgroundColor: '#FAFAFA', alignItems: 'center', justifyContent: 'center' },
+  chipAzoteActive:      { backgroundColor: '#0A0A0A' },
+  chipAzoteLabel:       { fontSize: 16, color: '#0A0A0A' },
+  chipAzoteLabelActive: { color: 'white' },
+  saveBtnAzote:    { marginTop: 28, height: 48, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center' },
+  saveBtnAzoteTxt: { color: '#FAFAFA', fontWeight: '700', fontSize: 18 },
 
   // Section
   secLabel: { fontSize: 11, fontWeight: '700', color: 'rgba(255,255,255,0.5)', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginTop: 4 },
@@ -1027,6 +1187,13 @@ const s = StyleSheet.create({
   dayLetter:     { fontSize: 11, color: 'rgba(255,255,255,0.6)', fontWeight: '700' },
   dayLetterActive:{ color: '#1A56DB' },
 
+  // Day picker — variant "azote"
+  daysRowAzote:      { flexDirection: 'row', gap: 4, marginBottom: 8 },
+  dayBtnAzote:       { flex: 1, aspectRatio: 1, borderRadius: 4, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
+  dayBtnAzoteActive: { backgroundColor: '#0A0A0A' },
+  dayLetterAzote:      { fontSize: 12, color: '#0A0A0A' },
+  dayLetterAzoteActive:{ color: 'white' },
+
   // Date buttons
   dateBtn:       { padding: 12, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', marginRight: 8, alignItems: 'center' },
   dateBtnActive: { backgroundColor: 'white' },
@@ -1041,10 +1208,10 @@ const s = StyleSheet.create({
   lenTxtActive:  { color: '#1A56DB', fontWeight: '700' },
 
   // Sin días fijos
-  noTrainingBtn:       { marginTop: 10, marginBottom: 4, padding: 12, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', alignItems: 'center' },
-  noTrainingBtnActive: { backgroundColor: 'rgba(255,255,255,0.12)', borderColor: 'rgba(255,255,255,0.5)' },
-  noTrainingTxt:       { fontSize: 13, color: 'rgba(255,255,255,0.5)', fontWeight: '500' },
-  noTrainingTxtActive: { color: 'white', fontWeight: '600' },
+  noTrainingBtn:       { marginTop: 4, marginBottom: 4, padding: 12, borderRadius: 12, backgroundColor: '#FAFAFA', alignItems: 'center' },
+  noTrainingBtnActive: { backgroundColor: '#F5F5F5' },
+  noTrainingTxt:       { fontSize: 13, color: '#525252', fontWeight: '500' },
+  noTrainingTxtActive: { color: '#0A0A0A', fontWeight: '700', textDecorationLine: 'underline' },
 
   // Save button
   saveBtn:    { marginTop: 28, padding: 16, borderRadius: 50, backgroundColor: 'white', alignItems: 'center' },
@@ -1078,5 +1245,17 @@ const s = StyleSheet.create({
     textAlignVertical: 'top',
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.2)',
+  },
+
+  // Input "Otros" — variant azote
+  otherInputAzote: {
+    backgroundColor: '#FAFAFA',
+    borderRadius: 12,
+    padding: 12,
+    color: '#0A0A0A',
+    fontSize: 14,
+    marginTop: 10,
+    minHeight: 60,
+    textAlignVertical: 'top',
   },
 });

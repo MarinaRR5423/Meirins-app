@@ -9,7 +9,7 @@
  */
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
-import { X, ChevronRight, ChevronLeft, Check } from 'lucide-react-native';
+import { X, ChevronRight, ChevronLeft, Check, Footprints } from 'lucide-react-native';
 import {
   PROGRAMS, totalSessions, getSession, formatSession, sessionMinutes,
   LEVEL_LABEL, isRecommended,
@@ -71,20 +71,26 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
       {program && session ? (
         <View style={st.card}>
           <View style={st.headerRow}>
-            <Text style={st.title}>{program.emoji} {L(program.name)}</Text>
+            <View style={st.headerLabel}>
+              <Footprints size={14} color="#0A1823" />
+              <Text style={st.headerLabelTxt}>{tr('Tu plan de ejercicio', 'Your training plan', 'Ton plan d\'entraînement', 'Il tuo piano di allenamento')}</Text>
+            </View>
             <TouchableOpacity onPress={() => setOpen(true)}>
-              <Text style={st.link}>{tr('Ver más', 'See more', 'Voir plus', 'Vedi altro')}</Text>
+              <ChevronRight size={16} color="#0A1823" />
             </TouchableOpacity>
+          </View>
+
+          <Text style={st.title}>{program.emoji} {L(program.name)}</Text>
+
+          <View style={st.tagsRow}>
+            <View style={st.tag}><Text style={st.tagTxt}>{program.weeks.length} {tr('semanas', 'weeks', 'semaines', 'settimane')}</Text></View>
+            <View style={st.tag}><Text style={st.tagTxt}>{done}/{total} {tr('sesiones', 'sessions', 'séances', 'sessioni')}</Text></View>
           </View>
 
           {/* Barra de progreso */}
           <View style={st.progressBg}>
             <View style={[st.progressFill, { width: `${Math.round((done / total) * 100)}%` }]} />
           </View>
-          <Text style={st.progressTxt}>
-            {tr('Semana', 'Week', 'Semaine', 'Settimana')} {session.week}/{program.weeks.length}
-            {'  ·  '}{done}/{total} {tr('sesiones', 'sessions', 'séances', 'sessioni')}
-          </Text>
 
           {compact ? (
             /* Hoy toca sesión del programa: se muestra como "Sesión de hoy"
@@ -102,12 +108,14 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
                 {tr('PRÓXIMA SESIÓN', 'NEXT SESSION', 'PROCHAINE SÉANCE', 'PROSSIMA SESSIONE')}
                 {'  ·  ⏱ ~'}{sessionMinutes(session.spec)}{'\''}
               </Text>
-              {formatSession(session.spec, lang).map((line, i) => (
-                <View key={i} style={st.lineRow}>
-                  <Text style={st.lineDot}>·</Text>
-                  <Text style={st.lineTxt}>{line}</Text>
-                </View>
-              ))}
+              <View style={st.sessionCard}>
+                {formatSession(session.spec, lang).map((line, i) => (
+                  <View key={i} style={st.lineRow}>
+                    <View style={st.lineDot} />
+                    <Text style={st.lineTxt}>{line}</Text>
+                  </View>
+                ))}
+              </View>
 
               <TouchableOpacity style={[st.doneBtn, saving && { opacity: 0.6 }]} onPress={completeSession} disabled={saving}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -129,7 +137,7 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
               {tr('9 planes guiados: correr, nadar, fuerza…', '9 guided plans: run, swim, strength…', '9 plans guidés : courir, nager, force…', '9 piani guidati: correre, nuotare, forza…')}
             </Text>
           </View>
-          <ChevronRight size={20} color="#1A56DB" />
+          <ChevronRight size={20} color="#0A0A0A" />
         </TouchableOpacity>
       )}
 
@@ -234,34 +242,37 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
 }
 
 const st = StyleSheet.create({
-  // Tarjeta programa activo
-  card: {
-    backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12,
-    borderWidth: 1.5, borderColor: '#C7D2FE',
-  },
-  headerRow:   { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  title:       { fontSize: 15, fontWeight: '700', color: '#1E293B', flex: 1 },
-  link:        { fontSize: 13, color: BLUE, fontWeight: '600' },
-  progressBg:  { height: 8, borderRadius: 4, backgroundColor: '#E2E8F0', overflow: 'hidden' },
-  progressFill:{ height: 8, borderRadius: 4, backgroundColor: BLUE },
-  progressTxt: { fontSize: 12, color: '#64748B', marginTop: 6, marginBottom: 12 },
-  sessionLabel:{ fontSize: 11, fontWeight: '700', color: '#94A3B8', letterSpacing: 1, marginBottom: 8 },
-  lineRow:     { flexDirection: 'row', gap: 8, marginBottom: 4 },
-  lineDot:     { color: BLUE, fontSize: 13 },
-  lineTxt:     { fontSize: 13, color: '#334155', flex: 1 },
-  doneBtn:     { backgroundColor: BLUE, borderRadius: 12, padding: 13, alignItems: 'center', marginTop: 12 },
-  doneBtnTxt:  { color: 'white', fontWeight: '700', fontSize: 14 },
-  compactHint: { fontSize: 13, color: '#475569', backgroundColor: '#F8FAFC', borderRadius: 10, padding: 10 },
+  // Tarjeta programa activo — variante "azul clarito" (Figma)
+  card: { backgroundColor: '#8EC5F1', borderRadius: 24, padding: 16, marginBottom: 2 },
+  headerRow:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  headerLabel:    { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  headerLabelTxt: { fontSize: 12, color: '#0A1823' },
+  title:       { fontSize: 20, fontWeight: '800', color: '#0A1823', marginBottom: 8 },
+  link:        { fontSize: 13, color: '#0A1823', fontWeight: '600' },
+  tagsRow:     { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginBottom: 16 },
+  tag:         { height: 24, paddingHorizontal: 8, borderRadius: 8, backgroundColor: '#B3D9F5', justifyContent: 'center' },
+  tagTxt:      { fontSize: 10, fontWeight: '600', color: '#0A1823', textTransform: 'uppercase', letterSpacing: 0.3 },
+  progressBg:  { height: 6, borderRadius: 3, backgroundColor: 'rgba(10,24,35,0.15)', overflow: 'hidden', marginBottom: 16 },
+  progressFill:{ height: 6, borderRadius: 3, backgroundColor: '#0A1823' },
+  progressTxt: { fontSize: 12, color: '#296390', marginTop: 6, marginBottom: 12 },
+  sessionLabel:{ fontSize: 11, fontWeight: '700', color: '#0A1823', letterSpacing: 1, marginBottom: 8 },
+  sessionCard: { backgroundColor: '#B3D9F5', borderRadius: 16, padding: 12, gap: 6, marginBottom: 12 },
+  lineRow:     { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  lineDot:     { width: 4, height: 4, borderRadius: 2, backgroundColor: '#0A1823' },
+  lineTxt:     { fontSize: 13, color: '#0A1823', flex: 1 },
+  doneBtn:     { backgroundColor: '#0A1823', borderRadius: 12, padding: 13, alignItems: 'center' },
+  doneBtnTxt:  { color: '#ECF5FD', fontWeight: '700', fontSize: 14 },
+  compactHint: { fontSize: 13, color: '#0A1823', backgroundColor: '#B3D9F5', borderRadius: 12, padding: 10 },
 
   // Banner sin programa
   banner: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
-    backgroundColor: '#EEF2FF', borderRadius: 16, padding: 14,
-    marginBottom: 12, borderWidth: 1, borderColor: '#C7D2FE',
+    backgroundColor: '#FAFAFA', borderRadius: 24, padding: 16,
+    marginBottom: 2, borderWidth: 1, borderColor: '#E5E5E5',
   },
-  bannerTitle: { fontSize: 14, fontWeight: '700', color: '#312E81', marginBottom: 2 },
-  bannerSub:   { fontSize: 12, color: '#6366F1' },
-  bannerArrow: { fontSize: 18, color: '#312E81', fontWeight: '700' },
+  bannerTitle: { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 2 },
+  bannerSub:   { fontSize: 12, color: '#525252' },
+  bannerArrow: { fontSize: 18, color: '#0A0A0A', fontWeight: '700' },
 
   // Modal
   modal:       { flex: 1, backgroundColor: '#0F172A' },

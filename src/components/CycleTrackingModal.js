@@ -78,11 +78,10 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
       <SafeAreaView style={s.container}>
         {/* Header */}
         <View style={s.header}>
-          <TouchableOpacity onPress={onClose} style={s.closeBtn}>
-            <X size={20} color="#64748B" />
-          </TouchableOpacity>
           <Text style={s.title}>{txt.title[lang] || txt.title.es}</Text>
-          <View style={{ width: 32 }} />
+          <TouchableOpacity onPress={onClose} style={s.closeBtn}>
+            <X size={16} color="#0A0A0A" />
+          </TouchableOpacity>
         </View>
 
         {/* Date selector */}
@@ -94,13 +93,13 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
             const hasData = cycleLog[d] && Object.keys(cycleLog[d]).length > 0;
             return (
               <TouchableOpacity key={d} onPress={() => setSelectedDate(d)} style={[s.dateBtn, isSel && s.dateBtnSel]}>
-                <Text style={[s.dayLetter, isSel && { color: 'white' }]}>
+                <Text style={[s.dayLetter, isSel && { color: '#171717' }]}>
                   {dt.toLocaleDateString('default', { weekday: 'narrow' })}
                 </Text>
-                <Text style={[s.dayNum, isSel && { color: 'white' }, isToday && !isSel && { color: BLUE, fontWeight: '700' }]}>
+                <Text style={[s.dayNum, isSel && { color: '#171717', fontWeight: '800' }, isToday && !isSel && { color: '#171717', fontWeight: '700' }]}>
                   {dt.getDate()}
                 </Text>
-                {hasData && <View style={[s.dot, isSel && { backgroundColor: 'white' }]} />}
+                {hasData && <View style={[s.dot, isSel && { backgroundColor: '#171717' }]} />}
               </TouchableOpacity>
             );
           })}
@@ -111,7 +110,7 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
             const value = dayData[cat.id];
             return (
               <View key={cat.id} style={s.category}>
-                <Text style={[s.catTitle, { color: cat.color }]}>{cat.label[lang] || cat.label.es}</Text>
+                <Text style={s.catTitle}>{cat.label[lang] || cat.label.es}</Text>
                 <View style={s.options}>
                   {cat.options.map(opt => {
                     const isSel = cat.multi ? value?.includes?.(opt.id) : value === opt.id;
@@ -119,12 +118,8 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
                       <TouchableOpacity
                         key={opt.id}
                         onPress={() => toggleOption(cat.id, opt.id, cat.multi)}
-                        style={[
-                          s.option,
-                          isSel && { borderColor: cat.color, backgroundColor: cat.color + '12' },
-                        ]}>
-                        <Text style={s.optIco}>{opt.icon}</Text>
-                        <Text style={[s.optLbl, isSel && { color: cat.color, fontWeight: '700' }]}>
+                        style={[s.option, isSel && s.optionActive]}>
+                        <Text style={[s.optLbl, isSel && s.optLblActive]}>
                           {opt.label[lang] || opt.label.es}
                         </Text>
                       </TouchableOpacity>
@@ -195,26 +190,28 @@ function formatDate(dateStr, lang) {
 }
 
 const s = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F8FAFC' },
-  header:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#E2E8F0', backgroundColor: 'white' },
-  closeBtn:  { width: 32, height: 32, borderRadius: 16, backgroundColor: '#F1F5F9', justifyContent: 'center', alignItems: 'center' },
+  container: { flex: 1, backgroundColor: 'white' },
+  header:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
+  closeBtn:  { width: 32, height: 32, borderRadius: 8, backgroundColor: '#F5F5F5', justifyContent: 'center', alignItems: 'center' },
   closeTxt:  { fontSize: 14, color: '#64748B', fontWeight: '600' },
-  title:     { fontSize: 16, fontWeight: '700', color: '#1E293B' },
+  title:     { fontSize: 24, fontWeight: '800', color: '#0A0A0A' },
 
-  dateRow:   { flexDirection: 'row', justifyContent: 'space-between', padding: 12, backgroundColor: 'white', borderBottomWidth: 1, borderBottomColor: '#E2E8F0' },
-  dateBtn:   { flex: 1, alignItems: 'center', paddingVertical: 8, borderRadius: 12, marginHorizontal: 2, position: 'relative' },
-  dateBtnSel:{ backgroundColor: BLUE },
-  dayLetter: { fontSize: 11, color: '#94A3B8', fontWeight: '600' },
-  dayNum:    { fontSize: 16, color: '#334155', fontWeight: '600', marginTop: 2 },
-  dot:       { position: 'absolute', bottom: 4, width: 4, height: 4, borderRadius: 2, backgroundColor: BLUE },
+  dateRow:   { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 12, gap: 4 },
+  dateBtn:   { flex: 1, alignItems: 'center', paddingVertical: 8, borderRadius: 4, backgroundColor: '#FAFAFA', position: 'relative', borderWidth: 1, borderColor: 'transparent' },
+  dateBtnSel:{ backgroundColor: 'white', borderColor: '#171717' },
+  dayLetter: { fontSize: 10, color: '#737373', fontWeight: '600', textTransform: 'uppercase' },
+  dayNum:    { fontSize: 14, color: '#0A0A0A', fontWeight: '500', marginTop: 2 },
+  dot:       { position: 'absolute', bottom: 4, width: 4, height: 4, borderRadius: 2, backgroundColor: '#171717' },
 
-  scroll:    { padding: 16 },
-  category:  { backgroundColor: 'white', borderRadius: 16, padding: 14, marginBottom: 12 },
-  catTitle:  { fontSize: 14, fontWeight: '700', marginBottom: 12 },
-  options:   { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  option:    { paddingHorizontal: 12, paddingVertical: 10, borderRadius: 12, borderWidth: 1.5, borderColor: '#E2E8F0', backgroundColor: '#F8FAFC', flexDirection: 'row', alignItems: 'center', gap: 6 },
+  scroll:    { paddingHorizontal: 16, paddingTop: 4 },
+  category:  { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 8 },
+  catTitle:  { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 16 },
+  options:   { flexDirection: 'row', flexWrap: 'wrap', gap: 2 },
+  option:    { height: 40, paddingHorizontal: 8, borderRadius: 16, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
+  optionActive: { backgroundColor: '#171717' },
   optIco:    { fontSize: 18 },
-  optLbl:    { fontSize: 13, color: '#475569' },
+  optLbl:    { fontSize: 16, color: '#0A0A0A' },
+  optLblActive: { color: 'white' },
 
   insightCard:  { backgroundColor: '#EFF6FF', borderRadius: 16, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: '#BFDBFE' },
   insightHeader:{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, gap: 6 },
@@ -228,11 +225,11 @@ const s = StyleSheet.create({
   insightHelps: { fontSize: 12, color: '#1E293B', lineHeight: 18 },
 
   noteSection:{ marginTop: 8, marginBottom: 8 },
-  noteTitle:  { fontSize: 14, fontWeight: '700', color: '#1E293B', marginBottom: 8 },
-  noteInput:  { backgroundColor: 'white', borderRadius: 12, padding: 12, fontSize: 14, color: '#1E293B', minHeight: 100, textAlignVertical: 'top' },
+  noteTitle:  { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 8 },
+  noteInput:  { backgroundColor: '#FAFAFA', borderRadius: 12, padding: 12, fontSize: 14, color: '#0A0A0A', minHeight: 96, textAlignVertical: 'top' },
   noteCounter:{ fontSize: 11, color: '#94A3B8', textAlign: 'right', marginTop: 4 },
 
-  footer:    { padding: 16, borderTopWidth: 1, borderTopColor: '#E2E8F0', backgroundColor: 'white' },
-  saveBtn:   { backgroundColor: BLUE, paddingVertical: 14, borderRadius: 50, alignItems: 'center' },
-  saveTxt:   { color: 'white', fontWeight: '700', fontSize: 15 },
+  footer:    { padding: 16, backgroundColor: 'white' },
+  saveBtn:   { backgroundColor: '#171717', height: 48, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  saveTxt:   { color: 'white', fontWeight: '700', fontSize: 18 },
 });

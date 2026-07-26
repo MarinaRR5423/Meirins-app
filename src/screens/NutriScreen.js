@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Share, Modal, TextInput } from 'react-native';
-import { Check, X, ChevronRight, ChevronLeft } from 'lucide-react-native';
+import { Check, X, ChevronRight, ChevronLeft, RefreshCcw, Heart } from 'lucide-react-native';
 import SwipeableTabs from '../components/SwipeableTabs';
 import T, { getMealLabel, getPhaseDisplay } from '../i18n/translations';
 import { PHASES } from '../data/phases';
@@ -77,65 +77,83 @@ function MealCard({ meal, expanded, onToggle, onRecipe, seeRecipeLabel, mealLabe
   const displayTitle = meal.title || meal.items?.[0] || '';
   const m = meal.macros;
   return (
-    <View style={styles.card}>
-      <TouchableOpacity style={styles.mealRow} onPress={onToggle}>
-        <Text style={styles.mealIco}>{meal.ico}</Text>
+    <View style={mc.card}>
+      <TouchableOpacity style={mc.header} onPress={onToggle} activeOpacity={0.85}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.mealTag}>{mealLabelFn ? mealLabelFn(meal.label) : meal.label}</Text>
-          <Text style={styles.mealTitle}>{displayTitle}</Text>
-          {m?.kcal != null && (
-            <Text style={styles.mealMacros}>
-              🔥 {m.kcal} kcal  ·  🥩 {m.protein}g  ·  🌾 {m.carbs}g  ·  🫒 {m.fat}g
-            </Text>
-          )}
+          <Text style={mc.slot}>{meal.ico} {mealLabelFn ? mealLabelFn(meal.label) : meal.label}</Text>
+          <Text style={mc.title}>{displayTitle}</Text>
         </View>
-        <Text style={styles.chevron}>{expanded ? '▲' : '▼'}</Text>
+        <Text style={mc.chevron}>{expanded ? '▲' : '▼'}</Text>
       </TouchableOpacity>
 
-      {/* Acciones rápidas */}
-      {meal._personalized && (
-        <View style={styles.actionRow}>
-          {onToggleFavorite && meal._recipeId && (
-            <TouchableOpacity onPress={onToggleFavorite} style={styles.actionBtn}>
-              <Text style={[styles.actionTxt, isFavorite && { color: '#EF4444' }]}>{isFavorite ? '❤️' : '🤍'}</Text>
-            </TouchableOpacity>
-          )}
-          {onSwap && (
-            <TouchableOpacity onPress={onSwap} style={styles.actionBtn}>
-              <Text style={styles.actionTxt}>🔄</Text>
-            </TouchableOpacity>
-          )}
-          {onLogStatus && (
-            <>
-              <TouchableOpacity onPress={() => onLogStatus('done')} style={[styles.actionBtn, logStatus === 'done' && styles.actionBtnDone]}>
-                <Check size={16} color="white" />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => onLogStatus('skipped')} style={[styles.actionBtn, logStatus === 'skipped' && styles.actionBtnSkip]}>
-                <X size={16} color="white" />
-              </TouchableOpacity>
-            </>
-          )}
+      {m?.kcal != null && (
+        <View style={mc.tagsRow}>
+          <View style={mc.tag}><Text style={mc.tagTxt}>{m.kcal} kcal</Text></View>
+          <View style={mc.tag}><Text style={mc.tagTxt}>P: {m.protein}g</Text></View>
+          <View style={mc.tag}><Text style={mc.tagTxt}>H: {m.carbs}g</Text></View>
+          <View style={mc.tag}><Text style={mc.tagTxt}>G: {m.fat}g</Text></View>
         </View>
       )}
 
       {expanded && (
-        <View style={styles.mealDetail}>
+        <View style={mc.detail}>
           {(meal.items || []).map((it, i) => (
-            <View key={i} style={styles.listRow}>
-              <View style={styles.dot} />
-              <Text style={styles.listText}>{it}</Text>
+            <View key={i} style={mc.listRow}>
+              <View style={mc.dot} />
+              <Text style={mc.listText}>{it}</Text>
             </View>
           ))}
-          {meal.recipe && (
-            <TouchableOpacity style={styles.recipeBtn} onPress={() => onRecipe(meal.recipe, meal.label)}>
-              <Text style={styles.recipeBtnText}>{seeRecipeLabel || '👩‍🍳 Ver la receta completa'}</Text>
-            </TouchableOpacity>
-          )}
         </View>
       )}
+
+      <View style={mc.actionsBlock}>
+        {meal.recipe && (
+          <TouchableOpacity onPress={() => onRecipe(meal.recipe, meal.label)}>
+            <Text style={mc.recipeLink}>{seeRecipeLabel || 'Ver receta'}</Text>
+          </TouchableOpacity>
+        )}
+        {meal._personalized && (
+          <View style={mc.actionRow}>
+            {onSwap && (
+              <TouchableOpacity onPress={onSwap} style={mc.actionBtn}>
+                <RefreshCcw size={16} color="#260E01" />
+              </TouchableOpacity>
+            )}
+            {onToggleFavorite && meal._recipeId && (
+              <TouchableOpacity onPress={onToggleFavorite} style={mc.actionBtn}>
+                <Heart size={16} color="#260E01" fill={isFavorite ? '#260E01' : 'none'} />
+              </TouchableOpacity>
+            )}
+            {onLogStatus && (
+              <TouchableOpacity onPress={() => onLogStatus(logStatus === 'done' ? null : 'done')} style={mc.actionBtn}>
+                <Check size={16} color="#260E01" strokeWidth={logStatus === 'done' ? 3 : 2} />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+      </View>
     </View>
   );
 }
+
+const mc = StyleSheet.create({
+  card: { backgroundColor: '#FE6004', borderRadius: 24, padding: 16, marginBottom: 2 },
+  header: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
+  slot: { fontSize: 14, color: '#260E01' },
+  title: { fontSize: 20, fontWeight: '800', color: '#260E01', marginTop: 2 },
+  chevron: { color: '#260E01', fontSize: 14, flexShrink: 0 },
+  tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginBottom: 12 },
+  tag: { height: 24, paddingHorizontal: 8, borderRadius: 8, backgroundColor: 'white', justifyContent: 'center' },
+  tagTxt: { fontSize: 10, fontWeight: '600', color: '#260E01', textTransform: 'uppercase', letterSpacing: 0.3 },
+  detail: { backgroundColor: 'rgba(255,255,255,0.25)', borderRadius: 16, padding: 12, marginBottom: 12, gap: 6 },
+  listRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  dot: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#260E01' },
+  listText: { fontSize: 14, color: '#260E01', flex: 1 },
+  actionsBlock: { gap: 12 },
+  recipeLink: { fontSize: 14, color: '#260E01', textDecorationLine: 'underline' },
+  actionRow: { flexDirection: 'row', gap: 2 },
+  actionBtn: { flex: 1, height: 32, borderRadius: 8, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
+});
 
 export default function NutriScreen({ pi, program, lang = 'es', goal, activityLevel, dietary, profileExtended, saveAll, saveProfileExtended, age, weight, height, trainDays, toggleFavoriteRecipe, skipRecipe, logRecipeDone }) {
   useEffect(() => { trackScreen('Nutrición', { phase: pi?.phase, goal }); }, []);
@@ -161,6 +179,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
   const [openM, setOpenM] = useState(null);
   const [openD, setOpenD] = useState(null);
   const [openPlan, setOpenPlan] = useState(0);
+  const [selectedDayIdx, setSelectedDayIdx] = useState(null);
   const [recipe, setRecipe] = useState(null);
   const [altMeal, setAltMeal] = useState({});
   // Extras de calorías
@@ -452,7 +471,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
   }
 
   return (
-    <SwipeableTabs tabs={['plan', 'semana', 'lista', 'favoritos']} current={sub} onChange={setSub}>
+    <SwipeableTabs tabs={['plan', 'lista', 'favoritos']} current={sub} onChange={setSub}>
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
       <NutriSetupCard lang={lang} profileExtended={profileExtended} goal={goal}
@@ -490,7 +509,6 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
       <View style={styles.tabRow}>
         {[
           { id: 'plan',      l: n.myPlan },
-          { id: 'semana',    l: n.week },
           { id: 'lista',     l: n.list },
           { id: 'favoritos', l: { es: '❤️ Favs', en: '❤️ Favs', fr: '❤️ Favs', it: '❤️ Fav' }[lang] || '❤️ Favs' },
         ].map(t => (
@@ -501,196 +519,170 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
         ))}
       </View>
 
-      {/* ── MON PLAN ── */}
+      {/* ── MI PLAN (fusiona plan + semana) ── */}
       {sub === 'plan' && <>
-        <View style={[styles.card, { backgroundColor: BLUE.light }]}>
-          <View style={styles.planHeader}>
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.planTag, { color: BLUE.primary }]}>{cm.today.toUpperCase()}</Text>
-              <Text style={[styles.planTitle, { color: BLUE.primary }]}>
-                {lang === 'en' ? 'Your menu' : lang === 'fr' ? 'Ton menu' : lang === 'it' ? 'Il tuo menù' : 'Tu menú'}
-                {cals ? ` · ${cals.total} kcal` : ''}
-              </Text>
-            </View>
+        {/* Semana en pequeño */}
+        <View style={styles.weekStripCard}>
+          {(() => {
+            const first = weekMenuDays[0];
+            const last  = weekMenuDays[6];
+            const fmt = d => `${d.dayNum} ${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][new Date(d.dateStr).getMonth()]}`;
+            const label = weekOffset === 0
+              ? (lang === 'en' ? 'This week' : lang === 'fr' ? 'Cette semaine' : lang === 'it' ? 'Questa settimana' : 'Esta semana')
+              : weekOffset === -1
+                ? (lang === 'en' ? 'Last week' : lang === 'fr' ? 'Semaine dernière' : lang === 'it' ? 'Settimana scorsa' : 'Semana pasada')
+                : weekOffset === 1
+                  ? (lang === 'en' ? 'Next week' : lang === 'fr' ? 'Semaine prochaine' : lang === 'it' ? 'Settimana prossima' : 'Semana siguiente')
+                  : (first && last ? `${fmt(first)} – ${fmt(last)}` : '');
+            return (
+              <View style={styles.weekNavAzote}>
+                <TouchableOpacity onPress={() => { setWeekOffset(o => o - 1); setSelectedDayIdx(null); }} style={{ padding: 4 }}>
+                  <ChevronLeft size={16} color="#0A0A0A" />
+                </TouchableOpacity>
+                <Text style={styles.weekNavLabelAzote}>{label}</Text>
+                <TouchableOpacity onPress={() => { setWeekOffset(o => o + 1); setSelectedDayIdx(null); }} style={{ padding: 4 }}>
+                  <ChevronRight size={16} color="#0A0A0A" />
+                </TouchableOpacity>
+              </View>
+            );
+          })()}
+          <View style={styles.weekStripRow}>
+            {weekMenuDays.map((day, i) => {
+              const activeIdx = selectedDayIdx ?? weekMenuDays.findIndex(d => d.isToday);
+              const isSel = activeIdx === i;
+              return (
+                <TouchableOpacity key={i} onPress={() => setSelectedDayIdx(i)}
+                  style={[styles.weekStripCell, day.isToday && styles.weekStripCellToday, isSel && !day.isToday && styles.weekStripCellExpanded]}>
+                  <Text style={[styles.weekStripDay, day.isToday && styles.weekStripDayToday]}>{day.dayNum}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
-        {/* ── TRACKER CALORÍAS ── */}
-        {cals && (() => {
-          const consumedFromMeals = todayMenu.meals
-            .filter(m => todayActivityRecipes[m.id] === 'done' && m.macros?.kcal)
-            .reduce((s, m) => s + m.macros.kcal, 0);
-          const consumedFromExtras = extras.reduce((s, e) => s + (e.kcal || 0), 0);
-          const consumed = consumedFromMeals + consumedFromExtras;
-          const remaining = Math.max(0, cals.total - consumed);
-          const pct = Math.min(1, consumed / cals.total);
-          const over = consumed > cals.total;
-          const barColor = over ? '#EF4444' : pct > 0.85 ? '#F59E0B' : '#16A34A';
-          const lbl = { es: ['Calorías de hoy', 'Consumidas', 'Restantes', 'Superado en'],
-                        en: ['Today\'s calories', 'Consumed', 'Remaining', 'Over by'],
-                        fr: ['Calories du jour', 'Consommées', 'Restantes', 'Dépassé de'],
-                        it: ['Calorie di oggi', 'Consumate', 'Rimanenti', 'Superato di'] }[lang] || [];
+        {(() => {
+          const activeIdx = selectedDayIdx ?? weekMenuDays.findIndex(d => d.isToday);
+          const activeDay = weekMenuDays[activeIdx] ?? weekMenuDays[0];
+          const isToday = !!activeDay?.isToday;
+          const meals = isToday ? todayMenu.meals : (activeDay?.menu?.meals || []);
+
           return (
-            <View style={styles.calCard}>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                <Text style={styles.calTitle}>🔥 {lbl[0]}</Text>
-                <Text style={{ fontSize: 11, color: '#94A3B8' }}>{cals.total} kcal objetivo</Text>
+            <>
+              <View style={styles.planHeaderCard}>
+                <Text style={styles.planHeaderTag}>{isToday ? cm.today.toUpperCase() : activeDay?.label}</Text>
+                <Text style={styles.planHeaderTitle}>
+                  {lang === 'en' ? 'Your menu' : lang === 'fr' ? 'Ton menu' : lang === 'it' ? 'Il tuo menù' : 'Tu menú'}
+                  {isToday && cals ? ` · ${cals.total} kcal` : ''}
+                </Text>
               </View>
-              <View style={styles.calBarBg}>
-                <View style={[styles.calBarFill, { width: `${pct * 100}%`, backgroundColor: barColor }]} />
-              </View>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
-                <View style={styles.calStat}>
-                  <Text style={[styles.calStatNum, { color: barColor }]}>{consumed}</Text>
-                  <Text style={styles.calStatLbl}>{lbl[1]}</Text>
+
+              {/* ── TRACKER CALORÍAS (solo hoy) ── */}
+              {isToday && cals && (() => {
+                const consumedFromMeals = todayMenu.meals
+                  .filter(m => todayActivityRecipes[m.id] === 'done' && m.macros?.kcal)
+                  .reduce((s, m) => s + m.macros.kcal, 0);
+                const consumedFromExtras = extras.reduce((s, e) => s + (e.kcal || 0), 0);
+                const consumed = consumedFromMeals + consumedFromExtras;
+                const remaining = Math.max(0, cals.total - consumed);
+                const pct = Math.min(1, consumed / cals.total);
+                const over = consumed > cals.total;
+                const barColor = over ? '#DC2626' : pct > 0.85 ? '#FE6004' : '#49CF38';
+                const lbl = { es: ['Calorías de hoy', 'Consumidas', 'Restantes', 'Superado en'],
+                              en: ['Today\'s calories', 'Consumed', 'Remaining', 'Over by'],
+                              fr: ['Calories du jour', 'Consommées', 'Restantes', 'Dépassé de'],
+                              it: ['Calorie di oggi', 'Consumate', 'Rimanenti', 'Superato di'] }[lang] || [];
+                return (
+                  <View style={styles.calCard}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                      <Text style={styles.calTitle}>🔥 {lbl[0]}</Text>
+                      <Text style={{ fontSize: 11, color: '#737373' }}>{cals.total} kcal objetivo</Text>
+                    </View>
+                    <View style={styles.calBarBg}>
+                      <View style={[styles.calBarFill, { width: `${pct * 100}%`, backgroundColor: barColor }]} />
+                    </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+                      <View style={styles.calStat}>
+                        <Text style={[styles.calStatNum, { color: barColor }]}>{consumed}</Text>
+                        <Text style={styles.calStatLbl}>{lbl[1]}</Text>
+                      </View>
+                      <View style={[styles.calDivider]} />
+                      <View style={styles.calStat}>
+                        <Text style={[styles.calStatNum, { color: over ? '#DC2626' : '#0A0A0A' }]}>
+                          {over ? `+${consumed - cals.total}` : remaining}
+                        </Text>
+                        <Text style={styles.calStatLbl}>{over ? lbl[3] : lbl[2]}</Text>
+                      </View>
+                    </View>
+                  </View>
+                );
+              })()}
+
+              {/* Comidas del día seleccionado */}
+              {meals.map((meal, i) => (
+                <MealCard
+                  key={meal.id}
+                  meal={meal}
+                  expanded={openPlan === i}
+                  onToggle={() => setOpenPlan(openPlan === i ? null : i)}
+                  onRecipe={(r, lbl) => setRecipe({ ...r, mealLabel: lbl, title: meal.title || meal.items?.[0], emoji: meal.ico, macros: meal.macros, _recipeId: meal._recipeId })}
+                  seeRecipeLabel={n.seeRecipe}
+                  mealLabelFn={(lbl) => getMealLabel(lang, lbl)}
+                  isFavorite={profileExtended?.favoriteRecipes?.includes(meal._recipeId || meal.id)}
+                  onToggleFavorite={isToday && meal._personalized && toggleFavoriteRecipe ? () => toggleFavoriteRecipe(meal._recipeId || meal.id) : null}
+                  onSwap={isToday && meal._personalized && skipRecipe ? () => skipRecipe(meal.id, meal._recipeId || meal.id) : null}
+                  onLogStatus={isToday && logRecipeDone ? (status) => logRecipeDone(meal.id, status) : null}
+                  logStatus={isToday ? todayActivityRecipes[meal.id] : undefined}
+                />
+              ))}
+
+              {/* ── EXTRAS (solo hoy) ── */}
+              {isToday && (
+                <View style={styles.extrasCard}>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: extras.length ? 10 : 0 }}>
+                    <Text style={styles.calTitle}>
+                      {{ es: '➕ Otras comidas', en: '➕ Other foods', fr: '➕ Autres aliments', it: '➕ Altro cibo' }[lang] || '➕ Otras comidas'}
+                    </Text>
+                    <TouchableOpacity onPress={() => setShowAddExtra(true)} style={styles.addExtraBtn}>
+                      <Text style={styles.addExtraBtnTxt}>
+                        {{ es: '+ Añadir', en: '+ Add', fr: '+ Ajouter', it: '+ Aggiungi' }[lang] || '+ Añadir'}
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  {extras.map((e, i) => (
+                    <View key={i} style={styles.extraRow}>
+                      <Text style={styles.extraName}>{e.name}</Text>
+                      <Text style={styles.extraKcal}>🔥 {e.kcal} kcal</Text>
+                      <TouchableOpacity onPress={() => removeExtra(i)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                        <Text style={{ fontSize: 16, color: '#A3A3A3' }}>✕</Text>
+                      </TouchableOpacity>
+                    </View>
+                  ))}
                 </View>
-                <View style={[styles.calDivider]} />
-                <View style={styles.calStat}>
-                  <Text style={[styles.calStatNum, { color: over ? '#EF4444' : '#1E293B' }]}>
-                    {over ? `+${consumed - cals.total}` : remaining}
-                  </Text>
-                  <Text style={styles.calStatLbl}>{over ? lbl[3] : lbl[2]}</Text>
-                </View>
-              </View>
-            </View>
+              )}
+            </>
           );
         })()}
 
-        {/* Repas du jour */}
-        {todayMenu.meals.map((meal, i) => (
-          <MealCard
-            key={meal.id}
-            meal={meal}
-            expanded={openPlan === i}
-            onToggle={() => setOpenPlan(openPlan === i ? null : i)}
-            onRecipe={(r, lbl) => setRecipe({ ...r, mealLabel: lbl, title: meal.title || meal.items?.[0], emoji: meal.ico, macros: meal.macros, _recipeId: meal._recipeId })}
-            seeRecipeLabel={n.seeRecipe}
-            mealLabelFn={(lbl) => getMealLabel(lang, lbl)}
-            isFavorite={profileExtended?.favoriteRecipes?.includes(meal._recipeId || meal.id)}
-            onToggleFavorite={meal._personalized && toggleFavoriteRecipe ? () => toggleFavoriteRecipe(meal._recipeId || meal.id) : null}
-            onSwap={meal._personalized && skipRecipe ? () => skipRecipe(meal.id, meal._recipeId || meal.id) : null}
-            onLogStatus={logRecipeDone ? (status) => logRecipeDone(meal.id, status) : null}
-            logStatus={todayActivityRecipes[meal.id]}
-          />
-        ))}
-
-        {/* ── EXTRAS ── */}
-        <View style={styles.extrasCard}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: extras.length ? 10 : 0 }}>
-            <Text style={styles.calTitle}>
-              {{ es: '➕ Otras comidas', en: '➕ Other foods', fr: '➕ Autres aliments', it: '➕ Altro cibo' }[lang] || '➕ Otras comidas'}
-            </Text>
-            <TouchableOpacity onPress={() => setShowAddExtra(true)} style={styles.addExtraBtn}>
-              <Text style={styles.addExtraBtnTxt}>
-                {{ es: '+ Añadir', en: '+ Add', fr: '+ Ajouter', it: '+ Aggiungi' }[lang] || '+ Añadir'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          {extras.map((e, i) => (
-            <View key={i} style={styles.extraRow}>
-              <Text style={styles.extraName}>{e.name}</Text>
-              <Text style={styles.extraKcal}>🔥 {e.kcal} kcal</Text>
-              <TouchableOpacity onPress={() => removeExtra(i)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-                <Text style={{ fontSize: 16, color: '#CBD5E1' }}>✕</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
-        </View>
-
-        {/* Tipos de día — solo visible con batch cooking activo */}
+        {/* Tu plan nutricional — solo visible con batch cooking activo */}
         {profileExtended?.batchCooking && (() => {
           const dtl = getDayTypeLabels(lang);
           return (
-            <View style={[styles.card, { backgroundColor: '#F8FAFC' }]}>
+            <View style={styles.nutriPlanCard}>
               <Text style={styles.sectionTitle}>{n.dayTypes}</Text>
               {['A', 'B', 'free'].map(key => (
-                <View key={key} style={[styles.dayTypeRow, { backgroundColor: DAY_TYPES[key].color }]}>
-                  <Text style={[styles.dayTypeLabel, { color: DAY_TYPES[key].textColor }]}>{dtl[key].label}</Text>
-                  <Text style={[styles.dayTypeTag,   { color: DAY_TYPES[key].textColor }]}>{dtl[key].tag}</Text>
+                <View key={key} style={styles.nutriPlanRow}>
+                  <View style={styles.nutriPlanAvatar}><Text style={styles.nutriPlanAvatarTxt}>{key === 'free' ? '🌿' : key}</Text></View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.nutriPlanLabel}>{dtl[key].label}</Text>
+                    <Text style={styles.nutriPlanTag}>{dtl[key].tag}</Text>
+                  </View>
                 </View>
               ))}
             </View>
           );
         })()}
 
-      </>}
-
-      {/* ── SEMAINE ── */}
-      {sub === 'semana' && <>
-        {/* Navegación de semana */}
-        {(() => {
-          const first = weekMenuDays[0];
-          const last  = weekMenuDays[6];
-          const fmt = d => `${d.dayNum} ${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][new Date(d.dateStr).getMonth()]}`;
-          const label = weekOffset === 0
-            ? (lang === 'en' ? 'This week' : lang === 'fr' ? 'Cette semaine' : lang === 'it' ? 'Questa settimana' : 'Esta semana')
-            : weekOffset === -1
-              ? (lang === 'en' ? 'Last week' : lang === 'fr' ? 'Semaine dernière' : lang === 'it' ? 'Settimana scorsa' : 'Semana pasada')
-              : weekOffset === 1
-                ? (lang === 'en' ? 'Next week' : lang === 'fr' ? 'Semaine prochaine' : lang === 'it' ? 'Settimana prossima' : 'Semana siguiente')
-                : (first && last ? `${fmt(first)} – ${fmt(last)}` : '');
-          return (
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, paddingHorizontal: 4 }}>
-              <TouchableOpacity onPress={() => { setWeekOffset(o => o - 1); setOpenD(null); }} style={{ padding: 8 }}>
-                <ChevronLeft size={28} color={BLUE.primary} />
-              </TouchableOpacity>
-              <Text style={{ fontSize: 14, fontWeight: '600', color: '#1E293B' }}>{label}</Text>
-              <TouchableOpacity onPress={() => { setWeekOffset(o => o + 1); setOpenD(null); }} style={{ padding: 8 }}>
-                <ChevronRight size={28} color={BLUE.primary} />
-              </TouchableOpacity>
-            </View>
-          );
-        })()}
-
-        {weekMenuDays.map((day, i) => (
-          <View key={i} style={[styles.card, day.isToday && { borderWidth: 2, borderColor: BLUE.primary }]}>
-            <TouchableOpacity style={styles.dayRow} onPress={() => setOpenD(openD === i ? null : i)}>
-              <View style={styles.dayDate}>
-                <Text style={[styles.dayLabel, day.isToday && { color: BLUE.primary, fontWeight: '700' }]}>{day.label}</Text>
-                <Text style={styles.dayNum}>{day.dayNum}</Text>
-              </View>
-              {profileExtended?.batchCooking && day.dayType && (
-                <View style={[styles.dayTypeBadge, { backgroundColor: day.dayType.color }]}>
-                  <Text style={[styles.dayTypeBadgeText, { color: day.dayType.textColor }]}>{getDayTypeLabels(lang)[day.dayType.key]?.label}</Text>
-                </View>
-              )}
-              <View style={{ flex: 1, marginLeft: 8 }}>
-                <Text style={styles.dayMeals} numberOfLines={1}>
-                  {day.menu.meals.slice(0, 2).map(m => {
-                    const name = m.title || m.items?.[0] || '';
-                    return m.ico + ' ' + (name || getMealLabel(lang, m.label));
-                  }).join(' · ')}
-                </Text>
-              </View>
-              <Text style={styles.chevron}>{openD === i ? '▲' : '▼'}</Text>
-            </TouchableOpacity>
-
-            {openD === i && (
-              <View style={styles.mealDetail}>
-                {day.menu.meals.map((meal, j) => {
-                  const dishName = meal.title || meal.items?.[0] || '';
-                  const canOpen  = !!meal.recipe;
-                  return (
-                    <View key={meal.id} style={{ marginBottom: 12 }}>
-                      <Text style={[styles.mealTag, { color: profileExtended?.batchCooking && day.dayType ? day.dayType.textColor : BLUE.primary, marginBottom: 2 }]}>
-                        {meal.ico} {getMealLabel(lang, meal.label)}
-                      </Text>
-                      <TouchableOpacity disabled={!canOpen}
-                        onPress={() => setRecipe({ ...meal.recipe, mealLabel: meal.label, title: dishName, emoji: meal.ico, macros: meal.macros, _recipeId: meal._recipeId })}
-                        activeOpacity={canOpen ? 0.7 : 1}>
-                        <Text style={[styles.mealTitle, { fontSize: 14, color: canOpen ? BLUE.primary : '#1E293B', textDecorationLine: canOpen ? 'underline' : 'none' }]}>
-                          {dishName || getMealLabel(lang, meal.label)}{canOpen ? ' →' : ''}
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  );
-                })}
-              </View>
-            )}
-          </View>
-        ))}
-
-        <TipsCard articles={nutriArticles} lang={lang} />
+        <TipsCard articles={nutriArticles} lang={lang} variant="azote" />
       </>}
 
       {/* ── LISTE DE COURSES ── */}
@@ -930,7 +922,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F0F4FA' },
+  container: { flex: 1, backgroundColor: 'white' },
   content: { padding: 14, paddingTop: 60, paddingBottom: 30 },
 
   // Nutrition context card
@@ -955,32 +947,44 @@ const styles = StyleSheet.create({
   dietSection:      { marginTop: 10 },
   dietSectionLabel: { fontSize: 10, fontWeight: '700', color: '#94A3B8', letterSpacing: 0.8, marginBottom: 5 },
   dietItem:         { fontSize: 13, color: '#475569', lineHeight: 20 },
-  card: { backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
-  back: { fontSize: 14, color: '#1A56DB', fontWeight: '600', marginBottom: 16 },
-  recipeTag: { fontSize: 11, color: '#1A56DB', fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 },
-  recipeTitle: { fontSize: 18, fontWeight: '700', color: '#1E293B', marginBottom: 4 },
-  sectionTitle: { fontSize: 14, fontWeight: '600', color: '#1E293B', marginBottom: 10 },
+  card: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2 },
+  back: { fontSize: 14, color: '#0A0A0A', fontWeight: '600', marginBottom: 16 },
+  recipeTag: { fontSize: 11, color: '#0A0A0A', fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 },
+  recipeTitle: { fontSize: 18, fontWeight: '700', color: '#0A0A0A', marginBottom: 4 },
+  sectionTitle: { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 10 },
   listRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: '#F8FAFC' },
-  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#1A56DB', marginTop: 5, marginRight: 10, flexShrink: 0 },
+  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#0A0A0A', marginTop: 5, marginRight: 10, flexShrink: 0 },
   listText: { fontSize: 13, color: '#334155', flex: 1, lineHeight: 20 },
   stepRow: { flexDirection: 'row', gap: 12, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
-  stepNum: { width: 26, height: 26, borderRadius: 13, backgroundColor: '#1A56DB', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
+  stepNum: { width: 26, height: 26, borderRadius: 13, backgroundColor: '#171717', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
   stepNumText: { color: 'white', fontSize: 12, fontWeight: '700' },
   stepText: { fontSize: 13, color: '#334155', lineHeight: 20, flex: 1, paddingTop: 4 },
-  tabRow: { flexDirection: 'row', backgroundColor: 'white', borderRadius: 50, padding: 4, marginBottom: 14, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
-  tab: { flex: 1, paddingVertical: 9, borderRadius: 46, alignItems: 'center' },
-  tabActive: { backgroundColor: '#1A56DB' },
-  tabText: { fontSize: 12, color: '#94A3B8' },
+  tabRow: { flexDirection: 'row', backgroundColor: '#F5F5F5', borderRadius: 16, padding: 4, marginBottom: 14 },
+  tab: { flex: 1, paddingVertical: 9, borderRadius: 12, alignItems: 'center' },
+  tabActive: { backgroundColor: '#171717' },
+  tabText: { fontSize: 12, color: '#525252' },
   tabTextActive: { color: 'white', fontWeight: '700' },
-  planHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  planTag: { fontSize: 10, fontWeight: '700', letterSpacing: 0.8, marginBottom: 2 },
-  planTitle: { fontSize: 17, fontWeight: '700' },
+
+  // Semana en pequeño (calendario compacto de "Mi plan")
+  weekStripCard: { backgroundColor: '#F5F5F5', borderRadius: 32, padding: 16, marginBottom: 2 },
+  weekNavAzote: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
+  weekNavLabelAzote: { fontSize: 14, color: '#0A0A0A' },
+  weekStripRow: { flexDirection: 'row', gap: 4 },
+  weekStripCell: { flex: 1, aspectRatio: 1, borderRadius: 4, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
+  weekStripCellToday: { backgroundColor: '#171717' },
+  weekStripCellExpanded: { borderWidth: 2, borderColor: '#171717' },
+  weekStripDay: { fontSize: 12, color: '#0A0A0A' },
+  weekStripDayToday: { color: 'white', fontWeight: '700' },
+
+  planHeaderCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2 },
+  planHeaderTag: { fontSize: 12, fontWeight: '600', color: '#525252', marginBottom: 2, textTransform: 'uppercase', letterSpacing: 0.5 },
+  planHeaderTitle: { fontSize: 20, fontWeight: '800', color: '#0A0A0A' },
   planSub: { fontSize: 12, lineHeight: 18, opacity: 0.85 },
   mealRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   mealIco: { fontSize: 26, flexShrink: 0 },
-  mealTag:    { fontSize: 10, color: '#1A56DB', fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 2 },
-  mealTitle:  { fontSize: 13, fontWeight: '600', color: '#1E293B' },
-  mealMacros: { fontSize: 11, color: '#94A3B8', marginTop: 4 },
+  mealTag:    { fontSize: 10, color: '#0A0A0A', fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 2 },
+  mealTitle:  { fontSize: 13, fontWeight: '600', color: '#0A0A0A' },
+  mealMacros: { fontSize: 11, color: '#737373', marginTop: 4 },
 
   // Action buttons (favorite, swap, done, skip)
   actionRow:     { flexDirection: 'row', gap: 8, marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#F1F5F9' },
@@ -992,6 +996,14 @@ const styles = StyleSheet.create({
   mealDetail: { marginTop: 14, paddingTop: 14, borderTopWidth: 1, borderTopColor: '#F1F5F9' },
   recipeBtn: { marginTop: 12, padding: 10, borderRadius: 12, borderWidth: 1.5, borderColor: '#1A56DB', backgroundColor: '#EFF6FF', alignItems: 'center' },
   recipeBtnText: { color: '#1A56DB', fontWeight: '600', fontSize: 13 },
+
+  // Tu plan nutricional — variante "marrón claro" (Figma)
+  nutriPlanCard: { backgroundColor: '#E8D5B9', borderRadius: 24, padding: 16, marginBottom: 2 },
+  nutriPlanRow: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#F5EBDA', borderRadius: 16, padding: 8, marginBottom: 2 },
+  nutriPlanAvatar: { width: 48, height: 48, borderRadius: 16, backgroundColor: '#D6C1A8', alignItems: 'center', justifyContent: 'center' },
+  nutriPlanAvatarTxt: { fontSize: 20, fontWeight: '800', color: '#3D2B1F' },
+  nutriPlanLabel: { fontSize: 16, fontWeight: '700', color: '#3D2B1F' },
+  nutriPlanTag: { fontSize: 13, color: '#6B4F3A', marginTop: 1 },
   dayTypeRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10, borderRadius: 12, marginBottom: 6 },
   dayTypeLabel: { fontSize: 13, fontWeight: '700' },
   dayTypeTag: { fontSize: 12 },

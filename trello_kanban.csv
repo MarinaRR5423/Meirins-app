@@ -1,0 +1,69 @@
+List,Name,Description,Labels,Priority
+Done,Onboarding progresivo,SetupScreen reducido a 3 pasos (datos personales + módulos). Resto de preguntas se hacen contextualmente al entrar en cada pestaña.,Producto · Onboarding,Alta
+Done,Soporte multiidioma (ES/EN/FR/IT),Sistema de traducciones completo + detección automática del idioma del dispositivo,Producto · i18n,Alta
+Done,Setup de ciclo contextual,Tarjeta inline en pestaña Ciclo con fecha del último período y preguntas de salud menstrual,Producto · Onboarding,Alta
+Done,Setup nutricional contextual,Tarjeta inline en pestaña Nutrición con dieta + alergias + objetivos,Producto · Onboarding,Alta
+Done,Setup gimnasio contextual,Tarjeta inline en pestaña Gimnasio con días + nivel + acceso,Producto · Onboarding,Alta
+Done,Perfil editable completo,Tarjeta Mi Programa editable: objetivos · fitness · gym · dieta · alergias · cocina · presupuesto,Producto · Perfil,Alta
+Done,Sección Tu Salud editable,Etapa vital · condiciones (endometriosis/SOP/diabetes...) · anticoncepción · medicación,Producto · Perfil,Alta
+Done,Tabla de 19 dietas en Supabase,Estándar/Vegana/Keto/Mediterránea/Antiinflamatoria/Ayunos... con macros + alimentos + beneficios + contraindicaciones,Producto · Nutrición,Alta
+Done,Ayunos combinables con dietas,16:8/18:6/5:2/OMAD se pueden combinar con cualquier dieta base,Producto · Nutrición,Media
+Done,Tracker de peso + objetivo,Registro diario de peso con gráfico SVG de evolución + barra de progreso hacia objetivo,Producto · Tracking,Alta
+Done,Cálculo de calorías personalizado,Mifflin-St Jeor + factor de actividad + ajuste por fase del ciclo + objetivo,Producto · Nutrición,Alta
+Done,Algoritmo de personalización,Motor que adapta entrenos/nutrición a fase + trainDays + nivel fitness + condiciones,Producto · Algoritmo,Crítica
+Done,Sincronización con calendario (ICS),Exportación de entrenos como .ics — funciona en Expo Go y build nativo,Producto · Integración,Media
+Done,Notificaciones push locales,Aviso de ciclo + recordatorio entreno + hidratación diaria configurables,Producto · Engagement,Alta
+Done,Eliminar cuenta y datos,Función SQL delete_user_account + UI de confirmación de 3 pasos (requisito App Store),Legal · Compliance,Crítica
+Done,Estados vacíos,Componente EmptyState reutilizable + integración en HomeScreen,Producto · UX,Media
+Done,Banner offline,Detección de conexión a Supabase cada 30s + banner amarillo cuando no hay red,Producto · UX,Media
+Sprint 1 - Pre-Beta,Política de privacidad,Generar en termly.io (gratis) + hostear en GitHub Pages + link en la app desde el perfil,Legal · Compliance,Crítica
+Sprint 1 - Pre-Beta,Términos de uso,Documento obligatorio para apps con datos de salud sensibles,Legal · Compliance,Crítica
+Sprint 1 - Pre-Beta,Aviso médico en la app,Disclaimer al onboarding + en perfil: "Esta app no sustituye consejo médico profesional",Legal · Compliance,Crítica
+Sprint 1 - Pre-Beta,App Store Privacy Labels,Declarar en App Store Connect qué datos se recopilan (Health · Contact Info · User Content),Legal · Compliance,Crítica
+Sprint 1 - Pre-Beta,Cuenta Apple Developer Program,Suscripción anual de $99 — imprescindible para TestFlight y publicar en App Store,Infraestructura · Cuenta,Crítica
+Sprint 1 - Pre-Beta,Icono y splash screen definitivos,Diseño profesional del icono en todas las resoluciones + pantalla de carga,Diseño · Branding,Alta
+Sprint 1 - Pre-Beta,Build nativo iOS,eas build --platform ios --profile preview — habilita Apple Health · permisos calendario correctos · notificaciones,Infraestructura · Build,Crítica
+Sprint 1 - Pre-Beta,Build nativo Android,eas build --platform android --profile preview — APK para testear antes de Google Play,Infraestructura · Build,Alta
+Sprint 1 - Pre-Beta,Configurar Apple HealthKit real,Una vez en build nativo: conectar lectura de pasos · ritmo cardíaco · sueño · entrenos del Apple Watch,Producto · Integración,Alta
+Sprint 1 - Pre-Beta,Auditoría de bugs pre-Beta,Recorrer todas las pantallas/flujos con 3-4 perfiles distintos y documentar issues,Calidad · QA,Crítica
+Sprint 1 - Pre-Beta,Cifrado y RLS en Supabase,Verificar que todas las tablas tienen Row Level Security activa y políticas correctas,Seguridad,Crítica
+Sprint 2 - Beta cerrada,Setup TestFlight,Subir build a App Store Connect + configurar grupo de testers + invitar beta testers,Lanzamiento · Beta,Crítica
+Sprint 2 - Beta cerrada,Reclutar 20-50 beta testers,Amigas · redes sociales · comunidades de salud femenina · grupos de Telegram,Crecimiento · Beta,Crítica
+Sprint 2 - Beta cerrada,Formulario de feedback,Google Forms o Typeform con preguntas clave (¿qué funciona? ¿qué falta? ¿pagarías?),Calidad · Feedback,Alta
+Sprint 2 - Beta cerrada,Sistema de analítica,Integrar Mixpanel o PostHog free — qué pantallas se ven · funnel de onboarding · retención,Producto · Analítica,Alta
+Sprint 2 - Beta cerrada,Sistema de crash reporting,Sentry free — capturar errores en producción para iterar rápido,Calidad · Monitoring,Alta
+Sprint 2 - Beta cerrada,Iterar según feedback Beta,Reservar 2-4 semanas para corregir issues críticos antes de pasar a la siguiente fase,Producto · Iteración,Crítica
+Sprint 3 - Pre-lanzamiento,Asistente IA con Claude API,Chat contextual que conoce tu fase · dieta · condiciones. Coste estimado: ~50€/mes,Producto · IA,Alta
+Sprint 3 - Pre-lanzamiento,Sistema de suscripción + paywall,Integrar RevenueCat — definir tiers (Free vs Premium) y precios,Negocio · Monetización,Crítica
+Sprint 3 - Pre-lanzamiento,Definir freemium vs premium,Qué funciones son gratuitas y qué se desbloquea con Premium (IA · recetas avanzadas · sin límites),Negocio · Producto,Crítica
+Sprint 3 - Pre-lanzamiento,Pasarela de pago in-app,App Store + Google Play in-app purchases via RevenueCat,Negocio · Pago,Crítica
+Sprint 3 - Pre-lanzamiento,Historial completo del ciclo,Ver ciclos pasados · patrones · irregularidades en formato calendario o lista,Producto · Tracking,Media
+Sprint 3 - Pre-lanzamiento,Sistema de referidos,Código de invitación · descuento por traer a una amiga,Crecimiento · Viral,Media
+Sprint 3 - Pre-lanzamiento,Onboarding optimizado por retención,Probar 2-3 variantes del onboarding y elegir la que mejor retiene a 7 días,Producto · Retención,Alta
+Sprint 4 - Lanzamiento,Capturas de pantalla App Store,5-10 screenshots por idioma con copywriting persuasivo (Figma plantillas),Marketing · Assets,Crítica
+Sprint 4 - Lanzamiento,Descripción + keywords ASO,Optimizar título · subtitulo · descripción · keywords para App Store / Google Play,Marketing · ASO,Crítica
+Sprint 4 - Lanzamiento,Vídeo preview de la app,15-30 segundos mostrando los flujos principales,Marketing · Assets,Alta
+Sprint 4 - Lanzamiento,Landing page del producto,Web pública con descripción · capturas · link a App Store · política de privacidad,Marketing · Web,Alta
+Sprint 4 - Lanzamiento,Submission a Apple Review,Subir build final + completar todos los formularios de App Store Connect,Lanzamiento · Submission,Crítica
+Sprint 4 - Lanzamiento,Submission a Google Play,Subir AAB + completar Play Console (puede tardar más por reviews manuales),Lanzamiento · Submission,Crítica
+Sprint 4 - Lanzamiento,Estrategia de lanzamiento,Product Hunt · redes sociales · email a la lista de beta testers · prensa especializada,Marketing · Launch,Alta
+Post-lanzamiento,Soporte al usuario,Email de soporte + sección de FAQ + tiempo de respuesta <48h,Operaciones · Soporte,Alta
+Post-lanzamiento,Responder reseñas App Store,Responder a todas las reseñas en las primeras 24-48h (mejora ranking ASO),Marketing · ASO,Alta
+Post-lanzamiento,Health Connect Android,Una vez Expo SDK 55+ con Kotlin 2.x esté disponible — equivalente Android de Apple Health,Producto · Integración,Media
+Post-lanzamiento,Notificaciones push remotas,Migrar a notificaciones servidas desde backend (campañas personalizadas · re-engagement),Producto · Engagement,Media
+Post-lanzamiento,Modo oscuro,Implementar dark mode completo en todas las pantallas,Producto · UX,Baja
+Post-lanzamiento,Apple Watch companion app,App nativa para watchOS con tracking rápido + recordatorios en muñeca,Producto · Plataforma,Baja
+Post-lanzamiento,Widgets iOS / Android,Widget en pantalla de inicio con día del ciclo + sesión de hoy,Producto · Plataforma,Media
+Post-lanzamiento,Integraciones (Strava · Garmin · etc),Importar entrenos desde otras plataformas además de Apple Health,Producto · Integración,Media
+Post-lanzamiento,Compartir con pareja,Función para compartir el calendario del ciclo con tu pareja (con permisos),Producto · Social,Baja
+Post-lanzamiento,Community / Foro in-app,Espacio para que las usuarias compartan experiencias por condición (PCOS · endo...),Producto · Comunidad,Baja
+Post-lanzamiento,Recetas con generación IA,Generar recetas personalizadas vía IA respetando dieta + alergias + macros del día,Producto · IA,Media
+Post-lanzamiento,Coaching humano premium,Tier premium con seguimiento humano por una dietista o coach (revenue extra),Negocio · Premium,Baja
+Post-lanzamiento,Expansión a más idiomas,Alemán · portugués · catalán según el mercado objetivo,Producto · i18n,Baja
+Post-lanzamiento,Optimización de costes Supabase,Una vez con volumen — analizar consumo + indices + caché para reducir gasto,Infraestructura · Costes,Media
+Post-lanzamiento,GDPR compliance auditada,Una vez en producción — auditoría legal con abogado especializado en datos sensibles,Legal · Compliance,Alta
+Backlog,Modo embarazo dedicado,Programa específico para embarazadas: nutrición prenatal + ejercicios adaptados por trimestre,Producto · Nicho,Baja
+Backlog,Modo perimenopausia / menopausia,Adaptación completa para etapas vitales sin ciclo activo,Producto · Nicho,Baja
+Backlog,Sincronización entre dispositivos,Que la app funcione en iPad / iPhone / web del mismo usuario,Producto · Plataforma,Baja
+Backlog,Gamificación,Streaks · badges por consistencia · niveles para motivar a las usuarias menos constantes,Producto · Engagement,Baja
+Backlog,Exportar datos personales (GDPR),Botón Descargar mis datos en formato JSON o PDF (requisito GDPR),Legal · Compliance,Media

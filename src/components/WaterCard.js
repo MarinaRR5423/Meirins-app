@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GlassWater, ChevronRight } from 'lucide-react-native';
 import T from '../i18n/translations';
 
 const WATER_GOAL = 8;
 const ML_PER_GLASS = 250;
-const BLUE_PRIMARY = '#1A56DB';
 
 export default function WaterCard({ lang }) {
   const n = (T[lang] || T.es).nutri;
@@ -23,66 +23,60 @@ export default function WaterCard({ lang }) {
     AsyncStorage.setItem(storageKey, String(newCount));
   };
 
-  const handleBubble = (i) => {
-    updateCount(i < count ? i : i + 1);
-  };
-
   const ml = count * ML_PER_GLASS;
   const goalMl = WATER_GOAL * ML_PER_GLASS;
+  const remaining = Math.max(0, goalMl - ml);
   const pct = Math.min(1, ml / goalMl);
   const done = count >= WATER_GOAL;
 
   return (
-    <View style={styles.card}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{w.title}</Text>
-        <Text style={[styles.mlText, done && { color: '#16A34A' }]}>
-          {done ? w.done : `${ml} / ${goalMl} ${w.ml}`}
-        </Text>
+    <View style={s.card}>
+      <View style={s.header}>
+        <View style={s.headerLabel}>
+          <GlassWater size={16} color="#0A0A0A" strokeWidth={2} />
+          <Text style={s.headerLabelTxt}>{w.title}</Text>
+        </View>
+        <ChevronRight size={16} color="#0A0A0A" />
       </View>
-      <View style={styles.bubblesRow}>
-        {Array.from({ length: WATER_GOAL }, (_, i) => {
-          const filled = i < count;
-          return (
-            <TouchableOpacity key={i} onPress={() => handleBubble(i)} activeOpacity={0.7}
-              style={[styles.bubble, filled ? styles.bubbleFilled : styles.bubbleEmpty]}>
-              <Text style={[styles.bubbleEmoji, !filled && { opacity: 0.2 }]}>💧</Text>
-            </TouchableOpacity>
-          );
-        })}
-      </View>
-      <View style={styles.progressBg}>
-        <View style={[styles.progressFill, { width: `${pct * 100}%`, backgroundColor: done ? '#16A34A' : BLUE_PRIMARY }]} />
-      </View>
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>{count} / {WATER_GOAL} {w.glasses} · {w.goal}</Text>
-        {count > 0 && (
-          <TouchableOpacity onPress={() => updateCount(0)}>
-            <Text style={styles.resetText}>{w.reset}</Text>
-          </TouchableOpacity>
-        )}
+
+      <View style={{ flex: 1, justifyContent: 'space-between' }}>
+        <View>
+          <Text style={s.mlValue}>{ml}ml</Text>
+          <Text style={s.mlSubLabel}>{done ? w.done : `${remaining} ${w.ml} restantes`}</Text>
+
+          <View style={s.barBg}>
+            <View style={[s.barFill, { width: `${pct * 100}%` }]} />
+          </View>
+          <View style={s.barLabels}>
+            <Text style={s.barLabelTxt}>{ml}</Text>
+            <Text style={s.barLabelTxt}>{goalMl}</Text>
+          </View>
+        </View>
+
+        <TouchableOpacity
+          style={s.addBtn}
+          onPress={() => updateCount(Math.min(WATER_GOAL, count + 1))}
+          disabled={done}
+          activeOpacity={0.8}
+        >
+          <Text style={s.addBtnTxt}>{done ? '✓' : (w.addGlass || 'Añadir vaso')}</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
-  },
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
-  title: { fontSize: 14, fontWeight: '700', color: '#1E293B' },
-  mlText: { fontSize: 12, fontWeight: '700', color: '#1A56DB' },
-  bubblesRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
-  bubble: { width: 36, height: 36, borderRadius: 18, justifyContent: 'center', alignItems: 'center' },
-  bubbleFilled: { backgroundColor: '#DBEAFE' },
-  bubbleEmpty: { borderWidth: 1.5, borderColor: '#CBD5E1', backgroundColor: '#F8FAFC' },
-  bubbleEmoji: { fontSize: 18 },
-  progressBg: { height: 6, borderRadius: 3, backgroundColor: '#F1F5F9', marginBottom: 10, overflow: 'hidden' },
-  progressFill: { height: '100%', borderRadius: 3 },
-  footer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  footerText: { fontSize: 11, color: '#64748B' },
-  resetText: { fontSize: 11, color: '#94A3B8', fontWeight: '600' },
+const s = StyleSheet.create({
+  card: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, flex: 1 },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  headerLabel: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  headerLabelTxt: { fontSize: 12, color: '#0A0A0A' },
+  mlValue: { fontSize: 32, fontWeight: '800', color: '#429FE7', lineHeight: 36 },
+  mlSubLabel: { fontSize: 14, color: '#0A0A0A', marginTop: 2 },
+  barBg: { height: 4, borderRadius: 2, backgroundColor: '#E5E5E5', marginTop: 14, overflow: 'hidden' },
+  barFill: { height: '100%', borderRadius: 2, backgroundColor: '#429FE7' },
+  barLabels: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 },
+  barLabelTxt: { fontSize: 12, color: '#429FE7', textTransform: 'uppercase' },
+  addBtn: { backgroundColor: '#0A0A0A', height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginTop: 16 },
+  addBtnTxt: { color: 'white', fontWeight: '600', fontSize: 14 },
 });

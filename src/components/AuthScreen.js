@@ -78,8 +78,9 @@ export default function AuthScreen({ lang = 'es' }) {
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.emoji}>🌙</Text>
-        <Text style={styles.title}>Meirins</Text>
+        <View style={styles.brandChip}>
+          <Text style={styles.brandTitle}>Blumm</Text>
+        </View>
         <Text style={styles.subtitle}>{mode === 'login' ? t.welcome : t.createAccount}</Text>
 
         <View style={styles.toggle}>
@@ -91,10 +92,10 @@ export default function AuthScreen({ lang = 'es' }) {
           ))}
         </View>
 
-        <TextInput style={styles.input} placeholder="tu@email.com" placeholderTextColor="rgba(255,255,255,0.4)"
+        <TextInput style={styles.input} placeholder="tu@email.com" placeholderTextColor="#737373"
           value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
-        <View style={{ position: 'relative' }}>
-          <TextInput style={[styles.input, { paddingRight: 44 }]} placeholder={t.password} placeholderTextColor="rgba(255,255,255,0.4)"
+        <View style={{ position: 'relative', width: '100%' }}>
+          <TextInput style={[styles.input, { paddingRight: 44 }]} placeholder={t.password} placeholderTextColor="#737373"
             value={password} onChangeText={setPassword} secureTextEntry={!showPassword} />
           <TouchableOpacity onPress={() => setShowPassword(v => !v)}
             style={{ position: 'absolute', right: 12, top: 0, bottom: 0, justifyContent: 'center' }}>
@@ -120,20 +121,22 @@ export default function AuthScreen({ lang = 'es' }) {
 }
 
 const styles = StyleSheet.create({
-  outer:            { flex: 1, backgroundColor: '#0F1F4A' },
+  outer:            { flex: 1, backgroundColor: 'white' },
   container:        { flexGrow: 1, alignItems: 'center', justifyContent: 'center', padding: 28 },
   emoji:            { fontSize: 56, marginBottom: 10 },
-  title:            { fontFamily: 'serif', fontSize: 32, color: 'white', fontWeight: '700', marginBottom: 4 },
-  subtitle:         { fontSize: 14, color: 'rgba(255,255,255,0.6)', marginBottom: 28, textAlign: 'center', lineHeight: 22 },
-  toggle:           { flexDirection: 'row', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 30, padding: 3, marginBottom: 20, width: '100%' },
-  toggleBtn:        { flex: 1, paddingVertical: 9, borderRadius: 26, alignItems: 'center' },
-  toggleActive:     { backgroundColor: 'white' },
-  toggleText:       { fontSize: 13, color: 'rgba(255,255,255,0.6)' },
-  toggleTextActive: { color: '#1A56DB', fontWeight: '700' },
-  input:            { width: '100%', padding: 13, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)', backgroundColor: 'rgba(255,255,255,0.12)', color: 'white', fontSize: 16, marginBottom: 12 },
-  error:            { color: '#FCA5A5', fontSize: 13, marginTop: 8, textAlign: 'center' },
-  btn:              { width: '100%', padding: 15, borderRadius: 50, backgroundColor: 'white', alignItems: 'center', marginTop: 16 },
-  btnDisabled:      { backgroundColor: 'rgba(255,255,255,0.2)' },
-  btnText:          { color: '#1A56DB', fontSize: 16, fontWeight: '700' },
-  forgotText:       { color: 'rgba(255,255,255,0.5)', fontSize: 13, textDecorationLine: 'underline' },
+  brandChip:        { backgroundColor: '#FECA04', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 8, marginBottom: 16 },
+  brandTitle:       { fontSize: 24, color: '#0A0A0A', fontWeight: '800' },
+  title:            { fontSize: 28, color: '#0A0A0A', fontWeight: '800', marginBottom: 4 },
+  subtitle:         { fontSize: 14, color: '#525252', marginBottom: 28, textAlign: 'center', lineHeight: 22 },
+  toggle:           { flexDirection: 'row', backgroundColor: '#F5F5F5', borderRadius: 16, padding: 3, marginBottom: 20, width: '100%' },
+  toggleBtn:        { flex: 1, paddingVertical: 9, borderRadius: 13, alignItems: 'center' },
+  toggleActive:     { backgroundColor: '#171717' },
+  toggleText:       { fontSize: 13, color: '#525252' },
+  toggleTextActive: { color: 'white', fontWeight: '700' },
+  input:            { width: '100%', height: 48, borderRadius: 16, backgroundColor: '#FAFAFA', paddingHorizontal: 14, color: '#0A0A0A', fontSize: 16, marginBottom: 12 },
+  error:            { color: '#DC2626', fontSize: 13, marginTop: 8, textAlign: 'center' },
+  btn:              { width: '100%', height: 48, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center', marginTop: 16 },
+  btnDisabled:      { opacity: 0.4 },
+  btnText:          { color: '#FAFAFA', fontSize: 18, fontWeight: '700' },
+  forgotText:       { color: '#525252', fontSize: 13, textDecorationLine: 'underline' },
 });

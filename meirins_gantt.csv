@@ -1,0 +1,37 @@
+﻿Name,Begin date,End date,Duration,Predecessors,Resources,Notes
+SPRINT 1 - Pre-Beta,01/06/2026,19/06/2026,15,,Marina,Bloque legal + build nativo
+Politica de privacidad,01/06/2026,03/06/2026,3,,Marina,Generar en termly.io y hostear en GitHub Pages
+Terminos de uso,01/06/2026,03/06/2026,3,,Marina,Obligatorio con datos de salud
+Aviso medico en la app,04/06/2026,04/06/2026,1,,Marina,Disclaimer al onboarding y perfil
+App Store Privacy Labels,04/06/2026,05/06/2026,2,,Marina,Declarar en App Store Connect
+Cuenta Apple Developer Program,01/06/2026,05/06/2026,5,,Marina,Pago 99 USD anual y espera de validacion
+Icono y splash screen definitivos,01/06/2026,08/06/2026,6,,Marina,Diseno profesional en todas resoluciones
+Build nativo iOS,08/06/2026,11/06/2026,4,,Marina,eas build platform ios
+Build nativo Android,12/06/2026,15/06/2026,2,,Marina,eas build platform android
+Configurar Apple HealthKit real,15/06/2026,18/06/2026,4,,Marina,Solo posible con build nativo
+Cifrado y RLS en Supabase,11/06/2026,12/06/2026,2,,Marina,Verificar todas las tablas
+Auditoria de bugs pre-Beta,15/06/2026,19/06/2026,5,,Marina,Recorrer todos los flujos con 3-4 perfiles
+SPRINT 2 - Beta cerrada,22/06/2026,17/07/2026,20,,Marina,TestFlight + iteracion con feedback
+Setup TestFlight,22/06/2026,24/06/2026,3,,Marina,Subir build y configurar grupo testers
+Sistema de analitica,22/06/2026,24/06/2026,3,,Marina,Mixpanel o PostHog free
+Sistema de crash reporting,25/06/2026,26/06/2026,2,,Marina,Sentry free
+Formulario de feedback,25/06/2026,26/06/2026,2,,Marina,Google Forms con preguntas clave
+Reclutar 20-50 beta testers,25/06/2026,03/07/2026,7,,Marina,Amigas redes y comunidades
+Iterar segun feedback Beta,06/07/2026,17/07/2026,10,,Marina,Corregir issues criticos
+SPRINT 3 - Pre-lanzamiento,20/07/2026,14/08/2026,20,,Marina,Monetizacion y producto premium
+Definir freemium vs premium,20/07/2026,22/07/2026,3,,Marina,Decidir tier gratuito y premium
+Sistema de suscripcion y paywall,23/07/2026,31/07/2026,7,,Marina,Integrar RevenueCat
+Pasarela de pago in-app,03/08/2026,07/08/2026,5,,Marina,App Store + Google Play purchases
+Asistente IA con Claude API,20/07/2026,31/07/2026,10,,Marina,Chat contextual coste 50EUR/mes
+Historial completo del ciclo,03/08/2026,07/08/2026,5,,Marina,Calendario de ciclos pasados
+Sistema de referidos,10/08/2026,12/08/2026,3,,Marina,Codigo y descuentos
+Onboarding optimizado por retencion,10/08/2026,14/08/2026,5,,Marina,A/B test 2-3 variantes
+SPRINT 4 - Lanzamiento,17/08/2026,11/09/2026,20,,Marina,Submission y go-live
+Capturas de pantalla App Store,17/08/2026,21/08/2026,5,,Marina,5-10 screenshots por idioma
+Descripcion y keywords ASO,17/08/2026,19/08/2026,3,,Marina,Optimizar titulo y descripcion
+Video preview de la app,20/08/2026,24/08/2026,3,,Marina,15-30 segundos
+Landing page del producto,20/08/2026,26/08/2026,5,,Marina,Web publica con todo
+Submission a Apple Review,27/08/2026,28/08/2026,2,,Marina,Subir build final
+Submission a Google Play,27/08/2026,28/08/2026,2,,Marina,Subir AAB
+Espera de review (Apple + Google),31/08/2026,07/09/2026,6,,,Tiempo de revision de plataformas
+Estrategia de lanzamiento,08/09/2026,11/09/2026,4,,Marina,Product Hunt + redes + prensa

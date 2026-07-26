@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, Switch, Animated } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, Switch, Animated, ImageBackground } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Settings } from 'lucide-react-native';
-import { PHASES } from '../data/phases';
+import { Settings, ChevronRight, Salad, Footprints, Flame, CalendarDays, Info, Check } from 'lucide-react-native';
 import { usePhaseData } from '../hooks/usePhaseData';
 import T, { getPhaseDisplay, getMealLabel } from '../i18n/translations';
 import { calcCalories } from '../utils/calories';
@@ -15,8 +14,23 @@ import EmptyState from '../components/EmptyState';
 import { calcAdherence } from '../utils/adherenceStats';
 import { trackScreen } from '../lib/analytics';
 import WaterCard from '../components/WaterCard';
+import CycleTrackingModal from '../components/CycleTrackingModal';
 
 const BLUE = { primary: '#1A56DB', light: '#EFF6FF', mid: 'rgba(26,86,219,0.10)' };
+
+const PHASE_IMAGES = {
+  menstrual:  require('../../assets/phases/menstrual.png'),
+  follicular: require('../../assets/phases/follicular.png'),
+  ovulation:  require('../../assets/phases/ovulation.png'),
+  luteal:     require('../../assets/phases/luteal.png'),
+};
+
+const HERO_COPY = {
+  menstrual:  { es: 'estás entrando en la fase menstrual',   en: 'you\'re entering your menstrual phase',   fr: 'tu entres dans ta phase menstruelle',    it: 'stai entrando nella fase mestruale' },
+  follicular: { es: 'estás en plena fase folicular',          en: 'you\'re in full follicular phase',        fr: 'tu es en pleine phase folliculaire',     it: 'sei in piena fase follicolare' },
+  ovulation:  { es: 'estás entrando en la fase de ovulación', en: 'you\'re entering your ovulation phase',   fr: 'tu entres dans ta phase d\'ovulation',   it: 'stai entrando nella fase di ovulazione' },
+  luteal:     { es: 'estás acabando tu fase lútea',           en: 'you\'re finishing your luteal phase',     fr: 'tu termines ta phase lutéale',           it: 'stai finendo la tua fase luteale' },
+};
 
 function WidgetWrap({ id, widgets, editMode, onLongPress, onRemove, wiggleRotate, children }) {
   if (!widgets[id]) return null;
@@ -41,12 +55,8 @@ const HORMONAL_CONTRA = ['pill', 'hormonal_iud', 'ring', 'patch', 'implant'];
 const WIDGETS_KEY = 'home_widgets_v1';
 
 const WIDGET_DEFS = [
-  { id: 'cycle',     emoji: '🌙', label: { es: 'Tu ciclo',          en: 'Your cycle',      fr: 'Ton cycle',      it: 'Il tuo ciclo' } },
-  { id: 'session',   emoji: '🏋️', label: { es: 'Sesión de hoy',     en: "Today's session", fr: "Séance d'aujourd'hui", it: 'Sessione di oggi' } },
   { id: 'streak',    emoji: '🔥', label: { es: 'Racha',             en: 'Streak',          fr: 'Série',          it: 'Serie' } },
-  { id: 'stats',     emoji: '📊', label: { es: 'Sueño / Nutrición', en: 'Sleep / Nutrition', fr: 'Sommeil / Nutrition', it: 'Sonno / Nutrizione' } },
-  { id: 'hydration', emoji: '💧', label: { es: 'Hidratación',       en: 'Hydration',       fr: 'Hydratation',    it: 'Idratazione' } },
-  { id: 'calories',  emoji: '🔥', label: { es: 'Calorías objetivo', en: 'Calorie goal',    fr: 'Objectif calorique', it: 'Obiettivo calorie' } },
+  { id: 'hydration', emoji: '💧', label: { es: 'Hidratación + Ciclo', en: 'Hydration + Cycle', fr: 'Hydratation + Cycle', it: 'Idratazione + Ciclo' } },
   { id: 'nutrition', emoji: '🥗', label: { es: 'Nutrición de hoy',  en: "Today's nutrition", fr: "Nutrition d'aujourd'hui", it: 'Nutrizione di oggi' } },
   { id: 'tip',       emoji: '💡', label: { es: 'Consejo del día',   en: 'Tip of the day',  fr: 'Conseil du jour', it: 'Consiglio del giorno' } },
 ];
@@ -77,7 +87,7 @@ function useHomeWidgets() {
   return { widgets, toggle, loaded };
 }
 
-export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
+export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCycleDay, logRecipeDone }) {
   useEffect(() => { trackScreen('Home', { phase: pi?.phase }); }, []);
   const { phaseData } = usePhaseData(pi?.phase, lang);
   const baseD = phaseData;
@@ -127,8 +137,6 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
         ext.fitnessLevel || 'regular',
         ext.conditions   || [],
       );
-  const pKeys = ['menstrual', 'follicular', 'ovulation', 'luteal'];
-  const pR = { menstrual: [1, 5], follicular: [6, 13], ovulation: [14, 16], luteal: [17, pi?.cycleLen || 28] };
   const h = (T[lang] || T.es).home;
   const c = (T[lang] || T.es).common;
 
@@ -144,11 +152,12 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
     return map[slot][lang] || map[slot].es;
   })();
   const userName = profile?.profileExtended?.name?.trim() || '';
-  const greeting = userName ? `${greetingTxt}, ${userName}` : greetingTxt;
+  const avatarInitial = (userName[0] || 'B').toUpperCase();
 
   const { widgets, toggle } = useHomeWidgets();
   const [showCustomize, setShowCustomize] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [trackingOpen, setTrackingOpen] = useState(false);
 
   const wiggleAnim = useRef(new Animated.Value(0)).current;
   useEffect(() => {
@@ -170,6 +179,8 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
   const enterEdit = useCallback(() => setEditMode(true), []);
   const ww = { widgets, editMode, onLongPress: enterEdit, onRemove: toggle, wiggleRotate };
 
+  const tr = (es, en, fr, it) => ({ es, en, fr, it }[lang] || es);
+
   const customizeTxt = {
     title:  { es: 'Personalizar inicio', en: 'Customize home',   fr: 'Personnaliser', it: 'Personalizza' },
     done:   { es: 'Hecho',              en: 'Done',              fr: 'Terminé',       it: 'Fatto' },
@@ -185,9 +196,14 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
     };
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.headerSub}>Meirins · {h.today}</Text>
-          <Text style={styles.headerTitle}>👋 {greeting}</Text>
+        <View style={styles.topBar}>
+          <View style={styles.greetingChip}>
+            <View style={styles.avatarCircle}><Text style={styles.avatarInitialTxt}>{avatarInitial}</Text></View>
+            <View>
+              <Text style={styles.greetingHi}>{greetingTxt}</Text>
+              <Text style={styles.greetingName} numberOfLines={1}>{userName || 'Blumm'}</Text>
+            </View>
+          </View>
         </View>
         <EmptyState
           emoji="🌙"
@@ -200,253 +216,229 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
     );
   }
 
+  // Últimos 11 días para el punteado de hábito
+  const habitDots = Array.from({ length: 11 }, (_, i) => {
+    const dt = new Date(); dt.setDate(dt.getDate() - (10 - i));
+    const key = dt.toISOString().split('T')[0];
+    const day = ext.activityLog?.[key];
+    return !!(day && (Object.keys(day.recipes || {}).length > 0 || day.workout === 'done'));
+  });
+  const adhStreak = calcAdherence(ext.activityLog || {}, 30);
+
+  const todayCycleKey = new Date().toISOString().split('T')[0];
+  const hasCycleLogToday = !!ext.cycleLog?.[todayCycleKey];
+
+  // Estado de "comido" de la siguiente comida sugerida
+  const nextMealType = d?.meals?.[0]?.t;
+  const todayActivity = ext.activityLog?.[todayKeyH];
+  const nextMealDone = !!(nextMealType && todayActivity?.recipes?.[nextMealType] === 'done');
+
+  const heroDayLabel = `${tr('día', 'day', 'jour', 'giorno')} ${pi?.day}/${pi?.cycleLen}`;
+  const heroHeadline = isHormonalContra
+    ? `${tr('Día', 'Day', 'Jour', 'Giorno')} ${pi?.day}, ${tr('ciclo con anticoncepción hormonal', 'cycle on hormonal contraception', 'cycle sous contraception hormonale', 'ciclo con contraccezione ormonale')}`
+    : `${tr('Día', 'Day', 'Jour', 'Giorno')} ${pi?.day}, ${(HERO_COPY[pi?.phase] && (HERO_COPY[pi.phase][lang] || HERO_COPY[pi.phase].es)) || ''}`;
+
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.headerSub}>{greeting}</Text>
-          <Text style={styles.headerTitle}>
-            {isHormonalContra ? `💊 ${{ es: 'Ciclo con AC', en: 'Cycle on BC', fr: 'Cycle sous CO', it: 'Ciclo con AC' }[lang] || 'Ciclo con AC'}` : `${d?.emoji} ${h.phase} ${d?.name}`}
-          </Text>
-        </View>
-        <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
+      <ScrollView style={styles.scroll} contentContainerStyle={{ padding: 16, paddingTop: 58, paddingBottom: 120 }}>
+
+        {/* ── TOP BAR ── */}
+        <View style={styles.topRow}>
+          <View style={styles.greetingChip}>
+            <View style={styles.avatarCircle}><Text style={styles.avatarInitialTxt}>{avatarInitial}</Text></View>
+            <View>
+              <Text style={styles.greetingHi}>{greetingTxt}</Text>
+              <Text style={styles.greetingName} numberOfLines={1}>{userName || 'Blumm'}</Text>
+            </View>
+          </View>
           {editMode ? (
-            <TouchableOpacity onPress={() => setEditMode(false)} style={styles.doneBadge} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <TouchableOpacity onPress={() => setEditMode(false)} style={styles.doneBadge}>
               <Text style={styles.doneBadgeTxt}>{customizeTxt.done[lang] || 'Hecho'}</Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity onPress={() => setShowCustomize(true)} style={styles.customizeBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-              <Settings size={16} color="rgba(255,255,255,0.85)" />
+              <Settings size={16} color="#0A0A0A" />
             </TouchableOpacity>
           )}
-          <View style={styles.dayBadge}>
-            <Text style={styles.dayNum}>{pi?.day}</Text>
-            <Text style={styles.dayLabel}>{h.cycleDay}</Text>
-          </View>
         </View>
-      </View>
 
-      <View style={styles.headerTag}>
-        <Text style={styles.headerTagText}>
-          {isHormonalContra
-            ? `${{ es: 'Fases hormonales no aplican', en: 'Hormonal phases don\'t apply', fr: 'Phases hormonales non applicables', it: 'Fasi ormonali non applicable' }[lang] || 'Fases hormonales no aplican'} · ${h.remaining} `
-            : `${d?.tagline} · ${h.remaining} `}
-          <Text style={{ fontWeight: '700' }}>{pi?.daysLeft} {h.daysLeft}</Text>
-        </Text>
-      </View>
+        {/* ── HERO DE FASE ── */}
+        <ImageBackground
+          source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
+          style={styles.heroCard}
+          imageStyle={styles.heroCardImg}
+        >
+          <Text style={styles.heroHeadline}>{heroHeadline}</Text>
+          <View style={styles.heroTags}>
+            <View style={styles.heroTag}><Text style={styles.heroTagTxt}>{heroDayLabel}</Text></View>
+            {!isHormonalContra && d?.intensity ? (
+              <View style={styles.heroTag}><Text style={styles.heroTagTxt}>{d.intensity}</Text></View>
+            ) : null}
+          </View>
+        </ImageBackground>
 
-      <ScrollView style={styles.scroll} contentContainerStyle={{ padding: 14, paddingBottom: 30 }}>
-
-        {/* ── CICLO ── */}
-        <WidgetWrap {...ww} id="cycle">
-          <View style={styles.card}>
-            <View style={styles.cardRow}>
-              <Text style={styles.cardLabel}>{h.yourCycle}</Text>
-              <Text style={styles.cardMuted}>{h.dayOf} {pi?.day} {h.of} {pi?.cycleLen}</Text>
-            </View>
-            {isHormonalContra ? (
-              <View style={{ backgroundColor: '#F3F4F6', borderRadius: 10, padding: 10, marginTop: 8 }}>
-                <Text style={{ fontSize: 12, color: '#6B7280', textAlign: 'center' }}>
-                  💊 {{ es: 'Con anticoncepción hormonal las fases no se muestran', en: 'Cycle phases not shown with hormonal contraception', fr: 'Phases non affichées avec contraception hormonale', it: 'Fasi non mostrate con contraccezione ormonale' }[lang]}
-                </Text>
+        {/* ── KCAL + ENTRENO ── */}
+        <View style={styles.row2col}>
+          {cals ? (
+            <View style={styles.miniCard}>
+              <View style={styles.miniHeader}>
+                <View style={styles.miniHeaderLabel}>
+                  <Salad size={14} color="#0A0A0A" />
+                  <Text style={styles.miniHeaderTxt}>{tr('Kcal. objetivo', 'Kcal. goal', 'Kcal. objectif', 'Kcal. obiettivo')}</Text>
+                </View>
+                <ChevronRight size={14} color="#0A0A0A" />
               </View>
+              <Text style={[styles.miniBigNum, { color: '#FE6004' }]}>{cals.total}</Text>
+              <Text style={styles.miniSub}>{cals.tdee} {tr('mantenimiento', 'maintenance', 'entretien', 'mantenimento')}</Text>
+            </View>
+          ) : null}
+          <TouchableOpacity style={styles.miniCard} onPress={() => navigation.navigate('Gimnasio')} activeOpacity={0.85}>
+            <View style={styles.miniHeader}>
+              <View style={styles.miniHeaderLabel}>
+                <Footprints size={14} color="#0A0A0A" />
+                <Text style={styles.miniHeaderTxt}>{h.sessionToday}</Text>
+              </View>
+              <ChevronRight size={14} color="#0A0A0A" />
+            </View>
+            <Text style={[styles.miniBigNum, { fontSize: 24, color: '#429FE7' }]} numberOfLines={2}>
+              {todaySession?.name ?? (lang === 'en' ? 'Rest' : lang === 'fr' ? 'Repos' : 'Descanso')}
+            </Text>
+            {todaySession?.dur ? <Text style={styles.miniSub}>{todaySession.dur}</Text> : null}
+          </TouchableOpacity>
+        </View>
+
+        {/* ── SIGUIENTE COMIDA ── */}
+        <WidgetWrap {...ww} id="nutrition">
+          <View style={styles.mealCard}>
+            <View style={styles.mealHeader}>
+              <View style={styles.miniHeaderLabel}>
+                <Salad size={14} color="#0A0A0A" />
+                <Text style={styles.mealHeaderTxt}>{tr('Siguiente comida', 'Next meal', 'Prochain repas', 'Prossimo pasto')}</Text>
+              </View>
+              <TouchableOpacity onPress={() => !editMode && navigation.navigate('Nutrición')}>
+                <ChevronRight size={16} color="#0A0A0A" />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.mealSlot}>{getMealLabel(lang, d?.meals?.[0]?.t)}</Text>
+            <Text style={styles.mealTitle}>{d?.meals?.[0]?.ico} {d?.meals?.[0]?.title}</Text>
+            {d?.meals?.[0]?.items?.slice(0, 3).map((it, i) => (
+              <View key={i} style={styles.mealItemRow}>
+                <View style={styles.mealDot} />
+                <Text style={styles.mealItemTxt}>{it}</Text>
+              </View>
+            ))}
+            <View style={styles.mealTags}>
+              {d?.focus?.slice(0, 4).map(f => (
+                <View key={f} style={styles.mealTag}><Text style={styles.mealTagTxt}>{f}</Text></View>
+              ))}
+            </View>
+            {logRecipeDone && nextMealType ? (
+              <TouchableOpacity
+                style={[styles.mealBtn, nextMealDone && styles.mealBtnDone]}
+                onPress={() => !nextMealDone && logRecipeDone(nextMealType, 'done')}
+                activeOpacity={0.85}
+                disabled={nextMealDone}
+              >
+                {nextMealDone && <Check size={18} color="#49CF38" />}
+                <Text style={[styles.mealBtnTxt, nextMealDone && styles.mealBtnTxtDone]}>
+                  {nextMealDone
+                    ? tr('Ya lo has comido', 'Already eaten', 'Déjà mangé', 'Già mangiato')
+                    : tr('Ya lo he comido', 'Mark as eaten', 'Marquer comme mangé', 'Segna come mangiato')}
+                </Text>
+              </TouchableOpacity>
             ) : (
-              <>
-                <View style={styles.progressBar}>
-                  {pKeys.map(ph => {
-                    const [s, e] = pR[ph];
-                    const w = ((e - s + 1) / (pi?.cycleLen || 28)) * 100;
-                    return <View key={ph} style={{ width: `${w}%`, backgroundColor: ph === pi?.phase ? PHASES[ph].color : PHASES[ph].mid }} />;
-                  })}
-                </View>
-                <View style={styles.phaseLabels}>
-                  {pKeys.map(ph => <Text key={ph} style={[styles.phaseLabel, { color: ph === pi?.phase ? PHASES[ph].color : '#CBD5E1', fontWeight: ph === pi?.phase ? '700' : '400' }]}>{PHASES[ph].emoji} {PHASES[ph].name.slice(0, 3)}</Text>)}
-                </View>
-                <View style={[styles.tagBg, { backgroundColor: d?.mid }]}>
-                  <Text style={[styles.tagText, { color: d?.color }]}>{d?.tagline}</Text>
-                  <Text style={styles.tagMuted}> · {h.remaining} <Text style={{ fontWeight: '700' }}>{pi?.daysLeft} {pi?.daysLeft !== 1 ? c.days : c.day}</Text></Text>
-                </View>
-              </>
+              <TouchableOpacity style={styles.mealBtn} onPress={() => navigation.navigate('Nutrición')} activeOpacity={0.85}>
+                <Text style={styles.mealBtnTxt}>{tr('Ver en Nutrición', 'View in Nutrition', 'Voir dans Nutrition', 'Vedi in Nutrizione')}</Text>
+              </TouchableOpacity>
             )}
           </View>
         </WidgetWrap>
 
-        {/* ── INTENSIDAD + SESIÓN ── */}
-        <View style={styles.grid}>
-          {!isHormonalContra && (
-            <View style={[styles.card, styles.gridCard]}>
-              <Text style={styles.cardLabel}>{h.intensityToday}</Text>
-              <Text style={[styles.intensity, { color: d?.color }]}>{d?.intensity}</Text>
-              <View style={styles.intensityBar}>
-                <View style={[styles.intensityFill, { width: `${d?.intensityPct}%`, backgroundColor: d?.color }]} />
-              </View>
-            </View>
-          )}
-          {widgets.session && (
-            <TouchableOpacity onPress={() => editMode ? setEditMode(false) : navigation.navigate('Gimnasio')} onLongPress={() => setEditMode(true)} delayLongPress={400} style={[styles.card, styles.gridCard]}>
-              {editMode && <TouchableOpacity style={wwStyles.xBadge} onPress={() => toggle('session')} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}><Text style={wwStyles.xBadgeTxt}>✕</Text></TouchableOpacity>}
-              <Text style={styles.cardLabel}>{h.sessionToday}</Text>
-              <Text style={{ fontSize: 22 }}>{todaySession?.ico ?? '😴'}</Text>
-              <Text style={styles.sessionName}>{todaySession?.name ?? (lang === 'en' ? 'Rest' : lang === 'fr' ? 'Repos' : 'Descanso')}</Text>
-              {todaySession?.dur ? <Text style={[styles.sessionDur, { color: BLUE.primary }]}>{todaySession.dur}</Text> : null}
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {/* ── RACHA ── */}
-        {widgets.streak && (() => {
-          const adh = calcAdherence(profile?.profileExtended?.activityLog || {}, 30);
-          if (adh.streak < 1) return null;
-          const streakTxt = {
-            title:  { es: '¡Vas genial!', en: 'You\'re on fire!', fr: 'Tu es en feu !', it: 'Sei in forma!' },
-            days:   { es: 'días seguidos', en: 'days in a row', fr: 'jours de suite', it: 'giorni di fila' },
-            msg1:   { es: 'Sigue así, estás construyendo un hábito real.', en: 'Keep it up, you\'re building a real habit.', fr: 'Continue, tu construis une vraie habitude.', it: 'Continua così, stai costruendo un\'abitudine vera.' },
-            msg7:   { es: '¡Una semana entera! Tu cuerpo ya lo nota.', en: 'A full week! Your body can already feel it.', fr: 'Une semaine entière ! Ton corps le ressent déjà.', it: 'Una settimana intera! Il tuo corpo lo sente già.' },
-            msg14:  { es: 'Dos semanas. Esto ya es un estilo de vida.', en: 'Two weeks. This is already a lifestyle.', fr: 'Deux semaines. C\'est déjà un mode de vie.', it: 'Due settimane. È già uno stile di vita.' },
-            msg30:  { es: '¡Un mes! Eres imparable.', en: 'One month! You\'re unstoppable.', fr: 'Un mois ! Tu es inarrêtable.', it: 'Un mese! Sei inarrestabile.' },
+        {/* ── HÁBITO / RACHA ── */}
+        {widgets.streak && adhStreak.streak >= 1 && (() => {
+          const streakMsg = {
+            m1:  { es: 'Vas genial, sigue así', en: "You're doing great, keep going", fr: 'Tu es sur la bonne voie', it: 'Stai andando alla grande' },
+            m7:  { es: '¡Una semana entera! Tu cuerpo ya lo nota.', en: 'A full week! Your body can already feel it.', fr: 'Une semaine entière ! Ton corps le ressent déjà.', it: 'Una settimana intera! Il tuo corpo lo sente già.' },
+            m14: { es: 'Dos semanas. Esto ya es un estilo de vida.', en: 'Two weeks. This is already a lifestyle.', fr: 'Deux semaines. C\'est déjà un mode de vie.', it: 'Due settimane. È già uno stile di vita.' },
           };
-          const msg = adh.streak >= 30 ? streakTxt.msg30 : adh.streak >= 14 ? streakTxt.msg14 : adh.streak >= 7 ? streakTxt.msg7 : streakTxt.msg1;
-          const streakColor = adh.streak >= 14 ? '#7C3AED' : adh.streak >= 7 ? '#D97706' : '#1A56DB';
-          const streakBg = adh.streak >= 14 ? 'rgba(124,58,237,0.07)' : adh.streak >= 7 ? 'rgba(217,119,6,0.07)' : 'rgba(26,86,219,0.07)';
+          const msg = adhStreak.streak >= 14 ? streakMsg.m14 : adhStreak.streak >= 7 ? streakMsg.m7 : streakMsg.m1;
           return (
             <TouchableOpacity activeOpacity={1} onLongPress={() => setEditMode(true)} delayLongPress={400}>
-              <Animated.View style={[styles.card, { marginBottom: 12, borderLeftWidth: 3, borderLeftColor: streakColor }, editMode ? { transform: [{ rotate: wiggleRotate }] } : undefined]}>
+              <Animated.View style={[styles.habitCard, editMode ? { transform: [{ rotate: wiggleRotate }] } : undefined]}>
                 {editMode && <TouchableOpacity style={wwStyles.xBadge} onPress={() => toggle('streak')} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}><Text style={wwStyles.xBadgeTxt}>✕</Text></TouchableOpacity>}
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={{ fontSize: 12, color: '#94A3B8', fontWeight: '500', marginBottom: 2 }}>{streakTxt.title[lang] || streakTxt.title.es}</Text>
-                    <Text style={{ fontSize: 13, color: '#475569', lineHeight: 18 }}>{msg[lang] || msg.es}</Text>
+                <View style={styles.miniHeader}>
+                  <View style={styles.miniHeaderLabel}>
+                    <CalendarDays size={14} color="#0A0A0A" />
+                    <Text style={styles.miniHeaderTxt}>{tr('Hábito', 'Habit', 'Habitude', 'Abitudine')}</Text>
                   </View>
-                  <View style={{ backgroundColor: streakBg, borderRadius: 14, padding: 12, alignItems: 'center', minWidth: 64 }}>
-                    <Text style={{ fontSize: 26, fontWeight: '800', color: streakColor, lineHeight: 30 }}>{adh.streak}</Text>
-                    <Text style={{ fontSize: 10, color: streakColor, marginTop: 1 }}>🔥 {streakTxt.days[lang] || streakTxt.days.es}</Text>
-                  </View>
+                  <ChevronRight size={14} color="#0A0A0A" />
+                </View>
+                <Text style={styles.habitBigTxt}>
+                  {adhStreak.streak} {adhStreak.streak === 1 ? c.day : c.days} {tr('seguidos', 'in a row', 'de suite', 'di fila')}
+                </Text>
+                <Text style={styles.habitSub}>{msg[lang] || msg.es}</Text>
+                <View style={styles.habitDotsRow}>
+                  {habitDots.map((on, i) => (
+                    <View key={i} style={[styles.habitDot, on ? styles.habitDotOn : styles.habitDotOff]} />
+                  ))}
                 </View>
               </Animated.View>
             </TouchableOpacity>
           );
         })()}
 
-        {/* ── SUEÑO + NUTRICIÓN + ENTRENO ── */}
-        {widgets.stats && (() => { // eslint-disable-line no-unused-expressions
-          const s = healthData?.lastSleep;
-          const adh = calcAdherence(profile?.profileExtended?.activityLog || {}, 7);
-          const hasNutri = adh.recipesPct != null;
-          const hasWorkout = adh.workoutsPct != null;
-          const sleepTxt = {
-            title:   { es: 'Sueño',      en: 'Sleep',     fr: 'Sommeil',        it: 'Sonno' },
-            nutri:   { es: 'Nutrición',  en: 'Nutrition', fr: 'Nutrition',       it: 'Nutrizione' },
-            workout: { es: 'Entreno',    en: 'Workout',   fr: 'Entraînement',    it: 'Allenamento' },
-          };
-          if (!s && !hasNutri && !hasWorkout) return (
-            <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
-              <TouchableOpacity onPress={() => navigation.navigate('Nutrición')} style={{ flex: 1, backgroundColor: '#F0FDF4', borderRadius: 16, padding: 12, alignItems: 'center',
-                shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 }}>
-                <Text style={{ fontSize: 22, marginBottom: 4 }}>🥗</Text>
-                <Text style={{ fontSize: 13, fontWeight: '700', color: '#16A34A' }}>{sleepTxt.nutri[lang] || sleepTxt.nutri.es}</Text>
-                <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2, textAlign: 'center' }}>
-                  {{ es: 'Ver plan →', en: 'View plan →', fr: 'Voir plan →', it: 'Vedi piano →' }[lang] || 'Ver plan →'}
+        {/* ── HIDRATACIÓN + CICLO ── */}
+        <WidgetWrap {...ww} id="hydration">
+          <View style={styles.row2col}>
+            <WaterCard lang={lang} />
+            <View style={styles.miniCard}>
+              <View style={styles.miniHeader}>
+                <View style={styles.miniHeaderLabel}>
+                  <Flame size={14} color="#0A0A0A" />
+                  <Text style={styles.miniHeaderTxt}>{h.yourCycle || tr('Ciclo', 'Cycle', 'Cycle', 'Ciclo')}</Text>
+                </View>
+                <ChevronRight size={14} color="#0A0A0A" />
+              </View>
+              <View style={{ flex: 1, justifyContent: 'space-between' }}>
+                <Text style={[styles.miniBigNum, { fontSize: 24, color: hasCycleLogToday ? '#49CF38' : '#171717' }]}>
+                  {hasCycleLogToday ? tr('Registrado', 'Logged', 'Enregistré', 'Registrato') : tr('Sin registro', 'Not logged', 'Non enregistré', 'Non registrato')}
                 </Text>
-              </TouchableOpacity>
-            </View>
-          );
-          const sleepEmoji = !s ? '🌙' : s.duration >= 7 ? '😴' : s.duration >= 6 ? '🌙' : '⚠️';
-          const sleepColor = !s ? '#94A3B8' : s.duration >= 7 ? '#0284C7' : s.duration >= 6 ? '#7C3AED' : '#DC2626';
-          return (
-            <View style={{ flexDirection: 'row', gap: 10, marginBottom: 12 }}>
-              {s && (
-                <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 16, padding: 12, alignItems: 'center',
-                  shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 }}>
-                  <Text style={{ fontSize: 22, marginBottom: 4 }}>{sleepEmoji}</Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 2 }}>
-                    <Text style={{ fontSize: 26, fontWeight: '800', color: sleepColor }}>{s.duration}</Text>
-                    <Text style={{ fontSize: 11, color: '#64748B' }}>h</Text>
-                  </View>
-                  <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>{sleepTxt.title[lang] || sleepTxt.title.es}</Text>
-                  {(s.deepSleep > 0 || s.remSleep > 0) && (
-                    <View style={{ flexDirection: 'row', gap: 6, marginTop: 6 }}>
-                      {s.deepSleep > 0 && <Text style={{ fontSize: 10, color: '#0284C7', fontWeight: '600' }}>{s.deepSleep}h deep</Text>}
-                      {s.remSleep  > 0 && <Text style={{ fontSize: 10, color: '#7C3AED', fontWeight: '600' }}>{s.remSleep}h rem</Text>}
-                    </View>
-                  )}
-                </View>
-              )}
-              {hasNutri && (
-                <View style={{ flex: 1, backgroundColor: '#F0FDF4', borderRadius: 16, padding: 12, alignItems: 'center',
-                  shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 }}>
-                  <Text style={{ fontSize: 22, marginBottom: 4 }}>🥗</Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 1 }}>
-                    <Text style={{ fontSize: 26, fontWeight: '800', color: '#16A34A' }}>{adh.recipesPct}</Text>
-                    <Text style={{ fontSize: 11, color: '#64748B' }}>%</Text>
-                  </View>
-                  <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>{sleepTxt.nutri[lang] || sleepTxt.nutri.es}</Text>
-                  <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>{adh.recipesDone}/{adh.recipesTotal}</Text>
-                </View>
-              )}
-              {hasWorkout && (
-                <View style={{ flex: 1, backgroundColor: '#EFF6FF', borderRadius: 16, padding: 12, alignItems: 'center',
-                  shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 }}>
-                  <Text style={{ fontSize: 22, marginBottom: 4 }}>🏋️</Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 1 }}>
-                    <Text style={{ fontSize: 26, fontWeight: '800', color: BLUE.primary }}>{adh.workoutsPct}</Text>
-                    <Text style={{ fontSize: 11, color: '#64748B' }}>%</Text>
-                  </View>
-                  <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>{sleepTxt.workout[lang] || sleepTxt.workout.es}</Text>
-                  <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>{adh.workoutsDone}/{adh.workoutsTotal}</Text>
-                  {adh.streak > 0 && <Text style={{ fontSize: 10, color: '#F59E0B', fontWeight: '700', marginTop: 3 }}>🔥 {adh.streak}</Text>}
-                </View>
-              )}
-            </View>
-          );
-        })()}
-
-        {/* ── HIDRATACIÓN ── */}
-        <WidgetWrap {...ww} id="hydration"><WaterCard lang={lang} /></WidgetWrap>
-
-        {/* ── CALORÍAS ── */}
-        {widgets.calories && cals && (
-          <WidgetWrap {...ww} id="calories">
-            <View style={styles.card}>
-              <Text style={styles.sectionTitle}>{h.caloriesGoal}</Text>
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <View style={{ alignItems: 'center' }}>
-                  <Text style={{ fontSize: 32, fontWeight: '700', color: d?.color }}>{cals.total}</Text>
-                  <Text style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>{h.kcalPhase}</Text>
-                </View>
-                <View style={{ alignItems: 'center' }}>
-                  <Text style={{ fontSize: 20, fontWeight: '600', color: '#475569' }}>{cals.tdee}</Text>
-                  <Text style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>{h.kcalMaint}</Text>
-                </View>
-                <View style={{ backgroundColor: d?.mid, borderRadius: 10, padding: 10, alignItems: 'center' }}>
-                  <Text style={{ fontSize: 13, fontWeight: '700', color: d?.color }}>{d?.kcal?.split('·')[0]}</Text>
-                </View>
+                <TouchableOpacity style={styles.smallBtn} onPress={() => setTrackingOpen(true)} activeOpacity={0.85}>
+                  <Text style={styles.smallBtnTxt}>{tr('Registrar', 'Log it', 'Enregistrer', 'Registra')}</Text>
+                </TouchableOpacity>
               </View>
             </View>
-          </WidgetWrap>
-        )}
-
-        {/* ── NUTRICIÓN DEL DÍA ── */}
-        <WidgetWrap {...ww} id="nutrition">
-          <TouchableOpacity onPress={() => !editMode && navigation.navigate('Nutrición')} style={styles.card}>
-            <Text style={styles.sectionTitle}>{h.nutritionToday}</Text>
-            <View style={styles.tags}>
-              {d?.focus?.map(f => <View key={f} style={styles.tag}><Text style={styles.tagLabel}>{f}</Text></View>)}
-            </View>
-            <View style={[styles.highlight, { borderLeftColor: BLUE.primary }]}>
-              <Text style={styles.highlightTitle}>{d?.meals?.[0]?.ico} {d?.meals?.[0]?.title}</Text>
-              <Text style={styles.highlightSub}>{getMealLabel(lang, d?.meals?.[0]?.t)} · {d?.meals?.[0]?.items?.slice(0,2).join(' · ')}</Text>
-            </View>
-          </TouchableOpacity>
-        </WidgetWrap>
-
-        {/* ── CONSEJO ── */}
-        <WidgetWrap {...ww} id="tip">
-          <View style={styles.card}>
-            <Text style={styles.sectionTitle}>{h.phaseTip}</Text>
-            <Text style={styles.tip}>"{d?.tip}"</Text>
           </View>
         </WidgetWrap>
+
+        {/* ── CONSEJO DE LA FASE ── */}
+        <WidgetWrap {...ww} id="tip">
+          <ImageBackground
+            source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
+            style={styles.tipCard}
+            imageStyle={[styles.heroCardImg, { opacity: 0.55 }]}
+          >
+            <View style={styles.tipOverlay} />
+            <View style={styles.miniHeader}>
+              <View style={styles.miniHeaderLabel}>
+                <Info size={14} color="white" />
+                <Text style={[styles.miniHeaderTxt, { color: 'white' }]}>{h.phaseTip}</Text>
+              </View>
+              <ChevronRight size={14} color="white" />
+            </View>
+            <Text style={styles.tipQuote}>"{d?.tip}"</Text>
+          </ImageBackground>
+        </WidgetWrap>
       </ScrollView>
+
+      <CycleTrackingModal
+        visible={trackingOpen}
+        onClose={() => setTrackingOpen(false)}
+        lang={lang}
+        cycleLog={ext.cycleLog || {}}
+        onSave={(date, data) => logCycleDay?.(date, data)}
+        currentPhase={pi?.phase || null}
+      />
 
       {/* ── MODAL PERSONALIZAR ── */}
       <Modal visible={showCustomize} animationType="slide" transparent onRequestClose={() => setShowCustomize(false)}>
@@ -468,7 +460,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
                 <Switch
                   value={widgets[wd.id]}
                   onValueChange={() => toggle(wd.id)}
-                  trackColor={{ false: '#E2E8F0', true: BLUE.primary }}
+                  trackColor={{ false: '#E2E8F0', true: '#171717' }}
                   thumbColor="white"
                 />
               </View>
@@ -481,51 +473,81 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F0F4FA' },
-  header: { backgroundColor: '#1A56DB', padding: 20, paddingTop: 60, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  headerSub: { fontSize: 10, color: 'rgba(255,255,255,0.7)', letterSpacing: 2, textTransform: 'uppercase' },
-  headerTitle: { fontSize: 24, color: 'white', fontWeight: '700', marginTop: 4 },
-  customizeBtn: { marginTop: 6, padding: 4 },
-  dayBadge: { backgroundColor: 'rgba(255,255,255,0.15)', borderRadius: 18, padding: 12, alignItems: 'center', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)' },
-  dayNum: { fontSize: 28, color: 'white', fontWeight: '700', lineHeight: 32 },
-  dayLabel: { fontSize: 9, color: 'rgba(255,255,255,0.8)', letterSpacing: 0.5, marginTop: 2 },
-  headerTag: { backgroundColor: '#1A56DB', paddingHorizontal: 20, paddingBottom: 20 },
-  headerTagText: { color: 'rgba(255,255,255,0.9)', fontSize: 13, fontStyle: 'italic' },
+  container: { flex: 1, backgroundColor: 'white' },
   scroll: { flex: 1 },
-  card: { backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
-  cardRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
-  cardLabel: { fontSize: 11, color: '#94A3B8', fontWeight: '500' },
-  cardMuted: { fontSize: 12, color: '#94A3B8' },
-  progressBar: { flexDirection: 'row', borderRadius: 8, overflow: 'hidden', height: 10, marginBottom: 10 },
-  phaseLabels: { flexDirection: 'row', justifyContent: 'space-around', marginBottom: 12 },
-  phaseLabel: { fontSize: 9 },
-  tagBg: { borderRadius: 10, padding: 10 },
-  tagText: { fontSize: 13, fontWeight: '700' },
-  tagMuted: { fontSize: 13, color: '#475569' },
-  grid: { flexDirection: 'row', gap: 12, marginBottom: 12 },
-  gridCard: { flex: 1, margin: 0 },
-  intensity: { fontSize: 20, fontWeight: '700', marginVertical: 4 },
-  intensityBar: { height: 4, backgroundColor: '#F1F5F9', borderRadius: 2, overflow: 'hidden', marginTop: 8 },
-  intensityFill: { height: '100%', borderRadius: 2 },
-  sessionName: { fontSize: 12, fontWeight: '600', color: '#1E293B', marginTop: 4 },
-  sessionDur: { fontSize: 11, marginTop: 2 },
-  sectionTitle: { fontSize: 14, fontWeight: '600', color: '#1E293B', marginBottom: 10 },
-  tags: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 10 },
-  tag: { backgroundColor: 'rgba(26,86,219,0.10)', paddingHorizontal: 10, paddingVertical: 3, borderRadius: 20 },
-  tagLabel: { fontSize: 11, color: '#1A56DB', fontWeight: '500' },
-  highlight: { borderLeftWidth: 3, paddingLeft: 12 },
-  highlightTitle: { fontSize: 13, fontWeight: '600', color: '#1E293B' },
-  highlightSub: { fontSize: 12, color: '#64748B', marginTop: 2 },
-  tip: { fontSize: 13, color: '#475569', lineHeight: 22, fontStyle: 'italic' },
-  doneBadge: { marginTop: 6, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 6, borderWidth: 1, borderColor: 'rgba(255,255,255,0.4)' },
+
+  // Top bar
+  topBar: { paddingHorizontal: 16, paddingTop: 58 },
+  topRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 },
+  greetingChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1,
+    backgroundColor: '#F5F5F5', borderRadius: 24, padding: 8,
+  },
+  avatarCircle: { width: 40, height: 40, borderRadius: 16, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center' },
+  avatarInitialTxt: { color: 'white', fontWeight: '800', fontSize: 16 },
+  greetingHi: { fontSize: 14, color: '#0A0A0A' },
+  greetingName: { fontSize: 18, fontWeight: '800', color: '#0A0A0A' },
+  customizeBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#F5F5F5', alignItems: 'center', justifyContent: 'center', marginLeft: 10 },
+  doneBadge: { backgroundColor: '#171717', borderRadius: 20, paddingHorizontal: 14, paddingVertical: 10, marginLeft: 10 },
   doneBadgeTxt: { color: 'white', fontSize: 13, fontWeight: '700' },
-  // Modal
+
+  // Hero
+  heroCard: { height: 200, borderRadius: 24, padding: 16, justifyContent: 'space-between', marginTop: 2, marginBottom: 2, overflow: 'hidden' },
+  heroCardImg: { borderRadius: 24 },
+  heroHeadline: { fontSize: 26, fontWeight: '800', color: '#0A0A0A', lineHeight: 30 },
+  heroTags: { flexDirection: 'row', flexWrap: 'wrap', gap: 4 },
+  heroTag: { backgroundColor: '#F5F5F5', height: 24, paddingHorizontal: 8, borderRadius: 8, justifyContent: 'center' },
+  heroTagTxt: { fontSize: 10, fontWeight: '600', color: '#0A0A0A', textTransform: 'uppercase', letterSpacing: 0.3 },
+
+  // 2-col mini cards
+  row2col: { flexDirection: 'row', gap: 2, marginTop: 2, marginBottom: 2 },
+  miniCard: { flex: 1, backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16 },
+  miniHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
+  miniHeaderLabel: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  miniHeaderTxt: { fontSize: 12, color: '#0A0A0A' },
+  miniBigNum: { fontSize: 32, fontWeight: '800', lineHeight: 36 },
+  miniSub: { fontSize: 14, color: '#0A0A0A', marginTop: 2 },
+  smallBtn: { backgroundColor: '#0A0A0A', height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginTop: 16 },
+  smallBtnTxt: { color: 'white', fontWeight: '600', fontSize: 14 },
+
+  // Meal card
+  mealCard: { backgroundColor: '#FE6004', borderRadius: 24, padding: 16, marginTop: 2, marginBottom: 2 },
+  mealHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
+  mealHeaderTxt: { fontSize: 12, color: '#0A0A0A' },
+  mealSlot: { fontSize: 14, color: '#0A0A0A' },
+  mealTitle: { fontSize: 26, fontWeight: '800', color: '#260E01', lineHeight: 30, marginTop: 2, marginBottom: 10 },
+  mealItemRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 2 },
+  mealDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#260E01' },
+  mealItemTxt: { fontSize: 14, color: '#0A0A0A', flex: 1 },
+  mealTags: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 12, marginBottom: 16 },
+  mealTag: { backgroundColor: '#FFBF9B', height: 24, paddingHorizontal: 8, borderRadius: 8, justifyContent: 'center' },
+  mealTagTxt: { fontSize: 10, fontWeight: '600', color: '#260E01', textTransform: 'uppercase', letterSpacing: 0.3 },
+  mealBtn: { backgroundColor: '#0A0A0A', height: 48, borderRadius: 12, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },
+  mealBtnTxt: { color: '#FAFAFA', fontWeight: '700', fontSize: 18 },
+  mealBtnDone: { backgroundColor: '#0A0A0A22' },
+  mealBtnTxtDone: { color: '#49CF38' },
+
+  // Habit / streak
+  habitCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginTop: 2, marginBottom: 2 },
+  habitBigTxt: { fontSize: 28, fontWeight: '800', color: '#A157C9', marginBottom: 2 },
+  habitSub: { fontSize: 14, color: '#0A0A0A', marginBottom: 16 },
+  habitDotsRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  habitDot: { width: 22, height: 22, borderRadius: 11 },
+  habitDotOn: { backgroundColor: '#A157C9' },
+  habitDotOff: { backgroundColor: '#E5E5E5' },
+
+  // Tip
+  tipCard: { borderRadius: 24, padding: 16, marginTop: 2, marginBottom: 2, overflow: 'hidden', minHeight: 160, justifyContent: 'space-between' },
+  tipOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(10,10,10,0.35)', borderRadius: 24 },
+  tipQuote: { fontSize: 24, fontWeight: '800', color: 'white', lineHeight: 28, marginTop: 16 },
+
+  // Modal personalizar
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' },
   modalSheet: { backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingBottom: 40, maxHeight: '75%' },
   modalHandle: { width: 36, height: 4, backgroundColor: '#E2E8F0', borderRadius: 2, alignSelf: 'center', marginTop: 12, marginBottom: 16 },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  modalTitle: { fontSize: 17, fontWeight: '700', color: '#1E293B' },
-  modalDoneBtn: { backgroundColor: '#1A56DB', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 6 },
+  modalTitle: { fontSize: 17, fontWeight: '700', color: '#0A0A0A' },
+  modalDoneBtn: { backgroundColor: '#171717', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 6 },
   modalDoneTxt: { color: 'white', fontSize: 13, fontWeight: '600' },
   modalDesc: { fontSize: 13, color: '#64748B', marginBottom: 16 },
   widgetRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, gap: 12 },

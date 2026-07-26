@@ -8,7 +8,7 @@
  */
 
 import { normalizeDietId } from '../hooks/useDiets';
-import { MEAL_ENERGY_PCT, MEAL_MACRO_PCT } from './nutritionRules';
+import { MEAL_ENERGY_PCT, getMealMacroRules, getDietGroup, dbMealToAppId } from './nutritionRules';
 
 // IDs internos de meal_type en Supabase vs ID usado en la app
 const MEAL_TYPE_MAP = {
@@ -26,14 +26,6 @@ export function appMealToDbMealType(appMealId) {
   return MEAL_TYPE_MAP[appMealId] || appMealId;
 }
 
-// Mapa inverso: db meal_type → app meal id
-const DB_TO_APP_MEAL = {
-  breakfast:       'desayuno',
-  morning_snack:   'snack_manana',
-  lunch:           'almuerzo',
-  afternoon_snack: 'snack_tarde',
-  dinner:          'cena',
-};
 
 // Tolerancia ±30% sobre el target de kcal del slot (orientativo)
 const KCAL_TOLERANCE = 0.30;
@@ -48,28 +40,25 @@ const MACRO_TOLERANCE = 0.35;
  * se permite por defecto (no se descarta).
  */
 function isMacroCompliant(recipe, dbMealType, totalDailyKcal, diet) {
-  // Reglas de macros solo aplican a dieta estándar
-  const standardDiets = ['standard', 'intuitive_eating', null, '', undefined];
-  if (!standardDiets.includes(diet)) return true;
   if (!totalDailyKcal || !recipe.kcal) return true;
-  const appId = DB_TO_APP_MEAL[dbMealType];
+  const appId = dbMealToAppId(dbMealType);
   if (!appId) return true;
 
   const energyPct = MEAL_ENERGY_PCT[appId];
-  const macroPct  = MEAL_MACRO_PCT[appId];
+  const macroPct  = getMealMacroRules(diet, appId);
   if (!energyPct || !macroPct) return true;
 
-  // Targets absolutos para esta usuaria
+  // Targets absolutos para esta usuaria y su dieta
   const targetKcal    = totalDailyKcal * energyPct;
   const targetCarbs   = (totalDailyKcal * macroPct.carbs)   / 4;  // g
   const targetProtein = (totalDailyKcal * macroPct.protein) / 4;  // g
   const targetFat     = (totalDailyKcal * macroPct.fat)     / 9;  // g
 
-  // Verificar kcal
+  // Verificar kcal ±30%
   if (recipe.kcal < targetKcal * (1 - KCAL_TOLERANCE) ||
       recipe.kcal > targetKcal * (1 + KCAL_TOLERANCE)) return false;
 
-  // Verificar macros si están disponibles
+  // Verificar macros ±35% si están disponibles
   if (recipe.carbs_g != null) {
     if (recipe.carbs_g < targetCarbs * (1 - MACRO_TOLERANCE) ||
         recipe.carbs_g > targetCarbs * (1 + MACRO_TOLERANCE)) return false;

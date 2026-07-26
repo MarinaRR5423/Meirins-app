@@ -306,7 +306,7 @@ export default function GimnasioScreen({
   const wEmoji = (type) => hl?.workoutEmoji?.[type] ?? '💪';
 
   return (
-    <SwipeableTabs tabs={['hoy', 'semana', 'salud']} current={sub} onChange={setSub}>
+    <SwipeableTabs tabs={['hoy', 'salud']} current={sub} onChange={setSub}>
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
       <GymSetupCard lang={lang} trainDays={trainDays} setTrainDays={setTrainDays}
@@ -316,7 +316,6 @@ export default function GimnasioScreen({
       <View style={styles.tabRow}>
         {[
           { id: 'hoy',    l: g.today    },
-          { id: 'semana', l: g.week     },
           { id: 'salud',  l: g.salud    },
         ].map(t => (
           <TouchableOpacity key={t.id} onPress={() => setSub(t.id)}
@@ -328,6 +327,107 @@ export default function GimnasioScreen({
 
       {/* ════════════════════════ HOY ════════════════════════ */}
       {sub === 'hoy' && <>
+        {/* Semana — calendario compacto con navegación y acciones por día */}
+        <View style={styles.weekStripCard}>
+          <View style={styles.weekNavAzote}>
+            <TouchableOpacity onPress={() => { setWeekOffset(o => o - 1); setWeekAction(null); }} style={{ padding: 4 }}>
+              <ChevronLeft size={16} color="#0A0A0A" />
+            </TouchableOpacity>
+            <Text style={styles.weekNavLabelAzote}>
+              {weekOffset === 0
+                ? (g.thisWeek ?? 'Esta semana')
+                : weekOffset === -1
+                  ? (g.lastWeek ?? 'Semana pasada')
+                  : weekOffset === 1
+                    ? ({ es: 'Semana siguiente', en: 'Next week', fr: 'Semaine prochaine', it: 'Settimana prossima' }[lang] || 'Semana siguiente')
+                    : ''}
+            </Text>
+            <TouchableOpacity onPress={() => { setWeekOffset(o => o + 1); setWeekAction(null); }} style={{ padding: 4 }}>
+              <ChevronRight size={16} color="#0A0A0A" />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.weekStripRow}>
+            {offsetDays.map((day, i) => {
+              const isExpanded = weekAction?.dateKey === day.dateKey;
+              return (
+                <TouchableOpacity key={i}
+                  onPress={() => setWeekAction(isExpanded ? null : { dateKey: day.dateKey, step: 'main' })}
+                  style={[styles.weekStripCell, day.isToday && styles.weekStripCellToday, isExpanded && styles.weekStripCellExpanded]}>
+                  <Text style={[styles.weekStripDay, day.isToday && styles.weekStripDayToday]}>{day.dayNum}</Text>
+                  {day.dotColor && <View style={[styles.weekStripDot, { backgroundColor: day.dotColor }]} />}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          {weekAction && (() => {
+            const day      = offsetDays.find(d => d.dateKey === weekAction.dateKey);
+            if (!day) return null;
+            const s        = day.session;
+            const logEntry = (profileExtended?.activityLog || {})[day.dateKey] || {};
+            const logged   = logEntry.workout;
+            return (
+              <View style={styles.weekDetailAzote}>
+                {weekAction.step === 'main' && (
+                  <View>
+                    <Text style={styles.weekDetailWorkout}>{s ? s.name : g.rest}</Text>
+                    {logged && (
+                      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                        <Text style={styles.weekDetailStatus}>
+                          {(logged === 'done' || logged === 'extra')
+                            ? `✓ ${lang === 'en' ? 'Logged' : 'Registrado'}${logEntry.extraSport ? ` · ${logEntry.extraSport}` : ''}`
+                            : `😴 ${lang === 'en' ? 'Rest' : 'Descanso'}`}
+                        </Text>
+                        <GHTouchable onPress={async () => { await clearActivityDay(day.dateKey); setWeekAction(null); }}>
+                          <Text style={{ fontSize: 12, color: '#737373' }}>{lang === 'en' ? 'Clear' : 'Borrar'}</Text>
+                        </GHTouchable>
+                      </View>
+                    )}
+                    <View style={{ gap: 2 }}>
+                      {s && (
+                        <GHTouchable
+                          onPress={async () => { await saveActivityDay(day.dateKey, { workout: 'done' }); setWeekAction(null); }}
+                          style={styles.weekActionBtn}>
+                          <Text style={styles.weekActionBtnTxt}>✓ {lang === 'en' ? 'I did it' : 'Lo hice'}</Text>
+                        </GHTouchable>
+                      )}
+                      <GHTouchable
+                        onPress={() => setWeekAction(prev => ({ ...prev, step: 'sport' }))}
+                        style={styles.weekActionBtn}>
+                        <Text style={styles.weekActionBtnTxt}>🏅 {lang === 'en' ? 'Add sport' : 'Añadir deporte'}</Text>
+                      </GHTouchable>
+                      <GHTouchable
+                        onPress={async () => { await saveActivityDay(day.dateKey, { workout: 'skipped' }); setWeekAction(null); }}
+                        style={styles.weekActionBtn}>
+                        <Text style={styles.weekActionBtnTxt}>😴 {lang === 'en' ? 'Rest day' : 'Descansé'}</Text>
+                      </GHTouchable>
+                    </View>
+                  </View>
+                )}
+                {weekAction.step === 'sport' && (
+                  <View>
+                    <GHTouchable onPress={() => setWeekAction(prev => ({ ...prev, step: 'main' }))} style={{ marginBottom: 8 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                        <ChevronLeft size={14} color="#737373" />
+                        <Text style={{ fontSize: 12, color: '#737373' }}>{lang === 'en' ? 'Back' : 'Volver'}</Text>
+                      </View>
+                    </GHTouchable>
+                    <ExtraSportPicker
+                      lang={lang}
+                      g={g}
+                      onPick={async (sport, minutes) => {
+                        const status = s ? 'done' : 'extra';
+                        await saveActivityDay(day.dateKey, { workout: status, extraSport: sport, extraMinutes: minutes || null });
+                        setWeekAction(null);
+                      }}
+                    />
+                  </View>
+                )}
+              </View>
+            );
+          })()}
+        </View>
+
         {/* Programas guiados (de 0 a 5K, natación, fuerza…). Si hoy toca
             sesión del programa, la tarjeta es compacta porque la sesión
             se muestra como "Sesión de hoy" más abajo */}
@@ -524,159 +624,9 @@ export default function GimnasioScreen({
             )}
           </View>
         </>}
-      </>}
-
-      {/* ════════════════════════ SEMANA ════════════════════════ */}
-      {sub === 'semana' && <>
-        {/* Navegación de semana */}
-        {(() => {
-          const weekStart = offsetDays[0];
-          const weekEnd   = offsetDays[6];
-          const fmt = d => `${d.dayNum} ${['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'][d.date.getMonth()]}`;
-          return (
-            <View style={styles.weekNav}>
-              <TouchableOpacity onPress={() => { setWeekOffset(o => o - 1); setWeekAction(null); }}
-                style={styles.weekNavBtn}>
-                <ChevronLeft size={20} color="#1A56DB" />
-              </TouchableOpacity>
-              <Text style={styles.weekNavLabel}>
-                {weekOffset === 0
-                  ? (g.thisWeek ?? 'Esta semana')
-                  : weekOffset === -1
-                    ? (g.lastWeek ?? 'Semana pasada')
-                    : weekOffset === 1
-                      ? ({ es: 'Semana siguiente', en: 'Next week', fr: 'Semaine prochaine', it: 'Settimana prossima' }[lang] || 'Semana siguiente')
-                      : `${fmt(weekStart)} – ${fmt(weekEnd)}`}
-              </Text>
-              <TouchableOpacity
-                onPress={() => { setWeekOffset(o => o + 1); setWeekAction(null); }}
-                style={styles.weekNavBtn}>
-                <ChevronRight size={20} color="#1A56DB" />
-              </TouchableOpacity>
-            </View>
-          );
-        })()}
 
         <View style={styles.card}>
-          <Text style={styles.sectionTitle}>{g.weekPlanning}</Text>
-          {offsetDays.map((day, i) => {
-            const s          = day.session;
-            const isExpanded = weekAction?.dateKey === day.dateKey;
-            const logEntry   = (profileExtended?.activityLog || {})[day.dateKey] || {};
-            const logged     = logEntry.workout; // 'done'|'skipped'|'rest'|'extra'|undefined
-            return (
-              <View key={i}>
-                <GHTouchable
-                  onPress={() => setWeekAction(isExpanded ? null : { dateKey: day.dateKey, step: 'main' })}
-                  activeOpacity={0.7}
-                  style={[styles.weekRow, {
-                    backgroundColor: day.isToday ? '#EFF6FF' : isExpanded ? '#F0F9FF' : s ? '#F8FAFC' : 'white',
-                    borderColor: isExpanded ? BLUE.primary : day.isToday ? '#BFDBFE' : '#F1F5F9',
-                    borderWidth: isExpanded ? 1.5 : 1,
-                  }]}>
-                  <View style={styles.weekDate}>
-                    <Text style={[styles.weekDayLabel, (day.isToday || isExpanded) && { color: BLUE.primary, fontWeight: '700' }]}>
-                      {day.dayLabel}
-                    </Text>
-                    <Text style={styles.weekDayNum}>{day.dayNum}</Text>
-                  </View>
-                  {day.dotColor && (
-                    <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: day.dotColor, marginRight: 6, flexShrink: 0, alignSelf: 'center' }} />
-                  )}
-                  <Text style={{ fontSize: 20, flexShrink: 0 }}>
-                    {logged === 'done' || logged === 'extra' ? (logEntry.extraSport ? '🏅' : (s?.ico ?? '✅')) : logged === 'skipped' ? '😴' : s ? s.ico : '😴'}
-                  </Text>
-                  <View style={{ flex: 1 }}>
-                    <Text style={[styles.weekWorkout,
-                      { color: s ? '#1E293B' : '#CBD5E1', fontWeight: s ? '600' : '400' }]}
-                      numberOfLines={1}>
-                      {s ? s.name : g.rest}
-                    </Text>
-                    {s && !logged && <Text style={styles.weekDur}>{s.duration}</Text>}
-                    {(logEntry.extraSport) && (
-                      <Text style={styles.weekExtra}>
-                        + {logEntry.extraSport}{logEntry.extraMinutes ? ` · ${logEntry.extraMinutes} min` : ''}
-                      </Text>
-                    )}
-                  </View>
-                  <View style={{ alignItems: 'flex-end', gap: 4 }}>
-                    {(logged === 'done' || logged === 'extra') && <Check size={16} color={GREEN.text} />}
-                    {logged === 'skipped' && <Text style={{ color: '#EAB308', fontWeight: '700', fontSize: 16 }}>–</Text>}
-                    <Text style={{ fontSize: 11, color: '#94A3B8' }}>{isExpanded ? '▲' : '✏️'}</Text>
-                  </View>
-                </GHTouchable>
-
-                {isExpanded && (
-                  <View style={[styles.weekDetail, { borderColor: BLUE.primary }]}>
-                    {weekAction.step === 'main' && (
-                      <View>
-                        {logged && (
-                          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, paddingBottom: 10, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' }}>
-                            <Text style={{ fontSize: 13, fontWeight: '600',
-                              color: (logged === 'done' || logged === 'extra') ? GREEN.text : logged === 'skipped' ? '#EAB308' : '#64748B' }}>
-                              {(logged === 'done' || logged === 'extra')
-                                ? `✓ ${lang === 'en' ? 'Logged' : 'Registrado'}${logEntry.extraSport ? ` · ${logEntry.extraSport}${logEntry.extraMinutes ? ` ${logEntry.extraMinutes} min` : ''}` : ''}`
-                                : `😴 ${lang === 'en' ? 'Rest' : 'Descanso'}`}
-                            </Text>
-                            <GHTouchable onPress={async () => { await clearActivityDay(day.dateKey); setWeekAction(null); }}>
-                              <Text style={{ fontSize: 12, color: '#94A3B8' }}>{lang === 'en' ? 'Clear' : 'Borrar'}</Text>
-                            </GHTouchable>
-                          </View>
-                        )}
-                        <View style={{ gap: 8 }}>
-                          {s && (
-                            <GHTouchable
-                              onPress={async () => { await saveActivityDay(day.dateKey, { workout: 'done' }); setWeekAction(null); }}
-                              style={{ padding: 11, borderRadius: 14, backgroundColor: '#F0FDF4', borderWidth: 1, borderColor: '#86EFAC', alignItems: 'center' }}>
-                              <Text style={{ fontSize: 13, fontWeight: '700', color: GREEN.text }}>
-                                ✓ {lang === 'en' ? 'I did it' : 'Lo hice'}
-                              </Text>
-                            </GHTouchable>
-                          )}
-                          <GHTouchable
-                            onPress={() => setWeekAction(prev => ({ ...prev, step: 'sport' }))}
-                            style={{ padding: 11, borderRadius: 14, backgroundColor: BLUE.light, borderWidth: 1, borderColor: '#BFDBFE', alignItems: 'center' }}>
-                            <Text style={{ fontSize: 13, fontWeight: '700', color: BLUE.primary }}>
-                              🏅 {lang === 'en' ? 'Add sport' : 'Añadir deporte'}
-                            </Text>
-                          </GHTouchable>
-                          <GHTouchable
-                            onPress={async () => { await saveActivityDay(day.dateKey, { workout: 'skipped' }); setWeekAction(null); }}
-                            style={{ padding: 11, borderRadius: 14, backgroundColor: '#FEF9F0', borderWidth: 1, borderColor: '#FDE68A', alignItems: 'center' }}>
-                            <Text style={{ fontSize: 13, fontWeight: '700', color: '#92400E' }}>
-                              😴 {lang === 'en' ? 'Rest day' : 'Descansé'}
-                            </Text>
-                          </GHTouchable>
-                        </View>
-                      </View>
-                    )}
-                    {weekAction.step === 'sport' && (
-                      <View>
-                        <GHTouchable
-                          onPress={() => setWeekAction(prev => ({ ...prev, step: 'main' }))}
-                          style={{ marginBottom: 8 }}>
-                          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}><ChevronLeft size={14} color="#94A3B8" /><Text style={{ fontSize: 12, color: '#94A3B8' }}>{lang === 'en' ? 'Back' : 'Volver'}</Text></View>
-                        </GHTouchable>
-                        <ExtraSportPicker
-                          lang={lang}
-                          g={g}
-                          onPick={async (sport, minutes) => {
-                            const status = s ? 'done' : 'extra';
-                            await saveActivityDay(day.dateKey, { workout: status, extraSport: sport, extraMinutes: minutes || null });
-                            setWeekAction(null);
-                          }}
-                        />
-                      </View>
-                    )}
-                  </View>
-                )}
-              </View>
-            );
-          })}
-        </View>
-
-        <View style={[styles.card, { backgroundColor: BLUE.light }]}>
-          <Text style={[styles.sectionTitle, { color: BLUE.primary }]}>{g.myProgram}</Text>
+          <Text style={styles.sectionTitle}>{g.myProgram}</Text>
           {g.programRows.map((row, i) => (
             <View key={i} style={styles.progRow}>
               <Text style={{ fontSize: 22, flexShrink: 0 }}>{row.ico}</Text>
@@ -688,7 +638,7 @@ export default function GimnasioScreen({
           ))}
         </View>
 
-        <TipsCard articles={gymArticles} lang={lang} />
+        <TipsCard articles={gymArticles} lang={lang} variant="azote" />
       </>}
 
       {/* ════════════════════════ SALUD ════════════════════════ */}
@@ -1086,25 +1036,43 @@ function BigMetric({ icon, label, value, color = BLUE.primary }) {
 
 // ─────────────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F0F4FA' },
-  content: { padding: 14, paddingTop: 60, paddingBottom: 30 },
+  container: { flex: 1, backgroundColor: 'white' },
+  content: { padding: 16, paddingTop: 58, paddingBottom: 120 },
 
   // tabs
-  tabRow: { flexDirection: 'row', backgroundColor: 'white', borderRadius: 50, padding: 4, marginBottom: 14, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
-  tab: { flex: 1, paddingVertical: 9, borderRadius: 46, alignItems: 'center' },
-  tabActive: { backgroundColor: '#1A56DB' },
-  tabText: { fontSize: 12, color: '#94A3B8' },
+  tabRow: { flexDirection: 'row', backgroundColor: '#F5F5F5', borderRadius: 16, padding: 4, marginBottom: 14 },
+  tab: { flex: 1, paddingVertical: 9, borderRadius: 12, alignItems: 'center' },
+  tabActive: { backgroundColor: '#171717' },
+  tabText: { fontSize: 12, color: '#525252' },
   tabTextActive: { color: 'white', fontWeight: '700' },
 
+  // weekly strip (mini calendar) — pestaña Hoy
+  weekStripCard: { backgroundColor: '#F5F5F5', borderRadius: 32, padding: 16, marginBottom: 2 },
+  weekNavAzote: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
+  weekNavLabelAzote: { fontSize: 14, color: '#0A0A0A' },
+  weekStripRow: { flexDirection: 'row', gap: 4 },
+  weekStripCell: { flex: 1, aspectRatio: 1, borderRadius: 4, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
+  weekStripCellToday: { backgroundColor: '#171717' },
+  weekStripCellExpanded: { borderWidth: 2, borderColor: '#171717' },
+  weekStripDay: { fontSize: 12, color: '#0A0A0A' },
+  weekStripDayToday: { color: 'white', fontWeight: '700' },
+  weekStripDot: { position: 'absolute', bottom: 4, width: 4, height: 4, borderRadius: 2 },
+
+  weekDetailAzote: { marginTop: 12, backgroundColor: 'white', borderRadius: 16, padding: 12 },
+  weekDetailWorkout: { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 8 },
+  weekDetailStatus: { fontSize: 13, fontWeight: '600', color: '#0A0A0A' },
+  weekActionBtn: { paddingVertical: 11, borderRadius: 12, backgroundColor: '#FAFAFA', alignItems: 'center' },
+  weekActionBtnTxt: { fontSize: 13, fontWeight: '700', color: '#0A0A0A' },
+
   // cards
-  card: { backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
-  sectionTitle: { fontSize: 14, fontWeight: '600', color: '#1E293B', marginBottom: 10 },
+  card: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2 },
+  sectionTitle: { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 10 },
 
   // health banner (mini, on top of hoy)
-  healthBanner: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#F0FDF4', borderRadius: 14, padding: 12, marginBottom: 12, borderWidth: 1, borderColor: '#86EFAC' },
+  healthBanner: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#F5F5F5', borderRadius: 24, padding: 12, marginBottom: 2 },
   healthBannerIco: { fontSize: 28 },
-  healthBannerTitle: { fontSize: 13, fontWeight: '700', color: '#166534' },
-  healthBannerSub: { fontSize: 12, color: '#4ADE80', marginTop: 2 },
+  healthBannerTitle: { fontSize: 13, fontWeight: '700', color: '#0A0A0A' },
+  healthBannerSub: { fontSize: 12, color: '#525252', marginTop: 2 },
 
   // session
   sessionBanner:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
@@ -1118,20 +1086,20 @@ const styles = StyleSheet.create({
 
   // circuit
   circuitHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  progressText: { fontSize: 12, color: '#1A56DB', fontWeight: '600' },
-  warmupRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: '#FEF3C7', borderRadius: 12, padding: 10, marginBottom: 10 },
+  progressText: { fontSize: 12, color: '#0A0A0A', fontWeight: '600' },
+  warmupRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: '#FFEA9B', borderRadius: 16, padding: 10, marginBottom: 10 },
   warmupIco: { fontSize: 18 },
-  warmupLabel: { fontSize: 12, fontWeight: '700', color: '#92400E', marginBottom: 2 },
-  warmupDetail: { fontSize: 12, color: '#78350F' },
-  exRow: { flexDirection: 'row', alignItems: 'center', padding: 10, borderRadius: 12, borderWidth: 1, borderColor: '#F1F5F9', marginBottom: 6, gap: 10 },
-  exRowDone: { backgroundColor: '#F0FDF4', borderColor: '#86EFAC' },
-  exNum: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#EFF6FF', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
-  exNumDone: { backgroundColor: '#16A34A' },
-  exNumText: { fontSize: 12, fontWeight: '700', color: '#1A56DB' },
-  exName: { fontSize: 14, fontWeight: '600', color: '#1E293B' },
-  exNameDone: { color: '#16A34A', textDecorationLine: 'line-through' },
-  exDetail: { fontSize: 11, color: '#94A3B8', marginTop: 1 },
-  exReps: { fontSize: 13, fontWeight: '700', color: '#1A56DB', flexShrink: 0 },
+  warmupLabel: { fontSize: 12, fontWeight: '700', color: '#261E01', marginBottom: 2 },
+  warmupDetail: { fontSize: 12, color: '#261E01' },
+  exRow: { flexDirection: 'row', alignItems: 'center', padding: 10, borderRadius: 16, backgroundColor: 'white', marginBottom: 6, gap: 10 },
+  exRowDone: { backgroundColor: '#B6ECAF' },
+  exNum: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#F5F5F5', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
+  exNumDone: { backgroundColor: '#171717' },
+  exNumText: { fontSize: 12, fontWeight: '700', color: '#0A0A0A' },
+  exName: { fontSize: 14, fontWeight: '600', color: '#0A0A0A' },
+  exNameDone: { color: '#0B1F08', textDecorationLine: 'line-through' },
+  exDetail: { fontSize: 11, color: '#737373', marginTop: 1 },
+  exReps: { fontSize: 13, fontWeight: '700', color: '#0A0A0A', flexShrink: 0 },
   restRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 6 },
   restIco: { fontSize: 16 },
   restText: { fontSize: 13, color: '#64748B' },
@@ -1150,29 +1118,29 @@ const styles = StyleSheet.create({
   phaseDetail: { fontSize: 12, color: '#64748B', lineHeight: 18 },
 
   // log buttons
-  quickActions: { flexDirection: 'row', gap: 10, marginBottom: 12 },
-  quickBtn:     { flex: 1, padding: 12, borderRadius: 14, borderWidth: 1, borderColor: '#E2E8F0', backgroundColor: 'white', alignItems: 'center' },
+  quickActions: { flexDirection: 'row', gap: 2, marginBottom: 2 },
+  quickBtn:     { flex: 1, padding: 12, borderRadius: 16, backgroundColor: '#F5F5F5', alignItems: 'center' },
   quickBtnTxt:  { fontSize: 22, marginBottom: 2 },
-  quickBtnLbl:  { fontSize: 11, color: '#64748B', fontWeight: '500' },
+  quickBtnLbl:  { fontSize: 11, color: '#0A0A0A', fontWeight: '500' },
 
-  logBtns: { flexDirection: 'row', gap: 8, marginBottom: 12 },
-  doneBtn: { flex: 1, padding: 14, borderRadius: 14, backgroundColor: '#16A34A', alignItems: 'center' },
+  logBtns: { flexDirection: 'row', gap: 2, marginBottom: 2 },
+  doneBtn: { flex: 1, padding: 14, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center' },
   doneBtnText: { color: 'white', fontWeight: '700', fontSize: 14 },
-  skipBtn: { flex: 1, padding: 14, borderRadius: 14, backgroundColor: '#EF4444', alignItems: 'center' },
-  skipBtnText: { color: 'white', fontWeight: '700', fontSize: 14 },
-  undoBtn: { padding: 10, borderRadius: 12, borderWidth: 1, borderColor: '#E2E8F0', backgroundColor: 'white', alignItems: 'center', marginBottom: 12 },
-  undoBtnText: { fontSize: 13, color: '#64748B' },
-  extraRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10, backgroundColor: '#F0FDF4', borderRadius: 10 },
-  extraText: { fontSize: 13, color: '#166534', fontWeight: '500' },
-  extraRemove: { color: '#94A3B8', fontSize: 18 },
+  skipBtn: { flex: 1, padding: 14, borderRadius: 12, backgroundColor: '#F5F5F5', alignItems: 'center' },
+  skipBtnText: { color: '#0A0A0A', fontWeight: '700', fontSize: 14 },
+  undoBtn: { padding: 10, borderRadius: 12, backgroundColor: '#F5F5F5', alignItems: 'center', marginBottom: 2 },
+  undoBtnText: { fontSize: 13, color: '#0A0A0A' },
+  extraRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10, backgroundColor: '#B6ECAF', borderRadius: 16 },
+  extraText: { fontSize: 13, color: '#0B1F08', fontWeight: '500' },
+  extraRemove: { color: '#0B1F08', fontSize: 18 },
   extraInput: { flexDirection: 'row', gap: 8 },
-  input: { flex: 1, padding: 10, borderRadius: 10, borderWidth: 1, borderColor: '#E2E8F0', fontSize: 13 },
-  addBtn: { padding: 10, paddingHorizontal: 16, borderRadius: 10, backgroundColor: '#1A56DB', justifyContent: 'center' },
+  input: { flex: 1, padding: 10, borderRadius: 12, backgroundColor: '#FAFAFA', fontSize: 13, color: '#0A0A0A' },
+  addBtn: { padding: 10, paddingHorizontal: 16, borderRadius: 10, backgroundColor: '#171717', justifyContent: 'center' },
   addBtnText: { color: 'white', fontWeight: '600', fontSize: 13 },
-  dashedBtn: { padding: 10, borderRadius: 12, borderWidth: 1.5, borderStyle: 'dashed', borderColor: '#CBD5E1', alignItems: 'center' },
-  dashedBtnText: { fontSize: 13, color: '#64748B' },
-  restTitle: { fontSize: 16, fontWeight: '700', color: '#1E293B', marginBottom: 8 },
-  restSub: { fontSize: 13, color: '#64748B', lineHeight: 20, textAlign: 'center' },
+  dashedBtn: { padding: 10, borderRadius: 12, borderWidth: 1, borderColor: '#E5E5E5', alignItems: 'center', backgroundColor: 'white' },
+  dashedBtnText: { fontSize: 13, color: '#525252' },
+  restTitle: { fontSize: 16, fontWeight: '700', color: '#0A0A0A', marginBottom: 8 },
+  restSub: { fontSize: 13, color: '#525252', lineHeight: 20, textAlign: 'center' },
 
   // week navigation
   weekNav:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, paddingHorizontal: 4 },
@@ -1199,40 +1167,40 @@ const styles = StyleSheet.create({
   weekExReps: { fontSize: 12, fontWeight: '700', color: '#1A56DB' },
 
   // health tab — connection
-  connectedDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#16A34A', flexShrink: 0 },
-  connectedLabel: { fontSize: 12, color: '#16A34A', fontWeight: '600', marginTop: 2 },
-  lastSyncText: { fontSize: 11, color: '#94A3B8', marginTop: 2 },
-  syncBtn: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: BLUE.light, borderWidth: 1, borderColor: '#BFDBFE' },
-  syncBtnText: { fontSize: 12, color: BLUE.primary, fontWeight: '600' },
-  disconnectText: { fontSize: 11, color: '#94A3B8', textDecorationLine: 'underline' },
-  connectBtn: { backgroundColor: BLUE.primary, borderRadius: 14, padding: 14, alignItems: 'center' },
+  connectedDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#49CF38', flexShrink: 0 },
+  connectedLabel: { fontSize: 12, color: '#0B1F08', fontWeight: '600', marginTop: 2 },
+  lastSyncText: { fontSize: 11, color: '#737373', marginTop: 2 },
+  syncBtn: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: 'white' },
+  syncBtnText: { fontSize: 12, color: '#0A0A0A', fontWeight: '600' },
+  disconnectText: { fontSize: 11, color: '#737373', textDecorationLine: 'underline' },
+  connectBtn: { backgroundColor: '#171717', borderRadius: 12, height: 48, alignItems: 'center', justifyContent: 'center' },
   connectBtnText: { color: 'white', fontWeight: '700', fontSize: 14 },
 
   // health tab — last workout
-  dateChip: { fontSize: 11, color: '#94A3B8', backgroundColor: '#F1F5F9', paddingHorizontal: 10, paddingVertical: 3, borderRadius: 20, alignSelf: 'flex-start' },
+  dateChip: { fontSize: 11, color: '#0A0A0A', backgroundColor: 'white', paddingHorizontal: 10, paddingVertical: 3, borderRadius: 8, alignSelf: 'flex-start' },
   workoutHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 14 },
-  workoutName: { fontSize: 18, fontWeight: '700', color: '#1E293B' },
-  workoutTime: { fontSize: 12, color: '#64748B', marginTop: 2 },
+  workoutName: { fontSize: 18, fontWeight: '700', color: '#0A0A0A' },
+  workoutTime: { fontSize: 12, color: '#525252', marginTop: 2 },
   metricRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  pill: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 20, borderWidth: 1 },
+  pill: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, backgroundColor: 'white', borderWidth: 0 },
   pillLabel: { fontSize: 9, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.4 },
   pillValue: { fontSize: 13, fontWeight: '700' },
 
   // health tab — recent workouts
-  recentRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
-  recentName: { fontSize: 13, fontWeight: '600', color: '#1E293B' },
-  recentDate: { fontSize: 11, color: '#94A3B8', marginTop: 2 },
-  recentDur: { fontSize: 13, fontWeight: '700', color: BLUE.primary },
-  recentCal: { fontSize: 11, color: '#F97316', marginTop: 2 },
+  recentRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: 'white' },
+  recentName: { fontSize: 13, fontWeight: '600', color: '#0A0A0A' },
+  recentDate: { fontSize: 11, color: '#737373', marginTop: 2 },
+  recentDur: { fontSize: 13, fontWeight: '700', color: '#0A0A0A' },
+  recentCal: { fontSize: 11, color: '#FE6004', marginTop: 2 },
 
   // health tab — metrics grid
-  metricsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  bigMetric: { flex: 1, minWidth: '40%', backgroundColor: '#F8FAFC', borderRadius: 14, padding: 14, alignItems: 'center' },
+  metricsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  bigMetric: { flex: 1, minWidth: '40%', backgroundColor: 'white', borderRadius: 16, padding: 14, alignItems: 'center' },
   bigMetricValue: { fontSize: 20, fontWeight: '700', marginBottom: 2 },
-  bigMetricLabel: { fontSize: 11, color: '#94A3B8', fontWeight: '500' },
+  bigMetricLabel: { fontSize: 11, color: '#737373', fontWeight: '500' },
 
   // health tab — sleep
-  sleepHours: { fontSize: 42, fontWeight: '700', color: '#4F46E5' },
-  sleepUnit: { fontSize: 20, color: '#4F46E5', fontWeight: '600' },
-  sleepDate: { fontSize: 12, color: '#94A3B8' },
+  sleepHours: { fontSize: 42, fontWeight: '700', color: '#171717' },
+  sleepUnit: { fontSize: 20, color: '#171717', fontWeight: '600' },
+  sleepDate: { fontSize: 12, color: '#737373' },
 });

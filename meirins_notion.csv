@@ -1,0 +1,70 @@
+﻿Tarea,Sprint,Estado,Prioridad,Categoria,Inicio,Fin,Notas
+Onboarding progresivo,Done,Hecho,Alta,Producto,2026-05-01,2026-05-10,SetupScreen reducido a 3 pasos. Resto de preguntas contextuales.
+Soporte multiidioma (ES/EN/FR/IT),Done,Hecho,Alta,Producto,2026-05-01,2026-05-08,Traducciones completas + deteccion automatica del idioma.
+Setup de ciclo contextual,Done,Hecho,Alta,Producto,2026-05-08,2026-05-12,Tarjeta inline con fecha del ultimo periodo y salud menstrual.
+Setup nutricional contextual,Done,Hecho,Alta,Producto,2026-05-08,2026-05-12,Tarjeta inline con dieta + alergias + objetivos.
+Setup gimnasio contextual,Done,Hecho,Alta,Producto,2026-05-08,2026-05-12,Tarjeta inline con dias + nivel + acceso.
+Perfil editable completo,Done,Hecho,Alta,Producto,2026-05-10,2026-05-14,Mi Programa editable: objetivos fitness gym dieta alergias.
+Seccion Tu Salud editable,Done,Hecho,Alta,Producto,2026-05-12,2026-05-16,Etapa vital + condiciones + anticoncepcion + medicacion.
+Tabla de 19 dietas en Supabase,Done,Hecho,Alta,Nutricion,2026-05-15,2026-05-20,Estandar Vegana Keto Mediterranea Antiinflamatoria Ayunos.
+Ayunos combinables con dietas,Done,Hecho,Media,Nutricion,2026-05-18,2026-05-20,16:8 18:6 5:2 OMAD combinables con dieta base.
+Tracker de peso + objetivo,Done,Hecho,Alta,Producto,2026-05-15,2026-05-18,Registro diario con grafico SVG + barra de progreso.
+Calculo de calorias personalizado,Done,Hecho,Alta,Nutricion,2026-05-16,2026-05-18,Mifflin-St Jeor + factor actividad + fase ciclo + objetivo.
+Algoritmo de personalizacion,Done,Hecho,Critica,Producto,2026-05-20,2026-05-23,Motor que adapta entrenos y nutricion segun perfil.
+Sincronizacion con calendario (ICS),Done,Hecho,Media,Producto,2026-05-22,2026-05-24,Exportacion .ics. Funciona en Expo Go y build nativo.
+Notificaciones push locales,Done,Hecho,Alta,Producto,2026-05-23,2026-05-24,Aviso de ciclo + entreno + hidratacion configurables.
+Eliminar cuenta y datos,Done,Hecho,Critica,Legal,2026-05-24,2026-05-25,Funcion SQL + UI confirmacion (requisito App Store).
+Estados vacios,Done,Hecho,Media,Producto,2026-05-25,2026-05-25,Componente EmptyState + integracion en HomeScreen.
+Banner offline,Done,Hecho,Media,Producto,2026-05-25,2026-05-25,Deteccion de conexion + banner cuando no hay red.
+Politica de privacidad,Sprint 1 - Pre-Beta,Por hacer,Critica,Legal,2026-06-01,2026-06-03,Generar en termly.io + hostear en GitHub Pages.
+Terminos de uso,Sprint 1 - Pre-Beta,Por hacer,Critica,Legal,2026-06-01,2026-06-03,Obligatorio para apps con datos de salud.
+Aviso medico en la app,Sprint 1 - Pre-Beta,Por hacer,Critica,Legal,2026-06-04,2026-06-04,Disclaimer en onboarding y perfil.
+App Store Privacy Labels,Sprint 1 - Pre-Beta,Por hacer,Critica,Legal,2026-06-04,2026-06-05,Declarar datos recopilados en App Store Connect.
+Cuenta Apple Developer Program,Sprint 1 - Pre-Beta,Por hacer,Critica,Infraestructura,2026-06-01,2026-06-05,Pago anual 99 USD + validacion.
+Icono y splash screen definitivos,Sprint 1 - Pre-Beta,Por hacer,Alta,Diseno,2026-06-01,2026-06-08,Diseno profesional en todas las resoluciones.
+Build nativo iOS,Sprint 1 - Pre-Beta,Por hacer,Critica,Infraestructura,2026-06-08,2026-06-11,eas build platform ios. Habilita Apple Health.
+Build nativo Android,Sprint 1 - Pre-Beta,Por hacer,Alta,Infraestructura,2026-06-12,2026-06-15,eas build platform android. APK pre Google Play.
+Configurar Apple HealthKit real,Sprint 1 - Pre-Beta,Por hacer,Alta,Producto,2026-06-15,2026-06-18,Solo posible con build nativo.
+Cifrado y RLS en Supabase,Sprint 1 - Pre-Beta,Por hacer,Critica,Legal,2026-06-11,2026-06-12,Verificar Row Level Security en todas las tablas.
+Auditoria de bugs pre-Beta,Sprint 1 - Pre-Beta,Por hacer,Critica,Calidad,2026-06-15,2026-06-19,Recorrer todos los flujos con 3-4 perfiles.
+Setup TestFlight,Sprint 2 - Beta cerrada,Por hacer,Critica,Lanzamiento,2026-06-22,2026-06-24,Subir build a App Store Connect + grupo testers.
+Sistema de analitica,Sprint 2 - Beta cerrada,Por hacer,Alta,Producto,2026-06-22,2026-06-24,Mixpanel o PostHog free para funnel y retencion.
+Sistema de crash reporting,Sprint 2 - Beta cerrada,Por hacer,Alta,Calidad,2026-06-25,2026-06-26,Sentry free para capturar errores en produccion.
+Formulario de feedback,Sprint 2 - Beta cerrada,Por hacer,Alta,Calidad,2026-06-25,2026-06-26,Google Forms con preguntas clave.
+Reclutar 20-50 beta testers,Sprint 2 - Beta cerrada,Por hacer,Critica,Crecimiento,2026-06-25,2026-07-03,Amigas + redes + comunidades de salud femenina.
+Iterar segun feedback Beta,Sprint 2 - Beta cerrada,Por hacer,Critica,Producto,2026-07-06,2026-07-17,Corregir issues criticos detectados en TestFlight.
+Asistente IA con Claude API,Sprint 3 - Pre-lanzamiento,Por hacer,Alta,Producto,2026-07-20,2026-07-31,Chat contextual. Coste 50 EUR/mes.
+Sistema de suscripcion + paywall,Sprint 3 - Pre-lanzamiento,Por hacer,Critica,Negocio,2026-07-23,2026-07-31,Integrar RevenueCat + definir tiers.
+Definir freemium vs premium,Sprint 3 - Pre-lanzamiento,Por hacer,Critica,Negocio,2026-07-20,2026-07-22,Decidir funciones gratuitas vs premium.
+Pasarela de pago in-app,Sprint 3 - Pre-lanzamiento,Por hacer,Critica,Negocio,2026-08-03,2026-08-07,In-app purchases via RevenueCat.
+Historial completo del ciclo,Sprint 3 - Pre-lanzamiento,Por hacer,Media,Producto,2026-08-03,2026-08-07,Calendario o lista de ciclos pasados + patrones.
+Sistema de referidos,Sprint 3 - Pre-lanzamiento,Por hacer,Media,Crecimiento,2026-08-10,2026-08-12,Codigo de invitacion + descuento.
+Onboarding optimizado por retencion,Sprint 3 - Pre-lanzamiento,Por hacer,Alta,Producto,2026-08-10,2026-08-14,A/B test 2-3 variantes para retencion 7 dias.
+Capturas de pantalla App Store,Sprint 4 - Lanzamiento,Por hacer,Critica,Marketing,2026-08-17,2026-08-21,5-10 screenshots por idioma con copywriting.
+Descripcion + keywords ASO,Sprint 4 - Lanzamiento,Por hacer,Critica,Marketing,2026-08-17,2026-08-19,Optimizar titulo subtitulo descripcion y keywords.
+Video preview de la app,Sprint 4 - Lanzamiento,Por hacer,Alta,Marketing,2026-08-20,2026-08-24,15-30 segundos mostrando flujos principales.
+Landing page del producto,Sprint 4 - Lanzamiento,Por hacer,Alta,Marketing,2026-08-20,2026-08-26,Web publica con descripcion capturas link App Store.
+Submission a Apple Review,Sprint 4 - Lanzamiento,Por hacer,Critica,Lanzamiento,2026-08-27,2026-08-28,Subir build final + completar formularios.
+Submission a Google Play,Sprint 4 - Lanzamiento,Por hacer,Critica,Lanzamiento,2026-08-27,2026-08-28,Subir AAB + completar Play Console.
+Espera de review (Apple + Google),Sprint 4 - Lanzamiento,Por hacer,Critica,Lanzamiento,2026-08-31,2026-09-07,Tiempo de revision de plataformas (1-2 semanas).
+Estrategia de lanzamiento,Sprint 4 - Lanzamiento,Por hacer,Alta,Marketing,2026-09-08,2026-09-11,Product Hunt + redes + email beta testers + prensa.
+Soporte al usuario,Post-lanzamiento,Por hacer,Alta,Operaciones,2026-09-14,2026-09-30,Email de soporte + FAQ + respuesta menor 48h.
+Responder resenas App Store,Post-lanzamiento,Por hacer,Alta,Marketing,2026-09-14,2026-12-31,Responder en las primeras 24-48h (mejora ASO).
+Health Connect Android,Post-lanzamiento,Por hacer,Media,Producto,2026-10-01,2026-10-15,Una vez Expo SDK 55+ con Kotlin 2.x disponible.
+Notificaciones push remotas,Post-lanzamiento,Por hacer,Media,Producto,2026-10-15,2026-10-30,Migrar a push servidas desde backend.
+Modo oscuro,Post-lanzamiento,Por hacer,Baja,Producto,2026-11-01,2026-11-15,Implementar dark mode en todas las pantallas.
+Apple Watch companion app,Post-lanzamiento,Por hacer,Baja,Producto,2026-12-01,2027-01-15,App nativa para watchOS.
+Widgets iOS y Android,Post-lanzamiento,Por hacer,Media,Producto,2026-11-15,2026-12-15,Widget con dia del ciclo + sesion de hoy.
+Integraciones (Strava y Garmin),Post-lanzamiento,Por hacer,Media,Producto,2026-12-15,2027-01-15,Importar entrenos de otras plataformas.
+Compartir con pareja,Post-lanzamiento,Por hacer,Baja,Producto,2027-01-15,2027-02-15,Compartir calendario del ciclo con permisos.
+Community Foro in-app,Post-lanzamiento,Por hacer,Baja,Producto,2027-02-01,2027-03-15,Espacio por condicion (PCOS endometriosis).
+Recetas con generacion IA,Post-lanzamiento,Por hacer,Media,Producto,2027-01-15,2027-02-15,Recetas IA respetando dieta + alergias + macros.
+Coaching humano premium,Post-lanzamiento,Por hacer,Baja,Negocio,2027-03-01,2027-04-30,Tier premium con dietista o coach humano.
+Expansion a mas idiomas,Post-lanzamiento,Por hacer,Baja,Producto,2027-02-01,2027-03-01,Aleman portugues o catalan.
+Optimizacion de costes Supabase,Post-lanzamiento,Por hacer,Media,Infraestructura,2026-12-01,2026-12-15,Analizar consumo + indices + cache.
+GDPR compliance auditada,Post-lanzamiento,Por hacer,Alta,Legal,2026-10-15,2026-11-15,Auditoria legal con abogado especializado.
+Modo embarazo dedicado,Backlog,Idea,Baja,Producto,,,Programa especifico embarazadas con nutricion prenatal.
+Modo perimenopausia y menopausia,Backlog,Idea,Baja,Producto,,,Adaptacion completa para etapas sin ciclo activo.
+Sincronizacion entre dispositivos,Backlog,Idea,Baja,Producto,,,App funcional en iPad iPhone y web.
+Gamificacion,Backlog,Idea,Baja,Producto,,,Streaks + badges + niveles para motivar.
+Exportar datos personales (GDPR),Backlog,Idea,Media,Legal,,,Boton Descargar mis datos JSON o PDF.

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
-import { Check } from 'lucide-react-native';
+import { Check, ChevronLeft } from 'lucide-react-native';
 import T from '../i18n/translations';
 import { trackEvent, Events } from '../lib/analytics';
 
@@ -11,7 +11,48 @@ const LANG_OPTIONS = [
   { code: 'it', flag: '🇮🇹' },
 ];
 
-export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
+// Conversiones imperial ↔ métrico
+const lbsToKg  = (lbs) => Math.round(parseFloat(lbs) * 0.453592 * 10) / 10;
+const feetInchesToCm = (ft, inch) => Math.round((parseFloat(ft || 0) * 30.48) + (parseFloat(inch || 0) * 2.54));
+
+function BackBtn({ label, onPress }) {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.backBtn} activeOpacity={0.8}>
+      <ChevronLeft size={16} color="#0A0A0A" />
+      <Text style={styles.backBtnTxt}>{label}</Text>
+    </TouchableOpacity>
+  );
+}
+
+function StepBar({ index, total = 3 }) {
+  return (
+    <View style={styles.stepBarRow}>
+      {Array.from({ length: total }, (_, i) => (
+        <View key={i} style={[styles.stepBarSeg, i <= index && styles.stepBarSegActive]} />
+      ))}
+    </View>
+  );
+}
+
+function UnitInput({ value, onChangeText, placeholder, unit, keyboardType = 'numeric' }) {
+  return (
+    <View style={styles.input}>
+      <TextInput
+        style={styles.inputTxt}
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        placeholderTextColor="#737373"
+        keyboardType={keyboardType}
+      />
+      <View style={styles.inputUnitBadge}>
+        <Text style={styles.inputUnitBadgeTxt}>{unit}</Text>
+      </View>
+    </View>
+  );
+}
+
+export default function SetupScreen({ onDone, lang = 'es', onLangChange, unitSystem = 'metric', onUnitSystemChange }) {
   const su = (T[lang] || T.es).setup;
 
   const [step, setStep] = useState(0);
@@ -27,6 +68,8 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
   const [age, setAge] = useState('');
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
+  const [heightFt, setHeightFt] = useState('');
+  const [heightIn, setHeightIn] = useState('');
   const [activityLevel, setActivityLevel] = useState('moderate');
   const [modules, setModules] = useState(['cycle', 'nutrition', 'sport', 'sleep']);
   const [goals, setGoals] = useState({}); // { cycle: 'track', nutrition: 'lose_weight', sport: 'muscle' }
@@ -46,11 +89,13 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
 
   const finish = async () => {
     setSaving(true);
+    const weightKg = unitSystem === 'imperial' ? lbsToKg(weight) : parseFloat(weight);
+    const heightCm = unitSystem === 'imperial' ? feetInchesToCm(heightFt, heightIn) : parseFloat(height);
     await onDone({
       name: name.trim(),
       age: parseInt(age),
-      weight: parseFloat(weight),
-      height: parseFloat(height),
+      weight: weightKg,
+      height: heightCm,
       activityLevel,
       modules,
       goals,
@@ -102,8 +147,8 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
           </TouchableOpacity>
         ))}
       </View>
-      <Text style={styles.emoji}>🌙</Text>
-      <Text style={styles.title}>Meirins</Text>
+      <Text style={styles.emoji}>🌻</Text>
+      <Text style={styles.title}>Blumm</Text>
       <Text style={styles.tagline}>{su.tagline}</Text>
       <View style={styles.divider} />
       {su.features.map(f => (
@@ -119,65 +164,99 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
   if (step === 1) return (
     <KeyboardAvoidingView style={styles.scrollContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <TouchableOpacity onPress={() => setStep(0)}><Text style={styles.back}>{su.back}</Text></TouchableOpacity>
-        <Text style={styles.stepDots}><Text style={styles.dotActive}>●</Text> ● ● ●</Text>
+        <BackBtn label={su.back} onPress={() => setStep(0)} />
+        <StepBar index={0} />
         <Text style={styles.stepTitle}>{su.step1Title}</Text>
         <Text style={styles.stepSub}>{su.step1Sub}</Text>
 
         {/* Nombre — opcional */}
         <View style={styles.inputGroup}>
-          <Text style={styles.inputLabel}>{su.nameLabel || '¿Cómo te llamas?'} <Text style={{ color: 'rgba(255,255,255,0.35)', fontSize: 12 }}>{su.nameOptional || '(opcional)'}</Text></Text>
-          <TextInput
-            style={styles.input}
-            value={name}
-            onChangeText={setName}
-            placeholder={su.namePlaceholder || 'Tu nombre…'}
-            placeholderTextColor="rgba(255,255,255,0.3)"
-            autoCapitalize="words"
-          />
+          <Text style={styles.inputLabel}>{su.nameLabel || '¿Cómo te llamas?'} <Text style={{ color: '#A3A3A3', fontSize: 12 }}>{su.nameOptional || '(opcional)'}</Text></Text>
+          <View style={styles.input}>
+            <TextInput
+              style={styles.inputTxt}
+              value={name}
+              onChangeText={setName}
+              placeholder={su.namePlaceholder || 'Tu nombre…'}
+              placeholderTextColor="#737373"
+              autoCapitalize="words"
+            />
+          </View>
         </View>
 
-        {[
-          { label: su.ageLabel,    value: age,    set: setAge,    placeholder: su.agePh,    keyboard: 'numeric',      unit: su.ageUnit },
-          { label: su.weightLabel, value: weight, set: setWeight, placeholder: su.weightPh, keyboard: 'decimal-pad',  unit: 'kg' },
-          { label: su.heightLabel, value: height, set: setHeight, placeholder: su.heightPh, keyboard: 'numeric',      unit: 'cm' },
-        ].map(f => (
-          <View key={f.label} style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>{f.label}</Text>
-            <View style={styles.inputRow}>
-              <TextInput style={styles.input} value={f.value} onChangeText={f.set}
-                placeholder={f.placeholder} placeholderTextColor="rgba(255,255,255,0.3)"
-                keyboardType={f.keyboard} />
-              <Text style={styles.inputUnit}>{f.unit}</Text>
-            </View>
+        {/* Toggle de sistema de medidas */}
+        <View style={styles.unitToggleRow}>
+          {[
+            { id: 'metric',   label: 'kg · cm' },
+            { id: 'imperial', label: 'lbs · ft' },
+          ].map(u => (
+            <TouchableOpacity key={u.id} onPress={() => onUnitSystemChange?.(u.id)}
+              style={[styles.unitToggleBtn, unitSystem === u.id && styles.unitToggleBtnActive]}>
+              <Text style={[styles.unitToggleLabel, unitSystem === u.id && styles.unitToggleLabelActive]}>{u.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Edad */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>{su.ageLabel}</Text>
+          <View style={styles.input}>
+            <TextInput style={styles.inputTxt} value={age} onChangeText={setAge}
+              placeholder={su.agePh} placeholderTextColor="#737373" keyboardType="numeric" />
           </View>
-        ))}
+        </View>
+
+        {/* Peso */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>{su.weightLabel}</Text>
+          <UnitInput value={weight} onChangeText={setWeight}
+            placeholder={unitSystem === 'imperial' ? '130' : su.weightPh}
+            unit={unitSystem === 'imperial' ? 'lbs' : 'Kg'} keyboardType="decimal-pad" />
+        </View>
+
+        {/* Altura */}
+        <View style={styles.inputGroup}>
+          <Text style={styles.inputLabel}>{su.heightLabel}</Text>
+          {unitSystem === 'imperial' ? (
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+              <View style={{ flex: 1 }}>
+                <UnitInput value={heightFt} onChangeText={setHeightFt} placeholder="5" unit="ft" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <UnitInput value={heightIn} onChangeText={setHeightIn} placeholder="6" unit="in" />
+              </View>
+            </View>
+          ) : (
+            <UnitInput value={height} onChangeText={setHeight} placeholder={su.heightPh} unit="Cm" />
+          )}
+        </View>
 
         {/* Nivel de actividad */}
-        <Text style={[styles.inputLabel, { marginTop: 6, marginBottom: 10 }]}>
+        <Text style={[styles.sectionLabel, { marginTop: 6 }]}>
           {lang === 'en' ? 'Activity level' : lang === 'fr' ? 'Niveau d\'activité' : lang === 'it' ? 'Livello di attività' : 'Nivel de actividad'}
         </Text>
-        {ACTIVITY_OPTS.map(opt => {
-          const active = activityLevel === opt.id;
-          return (
-            <TouchableOpacity key={opt.id} onPress={() => setActivityLevel(opt.id)}
-              style={[styles.optionCard, active && styles.optionCardActive]}>
-              <Text style={styles.optionEmoji}>{opt.emoji}</Text>
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.optionLabel, active && styles.optionLabelActive]}>{opt.label[lang] || opt.label.es}</Text>
-                <Text style={styles.optionDesc}>{opt.desc[lang] || opt.desc.es}</Text>
-              </View>
-              <View style={[styles.radio, active && styles.radioActive]}>
-                {active && <View style={styles.radioDot} />}
-              </View>
-            </TouchableOpacity>
-          );
-        })}
+        <View style={{ gap: 2, marginBottom: 8 }}>
+          {ACTIVITY_OPTS.map(opt => {
+            const active = activityLevel === opt.id;
+            return (
+              <TouchableOpacity key={opt.id} onPress={() => setActivityLevel(opt.id)}
+                style={[styles.optionCard, active && styles.optionCardActive]}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.optionLabel}>{opt.emoji} {opt.label[lang] || opt.label.es}</Text>
+                  <Text style={styles.optionDesc}>{opt.desc[lang] || opt.desc.es}</Text>
+                </View>
+                <View style={[styles.radio, active && styles.radioActive]}>
+                  {active && <View style={styles.radioDot} />}
+                </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
 
         <TouchableOpacity
-          style={[styles.btn, (!age || !weight || !height) && styles.btnDisabled]}
-          onPress={() => age && weight && height && setStep(2)}
-          disabled={!age || !weight || !height}>
+          style={[styles.btn, (!age || !weight || (unitSystem === 'imperial' ? !heightFt : !height)) && styles.btnDisabled]}
+          onPress={() => { const hOk = unitSystem === 'imperial' ? !!heightFt : !!height; if (age && weight && hOk) setStep(2); }}
+          disabled={!age || !weight || (unitSystem === 'imperial' ? !heightFt : !height)}>
           <Text style={styles.btnText}>{su.next}</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -187,27 +266,28 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
   // ─── PASO 2 · Módulos ───────────────────────────────────────────────────────
   if (step === 2) return (
     <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
-      <TouchableOpacity onPress={() => setStep(1)}><Text style={styles.back}>{su.back}</Text></TouchableOpacity>
-      <Text style={styles.stepDots}>● <Text style={styles.dotActive}>●</Text> ● ●</Text>
+      <BackBtn label={su.back} onPress={() => setStep(1)} />
+      <StepBar index={1} />
       <Text style={styles.stepTitle}>{su.modulesTitle}</Text>
       <Text style={styles.stepSub}>{su.modulesSub}</Text>
 
-      {su.modulesOpts.map(opt => {
-        const active = modules.includes(opt.id);
-        return (
-          <TouchableOpacity key={opt.id} onPress={() => toggleModule(opt.id)}
-            style={[styles.optionCard, active && styles.optionCardActive]}>
-            <Text style={styles.optionEmoji}>{opt.emoji}</Text>
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.optionLabel, active && styles.optionLabelActive]}>{opt.label}</Text>
-              <Text style={styles.optionDesc}>{opt.desc}</Text>
-            </View>
-            <View style={[styles.checkbox, active && styles.checkboxActive]}>
-              {active && <Check size={14} color="white" />}
-            </View>
-          </TouchableOpacity>
-        );
-      })}
+      <View style={{ gap: 2, marginBottom: 8 }}>
+        {su.modulesOpts.map(opt => {
+          const active = modules.includes(opt.id);
+          return (
+            <TouchableOpacity key={opt.id} onPress={() => toggleModule(opt.id)}
+              style={[styles.optionCard, active && styles.optionCardActive]}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.optionLabel}>{opt.emoji} {opt.label}</Text>
+                <Text style={styles.optionDesc}>{opt.desc}</Text>
+              </View>
+              <View style={[styles.checkbox, active && styles.checkboxActive]}>
+                {active && <Check size={14} color="white" />}
+              </View>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
 
       <TouchableOpacity
         style={[styles.btn, modules.length === 0 && styles.btnDisabled]}
@@ -229,32 +309,33 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
 
     return (
       <ScrollView style={styles.scrollContainer} contentContainerStyle={styles.scrollContent}>
-        <TouchableOpacity onPress={() => setStep(2)}><Text style={styles.back}>{su.back}</Text></TouchableOpacity>
-        <Text style={styles.stepDots}>● ● <Text style={styles.dotActive}>●</Text> ●</Text>
+        <BackBtn label={su.back} onPress={() => setStep(2)} />
+        <StepBar index={2} />
         <Text style={styles.stepTitle}>{titleTxt}</Text>
         <Text style={styles.stepSub}>{subTxt}</Text>
 
         {goalModules.map(catId => (
-          <View key={catId} style={{ marginBottom: 18 }}>
-            <Text style={[styles.inputLabel, { fontSize: 14, fontWeight: '700', marginBottom: 10 }]}>
+          <View key={catId} style={{ marginBottom: 20 }}>
+            <Text style={styles.sectionLabel}>
               {moduleLabels[catId][lang] || moduleLabels[catId].es}
             </Text>
-            {GOALS_BY_MODULE[catId].map(opt => {
-              const active = goals[catId] === opt.id;
-              return (
-                <TouchableOpacity key={opt.id} onPress={() => setGoal(catId, opt.id)}
-                  style={[styles.optionCard, active && styles.optionCardActive]}>
-                  <Text style={styles.optionEmoji}>{opt.emoji}</Text>
-                  <View style={{ flex: 1 }}>
-                    <Text style={[styles.optionLabel, active && styles.optionLabelActive]}>{opt.label[lang] || opt.label.es}</Text>
-                    <Text style={styles.optionDesc}>{opt.desc[lang] || opt.desc.es}</Text>
-                  </View>
-                  <View style={[styles.radio, active && styles.radioActive]}>
-                    {active && <View style={styles.radioDot} />}
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
+            <View style={{ gap: 2 }}>
+              {GOALS_BY_MODULE[catId].map(opt => {
+                const active = goals[catId] === opt.id;
+                return (
+                  <TouchableOpacity key={opt.id} onPress={() => setGoal(catId, opt.id)}
+                    style={[styles.optionCard, active && styles.optionCardActive]}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.optionLabel}>{opt.emoji} {opt.label[lang] || opt.label.es}</Text>
+                      <Text style={styles.optionDesc}>{opt.desc[lang] || opt.desc.es}</Text>
+                    </View>
+                    <View style={[styles.radio, active && styles.radioActive]}>
+                      {active && <View style={styles.radioDot} />}
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
           </View>
         ))}
 
@@ -295,49 +376,63 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0F1F4A', alignItems: 'center', justifyContent: 'center', padding: 28 },
+  container: { flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', padding: 28 },
 
   // Aviso médico
-  medDisclaimer:      { backgroundColor: 'rgba(253,230,138,0.12)', borderWidth: 1, borderColor: 'rgba(253,230,138,0.3)', borderRadius: 14, padding: 14, marginTop: 8, marginBottom: 16 },
-  medDisclaimerTitle: { fontSize: 13, fontWeight: '700', color: '#FCD34D', marginBottom: 6, letterSpacing: 0.3 },
-  medDisclaimerBody:  { fontSize: 12, color: 'rgba(255,255,255,0.8)', lineHeight: 18 },
+  medDisclaimer:      { backgroundColor: '#FFF7ED', borderWidth: 1, borderColor: '#FED7AA', borderRadius: 16, padding: 14, marginTop: 8, marginBottom: 16 },
+  medDisclaimerTitle: { fontSize: 13, fontWeight: '700', color: '#9A3412', marginBottom: 6, letterSpacing: 0.3 },
+  medDisclaimerBody:  { fontSize: 12, color: '#7C2D12', lineHeight: 18 },
   langRow: { position: 'absolute', top: 56, right: 24, flexDirection: 'row', gap: 8 },
-  langBtn: { padding: 6, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1, borderColor: 'transparent' },
-  langBtnActive: { backgroundColor: 'rgba(255,255,255,0.25)', borderColor: 'rgba(255,255,255,0.5)' },
+  langBtn: { padding: 6, borderRadius: 8, backgroundColor: '#F5F5F5', borderWidth: 1, borderColor: 'transparent' },
+  langBtnActive: { backgroundColor: 'white', borderColor: '#171717' },
   langFlag: { fontSize: 20 },
-  scrollContainer: { flex: 1, backgroundColor: '#0F1F4A' },
-  scrollContent: { padding: 28, paddingTop: 60, paddingBottom: 40 },
-  emoji: { fontSize: 72, marginBottom: 16 },
-  title: { fontFamily: 'serif', fontSize: 40, color: 'white', fontWeight: '700', marginBottom: 4 },
-  tagline: { fontSize: 11, color: 'rgba(255,255,255,0.5)', letterSpacing: 3, marginBottom: 20 },
-  divider: { width: 40, height: 2, backgroundColor: 'rgba(255,255,255,0.3)', marginBottom: 22 },
-  feature: { backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: 12, padding: 12, marginBottom: 8, width: '100%' },
-  featureText: { color: 'white', fontSize: 14 },
-  btn: { width: '100%', padding: 15, borderRadius: 50, backgroundColor: 'white', alignItems: 'center', marginTop: 24 },
-  btnDisabled: { backgroundColor: 'rgba(255,255,255,0.2)' },
-  btnText: { color: '#1A56DB', fontSize: 16, fontWeight: '700' },
-  back: { color: 'rgba(255,255,255,0.6)', fontSize: 14, marginBottom: 20 },
-  stepDots: { fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: 6, marginBottom: 14 },
-  dotActive: { color: 'white' },
-  stepTitle: { fontFamily: 'serif', fontSize: 28, color: 'white', fontWeight: '700', marginBottom: 6 },
-  stepSub: { fontSize: 14, color: 'rgba(255,255,255,0.65)', marginBottom: 24 },
+  scrollContainer: { flex: 1, backgroundColor: 'white' },
+  scrollContent: { padding: 20, paddingTop: 60, paddingBottom: 40 },
+  emoji: { fontSize: 64, marginBottom: 16 },
+  title: { fontSize: 36, color: '#0A0A0A', fontWeight: '800', marginBottom: 4 },
+  tagline: { fontSize: 11, color: '#737373', letterSpacing: 3, marginBottom: 20 },
+  divider: { width: 40, height: 2, backgroundColor: '#E5E5E5', marginBottom: 22 },
+  feature: { backgroundColor: '#F5F5F5', borderRadius: 16, padding: 12, marginBottom: 8, width: '100%' },
+  featureText: { color: '#0A0A0A', fontSize: 14 },
+  btn: { width: '100%', height: 48, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center', marginTop: 24 },
+  btnDisabled: { opacity: 0.4 },
+  btnText: { color: '#FAFAFA', fontSize: 18, fontWeight: '700' },
+
+  // Volver
+  backBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', backgroundColor: '#F5F5F5', borderRadius: 8, paddingHorizontal: 8, height: 32, marginBottom: 20 },
+  backBtnTxt: { fontSize: 14, color: '#0A0A0A' },
+
+  // Barra de pasos
+  stepBarRow: { flexDirection: 'row', gap: 4, marginBottom: 12 },
+  stepBarSeg: { flex: 1, height: 4, borderRadius: 2, backgroundColor: '#E5E5E5' },
+  stepBarSegActive: { backgroundColor: '#171717' },
+
+  stepTitle: { fontSize: 24, color: '#0A0A0A', fontWeight: '800', marginBottom: 6 },
+  stepSub: { fontSize: 14, color: '#0A0A0A', marginBottom: 24, lineHeight: 20 },
+  sectionLabel: { fontSize: 16, fontWeight: '700', color: '#171717', marginBottom: 10 },
   inputGroup: { marginBottom: 16 },
-  inputLabel: { fontSize: 13, color: 'rgba(255,255,255,0.7)', marginBottom: 6, fontWeight: '500' },
-  inputRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  input: { flex: 1, padding: 13, borderRadius: 14, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)', backgroundColor: 'rgba(255,255,255,0.12)', color: 'white', fontSize: 16 },
-  inputUnit: { color: 'rgba(255,255,255,0.5)', fontSize: 14, minWidth: 30 },
-  optionCard: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 16, padding: 16, marginBottom: 10, borderWidth: 1.5, borderColor: 'transparent' },
-  optionCardActive: { backgroundColor: 'rgba(255,255,255,0.15)', borderColor: 'white' },
-  optionEmoji: { fontSize: 28, flexShrink: 0 },
-  optionLabel: { fontSize: 15, color: 'rgba(255,255,255,0.7)', fontWeight: '600' },
-  optionLabelActive: { color: 'white' },
-  optionDesc: { fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 },
-  checkbox: { width: 24, height: 24, borderRadius: 6, borderWidth: 2, borderColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
-  checkboxActive: { backgroundColor: 'white', borderColor: 'white' },
-  checkmark: { color: '#1A56DB', fontSize: 14, fontWeight: '700' },
+  inputLabel: { fontSize: 16, color: '#171717', marginBottom: 8 },
+  input: { flexDirection: 'row', alignItems: 'center', height: 48, borderRadius: 16, backgroundColor: '#FAFAFA', paddingLeft: 8, paddingRight: 4, gap: 8 },
+  inputTxt: { flex: 1, fontSize: 16, color: '#0A0A0A' },
+  inputUnitBadge: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#262626', alignItems: 'center', justifyContent: 'center' },
+  inputUnitBadgeTxt: { color: 'white', fontSize: 14 },
+
+  optionCard: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#FAFAFA', borderRadius: 24, padding: 16, minHeight: 56, borderWidth: 1, borderColor: 'transparent' },
+  optionCardActive: { backgroundColor: '#F5F5F5', borderColor: '#262626' },
+  optionLabel: { fontSize: 16, color: '#0A0A0A' },
+  optionDesc: { fontSize: 12, color: '#737373', marginTop: 2 },
+  checkbox: { width: 20, height: 20, borderRadius: 6, borderWidth: 1, borderColor: '#737373', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
+  checkboxActive: { backgroundColor: '#262626', borderColor: '#262626' },
 
   // Radio para selección única (nivel actividad, objetivos)
-  radio:       { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: 'rgba(255,255,255,0.3)', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
-  radioActive: { borderColor: 'white' },
-  radioDot:    { width: 10, height: 10, borderRadius: 5, backgroundColor: 'white' },
+  radio:       { width: 20, height: 20, borderRadius: 10, borderWidth: 1, borderColor: '#737373', backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
+  radioActive: { backgroundColor: '#262626', borderColor: '#262626' },
+  radioDot:    { width: 8, height: 8, borderRadius: 4, backgroundColor: 'white' },
+
+  // Toggle de sistema de medidas (metric / imperial)
+  unitToggleRow:        { flexDirection: 'row', gap: 8, marginBottom: 18 },
+  unitToggleBtn:        { flex: 1, paddingVertical: 10, borderRadius: 16, borderWidth: 1, borderColor: '#E5E5E5', alignItems: 'center', backgroundColor: '#FAFAFA' },
+  unitToggleBtnActive:  { backgroundColor: '#171717', borderColor: '#171717' },
+  unitToggleLabel:      { fontSize: 13, color: '#525252', fontWeight: '600' },
+  unitToggleLabelActive:{ color: 'white' },
 });

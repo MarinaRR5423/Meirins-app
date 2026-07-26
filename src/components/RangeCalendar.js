@@ -18,7 +18,7 @@ import React, { useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
 
-const DEFAULT_COLOR = '#EF4444';
+const DEFAULT_COLOR = '#49CF38';
 
 export default function RangeCalendar({ start, end, onChange, color = DEFAULT_COLOR, maxPastMonths = 6, lang = 'es' }) {
   const [viewDate, setViewDate] = useState(() => {
@@ -119,17 +119,16 @@ export default function RangeCalendar({ start, end, onChange, color = DEFAULT_CO
               activeOpacity={isFuture ? 1 : 0.7}
               style={[
                 s.cell,
-                isInRange && { backgroundColor: color + '33' },                  // 20% opacity
-                isStart   && { backgroundColor: color, borderTopLeftRadius: 18, borderBottomLeftRadius: 18 },
-                isEnd     && { backgroundColor: color, borderTopRightRadius: 18, borderBottomRightRadius: 18 },
-                isStart && isEnd && { borderRadius: 18 },
+                isInRange && { backgroundColor: '#B6ECAF', borderRadius: 4 },
+                isStart   && { backgroundColor: color, borderRadius: 4 },
+                isEnd     && { backgroundColor: color, borderRadius: 4 },
               ]}
             >
               <Text style={[
                 s.dayNum,
-                isToday && !isEdge && { color: color, fontWeight: '700' },
-                isEdge && { color: 'white', fontWeight: '700' },
-                isFuture && { color: 'rgba(255,255,255,0.2)' },
+                isToday && !isEdge && { color: '#171717', fontWeight: '700' },
+                isEdge && { color: '#0B1F08', fontWeight: '700' },
+                isFuture && { color: '#D4D4D4' },
               ]}>
                 {dayNum}
               </Text>
@@ -179,14 +178,14 @@ function formatRange(start, end, lang) {
 
 const s = StyleSheet.create({
   header:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  navBtn:       { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.1)', justifyContent: 'center', alignItems: 'center' },
-  navTxt:       { color: 'white', fontSize: 22, fontWeight: '600', marginTop: -2 },
-  title:        { color: 'white', fontSize: 15, fontWeight: '700', textTransform: 'capitalize' },
+  navBtn:       { width: 32, height: 32, justifyContent: 'center', alignItems: 'center' },
+  navTxt:       { color: '#171717', fontSize: 22, fontWeight: '600', marginTop: -2 },
+  title:        { color: '#0A0A0A', fontSize: 16, fontWeight: '500', textTransform: 'capitalize' },
   weekHeader:   { flexDirection: 'row', marginBottom: 4 },
-  weekHeaderTxt:{ flex: 1, textAlign: 'center', fontSize: 11, fontWeight: '700', color: 'rgba(255,255,255,0.4)' },
-  grid:         { flexDirection: 'row', flexWrap: 'wrap' },
-  cell:         { width: '14.28%', aspectRatio: 1, justifyContent: 'center', alignItems: 'center' },
-  dayNum:       { fontSize: 13, color: 'rgba(255,255,255,0.7)', fontWeight: '500' },
-  legend:       { marginTop: 12, padding: 10, backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: 10 },
-  legendTxt:    { fontSize: 12, color: 'rgba(255,255,255,0.7)', textAlign: 'center' },
+  weekHeaderTxt:{ flex: 1, textAlign: 'center', fontSize: 10, fontWeight: '700', color: '#737373', textTransform: 'uppercase' },
+  grid:         { flexDirection: 'row', flexWrap: 'wrap', gap: 4 },
+  cell:         { width: '13%', aspectRatio: 1, justifyContent: 'center', alignItems: 'center' },
+  dayNum:       { fontSize: 12, color: '#0A0A0A', fontWeight: '500' },
+  legend:       { marginTop: 12, padding: 0 },
+  legendTxt:    { fontSize: 12, color: '#525252', textAlign: 'center' },
 });
