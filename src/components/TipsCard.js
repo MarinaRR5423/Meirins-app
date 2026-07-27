@@ -50,9 +50,6 @@ export default function TipsCard({ articles = [], lang = 'es', variant = 'defaul
                   onPress={() => setOpen(article)}
                   activeOpacity={0.75}
                 >
-                  <View style={[a.iconBg, { backgroundColor: c.bg }]}>
-                    <Text style={a.icon}>{article.icon}</Text>
-                  </View>
                   <View style={a.body}>
                     <Text style={a.articleTitle}>{article.title[lang] || article.title.es}</Text>
                     <Text style={a.summary} numberOfLines={2}>{article.summary[lang] || article.summary.es}</Text>
