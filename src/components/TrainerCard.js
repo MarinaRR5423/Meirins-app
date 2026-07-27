@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { ArrowRight } from 'lucide-react-native';
 import { useTrainerConnection } from '../hooks/useTrainerConnection';
+import { F } from '../theme/fonts';
 
 export default function TrainerCard({ lang = 'es' }) {
   const [code, setCode] = useState('');
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
   card: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 12 },
   header: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 16 },
   icon: { fontSize: 28, flexShrink: 0 },
-  title: { fontSize: 16, fontWeight: '700', color: '#171717', marginBottom: 4 },
+  title: { fontSize: 16, fontFamily: F.bodyB, color: '#171717', marginBottom: 4 },
   sub: { fontSize: 12, color: '#525252', lineHeight: 18 },
   enterBtn: {
     backgroundColor: 'white', borderRadius: 16, height: 48,
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 12,
     fontSize: 16,
-    fontWeight: '700',
+    fontFamily: F.bodyB,
     color: '#0A0A0A',
     letterSpacing: 2,
     backgroundColor: '#FAFAFA',
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     alignItems: 'center',
   },
-  cancelBtnText: { fontSize: 13, color: '#525252', fontWeight: '600' },
+  cancelBtnText: { fontSize: 13, color: '#525252', fontFamily: F.bodyB },
   connectBtn: {
     flex: 2,
     padding: 12,
@@ -198,12 +199,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#171717',
     alignItems: 'center',
   },
-  connectBtnText: { fontSize: 13, color: 'white', fontWeight: '700' },
+  connectBtnText: { fontSize: 13, color: 'white', fontFamily: F.bodyB },
   // connected state
   connectedRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   dot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#49CF38', flexShrink: 0 },
-  connectedLabel: { fontSize: 10, fontWeight: '700', color: '#0B1F08', letterSpacing: 0.6, marginBottom: 2 },
-  trainerName: { fontSize: 15, fontWeight: '700', color: '#0A0A0A' },
+  connectedLabel: { fontSize: 10, fontFamily: F.bodyB, color: '#0B1F08', letterSpacing: 0.6, marginBottom: 2 },
+  trainerName: { fontSize: 15, fontFamily: F.bodyB, color: '#0A0A0A' },
   trainerSpecialty: { fontSize: 12, color: '#525252', marginTop: 2 },
   disconnectText: { fontSize: 12, color: '#737373', textDecorationLine: 'underline' },
 });

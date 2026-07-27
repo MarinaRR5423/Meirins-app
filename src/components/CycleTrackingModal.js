@@ -97,7 +97,7 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
                 <Text style={[s.dayLetter, isSel && { color: '#171717' }]}>
                   {dt.toLocaleDateString('default', { weekday: 'narrow' })}
                 </Text>
-                <Text style={[s.dayNum, isSel && { color: '#171717', fontWeight: '800' }, isToday && !isSel && { color: '#171717', fontWeight: '700' }]}>
+                <Text style={[s.dayNum, isSel && { color: '#171717', fontFamily: F.headingX }, isToday && !isSel && { color: '#171717', fontFamily: F.bodyB }]}>
                   {dt.getDate()}
                 </Text>
                 {hasData && <View style={[s.dot, isSel && { backgroundColor: '#171717' }]} />}
@@ -194,19 +194,19 @@ const s = StyleSheet.create({
   container: { flex: 1, backgroundColor: 'white' },
   header:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   closeBtn:  { width: 32, height: 32, borderRadius: 8, backgroundColor: '#F5F5F5', justifyContent: 'center', alignItems: 'center' },
-  closeTxt:  { fontSize: 14, color: '#64748B', fontWeight: '600' },
-  title:     { fontSize: 24, fontWeight: '800', color: '#0A0A0A', fontFamily: F.headingX },
+  closeTxt:  { fontSize: 14, color: '#64748B', fontFamily: F.bodyB },
+  title:     { fontSize: 24, color: '#0A0A0A', fontFamily: F.headingX },
 
   dateRow:   { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 12, gap: 4 },
   dateBtn:   { flex: 1, alignItems: 'center', paddingVertical: 8, borderRadius: 4, backgroundColor: '#FAFAFA', position: 'relative', borderWidth: 1, borderColor: 'transparent' },
   dateBtnSel:{ backgroundColor: 'white', borderColor: '#171717' },
-  dayLetter: { fontSize: 10, color: '#737373', fontWeight: '600', textTransform: 'uppercase' },
+  dayLetter: { fontSize: 10, color: '#737373', fontFamily: F.bodyB, textTransform: 'uppercase' },
   dayNum:    { fontSize: 14, color: '#0A0A0A', fontWeight: '500', marginTop: 2 },
   dot:       { position: 'absolute', bottom: 4, width: 4, height: 4, borderRadius: 2, backgroundColor: '#171717' },
 
   scroll:    { paddingHorizontal: 16, paddingTop: 4 },
   category:  { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 8 },
-  catTitle:  { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 16 },
+  catTitle:  { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A', marginBottom: 16 },
   options:   { flexDirection: 'row', flexWrap: 'wrap', gap: 2 },
   option:    { height: 40, paddingHorizontal: 8, borderRadius: 16, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
   optionActive: { backgroundColor: '#171717' },
@@ -217,20 +217,20 @@ const s = StyleSheet.create({
   insightCard:  { backgroundColor: '#EFF6FF', borderRadius: 16, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: '#BFDBFE' },
   insightHeader:{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, gap: 6 },
   insightIcon:  { fontSize: 18 },
-  insightTitle: { fontSize: 13, fontWeight: '700', color: '#1E40AF', flex: 1 },
+  insightTitle: { fontSize: 13, fontFamily: F.bodyB, color: '#1E40AF', flex: 1 },
   insightClose: { width: 24, height: 24, borderRadius: 12, backgroundColor: '#DBEAFE', justifyContent: 'center', alignItems: 'center' },
-  insightCloseTxt: { fontSize: 11, color: '#3B82F6', fontWeight: '700' },
+  insightCloseTxt: { fontSize: 11, color: '#3B82F6', fontFamily: F.bodyB },
   insightWhy:   { fontSize: 13, color: '#1E293B', lineHeight: 19, marginBottom: 10 },
   insightHelpsRow: { backgroundColor: '#DBEAFE', borderRadius: 10, padding: 10 },
-  insightHelpsLabel: { fontSize: 11, fontWeight: '700', color: '#1E40AF', marginBottom: 4 },
+  insightHelpsLabel: { fontSize: 11, fontFamily: F.bodyB, color: '#1E40AF', marginBottom: 4 },
   insightHelps: { fontSize: 12, color: '#1E293B', lineHeight: 18 },
 
   noteSection:{ marginTop: 8, marginBottom: 8 },
-  noteTitle:  { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 8 },
+  noteTitle:  { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A', marginBottom: 8 },
   noteInput:  { backgroundColor: '#FAFAFA', borderRadius: 12, padding: 12, fontSize: 14, color: '#0A0A0A', minHeight: 96, textAlignVertical: 'top' },
   noteCounter:{ fontSize: 11, color: '#94A3B8', textAlign: 'right', marginTop: 4 },
 
   footer:    { padding: 16, backgroundColor: 'white' },
   saveBtn:   { backgroundColor: '#171717', height: 48, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  saveTxt:   { color: 'white', fontWeight: '700', fontSize: 18 },
+  saveTxt:   { color: 'white', fontFamily: F.bodyB, fontSize: 18 },
 });

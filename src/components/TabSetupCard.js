@@ -1075,9 +1075,9 @@ const s = StyleSheet.create({
     marginBottom: 12, borderWidth: 1, borderColor: '#BFDBFE',
   },
   bannerEmoji: { fontSize: 28 },
-  bannerTitle: { fontSize: 14, fontWeight: '700', color: '#1E3A8A', marginBottom: 2 },
+  bannerTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#1E3A8A', marginBottom: 2 },
   bannerSub:   { fontSize: 12, color: '#3B82F6' },
-  bannerArrow: { fontSize: 18, color: '#1E3A8A', fontWeight: '700' },
+  bannerArrow: { fontSize: 18, color: '#1E3A8A', fontFamily: F.bodyB },
 
   // Ciclo — tarjeta de estado vacío (Azote redesign)
   cicloEmptyCard: {
@@ -1090,7 +1090,7 @@ const s = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', marginBottom: 16,
   },
   cicloEmptyTitle: {
-    fontSize: 20, fontWeight: '800', color: '#171717',
+    fontSize: 20, fontFamily: F.headingX, color: '#171717',
     textAlign: 'center', marginBottom: 8, fontFamily: F.headingX,
   },
   cicloEmptySub: {
@@ -1101,7 +1101,7 @@ const s = StyleSheet.create({
     backgroundColor: '#171717', borderRadius: 12, height: 48,
     alignItems: 'center', justifyContent: 'center', width: '100%',
   },
-  cicloEmptyBtnTxt: { color: '#FAFAFA', fontWeight: '700', fontSize: 16 },
+  cicloEmptyBtnTxt: { color: '#FAFAFA', fontFamily: F.bodyB, fontSize: 16 },
 
   // Ejercicio — tarjeta de estado vacío (Azote redesign)
   gymEmptyCard: {
@@ -1114,7 +1114,7 @@ const s = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', marginBottom: 16,
   },
   gymEmptyTitle: {
-    fontSize: 20, fontWeight: '800', color: '#171717',
+    fontSize: 20, fontFamily: F.headingX, color: '#171717',
     textAlign: 'center', marginBottom: 8, fontFamily: F.headingX,
   },
   gymEmptySub: {
@@ -1125,7 +1125,7 @@ const s = StyleSheet.create({
     backgroundColor: '#171717', borderRadius: 12, height: 48,
     alignItems: 'center', justifyContent: 'center', width: '100%',
   },
-  gymEmptyBtnTxt: { color: '#FAFAFA', fontWeight: '700', fontSize: 16 },
+  gymEmptyBtnTxt: { color: '#FAFAFA', fontFamily: F.bodyB, fontSize: 16 },
   nutriEmptyCard: {
     borderRadius: 24, padding: 24, marginBottom: 12, overflow: 'hidden',
     minHeight: 200, justifyContent: 'flex-end',
@@ -1135,7 +1135,7 @@ const s = StyleSheet.create({
     backgroundColor: 'rgba(10,10,10,0.5)', borderRadius: 24,
   },
   nutriEmptyTitle: {
-    fontSize: 26, fontWeight: '800', color: '#FFFFFF',
+    fontSize: 26, fontFamily: F.headingX, color: '#FFFFFF',
     marginBottom: 8, fontFamily: F.headingX,
   },
   nutriEmptySub: {
@@ -1146,30 +1146,30 @@ const s = StyleSheet.create({
     backgroundColor: '#171717', borderRadius: 12, height: 48,
     alignItems: 'center', justifyContent: 'center',
   },
-  nutriEmptyBtnTxt: { color: '#FAFAFA', fontWeight: '700', fontSize: 16 },
+  nutriEmptyBtnTxt: { color: '#FAFAFA', fontFamily: F.bodyB, fontSize: 16 },
 
   gymEditBanner: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     backgroundColor: '#FAFAFA', borderRadius: 24, padding: 16,
     marginBottom: 12, borderWidth: 1, borderColor: '#E5E5E5',
   },
-  gymEditBannerTitle: { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 2 },
+  gymEditBannerTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A', marginBottom: 2 },
   gymEditBannerSub:   { fontSize: 12, color: '#525252' },
 
   // Modal
   modal:       { flex: 1, backgroundColor: BG },
   modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)' },
-  modalTitle:  { fontSize: 18, fontWeight: '700', color: 'white' },
+  modalTitle:  { fontSize: 18, fontFamily: F.bodyB, color: 'white' },
   closeBtn:    { width: 32, height: 32, borderRadius: 16, backgroundColor: 'rgba(255,255,255,0.15)', justifyContent: 'center', alignItems: 'center' },
-  closeTxt:    { color: 'white', fontSize: 14, fontWeight: '600' },
+  closeTxt:    { color: 'white', fontSize: 14, fontFamily: F.bodyB },
   modalBody:   { padding: 20, paddingBottom: 60 },
 
   // Modal — variant "azote" (Ciclo)
   modalAzote:       { backgroundColor: 'white' },
   modalHeaderAzote: { borderBottomColor: '#F1F5F9' },
-  modalTitleAzote:  { color: '#0A0A0A', fontWeight: '800' },
+  modalTitleAzote:  { color: '#0A0A0A', fontFamily: F.headingX },
   closeBtnAzote:    { backgroundColor: '#F5F5F5' },
-  secLabelAzote:    { fontSize: 16, fontWeight: '700', color: '#171717', marginBottom: 10 },
+  secLabelAzote:    { fontSize: 16, fontFamily: F.bodyB, color: '#171717', marginBottom: 10 },
   optCardAzote:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, backgroundColor: '#FAFAFA', borderRadius: 24, padding: 16, minHeight: 56, borderWidth: 1, borderColor: 'transparent' },
   optCardAzoteActive: { backgroundColor: '#F5F5F5', borderColor: '#262626' },
   optLabelAzote:      { fontSize: 16, color: '#0A0A0A' },
@@ -1182,20 +1182,20 @@ const s = StyleSheet.create({
   chipAzoteLabel:       { fontSize: 16, color: '#0A0A0A' },
   chipAzoteLabelActive: { color: 'white' },
   saveBtnAzote:    { marginTop: 28, height: 48, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center' },
-  saveBtnAzoteTxt: { color: '#FAFAFA', fontWeight: '700', fontSize: 18 },
+  saveBtnAzoteTxt: { color: '#FAFAFA', fontFamily: F.bodyB, fontSize: 18 },
 
   // Section
-  secLabel: { fontSize: 11, fontWeight: '700', color: 'rgba(255,255,255,0.5)', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginTop: 4 },
+  secLabel: { fontSize: 11, fontFamily: F.bodyB, color: 'rgba(255,255,255,0.5)', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginTop: 4 },
   secSub:   { fontSize: 13, color: 'rgba(255,255,255,0.55)', marginBottom: 12 },
 
   // Option card
   optCard:       { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 14, padding: 14, marginBottom: 8, borderWidth: 1.5, borderColor: 'transparent' },
   optCardActive: { backgroundColor: 'rgba(255,255,255,0.18)', borderColor: 'white' },
   optIcon:       { fontSize: 22, flexShrink: 0 },
-  optLabel:      { fontSize: 14, color: 'rgba(255,255,255,0.75)', fontWeight: '600' },
+  optLabel:      { fontSize: 14, color: 'rgba(255,255,255,0.75)', fontFamily: F.bodyB },
   optLabelActive:{ color: 'white' },
   optDesc:       { fontSize: 12, color: 'rgba(255,255,255,0.4)', marginTop: 2 },
-  check:         { fontSize: 14, color: 'white', fontWeight: '700' },
+  check:         { fontSize: 14, color: 'white', fontFamily: F.bodyB },
 
   // Chips
   chips:          { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 4 },
@@ -1209,7 +1209,7 @@ const s = StyleSheet.create({
   daysRow:       { flexDirection: 'row', gap: 6, marginBottom: 8 },
   dayBtn:        { flex: 1, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', alignItems: 'center' },
   dayBtnActive:  { backgroundColor: 'white', borderColor: 'white' },
-  dayLetter:     { fontSize: 11, color: 'rgba(255,255,255,0.6)', fontWeight: '700' },
+  dayLetter:     { fontSize: 11, color: 'rgba(255,255,255,0.6)', fontFamily: F.bodyB },
   dayLetterActive:{ color: '#1A56DB' },
 
   // Day picker — variant "azote"
@@ -1223,24 +1223,24 @@ const s = StyleSheet.create({
   dateBtn:       { padding: 12, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', marginRight: 8, alignItems: 'center' },
   dateBtnActive: { backgroundColor: 'white' },
   dateBtnTxt:    { color: 'rgba(255,255,255,0.7)', fontSize: 13 },
-  dateBtnTxtActive: { color: '#1A56DB', fontWeight: '700' },
+  dateBtnTxtActive: { color: '#1A56DB', fontFamily: F.bodyB },
 
   // Cycle length
   lenRow:        { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
   lenBtn:        { padding: 10, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', minWidth: 44, alignItems: 'center' },
   lenBtnActive:  { backgroundColor: 'white' },
   lenTxt:        { color: 'rgba(255,255,255,0.7)', fontSize: 14 },
-  lenTxtActive:  { color: '#1A56DB', fontWeight: '700' },
+  lenTxtActive:  { color: '#1A56DB', fontFamily: F.bodyB },
 
   // Sin días fijos
   noTrainingBtn:       { marginTop: 4, marginBottom: 4, padding: 12, borderRadius: 12, backgroundColor: '#FAFAFA', alignItems: 'center' },
   noTrainingBtnActive: { backgroundColor: '#F5F5F5' },
   noTrainingTxt:       { fontSize: 13, color: '#525252', fontWeight: '500' },
-  noTrainingTxtActive: { color: '#0A0A0A', fontWeight: '700', textDecorationLine: 'underline' },
+  noTrainingTxtActive: { color: '#0A0A0A', fontFamily: F.bodyB, textDecorationLine: 'underline' },
 
   // Save button
   saveBtn:    { marginTop: 28, padding: 16, borderRadius: 50, backgroundColor: 'white', alignItems: 'center' },
-  saveBtnTxt: { color: '#1A56DB', fontWeight: '700', fontSize: 16 },
+  saveBtnTxt: { color: '#1A56DB', fontFamily: F.bodyB, fontSize: 16 },
 
   // Divider
   divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.12)', marginVertical: 8 },
@@ -1252,11 +1252,11 @@ const s = StyleSheet.create({
   yesNoRow:        { flexDirection: 'row', gap: 10, marginTop: 8, marginBottom: 6 },
   yesNoBtn:        { flex: 1, paddingVertical: 12, borderRadius: 12, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.25)', alignItems: 'center' },
   yesNoBtnActive:  { backgroundColor: 'white', borderColor: 'white' },
-  yesNoTxt:        { fontSize: 14, fontWeight: '600', color: 'rgba(255,255,255,0.75)' },
+  yesNoTxt:        { fontSize: 14, fontFamily: F.bodyB, color: 'rgba(255,255,255,0.75)' },
   yesNoTxtActive:  { color: '#1A56DB' },
 
   // Label para categorías de dietas
-  dietCatLabel: { fontSize: 10, fontWeight: '700', color: 'rgba(255,255,255,0.55)', letterSpacing: 0.8, marginTop: 8, marginBottom: 4, textTransform: 'uppercase' },
+  dietCatLabel: { fontSize: 10, fontFamily: F.bodyB, color: 'rgba(255,255,255,0.55)', letterSpacing: 0.8, marginTop: 8, marginBottom: 4, textTransform: 'uppercase' },
 
   // Input "Otros" para complementos personalizados
   otherInput: {

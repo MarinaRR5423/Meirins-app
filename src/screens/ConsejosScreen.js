@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Modal, SafeAreaVi
 import { ARTICLES, ARTICLE_CATEGORIES } from '../data/articles';
 import { fetchArticles } from '../data/dataService';
 import T from '../i18n/translations';
+import { F } from '../theme/fonts';
 
 function ArticleCard({ article, lang, onPress }) {
   const cat = ARTICLE_CATEGORIES[article.category];
@@ -139,14 +140,14 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     paddingHorizontal: 20,
   },
-  headerTitle: { fontSize: 24, fontWeight: '700', color: 'white' },
+  headerTitle: { fontSize: 24, fontFamily: F.bodyB, color: 'white' },
 
   filterRow: { paddingHorizontal: 14, paddingVertical: 12, gap: 8 },
   filterChip: {
     paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,
     backgroundColor: 'white', borderWidth: 1.5, borderColor: '#E2E8F0',
   },
-  filterChipText: { fontSize: 13, fontWeight: '600', color: '#64748B' },
+  filterChipText: { fontSize: 13, fontFamily: F.bodyB, color: '#64748B' },
   filterChipTextActive: { color: 'white' },
 
   list: { padding: 14 },
@@ -161,8 +162,8 @@ const styles = StyleSheet.create({
   cardIcon: { fontSize: 28 },
   cardBody: { flex: 1 },
   catChip: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10, marginBottom: 6 },
-  catChipText: { fontSize: 10, fontWeight: '700', textTransform: 'capitalize' },
-  cardTitle: { fontSize: 15, fontWeight: '700', color: '#1E293B', marginBottom: 4, lineHeight: 20 },
+  catChipText: { fontSize: 10, fontFamily: F.bodyB, textTransform: 'capitalize' },
+  cardTitle: { fontSize: 15, fontFamily: F.bodyB, color: '#1E293B', marginBottom: 4, lineHeight: 20 },
   cardSummary: { fontSize: 12, color: '#64748B', lineHeight: 18, marginBottom: 8 },
   cardReadTime: { fontSize: 11, color: '#94A3B8' },
 
@@ -173,11 +174,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F1F5F9',
   },
   backBtn: { paddingVertical: 4 },
-  backText: { fontSize: 15, color: '#1A56DB', fontWeight: '600' },
+  backText: { fontSize: 15, color: '#1A56DB', fontFamily: F.bodyB },
   modalScroll: { flex: 1 },
   modalContent: { padding: 24, paddingTop: 32 },
   modalIcon: { fontSize: 48, textAlign: 'center', marginBottom: 16 },
-  modalTitle: { fontSize: 24, fontWeight: '800', color: '#1E293B', textAlign: 'center', lineHeight: 30, marginBottom: 8 },
+  modalTitle: { fontSize: 24, fontFamily: F.headingX, color: '#1E293B', textAlign: 'center', lineHeight: 30, marginBottom: 8 },
   modalMeta: { fontSize: 12, color: '#94A3B8', textAlign: 'center', marginBottom: 20 },
   modalDivider: { height: 3, borderRadius: 2, width: 40, alignSelf: 'center', marginBottom: 24 },
   modalPara: { fontSize: 15, color: '#334155', lineHeight: 26, marginBottom: 16 },

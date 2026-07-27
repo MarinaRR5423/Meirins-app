@@ -72,8 +72,8 @@ function CycleOrbit({ pi, cycleLen }) {
             const isActive = ph.key === currentPhase;
             return (
               <View key={ph.key} style={{ width: `${widthPct}%`, alignItems: 'center' }}>
-                <Text style={{ fontSize: 9, color: isActive ? ph.stroke : '#94A3B8', fontWeight: isActive ? '700' : '400' }}>{PHASES[ph.key]?.emoji}</Text>
-                <Text style={{ fontSize: 8, color: isActive ? ph.stroke : '#94A3B8', fontWeight: isActive ? '700' : '400', textAlign: 'center' }}>{ph.key.slice(0,4)}</Text>
+                <Text style={{ fontSize: 9, color: isActive ? ph.stroke : '#94A3B8', fontFamily: isActive ? F.bodyB : F.body }}>{PHASES[ph.key]?.emoji}</Text>
+                <Text style={{ fontSize: 8, color: isActive ? ph.stroke : '#94A3B8', fontFamily: isActive ? F.bodyB : F.body, textAlign: 'center' }}>{ph.key.slice(0,4)}</Text>
               </View>
             );
           })}
@@ -95,9 +95,9 @@ function CycleOrbit({ pi, cycleLen }) {
 const orbitStyles = StyleSheet.create({
   circle: { width: 170, height: 170, borderRadius: 85, borderWidth: 6, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 12, elevation: 4 },
   circleEmoji: { fontSize: 36, marginBottom: 2 },
-  circleDay: { fontSize: 38, fontWeight: '800', color: '#1E293B', lineHeight: 44 },
-  circleLabel: { fontSize: 10, color: '#94A3B8', fontWeight: '600', letterSpacing: 0.5 },
-  circlePhaseName: { fontSize: 11, fontWeight: '700', marginTop: 2 },
+  circleDay: { fontSize: 38, fontFamily: F.headingX, color: '#1E293B', lineHeight: 44 },
+  circleLabel: { fontSize: 10, color: '#94A3B8', fontFamily: F.bodyB, letterSpacing: 0.5 },
+  circlePhaseName: { fontSize: 11, fontFamily: F.bodyB, marginTop: 2 },
   dayMarker: { position: 'absolute', top: 2, width: 10, height: 10, borderRadius: 5, backgroundColor: '#1A56DB', borderWidth: 2, borderColor: 'white', marginLeft: -5, shadowColor: '#1A56DB', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.5, shadowRadius: 3, elevation: 3 },
   legendRow: { flexDirection: 'row', gap: 12, marginTop: 14 },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
@@ -211,7 +211,7 @@ function SleepCard({ sleepLog, logSleep, lang }) {
                   <View style={styles.barBg}>
                     <View style={[styles.barFill, { height: barH, backgroundColor: qColor }]} />
                   </View>
-                  <Text style={[styles.barDay, isToday && { color: BLUE.primary, fontWeight: '700' }]}>{dayLetter}</Text>
+                  <Text style={[styles.barDay, isToday && { color: BLUE.primary, fontFamily: F.bodyB }]}>{dayLetter}</Text>
                   {entry && <Text style={styles.barHours}>{entry.hours}{sl.hoursShort}</Text>}
                 </View>
               );
@@ -430,7 +430,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
           {isHormonalContra ? (
             <View style={{ alignItems: 'center', paddingVertical: 24, gap: 10 }}>
               <Text style={{ fontSize: 48 }}>💊</Text>
-              <Text style={{ fontSize: 14, fontWeight: '700', color: '#374151' }}>
+              <Text style={{ fontSize: 14, fontFamily: F.bodyB, color: '#374151' }}>
                 {tr('Anticoncepción hormonal activa', 'Hormonal contraception active', 'Contraception hormonale active', 'Contraccezione ormonale attiva')}
               </Text>
               <Text style={{ fontSize: 12, color: '#6B7280', textAlign: 'center', paddingHorizontal: 20, lineHeight: 18 }}>
@@ -442,7 +442,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
                 )}
               </Text>
               <Text style={{ fontSize: 12, color: '#6B7280', textAlign: 'center', paddingHorizontal: 20 }}>
-                {tr('Día del ciclo: ', 'Cycle day: ', 'Jour du cycle : ', 'Giorno del ciclo: ')}<Text style={{ fontWeight: '700', color: '#374151' }}>{pi?.day ?? '—'}</Text>
+                {tr('Día del ciclo: ', 'Cycle day: ', 'Jour du cycle : ', 'Giorno del ciclo: ')}<Text style={{ fontFamily: F.bodyB, color: '#374151' }}>{pi?.day ?? '—'}</Text>
               </Text>
             </View>
           ) : (
@@ -553,7 +553,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
                   <Text style={[
                     styles.calDayNum,
                     phase && { color: isMarked ? 'white' : PHASE_TEXT[phase] },
-                    isMarked && { fontWeight: '700' },
+                    isMarked && { fontFamily: F.bodyB },
                     isToday && styles.calDayNumToday,
                     isSelected && styles.calDayNumSelected,
                   ]}>{dayNum}</Text>
@@ -572,7 +572,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
                 setMarkEnd(periodEnd || null);
               }}
               style={{ backgroundColor: 'white', borderWidth: 1, borderColor: '#171717', borderRadius: 12, padding: 12, alignItems: 'center', marginTop: 4 }}>
-              <Text style={{ color: '#171717', fontWeight: '700', fontSize: 13 }}>
+              <Text style={{ color: '#171717', fontFamily: F.bodyB, fontSize: 13 }}>
                 🩸 {tr('Marcar regla en el calendario', 'Mark period on the calendar', 'Marquer les règles sur le calendrier', 'Segna il ciclo sul calendario')}
               </Text>
             </TouchableOpacity>
@@ -589,14 +589,14 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
                 <TouchableOpacity
                   onPress={() => { setMarking(false); setMarkStart(null); setMarkEnd(null); }}
                   style={{ flex: 1, backgroundColor: '#F1F5F9', borderRadius: 12, padding: 12, alignItems: 'center' }}>
-                  <Text style={{ color: '#64748B', fontWeight: '700', fontSize: 13 }}>
+                  <Text style={{ color: '#64748B', fontFamily: F.bodyB, fontSize: 13 }}>
                     {tr('Cancelar', 'Cancel', 'Annuler', 'Annulla')}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={savePeriodMark} disabled={!markStart}
                   style={{ flex: 1, backgroundColor: markStart ? '#EF4444' : '#FCA5A5', borderRadius: 12, padding: 12, alignItems: 'center' }}>
-                  <Text style={{ color: 'white', fontWeight: '700', fontSize: 13 }}>
+                  <Text style={{ color: 'white', fontFamily: F.bodyB, fontSize: 13 }}>
                     {tr('Guardar regla', 'Save period', 'Enregistrer', 'Salva ciclo')}
                   </Text>
                 </TouchableOpacity>
@@ -722,62 +722,62 @@ const styles = StyleSheet.create({
   todayPillOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor:'rgba(0,0,0,0.42)', borderRadius:20 },
   todayRow: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', padding:16, paddingVertical:14 },
   todayBlock: { alignItems:'center', minWidth:60 },
-  todayLabel: { fontSize:10, fontWeight:'600', color:'rgba(255,255,255,0.7)', letterSpacing:0.5, textAlign:'center' },
-  todayDay: { fontSize:28, fontWeight:'800', color:'white', fontFamily: F.headingX, lineHeight:32 },
+  todayLabel: { fontSize:10, fontFamily: F.bodyB, color:'rgba(255,255,255,0.7)', letterSpacing:0.5, textAlign:'center' },
+  todayDay: { fontSize:28, color:'white', fontFamily: F.headingX, lineHeight:32 },
   todayPhase: { alignItems:'center', flex:1 },
-  todayPhaseName: { fontSize:16, fontWeight:'800', color:'white', textAlign:'center', fontFamily: F.headingX },
+  todayPhaseName: { fontSize:16, color:'white', textAlign:'center', fontFamily: F.headingX },
   todayTagline: { fontSize:11, color:'rgba(255,255,255,0.75)', textAlign:'center', marginBottom:2 },
 
   // Card header
   cardHeader: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginBottom:12 },
-  cardTitle: { fontSize:14, fontWeight:'700', color:'#1E293B', fontFamily: F.heading },
+  cardTitle: { fontSize:14, color:'#1E293B', fontFamily: F.heading },
   viewToggleBtn: { backgroundColor:'#F0F4FA', borderRadius:20, paddingHorizontal:12, paddingVertical:6, borderWidth:1, borderColor:'#E2E8F0' },
   viewToggleBtnText: { fontSize:15 },
 
   // Registrar el día — tarjeta amarilla (Azote)
   logDayCard: { backgroundColor:'#FECA04', borderRadius:24, padding:16, marginBottom:12 },
   logDayHeader: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginBottom:16 },
-  logDayHeaderTxt: { fontSize:12, fontWeight:'600', color:'#261E01' },
-  logDayTitle: { fontSize:26, fontWeight:'800', color:'#261E01', lineHeight:30, marginBottom:8, fontFamily: F.headingX },
+  logDayHeaderTxt: { fontSize:12, fontFamily: F.bodyB, color:'#261E01' },
+  logDayTitle: { fontSize:26, color:'#261E01', lineHeight:30, marginBottom:8, fontFamily: F.headingX },
   logDaySub: { fontSize:14, color:'#261E01', lineHeight:20, marginBottom:20 },
   logDayBtn: { backgroundColor:'#0A0A0A', height:48, borderRadius:12, alignItems:'center', justifyContent:'center', width:'100%' },
-  logDayBtnTxt: { color:'#FAFAFA', fontWeight:'700', fontSize:16 },
+  logDayBtnTxt: { color:'#FAFAFA', fontFamily: F.bodyB, fontSize:16 },
 
   // Calendar
   calendarCard: { backgroundColor:'#F5F5F5', borderRadius:32, paddingHorizontal:8, shadowOpacity:0, elevation:0 },
   legend: { flexDirection:'row', flexWrap:'wrap', gap:4, marginBottom:12 },
   legendTag: { height:24, paddingHorizontal:8, borderRadius:8, justifyContent:'center', alignItems:'center' },
-  legendTagText: { fontSize:10, fontWeight:'600', letterSpacing:0.3, textTransform:'uppercase' },
+  legendTagText: { fontSize:10, fontFamily: F.bodyB, letterSpacing:0.3, textTransform:'uppercase' },
   calHeader: { flexDirection:'row', marginBottom:6 },
-  calHeaderText: { flex:1, textAlign:'center', fontSize:12, fontWeight:'700', color:'#94A3B8' },
+  calHeaderText: { flex:1, textAlign:'center', fontSize:12, fontFamily: F.bodyB, color:'#94A3B8' },
   calGrid: { flexDirection:'row', flexWrap:'wrap' },
   calCell: { width:'14.28%', aspectRatio:1, justifyContent:'center', alignItems:'center', borderRadius:6, overflow:'hidden' },
   calCellDot: { position:'absolute', width:'78%', height:'78%', borderRadius:10 },
   calCellMark: { position:'absolute', width:'100%', height:'100%', backgroundColor:'#EF4444' },
   calCellToday: { borderWidth:2, borderColor:'#171717' },
-  calDayNum: { fontSize:12, fontWeight:'600', color:'#334155', zIndex:1 },
-  calDayNumToday: { fontWeight:'800', color:'#171717' },
+  calDayNum: { fontSize:12, fontFamily: F.bodyB, color:'#334155', zIndex:1 },
+  calDayNumToday: { fontFamily: F.headingX, color:'#171717' },
   calCellSelected: { borderWidth:2, borderColor:'#1E293B' },
-  calDayNumSelected: { fontWeight:'800' },
+  calDayNumSelected: { fontFamily: F.headingX },
   noDataNote: { fontSize:12, color:'#94A3B8', textAlign:'center', marginTop:8, lineHeight:18 },
 
   // Day detail panel
   dayDetail: { marginTop:14, borderRadius:14, padding:14, borderWidth:1 },
-  dayDetailDate: { fontSize:12, fontWeight:'600', marginBottom:8, textTransform:'capitalize' },
+  dayDetailDate: { fontSize:12, fontFamily: F.bodyB, marginBottom:8, textTransform:'capitalize' },
   dayDetailRow: { flexDirection:'row', alignItems:'center', gap:10 },
   dayDetailEmoji: { fontSize:28 },
-  dayDetailPhase: { fontSize:15, fontWeight:'700', lineHeight:20 },
+  dayDetailPhase: { fontSize:15, fontFamily: F.bodyB, lineHeight:20 },
   dayDetailTagline: { fontSize:12, opacity:0.8, marginTop:2 },
   dayDetailBadge: { paddingHorizontal:10, paddingVertical:5, borderRadius:12 },
-  dayDetailBadgeText: { color:'white', fontSize:12, fontWeight:'700' },
+  dayDetailBadgeText: { color:'white', fontSize:12, fontFamily: F.bodyB },
 
   // Sleep card
   sleepLogRow: { flexDirection:'row', alignItems:'center', justifyContent:'space-between', marginBottom:12 },
   sleepLabel: { fontSize:13, color:'#475569', fontWeight:'500' },
   hoursRow: { flexDirection:'row', alignItems:'center', gap:8 },
   hoursBtn: { width:32, height:32, borderRadius:16, backgroundColor:'#F0F4FA', justifyContent:'center', alignItems:'center', borderWidth:1, borderColor:'#E2E8F0' },
-  hoursBtnText: { fontSize:18, fontWeight:'700', color:'#1A56DB', lineHeight:22 },
-  hoursValue: { fontSize:20, fontWeight:'800', color:'#1E293B', minWidth:50, textAlign:'center' },
+  hoursBtnText: { fontSize:18, fontFamily: F.bodyB, color:'#1A56DB', lineHeight:22 },
+  hoursValue: { fontSize:20, fontFamily: F.headingX, color:'#1E293B', minWidth:50, textAlign:'center' },
   qualityRow: { flexDirection:'row', alignItems:'center', justifyContent:'space-between', marginBottom:4 },
   qualityBtns: { flexDirection:'row', gap:6 },
   qualityBtn: { width:36, height:36, borderRadius:18, borderWidth:1.5, borderColor:'#E2E8F0', justifyContent:'center', alignItems:'center' },
@@ -785,10 +785,10 @@ const styles = StyleSheet.create({
   qualityLabelText: { fontSize:11, color:'#94A3B8', textAlign:'right', marginBottom:12 },
   logBtn: { backgroundColor:'#EFF6FF', borderRadius:12, paddingVertical:10, alignItems:'center', marginBottom:16, borderWidth:1, borderColor:'#BFDBFE' },
   logBtnSaved: { backgroundColor:'#F0FDF4', borderColor:'#BBF7D0' },
-  logBtnText: { fontSize:14, fontWeight:'700', color:'#1A56DB' },
+  logBtnText: { fontSize:14, fontFamily: F.bodyB, color:'#1A56DB' },
   logBtnTextSaved: { color:'#16A34A' },
   sleepChart: { marginTop:4 },
-  chartLabel: { fontSize:11, color:'#94A3B8', fontWeight:'600', marginBottom:8 },
+  chartLabel: { fontSize:11, color:'#94A3B8', fontFamily: F.bodyB, marginBottom:8 },
   barsRow: { flexDirection:'row', justifyContent:'space-between', alignItems:'flex-end' },
   barItem: { flex:1, alignItems:'center' },
   barBg: { width:24, height:60, backgroundColor:'#F1F5F9', borderRadius:6, justifyContent:'flex-end', overflow:'hidden' },
@@ -796,27 +796,27 @@ const styles = StyleSheet.create({
   barDay: { fontSize:9, color:'#94A3B8', marginTop:4 },
   barHours: { fontSize:8, color:'#64748B', marginTop:1 },
   avgBadge: { backgroundColor:'#EFF6FF', paddingHorizontal:10, paddingVertical:4, borderRadius:10 },
-  avgText: { fontSize:11, color:'#1A56DB', fontWeight:'700' },
+  avgText: { fontSize:11, color:'#1A56DB', fontFamily: F.bodyB },
   noDataText: { fontSize:12, color:'#94A3B8', textAlign:'center', marginTop:8 },
 
   // Información de las fases — carrusel con imágenes
-  phaseInfoTitle: { fontSize:18, fontWeight:'800', color:'#0A0A0A', marginBottom:12, fontFamily: F.headingX },
+  phaseInfoTitle: { fontSize:18, color:'#0A0A0A', marginBottom:12, fontFamily: F.headingX },
   phaseGrid: { flexDirection:'row', flexWrap:'wrap', gap:10 },
   phaseGridItem: { width:'48%', backgroundColor:'white', borderRadius:18, overflow:'hidden', shadowColor:'#000', shadowOffset:{width:0,height:2}, shadowOpacity:0.07, shadowRadius:8, elevation:2 },
   phaseGridImgWrap: { width:'100%', height:130, borderRadius:14, overflow:'hidden', position:'relative' },
   phaseGridImg: { width:'100%', height:'100%' },
   phaseGridActiveBadge: { position:'absolute', top:8, right:8, backgroundColor:'rgba(0,0,0,0.65)', borderRadius:20, paddingHorizontal:8, paddingVertical:3 },
-  phaseGridActiveTxt: { fontSize:9, fontWeight:'700', color:'white' },
-  phaseGridName: { fontSize:14, fontWeight:'800', color:'#0A0A0A', marginTop:10, marginHorizontal:12, fontFamily: F.heading },
+  phaseGridActiveTxt: { fontSize:9, fontFamily: F.bodyB, color:'white' },
+  phaseGridName: { fontSize:14, color:'#0A0A0A', marginTop:10, marginHorizontal:12, fontFamily: F.heading },
   phaseGridDays: { fontSize:11, color:'#737373', marginBottom:12, marginHorizontal:12 },
 
 
   // Edit
   editBtn: { fontSize:13, color:'#64748B', textAlign:'center', padding:4 },
-  editTitle: { fontSize:14, fontWeight:'600', color:'#1E293B', marginBottom:12 },
+  editTitle: { fontSize:14, fontFamily: F.bodyB, color:'#1E293B', marginBottom:12 },
   editLabel: { fontSize:12, color:'#64748B', marginBottom:8 },
   periodEndHeader: { flexDirection:'row', justifyContent:'space-between', alignItems:'center' },
-  periodEndClear: { fontSize:12, color:'#EF4444', fontWeight:'600' },
+  periodEndClear: { fontSize:12, color:'#EF4444', fontFamily: F.bodyB },
   dateBtn: { padding:10, borderRadius:10, borderWidth:1, borderColor:'#E2E8F0', marginRight:8, alignItems:'center', minWidth:60 },
   dateBtnSmall: { minWidth:50, padding:8 },
   dateBtnActive: { backgroundColor:'#1A56DB', borderColor:'#1A56DB' },
@@ -825,10 +825,10 @@ const styles = StyleSheet.create({
   lenBtn: { padding:8, borderRadius:10, borderWidth:1, borderColor:'#E2E8F0', minWidth:40, alignItems:'center' },
   lenBtnActive: { backgroundColor:'#1A56DB', borderColor:'#1A56DB' },
   lenBtnText: { fontSize:13, color:'#475569' },
-  lenBtnTextActive: { color:'white', fontWeight:'700' },
+  lenBtnTextActive: { color:'white', fontFamily: F.bodyB },
   editBtns: { flexDirection:'row', gap:8 },
   cancelBtn: { flex:1, padding:10, borderRadius:10, borderWidth:1, borderColor:'#E2E8F0', alignItems:'center' },
   cancelText: { fontSize:14, color:'#64748B' },
   saveBtn: { flex:1, padding:10, borderRadius:10, backgroundColor:'#1A56DB', alignItems:'center' },
-  saveText: { fontSize:14, color:'white', fontWeight:'600' },
+  saveText: { fontSize:14, color:'white', fontFamily: F.bodyB },
 });

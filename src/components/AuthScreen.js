@@ -61,7 +61,7 @@ export default function AuthScreen({ lang = 'es' }) {
     <View style={styles.feedbackScreen}>
       <Text style={styles.feedbackEmoji}>📩</Text>
       <Text style={styles.feedbackTitle}>{t.resetSent}</Text>
-      <Text style={styles.feedbackSubtitle}>{t.resetEmailSent}{'\n'}<Text style={{ fontWeight: '700' }}>{email}</Text></Text>
+      <Text style={styles.feedbackSubtitle}>{t.resetEmailSent}{'\n'}<Text style={{ fontFamily: F.bodyB }}>{email}</Text></Text>
       <TouchableOpacity style={styles.blackBtn} onPress={() => { setResetSent(false); setMode('login'); }}>
         <Text style={styles.blackBtnText}>{t.backToLogin}</Text>
       </TouchableOpacity>
@@ -72,7 +72,7 @@ export default function AuthScreen({ lang = 'es' }) {
     <View style={styles.feedbackScreen}>
       <Text style={styles.feedbackEmoji}>📬</Text>
       <Text style={styles.feedbackTitle}>{t.checkEmail}</Text>
-      <Text style={styles.feedbackSubtitle}>{t.emailSent}{'\n'}<Text style={{ fontWeight: '700' }}>{email}</Text></Text>
+      <Text style={styles.feedbackSubtitle}>{t.emailSent}{'\n'}<Text style={{ fontFamily: F.bodyB }}>{email}</Text></Text>
       <TouchableOpacity style={styles.blackBtn} onPress={() => { setConfirmed(false); setMode('login'); }}>
         <Text style={styles.blackBtnText}>{t.goToLogin}</Text>
       </TouchableOpacity>

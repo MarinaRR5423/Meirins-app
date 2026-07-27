@@ -12,6 +12,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import Svg, {
+import { F } from '../theme/fonts';
   Path, Polyline, Circle, Line, Defs,
   LinearGradient, Stop, Text as SvgText,
 } from 'react-native-svg';
@@ -145,7 +146,7 @@ export default function ProgressChart({ data, color = '#1A56DB', unit = 'kg', go
           y={(toY(last.value) - 10).toFixed(1)}
           fontSize="11" fill={color}
           textAnchor={toX(sorted.length - 1) > W * 0.75 ? 'end' : 'middle'}
-          fontWeight="bold"
+          fontFamily="F.bodyB"
         >{last.value} {unit}</SvgText>
 
         {/* Etiquetas eje X */}
@@ -183,6 +184,6 @@ const s = StyleSheet.create({
   empty:    { justifyContent: 'center', alignItems: 'center' },
   emptyTxt: { fontSize: 12, color: '#CBD5E1', textAlign: 'center' },
   deltaRow: { flexDirection: 'row', alignItems: 'baseline', gap: 4, marginTop: 2, paddingLeft: 38 },
-  delta:    { fontSize: 14, fontWeight: '700' },
+  delta:    { fontSize: 14, fontFamily: F.bodyB },
   deltaSub: { fontSize: 12, color: '#94A3B8' },
 });

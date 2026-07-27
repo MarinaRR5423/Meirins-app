@@ -142,11 +142,11 @@ const mc = StyleSheet.create({
   card: { backgroundColor: '#FE6004', borderRadius: 24, padding: 16, marginBottom: 2 },
   header: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
   slot: { fontSize: 14, color: '#260E01' },
-  title: { fontSize: 20, fontWeight: '800', color: '#260E01', marginTop: 2, fontFamily: F.headingX },
+  title: { fontSize: 20, color: '#260E01', marginTop: 2, fontFamily: F.headingX },
   chevron: { color: '#260E01', fontSize: 14, flexShrink: 0 },
   tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginBottom: 12 },
   tag: { height: 24, paddingHorizontal: 8, borderRadius: 8, backgroundColor: 'white', justifyContent: 'center' },
-  tagTxt: { fontSize: 10, fontWeight: '600', color: '#260E01', textTransform: 'uppercase', letterSpacing: 0.3 },
+  tagTxt: { fontSize: 10, fontFamily: F.bodyB, color: '#260E01', textTransform: 'uppercase', letterSpacing: 0.3 },
   detail: { backgroundColor: 'rgba(255,255,255,0.25)', borderRadius: 16, padding: 12, marginBottom: 12, gap: 6 },
   listRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   dot: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#260E01' },
@@ -399,7 +399,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
         {/* Macros con barras — tarjeta naranja Figma */}
         {m?.kcal != null && (
           <View style={{ backgroundColor: '#FE6004', borderRadius: 16, padding: 16, marginBottom: 12 }}>
-            <Text style={{ fontSize: 22, fontWeight: '800', color: '#FFFFFF', marginBottom: 4 }}>{m.kcal} kcal</Text>
+            <Text style={{ fontSize: 22, fontFamily: F.headingX, color: '#FFFFFF', marginBottom: 4 }}>{m.kcal} kcal</Text>
             {[
               { label: lang === 'en' ? 'Protein' : 'Proteínas', value: m.protein, pct: proteinPct },
               { label: lang === 'en' ? 'Carbs'   : 'Carbohidratos', value: m.carbs, pct: carbsPct },
@@ -409,7 +409,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
               <View key={macro.label} style={{ marginBottom: 8 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
                   <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', fontWeight: '500' }}>{macro.label}</Text>
-                  <Text style={{ fontSize: 12, color: '#FFFFFF', fontWeight: '700' }}>{macro.value}g</Text>
+                  <Text style={{ fontSize: 12, color: '#FFFFFF', fontFamily: F.bodyB }}>{macro.value}g</Text>
                 </View>
                 <View style={{ height: 6, backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: 3, overflow: 'hidden' }}>
                   <View style={{ width: `${Math.min(macro.pct, 100)}%`, height: 6, backgroundColor: '#FFFFFF', borderRadius: 3 }} />
@@ -427,7 +427,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
                 onPress={() => toggleFavoriteRecipe(recipe._recipeId)}
                 style={{ flex: 1, padding: 14, borderRadius: 14, borderWidth: 1, borderColor: isFav ? '#EF4444' : '#E2E8F0', backgroundColor: isFav ? '#FEF2F2' : 'white', alignItems: 'center' }}>
                 <Text style={{ fontSize: 22 }}>{isFav ? '❤️' : '🤍'}</Text>
-                <Text style={{ fontSize: 11, color: isFav ? '#EF4444' : '#64748B', marginTop: 4, fontWeight: '600' }}>
+                <Text style={{ fontSize: 11, color: isFav ? '#EF4444' : '#64748B', marginTop: 4, fontFamily: F.bodyB }}>
                   {isFav ? (lang === 'en' ? 'Favourite' : 'Favorito') : (lang === 'en' ? 'Add to favourites' : 'Añadir')}
                 </Text>
               </TouchableOpacity>
@@ -437,7 +437,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
                 onPress={() => logRecipeDone(recipe.mealId || recipe.mealLabel, 'done')}
                 style={{ flex: 1, padding: 14, borderRadius: 14, backgroundColor: '#16A34A', alignItems: 'center' }}>
                 <Check size={22} color="white" />
-                <Text style={{ fontSize: 11, color: 'white', marginTop: 4, fontWeight: '600' }}>
+                <Text style={{ fontSize: 11, color: 'white', marginTop: 4, fontFamily: F.bodyB }}>
                   {lang === 'en' ? 'Mark as eaten' : lang === 'fr' ? 'Marquer comme mangé' : 'Comido'}
                 </Text>
               </TouchableOpacity>
@@ -835,7 +835,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
         if (!favRecipes.length) return (
           <View style={{ alignItems: 'center', paddingTop: 48, paddingHorizontal: 24 }}>
             <Text style={{ fontSize: 40, marginBottom: 12 }}>🤍</Text>
-            <Text style={{ fontSize: 16, fontWeight: '700', color: '#1E293B', marginBottom: 8, textAlign: 'center' }}>{emptyTxt[lang] || emptyTxt.es}</Text>
+            <Text style={{ fontSize: 16, fontFamily: F.bodyB, color: '#1E293B', marginBottom: 8, textAlign: 'center' }}>{emptyTxt[lang] || emptyTxt.es}</Text>
             <Text style={{ fontSize: 13, color: '#94A3B8', textAlign: 'center', lineHeight: 20 }}>{hintTxt[lang] || hintTxt.es}</Text>
           </View>
         );
@@ -909,7 +909,7 @@ const styles = StyleSheet.create({
   // Tarjeta naranja kcal + foco
   orangeHeroCard:    { backgroundColor: '#FE6004', borderRadius: 24, padding: 20, marginBottom: 12 },
   orangeHeroLabel:   { fontSize: 12, fontFamily: F.bodyB, color: 'rgba(255,255,255,0.75)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.5 },
-  orangeHeroKcal:    { fontSize: 40, fontWeight: '800', color: '#FFFFFF', lineHeight: 44, marginBottom: 12, fontFamily: F.headingX },
+  orangeHeroKcal:    { fontSize: 40, color: '#FFFFFF', lineHeight: 44, marginBottom: 12, fontFamily: F.headingX },
   orangeHeroPills:   { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 12 },
   orangeHeroPill:    { backgroundColor: 'rgba(255,255,255,0.22)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
   orangeHeroPillTxt: { fontSize: 11, fontFamily: F.bodyB, color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: 0.3 },
@@ -927,11 +927,11 @@ const styles = StyleSheet.create({
   listCounter:      { flexDirection: 'row', alignItems: 'center', gap: 8 },
   listCounterBtn:   { width: 28, height: 28, borderRadius: 14, borderWidth: 1, borderColor: '#D4D4D4', alignItems: 'center', justifyContent: 'center' },
   listCounterTxt:   { fontSize: 16, color: '#0A0A0A', lineHeight: 20 },
-  listCounterVal:   { fontSize: 16, fontWeight: '700', color: '#0A0A0A', minWidth: 20, textAlign: 'center' },
+  listCounterVal:   { fontSize: 16, fontFamily: F.bodyB, color: '#0A0A0A', minWidth: 20, textAlign: 'center' },
   listCounterBtnFill: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#0A0A0A', alignItems: 'center', justifyContent: 'center' },
   listCounterFillTxt: { fontSize: 16, color: 'white', lineHeight: 20 },
   listCountBadge:   { alignItems: 'center' },
-  listCountBadgeTxt: { fontSize: 20, fontWeight: '800', color: '#0A0A0A', fontFamily: F.headingX },
+  listCountBadgeTxt: { fontSize: 20, color: '#0A0A0A', fontFamily: F.headingX },
   listCountBadgeSub: { fontSize: 10, color: '#737373' },
   listCatCard:      { backgroundColor: 'white', borderRadius: 20, padding: 16, marginBottom: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 2 },
   listCatTitle:     { fontSize: 13, fontFamily: F.bodyB, color: '#0A0A0A', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.4 },
@@ -939,22 +939,22 @@ const styles = StyleSheet.create({
   shopNameChecked:  { textDecorationLine: 'line-through', color: '#94A3B8' },
 
   card: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2 },
-  back: { fontSize: 14, color: '#0A0A0A', fontWeight: '600', marginBottom: 16 },
-  recipeTag: { fontSize: 11, color: '#0A0A0A', fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 },
-  recipeTitle: { fontSize: 18, fontWeight: '700', color: '#0A0A0A', marginBottom: 4, fontFamily: F.heading },
-  sectionTitle: { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 10, fontFamily: F.heading },
+  back: { fontSize: 14, color: '#0A0A0A', fontFamily: F.bodyB, marginBottom: 16 },
+  recipeTag: { fontSize: 11, color: '#0A0A0A', fontFamily: F.bodyB, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 },
+  recipeTitle: { fontSize: 18, color: '#0A0A0A', marginBottom: 4, fontFamily: F.heading },
+  sectionTitle: { fontSize: 14, color: '#0A0A0A', marginBottom: 10, fontFamily: F.heading },
   listRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: '#F8FAFC' },
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#0A0A0A', marginTop: 5, marginRight: 10, flexShrink: 0 },
   listText: { fontSize: 13, color: '#334155', flex: 1, lineHeight: 20 },
   stepRow: { flexDirection: 'row', gap: 12, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
   stepNum: { width: 26, height: 26, borderRadius: 13, backgroundColor: '#171717', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
-  stepNumText: { color: 'white', fontSize: 12, fontWeight: '700' },
+  stepNumText: { color: 'white', fontSize: 12, fontFamily: F.bodyB },
   stepText: { fontSize: 13, color: '#334155', lineHeight: 20, flex: 1, paddingTop: 4 },
   tabRow: { flexDirection: 'row', backgroundColor: '#F5F5F5', borderRadius: 16, padding: 4, marginBottom: 14 },
   tab: { flex: 1, paddingVertical: 9, borderRadius: 12, alignItems: 'center' },
   tabActive: { backgroundColor: '#171717' },
   tabText: { fontSize: 12, color: '#525252' },
-  tabTextActive: { color: 'white', fontWeight: '700' },
+  tabTextActive: { color: 'white', fontFamily: F.bodyB },
 
   // Semana en pequeño (calendario compacto de "Mi plan")
   weekStripCard: { backgroundColor: '#F5F5F5', borderRadius: 32, padding: 16, marginBottom: 2 },
@@ -965,16 +965,16 @@ const styles = StyleSheet.create({
   weekStripCellToday: { backgroundColor: '#171717' },
   weekStripCellExpanded: { borderWidth: 2, borderColor: '#171717' },
   weekStripDay: { fontSize: 12, color: '#0A0A0A' },
-  weekStripDayToday: { color: 'white', fontWeight: '700' },
+  weekStripDayToday: { color: 'white', fontFamily: F.bodyB },
 
   planHeaderCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2 },
-  planHeaderTag: { fontSize: 12, fontWeight: '600', color: '#525252', marginBottom: 2, textTransform: 'uppercase', letterSpacing: 0.5 },
-  planHeaderTitle: { fontSize: 20, fontWeight: '800', color: '#0A0A0A', fontFamily: F.headingX },
+  planHeaderTag: { fontSize: 12, fontFamily: F.bodyB, color: '#525252', marginBottom: 2, textTransform: 'uppercase', letterSpacing: 0.5 },
+  planHeaderTitle: { fontSize: 20, color: '#0A0A0A', fontFamily: F.headingX },
   planSub: { fontSize: 12, lineHeight: 18, opacity: 0.85 },
   mealRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   mealIco: { fontSize: 26, flexShrink: 0 },
-  mealTag:    { fontSize: 10, color: '#0A0A0A', fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 2 },
-  mealTitle:  { fontSize: 13, fontWeight: '600', color: '#0A0A0A' },
+  mealTag:    { fontSize: 10, color: '#0A0A0A', fontFamily: F.bodyB, textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 2 },
+  mealTitle:  { fontSize: 13, fontFamily: F.bodyB, color: '#0A0A0A' },
   mealMacros: { fontSize: 11, color: '#737373', marginTop: 4 },
 
   // Action buttons (favorite, swap, done, skip)
@@ -986,7 +986,7 @@ const styles = StyleSheet.create({
   chevron: { color: '#CBD5E1', fontSize: 14, flexShrink: 0 },
   mealDetail: { marginTop: 14, paddingTop: 14, borderTopWidth: 1, borderTopColor: '#F1F5F9' },
   recipeBtn: { marginTop: 12, padding: 10, borderRadius: 12, borderWidth: 1.5, borderColor: '#1A56DB', backgroundColor: '#EFF6FF', alignItems: 'center' },
-  recipeBtnText: { color: '#1A56DB', fontWeight: '600', fontSize: 13 },
+  recipeBtnText: { color: '#1A56DB', fontFamily: F.bodyB, fontSize: 13 },
 
   // Tu plan nutricional — Figma orange card
   planNutriCard:      { backgroundColor: '#FE6004', borderRadius: 24, padding: 20, marginBottom: 2 },
@@ -1008,49 +1008,49 @@ const styles = StyleSheet.create({
   planNutriEditBtn:   { backgroundColor: '#0A0A0A', borderRadius: 14, height: 48, alignItems: 'center', justifyContent: 'center' },
   planNutriEditTxt:   { fontSize: 15, fontFamily: F.bodyB, color: '#FFFFFF' },
   dayTypeRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10, borderRadius: 12, marginBottom: 6 },
-  dayTypeLabel: { fontSize: 13, fontWeight: '700' },
+  dayTypeLabel: { fontSize: 13, fontFamily: F.bodyB },
   dayTypeTag: { fontSize: 12 },
   dayRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   dayDate: { width: 50, alignItems: 'center', flexShrink: 0 },
   dayLabel: { fontSize: 11, color: '#94A3B8' },
-  dayNum: { fontSize: 20, fontWeight: '700', color: '#1E293B', lineHeight: 24 },
+  dayNum: { fontSize: 20, fontFamily: F.bodyB, color: '#1E293B', lineHeight: 24 },
   dayTypeBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10, flexShrink: 0 },
-  dayTypeBadgeText: { fontSize: 10, fontWeight: '700' },
+  dayTypeBadgeText: { fontSize: 10, fontFamily: F.bodyB },
   dayMeals: { fontSize: 12, color: '#64748B' },
   personsRow: { flexDirection: 'row', gap: 10, marginTop: 10 },
   personBox: { flex: 1, backgroundColor: 'white', borderRadius: 12, padding: 10, alignItems: 'center' },
   personLabel: { fontSize: 11, color: '#64748B', marginBottom: 6 },
   counter: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   counterBtn: { width: 28, height: 28, borderRadius: 14, borderWidth: 1.5, justifyContent: 'center', alignItems: 'center' },
-  counterBtnText: { fontSize: 16, fontWeight: '700' },
-  counterVal: { fontSize: 20, fontWeight: '700', minWidth: 16, textAlign: 'center' },
+  counterBtnText: { fontSize: 16, fontFamily: F.bodyB },
+  counterVal: { fontSize: 20, fontFamily: F.bodyB, minWidth: 16, textAlign: 'center' },
   counterBtnFill: { width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
-  counterBtnFillText: { color: 'white', fontSize: 16, fontWeight: '700' },
+  counterBtnFillText: { color: 'white', fontSize: 16, fontFamily: F.bodyB },
   listSub: { fontSize: 12, color: '#475569', marginBottom: 4 },
   shopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 7, borderBottomWidth: 1, borderBottomColor: '#F8FAFC' },
   shopLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   checkbox: { width: 18, height: 18, borderRadius: 4, borderWidth: 1.5, borderColor: '#1A56DB', flexShrink: 0 },
   shopName: { fontSize: 13, color: '#334155' },
-  shopQty: { fontSize: 13, fontWeight: '600', color: '#1A56DB', flexShrink: 0, marginLeft: 8 },
+  shopQty: { fontSize: 13, fontFamily: F.bodyB, color: '#1A56DB', flexShrink: 0, marginLeft: 8 },
   // Calorie tracker
   calCard:     { backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
-  calTitle:    { fontSize: 14, fontWeight: '700', color: '#1E293B' },
+  calTitle:    { fontSize: 14, fontFamily: F.bodyB, color: '#1E293B' },
   calBarBg:    { height: 10, backgroundColor: '#F1F5F9', borderRadius: 5, overflow: 'hidden' },
   calBarFill:  { height: '100%', borderRadius: 5 },
   calStat:     { flex: 1, alignItems: 'center' },
-  calStatNum:  { fontSize: 24, fontWeight: '800' },
+  calStatNum:  { fontSize: 24, fontFamily: F.headingX },
   calStatLbl:  { fontSize: 11, color: '#94A3B8', marginTop: 2 },
   calDivider:  { width: 1, backgroundColor: '#F1F5F9', marginVertical: 4 },
   // Extras
   extrasCard:    { backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
   addExtraBtn:   { backgroundColor: '#1A56DB', paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20 },
-  addExtraBtnTxt:{ color: 'white', fontSize: 13, fontWeight: '700' },
+  addExtraBtnTxt:{ color: 'white', fontSize: 13, fontFamily: F.bodyB },
   extraRow:      { flexDirection: 'row', alignItems: 'center', paddingVertical: 8, borderTopWidth: 1, borderTopColor: '#F1F5F9', gap: 8 },
   extraName:     { flex: 1, fontSize: 13, color: '#334155' },
-  extraKcal:     { fontSize: 12, color: '#F59E0B', fontWeight: '700' },
+  extraKcal:     { fontSize: 12, color: '#F59E0B', fontFamily: F.bodyB },
   // Modal extras
   extraModal:      { backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, paddingBottom: 40, gap: 12 },
   extraModalHandle:{ width: 36, height: 4, backgroundColor: '#E2E8F0', borderRadius: 2, alignSelf: 'center', marginBottom: 8 },
-  extraModalTitle: { fontSize: 17, fontWeight: '700', color: '#1E293B', marginBottom: 4 },
+  extraModalTitle: { fontSize: 17, fontFamily: F.bodyB, color: '#1E293B', marginBottom: 4 },
   extraInput:      { borderWidth: 1.5, borderColor: '#E2E8F0', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, color: '#1E293B' },
 });

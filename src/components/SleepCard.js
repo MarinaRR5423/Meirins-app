@@ -154,7 +154,7 @@ export default function SleepCard({ sleepLog = [], logSleep, lang = 'es', health
                       }]} />
                     )}
                   </View>
-                  <Text style={[s.barDay, isToday && { color: BLUE.primary, fontWeight: '700' }]}>{dayLetter}</Text>
+                  <Text style={[s.barDay, isToday && { color: BLUE.primary, fontFamily: F.bodyB }]}>{dayLetter}</Text>
                   {displayHours > 0 && <Text style={s.barHours}>{displayHours}{sl.hoursShort}</Text>}
                 </View>
               );
@@ -175,20 +175,20 @@ export default function SleepCard({ sleepLog = [], logSleep, lang = 'es', health
 const s = StyleSheet.create({
   card:       { backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  cardTitle:  { fontSize: 14, fontWeight: '700', color: '#1E293B' },
+  cardTitle:  { fontSize: 14, fontFamily: F.bodyB, color: '#1E293B' },
   avgBadge:   { backgroundColor: '#EFF6FF', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
-  avgText:    { fontSize: 11, color: BLUE.primary, fontWeight: '700' },
+  avgText:    { fontSize: 11, color: BLUE.primary, fontFamily: F.bodyB },
   hkBanner:   { flexDirection: 'row', backgroundColor: '#F8FAFF', borderRadius: 12, padding: 12, marginBottom: 12, gap: 8 },
   hkMetric:   { flex: 1, alignItems: 'center' },
-  hkValue:    { fontSize: 18, fontWeight: '800', color: '#1E293B', fontFamily: F.headingX },
+  hkValue:    { fontSize: 18, color: '#1E293B', fontFamily: F.headingX },
   hkLabel:    { fontSize: 10, color: '#94A3B8', marginTop: 2 },
   hkNote:     { fontSize: 11, color: '#94A3B8', marginBottom: 8, textAlign: 'center', fontStyle: 'italic' },
   row:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   label:      { fontSize: 13, color: '#475569', fontWeight: '500' },
   hoursRow:   { flexDirection: 'row', alignItems: 'center', gap: 8 },
   hoursBtn:   { width: 32, height: 32, borderRadius: 16, backgroundColor: '#F0F4FA', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#E2E8F0' },
-  hoursBtnText: { fontSize: 18, fontWeight: '700', color: BLUE.primary, lineHeight: 22 },
-  hoursValue: { fontSize: 20, fontWeight: '800', color: '#1E293B', minWidth: 50, textAlign: 'center', fontFamily: F.headingX },
+  hoursBtnText: { fontSize: 18, fontFamily: F.bodyB, color: BLUE.primary, lineHeight: 22 },
+  hoursValue: { fontSize: 20, color: '#1E293B', minWidth: 50, textAlign: 'center', fontFamily: F.headingX },
   qualityRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
   qualityBtns: { flexDirection: 'row', gap: 6 },
   qualityBtn:  { width: 36, height: 36, borderRadius: 18, borderWidth: 1.5, borderColor: '#E2E8F0', justifyContent: 'center', alignItems: 'center' },
@@ -196,10 +196,10 @@ const s = StyleSheet.create({
   qualityLabelText: { fontSize: 11, color: '#94A3B8', textAlign: 'right', marginBottom: 12 },
   logBtn:        { backgroundColor: '#EFF6FF', borderRadius: 12, paddingVertical: 10, alignItems: 'center', marginBottom: 16, borderWidth: 1, borderColor: '#BFDBFE' },
   logBtnSaved:   { backgroundColor: '#F0FDF4', borderColor: '#BBF7D0' },
-  logBtnText:    { fontSize: 14, fontWeight: '700', color: BLUE.primary },
+  logBtnText:    { fontSize: 14, fontFamily: F.bodyB, color: BLUE.primary },
   logBtnTextSaved: { color: '#16A34A' },
   chart:      { marginTop: 4 },
-  chartLabel: { fontSize: 11, color: '#94A3B8', fontWeight: '600', marginBottom: 8 },
+  chartLabel: { fontSize: 11, color: '#94A3B8', fontFamily: F.bodyB, marginBottom: 8 },
   barsRow:    { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
   barItem:    { flex: 1, alignItems: 'center' },
   barBg:      { width: 24, height: 60, backgroundColor: '#F1F5F9', borderRadius: 6, justifyContent: 'flex-end', overflow: 'hidden' },

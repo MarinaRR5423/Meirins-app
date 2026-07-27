@@ -17,6 +17,7 @@
 import React, { useState, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { ChevronLeft, ChevronRight } from 'lucide-react-native';
+import { F } from '../theme/fonts';
 
 const DEFAULT_COLOR = '#49CF38';
 
@@ -126,8 +127,8 @@ export default function RangeCalendar({ start, end, onChange, color = DEFAULT_CO
             >
               <Text style={[
                 s.dayNum,
-                isToday && !isEdge && { color: '#171717', fontWeight: '700' },
-                isEdge && { color: '#0B1F08', fontWeight: '700' },
+                isToday && !isEdge && { color: '#171717', fontFamily: F.bodyB },
+                isEdge && { color: '#0B1F08', fontFamily: F.bodyB },
                 isFuture && { color: '#D4D4D4' },
               ]}>
                 {dayNum}
@@ -179,10 +180,10 @@ function formatRange(start, end, lang) {
 const s = StyleSheet.create({
   header:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   navBtn:       { width: 32, height: 32, justifyContent: 'center', alignItems: 'center' },
-  navTxt:       { color: '#171717', fontSize: 22, fontWeight: '600', marginTop: -2 },
+  navTxt:       { color: '#171717', fontSize: 22, fontFamily: F.bodyB, marginTop: -2 },
   title:        { color: '#0A0A0A', fontSize: 16, fontWeight: '500', textTransform: 'capitalize' },
   weekHeader:   { flexDirection: 'row', marginBottom: 4 },
-  weekHeaderTxt:{ flex: 1, textAlign: 'center', fontSize: 10, fontWeight: '700', color: '#737373', textTransform: 'uppercase' },
+  weekHeaderTxt:{ flex: 1, textAlign: 'center', fontSize: 10, fontFamily: F.bodyB, color: '#737373', textTransform: 'uppercase' },
   grid:         { flexDirection: 'row', flexWrap: 'wrap', gap: 4 },
   cell:         { width: '13%', aspectRatio: 1, justifyContent: 'center', alignItems: 'center' },
   dayNum:       { fontSize: 12, color: '#0A0A0A', fontWeight: '500' },

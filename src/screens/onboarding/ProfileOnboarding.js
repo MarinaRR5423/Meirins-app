@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { Check } from 'lucide-react-native';
 import T from '../../i18n/translations';
+import { F } from '../../theme/fonts';
 
 const TOTAL = 5;
 
@@ -381,27 +382,27 @@ const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#0F1F4A' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8 },
   back: { color: 'rgba(255,255,255,0.7)', fontSize: 15, fontWeight: '500' },
-  stepCounter: { color: 'rgba(255,255,255,0.55)', fontSize: 13, fontWeight: '600' },
+  stepCounter: { color: 'rgba(255,255,255,0.55)', fontSize: 13, fontFamily: F.bodyB },
   progressTrack: { height: 3, backgroundColor: 'rgba(255,255,255,0.15)', marginHorizontal: 20, borderRadius: 2, marginBottom: 24 },
   progressFill: { height: '100%', backgroundColor: 'white', borderRadius: 2 },
   scrollContent: { paddingHorizontal: 24, paddingBottom: 24 },
-  title: { fontSize: 26, fontWeight: '700', color: 'white', marginBottom: 6 },
+  title: { fontSize: 26, fontFamily: F.bodyB, color: 'white', marginBottom: 6 },
   subtitle: { fontSize: 15, color: 'rgba(255,255,255,0.7)', marginBottom: 24, lineHeight: 22 },
   footer: { paddingHorizontal: 24, paddingBottom: 32, paddingTop: 12 },
   nextBtn: { backgroundColor: 'white', borderRadius: 50, paddingVertical: 16, alignItems: 'center' },
   nextBtnDisabled: { backgroundColor: 'rgba(255,255,255,0.25)' },
-  nextLabel: { fontSize: 16, fontWeight: '700', color: '#1A56DB' },
+  nextLabel: { fontSize: 16, fontFamily: F.bodyB, color: '#1A56DB' },
   nextLabelDisabled: { color: 'rgba(255,255,255,0.4)' },
-  secLabel: { fontSize: 11, fontWeight: '700', color: 'rgba(255,255,255,0.5)', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginTop: 4 },
+  secLabel: { fontSize: 11, fontFamily: F.bodyB, color: 'rgba(255,255,255,0.5)', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginTop: 4 },
   input: { backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: 50, paddingHorizontal: 20, paddingVertical: 14, fontSize: 15, color: 'white', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.25)' },
   card: { flexDirection: 'row', alignItems: 'center', padding: 14, borderRadius: 14, backgroundColor: 'rgba(255,255,255,0.1)', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.15)', marginBottom: 8, gap: 12 },
   cardSelected: { backgroundColor: 'rgba(255,255,255,0.92)', borderColor: 'white' },
   cardIcon: { fontSize: 22, width: 30, textAlign: 'center' },
-  cardLabel: { fontSize: 15, fontWeight: '600', color: 'white' },
+  cardLabel: { fontSize: 15, fontFamily: F.bodyB, color: 'white' },
   cardLabelSelected: { color: '#1A56DB' },
   cardDesc: { fontSize: 12, color: 'rgba(255,255,255,0.6)', marginTop: 2 },
   cardDescSelected: { color: '#475569' },
-  cardCheck: { fontSize: 16, color: '#1A56DB', fontWeight: '700' },
+  cardCheck: { fontSize: 16, color: '#1A56DB', fontFamily: F.bodyB },
   chips: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 4 },
   chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 50, backgroundColor: 'rgba(255,255,255,0.12)', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.2)', margin: 4 },
   chipSelected: { backgroundColor: 'white', borderColor: 'white' },
@@ -413,7 +414,7 @@ const s = StyleSheet.create({
   yesnoButtons: { flexDirection: 'row', gap: 8 },
   yesnoBtn: { paddingHorizontal: 20, paddingVertical: 8, borderRadius: 50, backgroundColor: 'rgba(255,255,255,0.12)', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.2)' },
   yesnoBtnActive: { backgroundColor: 'white', borderColor: 'white' },
-  yesnoBtnText: { fontSize: 13, color: 'white', fontWeight: '600' },
+  yesnoBtnText: { fontSize: 13, color: 'white', fontFamily: F.bodyB },
   yesnoBtnTextActive: { color: '#1A56DB' },
   infoBanner: { backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: 14, padding: 14, marginTop: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' },
   infoBannerText: { fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 19 },
@@ -421,6 +422,6 @@ const s = StyleSheet.create({
   noteText: { fontSize: 12, color: 'rgba(255,255,255,0.65)', marginTop: 6, fontStyle: 'italic' },
   mhNote: { fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 19, marginBottom: 10, fontStyle: 'italic' },
   readyBanner: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: 14, padding: 16, gap: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)' },
-  readyTitle: { fontSize: 15, fontWeight: '700', color: 'white', marginBottom: 4 },
+  readyTitle: { fontSize: 15, fontFamily: F.bodyB, color: 'white', marginBottom: 4 },
   readySubtitle: { fontSize: 12, color: 'rgba(255,255,255,0.7)', lineHeight: 18 },
 });

@@ -76,7 +76,7 @@ function ExtraSportPicker({ lang, g, onPick }) {
   return (
     <View style={{ gap: 16 }}>
       {/* Título */}
-      <Text style={{ fontSize: 14, fontWeight: '700', color: '#0A0A0A' }}>
+      <Text style={{ fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A' }}>
         {tr('Deportes', 'Sports', 'Sports', 'Sport')}
       </Text>
 
@@ -121,27 +121,27 @@ function ExtraSportPicker({ lang, g, onPick }) {
 
       {/* Control de tiempo */}
       <View>
-        <Text style={{ fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 10 }}>
+        <Text style={{ fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A', marginBottom: 10 }}>
           {tr('Tiempo', 'Time', 'Temps', 'Tempo')}
         </Text>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
           <TouchableOpacity onPress={() => setDurationH(h => Math.max(0.5, h - 0.5))}
             style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#F1F5F9', alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontSize: 20, color: '#0A0A0A', fontWeight: '700' }}>−</Text>
+            <Text style={{ fontSize: 20, color: '#0A0A0A', fontFamily: F.bodyB }}>−</Text>
           </TouchableOpacity>
-          <Text style={{ fontSize: 16, fontWeight: '700', color: '#0A0A0A', minWidth: 50, textAlign: 'center' }}>
+          <Text style={{ fontSize: 16, fontFamily: F.bodyB, color: '#0A0A0A', minWidth: 50, textAlign: 'center' }}>
             {durationH} h
           </Text>
           <TouchableOpacity onPress={() => setDurationH(h => Math.min(8, h + 0.5))}
             style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#F1F5F9', alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontSize: 20, color: '#0A0A0A', fontWeight: '700' }}>+</Text>
+            <Text style={{ fontSize: 20, color: '#0A0A0A', fontFamily: F.bodyB }}>+</Text>
           </TouchableOpacity>
         </View>
       </View>
 
       {/* Intensidad */}
       <View>
-        <Text style={{ fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 10 }}>
+        <Text style={{ fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A', marginBottom: 10 }}>
           {tr('Intensidad', 'Intensity', 'Intensité', 'Intensità')}
         </Text>
         {INTENSITIES.map(item => (
@@ -163,7 +163,7 @@ function ExtraSportPicker({ lang, g, onPick }) {
       <TouchableOpacity onPress={handleAdd}
         style={{ height: 48, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center', opacity: sport ? 1 : 0.4 }}
         disabled={!sport}>
-        <Text style={{ color: 'white', fontSize: 16, fontWeight: '700' }}>
+        <Text style={{ color: 'white', fontSize: 16, fontFamily: F.bodyB }}>
           {tr('Añadir', 'Add', 'Ajouter', 'Aggiungi')} ♡
         </Text>
       </TouchableOpacity>
@@ -788,7 +788,7 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
 
   const SportIdentifyPicker = ({ workoutId }) => (
     <View style={{ marginTop: 10, padding: 10, backgroundColor: '#F8FAFC', borderRadius: 10 }}>
-      <Text style={{ fontSize: 12, fontWeight: '600', color: '#475569', marginBottom: 8 }}>
+      <Text style={{ fontSize: 12, fontFamily: F.bodyB, color: '#475569', marginBottom: 8 }}>
         {{ es: '¿Qué deporte fue?', en: 'What sport was it?', fr: 'Quel sport était-ce ?', it: 'Che sport era?' }[lang] || '¿Qué deporte fue?'}
       </Text>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
@@ -892,7 +892,7 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
             <Text style={styles.workoutName}>{resolvedLabel(w)}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 2 }}>
               <Text style={styles.workoutTime}>{fmtTime(w.startTime)}{w.endTime ? ` → ${fmtTime(w.endTime)}` : ''}</Text>
-              {dur != null && <Text style={{ fontSize: 13, fontWeight: '700', color: BLUE.primary }}>⏱ {dur} {hl?.min}</Text>}
+              {dur != null && <Text style={{ fontSize: 13, fontFamily: F.bodyB, color: BLUE.primary }}>⏱ {dur} {hl?.min}</Text>}
             </View>
           </View>
           <TouchableOpacity
@@ -1003,7 +1003,7 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
                 activeOpacity={0.7}
                 style={{ flex: 1, alignItems: 'center' }}
               >
-                <Text style={{ fontSize: 9, color: scoreColor(n.duration), fontWeight: '700', marginBottom: 2 }}>
+                <Text style={{ fontSize: 9, color: scoreColor(n.duration), fontFamily: F.bodyB, marginBottom: 2 }}>
                   {n.duration}h
                 </Text>
                 <View style={{ width: '100%', height: 72, justifyContent: 'flex-end', backgroundColor: '#F1F5F9', borderRadius: 6, overflow: 'hidden',
@@ -1013,7 +1013,7 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
                     <View style={{ position: 'absolute', bottom: 0, width: '100%', height: deepH, backgroundColor: '#0284C7', borderRadius: 6 }} />
                   )}
                 </View>
-                <Text style={{ fontSize: 9, color: isSelected ? '#1A56DB' : '#94A3B8', marginTop: 3, fontWeight: isSelected ? '700' : '400' }}>
+                <Text style={{ fontSize: 9, color: isSelected ? '#1A56DB' : '#94A3B8', marginTop: 3, fontFamily: isSelected ? F.bodyB : F.body }}>
                   {dayLabel}
                 </Text>
               </TouchableOpacity>
@@ -1033,17 +1033,17 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
             {/* Row 1: Duración + Acostarse + Despertares */}
             <View style={{ flexDirection: 'row', gap: 8, marginBottom: 8 }}>
               <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, alignItems: 'center' }}>
-                <Text style={{ fontSize: 18, fontWeight: '800', color: scoreColor(selected.duration) }}>{selected.duration}h</Text>
+                <Text style={{ fontSize: 18, fontFamily: F.headingX, color: scoreColor(selected.duration) }}>{selected.duration}h</Text>
                 <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>{t(labelDur)}</Text>
               </View>
               <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, alignItems: 'center' }}>
-                <Text style={{ fontSize: 15, fontWeight: '700', color: '#1E293B' }}>
+                <Text style={{ fontSize: 15, fontFamily: F.bodyB, color: '#1E293B' }}>
                   {selected.bedtime ? fmtTime(selected.bedtime) : '—'}
                 </Text>
                 <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>🌙 {t(labelBed)}</Text>
               </View>
               <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, alignItems: 'center' }}>
-                <Text style={{ fontSize: 18, fontWeight: '800', color: (selected.interruptions ?? 0) === 0 ? '#16A34A' : (selected.interruptions ?? 0) <= 2 ? '#F59E0B' : '#DC2626' }}>
+                <Text style={{ fontSize: 18, fontFamily: F.headingX, color: (selected.interruptions ?? 0) === 0 ? '#16A34A' : (selected.interruptions ?? 0) <= 2 ? '#F59E0B' : '#DC2626' }}>
                   {selected.interruptions ?? 0}
                 </Text>
                 <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>⚡ {t(labelWake)}</Text>
@@ -1054,19 +1054,19 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
             <View style={{ flexDirection: 'row', gap: 8 }}>
               {selected.deepSleep > 0 && (
                 <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, alignItems: 'center' }}>
-                  <Text style={{ fontSize: 15, fontWeight: '700', color: '#4F46E5' }}>{selected.deepSleep}h</Text>
+                  <Text style={{ fontSize: 15, fontFamily: F.bodyB, color: '#4F46E5' }}>{selected.deepSleep}h</Text>
                   <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>🌑 {t(labelDeep)}</Text>
                 </View>
               )}
               {selected.remSleep > 0 && (
                 <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, alignItems: 'center' }}>
-                  <Text style={{ fontSize: 15, fontWeight: '700', color: '#7C3AED' }}>{selected.remSleep}h</Text>
+                  <Text style={{ fontSize: 15, fontFamily: F.bodyB, color: '#7C3AED' }}>{selected.remSleep}h</Text>
                   <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>🌙 {t(labelREM)}</Text>
                 </View>
               )}
               {selected.inBed > 0 && (
                 <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, alignItems: 'center' }}>
-                  <Text style={{ fontSize: 15, fontWeight: '700', color: '#64748B' }}>{selected.inBed}h</Text>
+                  <Text style={{ fontSize: 15, fontFamily: F.bodyB, color: '#64748B' }}>{selected.inBed}h</Text>
                   <Text style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>🛏 {t(labelInBed)}</Text>
                 </View>
               )}
@@ -1126,7 +1126,7 @@ const styles = StyleSheet.create({
   tab: { flex: 1, paddingVertical: 9, borderRadius: 12, alignItems: 'center' },
   tabActive: { backgroundColor: '#171717' },
   tabText: { fontSize: 12, color: '#525252' },
-  tabTextActive: { color: 'white', fontWeight: '700' },
+  tabTextActive: { color: 'white', fontFamily: F.bodyB },
 
   // weekly strip (mini calendar) — pestaña Hoy
   weekStripCard: { backgroundColor: '#F5F5F5', borderRadius: 32, padding: 16, marginBottom: 2 },
@@ -1137,66 +1137,66 @@ const styles = StyleSheet.create({
   weekStripCellToday: { backgroundColor: '#171717' },
   weekStripCellExpanded: { borderWidth: 2, borderColor: '#171717' },
   weekStripDay: { fontSize: 12, color: '#0A0A0A' },
-  weekStripDayToday: { color: 'white', fontWeight: '700' },
+  weekStripDayToday: { color: 'white', fontFamily: F.bodyB },
   weekStripDot: { position: 'absolute', bottom: 4, width: 4, height: 4, borderRadius: 2 },
 
   weekDetailAzote: { marginTop: 12, backgroundColor: 'white', borderRadius: 16, padding: 12 },
-  weekDetailWorkout: { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 8, fontFamily: F.heading },
-  weekDetailStatus: { fontSize: 13, fontWeight: '600', color: '#0A0A0A' },
+  weekDetailWorkout: { fontSize: 14, color: '#0A0A0A', marginBottom: 8, fontFamily: F.heading },
+  weekDetailStatus: { fontSize: 13, fontFamily: F.bodyB, color: '#0A0A0A' },
   weekActionBtn: { paddingVertical: 11, borderRadius: 12, backgroundColor: '#FAFAFA', alignItems: 'center' },
-  weekActionBtnTxt: { fontSize: 13, fontWeight: '700', color: '#0A0A0A' },
+  weekActionBtnTxt: { fontSize: 13, fontFamily: F.bodyB, color: '#0A0A0A' },
 
   // cards
   card: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2 },
-  sectionTitle: { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 10, fontFamily: F.heading },
+  sectionTitle: { fontSize: 14, color: '#0A0A0A', marginBottom: 10, fontFamily: F.heading },
 
   // health banner (mini, on top of hoy)
   healthBanner: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#F5F5F5', borderRadius: 24, padding: 12, marginBottom: 2 },
   healthBannerIco: { fontSize: 28 },
-  healthBannerTitle: { fontSize: 13, fontWeight: '700', color: '#0A0A0A' },
+  healthBannerTitle: { fontSize: 13, fontFamily: F.bodyB, color: '#0A0A0A' },
   healthBannerSub: { fontSize: 12, color: '#525252', marginTop: 2 },
 
   // session
   sessionBanner:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  sessionTag:     { fontSize: 10, fontWeight: '700', letterSpacing: 0.8, marginBottom: 4 },
-  sessionName:    { fontSize: 26, fontWeight: '800', marginBottom: 4, fontFamily: F.headingX, lineHeight: 30 },
+  sessionTag:     { fontSize: 10, fontFamily: F.bodyB, letterSpacing: 0.8, marginBottom: 4 },
+  sessionName:    { fontSize: 26, marginBottom: 4, fontFamily: F.headingX, lineHeight: 30 },
   fitnessNote:    { fontSize: 12, color: 'rgba(255,255,255,0.9)', backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 8, padding: 8, marginTop: 8, lineHeight: 18 },
   conditionNote:  { fontSize: 12, color: 'rgba(255,255,255,0.9)', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 8, padding: 8, marginTop: 6, lineHeight: 18 },
   sessionDur: { fontSize: 13, opacity: 0.8 },
   statusBadge: { paddingHorizontal: 12, paddingVertical: 5, borderRadius: 20, flexShrink: 0 },
-  statusText: { fontSize: 12, fontWeight: '700' },
+  statusText: { fontSize: 12, fontFamily: F.bodyB },
 
   // circuit
   circuitHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
-  progressText: { fontSize: 12, color: '#0A0A0A', fontWeight: '600' },
+  progressText: { fontSize: 12, color: '#0A0A0A', fontFamily: F.bodyB },
   warmupRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: '#FFEA9B', borderRadius: 16, padding: 10, marginBottom: 10 },
   warmupIco: { fontSize: 18 },
-  warmupLabel: { fontSize: 12, fontWeight: '700', color: '#261E01', marginBottom: 2 },
+  warmupLabel: { fontSize: 12, fontFamily: F.bodyB, color: '#261E01', marginBottom: 2 },
   warmupDetail: { fontSize: 12, color: '#261E01' },
   exRow: { flexDirection: 'row', alignItems: 'center', padding: 10, borderRadius: 16, backgroundColor: 'white', marginBottom: 6, gap: 10 },
   exRowDone: { backgroundColor: '#B6ECAF' },
   exNum: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#F5F5F5', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
   exNumDone: { backgroundColor: '#171717' },
-  exNumText: { fontSize: 12, fontWeight: '700', color: '#0A0A0A' },
-  exName: { fontSize: 14, fontWeight: '600', color: '#0A0A0A' },
+  exNumText: { fontSize: 12, fontFamily: F.bodyB, color: '#0A0A0A' },
+  exName: { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A' },
   exNameDone: { color: '#0B1F08', textDecorationLine: 'line-through' },
   exDetail: { fontSize: 11, color: '#737373', marginTop: 1 },
-  exReps: { fontSize: 13, fontWeight: '700', color: '#0A0A0A', flexShrink: 0 },
+  exReps: { fontSize: 13, fontFamily: F.bodyB, color: '#0A0A0A', flexShrink: 0 },
   restRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 6 },
   restIco: { fontSize: 16 },
   restText: { fontSize: 13, color: '#64748B' },
   variationBtn: { marginTop: 10, padding: 10, borderRadius: 12, borderWidth: 1.5, borderStyle: 'dashed', borderColor: '#1A56DB', alignItems: 'center' },
-  variationBtnText: { color: '#1A56DB', fontWeight: '600', fontSize: 13 },
+  variationBtnText: { color: '#1A56DB', fontFamily: F.bodyB, fontSize: 13 },
   variationBox: { marginTop: 8, backgroundColor: '#F0FDF4', borderRadius: 12, padding: 12 },
   tipBox: { marginTop: 12, backgroundColor: '#F8FAFC', borderRadius: 12, padding: 12 },
-  tipTitle: { fontSize: 12, fontWeight: '700', color: '#475569', marginBottom: 6 },
+  tipTitle: { fontSize: 12, fontFamily: F.bodyB, color: '#475569', marginBottom: 6 },
   tipText: { fontSize: 12, color: '#64748B', lineHeight: 20 },
   phaseRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 12 },
   phaseNum: { width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
-  phaseNumText: { fontSize: 12, fontWeight: '700' },
+  phaseNumText: { fontSize: 12, fontFamily: F.bodyB },
   phaseHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 },
-  phaseLabel: { fontSize: 14, fontWeight: '600', color: '#1E293B' },
-  phaseDur: { fontSize: 12, color: '#1A56DB', fontWeight: '600' },
+  phaseLabel: { fontSize: 14, fontFamily: F.bodyB, color: '#1E293B' },
+  phaseDur: { fontSize: 12, color: '#1A56DB', fontFamily: F.bodyB },
   phaseDetail: { fontSize: 12, color: '#64748B', lineHeight: 18 },
 
   // log buttons
@@ -1207,9 +1207,9 @@ const styles = StyleSheet.create({
 
   logBtns: { flexDirection: 'row', gap: 2, marginBottom: 2 },
   doneBtn: { flex: 1, padding: 14, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center' },
-  doneBtnText: { color: 'white', fontWeight: '700', fontSize: 14 },
+  doneBtnText: { color: 'white', fontFamily: F.bodyB, fontSize: 14 },
   skipBtn: { flex: 1, padding: 14, borderRadius: 12, backgroundColor: '#F5F5F5', alignItems: 'center' },
-  skipBtnText: { color: '#0A0A0A', fontWeight: '700', fontSize: 14 },
+  skipBtnText: { color: '#0A0A0A', fontFamily: F.bodyB, fontSize: 14 },
   undoBtn: { padding: 10, borderRadius: 12, backgroundColor: '#F5F5F5', alignItems: 'center', marginBottom: 2 },
   undoBtnText: { fontSize: 13, color: '#0A0A0A' },
   extraRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10, backgroundColor: '#B6ECAF', borderRadius: 16 },
@@ -1218,28 +1218,28 @@ const styles = StyleSheet.create({
   extraInput: { flexDirection: 'row', gap: 8 },
   input: { flex: 1, padding: 10, borderRadius: 12, backgroundColor: '#FAFAFA', fontSize: 13, color: '#0A0A0A' },
   addBtn: { padding: 10, paddingHorizontal: 16, borderRadius: 10, backgroundColor: '#171717', justifyContent: 'center' },
-  addBtnText: { color: 'white', fontWeight: '600', fontSize: 13 },
+  addBtnText: { color: 'white', fontFamily: F.bodyB, fontSize: 13 },
   dashedBtn: { padding: 10, borderRadius: 12, borderWidth: 1, borderColor: '#E5E5E5', alignItems: 'center', backgroundColor: 'white' },
   dashedBtnText: { fontSize: 13, color: '#525252' },
-  restTitle: { fontSize: 16, fontWeight: '700', color: '#0A0A0A', marginBottom: 8 },
+  restTitle: { fontSize: 16, fontFamily: F.bodyB, color: '#0A0A0A', marginBottom: 8 },
   restSub: { fontSize: 13, color: '#525252', lineHeight: 20, textAlign: 'center' },
 
   // week navigation
   weekNav:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, paddingHorizontal: 4 },
   weekNavBtn:   { padding: 8 },
-  weekNavArrow: { fontSize: 28, color: BLUE.primary, fontWeight: '700', lineHeight: 32 },
-  weekNavLabel: { fontSize: 14, fontWeight: '600', color: '#1E293B' },
+  weekNavArrow: { fontSize: 28, color: BLUE.primary, fontFamily: F.bodyB, lineHeight: 32 },
+  weekNavLabel: { fontSize: 14, fontFamily: F.bodyB, color: '#1E293B' },
 
   // week
   weekRow: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 10, borderRadius: 12, borderWidth: 1, marginBottom: 6 },
   weekDate: { width: 60, alignItems: 'center', flexShrink: 0 },
   weekDayLabel: { fontSize: 10, color: '#94A3B8' },
-  weekDayNum: { fontSize: 18, fontWeight: '700', color: '#1E293B', lineHeight: 22 },
+  weekDayNum: { fontSize: 18, fontFamily: F.bodyB, color: '#1E293B', lineHeight: 22 },
   weekWorkout: { fontSize: 13 },
   weekDur: { fontSize: 11, color: '#94A3B8' },
   weekExtra: { fontSize: 11, color: '#1A56DB', marginTop: 1 },
   progRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: 'rgba(26,86,219,0.08)' },
-  progLabel: { fontSize: 13, fontWeight: '600', color: '#1E293B' },
+  progLabel: { fontSize: 13, fontFamily: F.bodyB, color: '#1E293B' },
   progDetail: { fontSize: 12, color: '#475569', marginTop: 1 },
 
   // Tu plan de ejercicios — Figma blue card
@@ -1265,45 +1265,45 @@ const styles = StyleSheet.create({
   weekDetail: { marginTop: -4, marginBottom: 6, backgroundColor: '#F8FBFF', borderWidth: 1.5, borderTopWidth: 0, borderColor: '#1A56DB', borderBottomLeftRadius: 12, borderBottomRightRadius: 12, padding: 12, gap: 6 },
   weekExRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 5, borderBottomWidth: 1, borderBottomColor: '#EFF6FF' },
   weekExNum: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#EFF6FF', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
-  weekExNumText: { fontSize: 11, fontWeight: '700', color: '#1A56DB' },
+  weekExNumText: { fontSize: 11, fontFamily: F.bodyB, color: '#1A56DB' },
   weekExName: { flex: 1, fontSize: 13, color: '#1E293B', fontWeight: '500' },
-  weekExReps: { fontSize: 12, fontWeight: '700', color: '#1A56DB' },
+  weekExReps: { fontSize: 12, fontFamily: F.bodyB, color: '#1A56DB' },
 
   // health tab — connection
   connectedDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#49CF38', flexShrink: 0 },
-  connectedLabel: { fontSize: 12, color: '#0B1F08', fontWeight: '600', marginTop: 2 },
+  connectedLabel: { fontSize: 12, color: '#0B1F08', fontFamily: F.bodyB, marginTop: 2 },
   lastSyncText: { fontSize: 11, color: '#737373', marginTop: 2 },
   syncBtn: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 12, backgroundColor: 'white' },
-  syncBtnText: { fontSize: 12, color: '#0A0A0A', fontWeight: '600' },
+  syncBtnText: { fontSize: 12, color: '#0A0A0A', fontFamily: F.bodyB },
   disconnectText: { fontSize: 11, color: '#737373', textDecorationLine: 'underline' },
   connectBtn: { backgroundColor: '#171717', borderRadius: 12, height: 48, alignItems: 'center', justifyContent: 'center' },
-  connectBtnText: { color: 'white', fontWeight: '700', fontSize: 14 },
+  connectBtnText: { color: 'white', fontFamily: F.bodyB, fontSize: 14 },
 
   // health tab — last workout
   dateChip: { fontSize: 11, color: '#0A0A0A', backgroundColor: 'white', paddingHorizontal: 10, paddingVertical: 3, borderRadius: 8, alignSelf: 'flex-start' },
   workoutHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 14 },
-  workoutName: { fontSize: 18, fontWeight: '700', color: '#0A0A0A' },
+  workoutName: { fontSize: 18, fontFamily: F.bodyB, color: '#0A0A0A' },
   workoutTime: { fontSize: 12, color: '#525252', marginTop: 2 },
   metricRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   pill: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, backgroundColor: 'white', borderWidth: 0 },
-  pillLabel: { fontSize: 9, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.4 },
-  pillValue: { fontSize: 13, fontWeight: '700' },
+  pillLabel: { fontSize: 9, fontFamily: F.bodyB, textTransform: 'uppercase', letterSpacing: 0.4 },
+  pillValue: { fontSize: 13, fontFamily: F.bodyB },
 
   // health tab — recent workouts
   recentRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: 'white' },
-  recentName: { fontSize: 13, fontWeight: '600', color: '#0A0A0A' },
+  recentName: { fontSize: 13, fontFamily: F.bodyB, color: '#0A0A0A' },
   recentDate: { fontSize: 11, color: '#737373', marginTop: 2 },
-  recentDur: { fontSize: 13, fontWeight: '700', color: '#0A0A0A' },
+  recentDur: { fontSize: 13, fontFamily: F.bodyB, color: '#0A0A0A' },
   recentCal: { fontSize: 11, color: '#FE6004', marginTop: 2 },
 
   // health tab — metrics grid
   metricsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   bigMetric: { flex: 1, minWidth: '40%', backgroundColor: 'white', borderRadius: 16, padding: 14, alignItems: 'center' },
-  bigMetricValue: { fontSize: 20, fontWeight: '700', marginBottom: 2 },
+  bigMetricValue: { fontSize: 20, fontFamily: F.bodyB, marginBottom: 2 },
   bigMetricLabel: { fontSize: 11, color: '#737373', fontWeight: '500' },
 
   // health tab — sleep
-  sleepHours: { fontSize: 42, fontWeight: '700', color: '#171717' },
-  sleepUnit: { fontSize: 20, color: '#171717', fontWeight: '600' },
+  sleepHours: { fontSize: 42, fontFamily: F.bodyB, color: '#171717' },
+  sleepUnit: { fontSize: 20, color: '#171717', fontFamily: F.bodyB },
   sleepDate: { fontSize: 12, color: '#737373' },
 });

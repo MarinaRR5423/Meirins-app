@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
 
   // Aviso médico
   medDisclaimer:      { backgroundColor: '#FFF7ED', borderWidth: 1, borderColor: '#FED7AA', borderRadius: 16, padding: 14, marginTop: 8, marginBottom: 16 },
-  medDisclaimerTitle: { fontSize: 13, fontWeight: '700', color: '#9A3412', marginBottom: 6, letterSpacing: 0.3 },
+  medDisclaimerTitle: { fontSize: 13, fontFamily: F.bodyB, color: '#9A3412', marginBottom: 6, letterSpacing: 0.3 },
   medDisclaimerBody:  { fontSize: 12, color: '#7C2D12', lineHeight: 18 },
   langRow: { position: 'absolute', top: 56, right: 24, flexDirection: 'row', gap: 8 },
   langBtn: { padding: 6, borderRadius: 8, backgroundColor: '#F5F5F5', borderWidth: 1, borderColor: 'transparent' },
@@ -434,6 +434,6 @@ const styles = StyleSheet.create({
   unitToggleRow:        { flexDirection: 'row', gap: 8, marginBottom: 18 },
   unitToggleBtn:        { flex: 1, paddingVertical: 10, borderRadius: 16, borderWidth: 1, borderColor: '#E5E5E5', alignItems: 'center', backgroundColor: '#FAFAFA' },
   unitToggleBtnActive:  { backgroundColor: '#171717', borderColor: '#171717' },
-  unitToggleLabel:      { fontSize: 13, color: '#525252', fontWeight: '600' },
+  unitToggleLabel:      { fontSize: 13, color: '#525252', fontFamily: F.bodyB },
   unitToggleLabelActive:{ color: 'white' },
 });

@@ -549,13 +549,13 @@ export default function PerfilScreen({ pi, profile, signOut }) {
               <View style={{ flexDirection: 'row', gap: 8, marginTop: 14 }}>
                 <TouchableOpacity onPress={() => setEditingName(false)}
                   style={[styles.nameModalBtn, { backgroundColor: '#F1F5F9' }]}>
-                  <Text style={{ color: '#64748B', fontWeight: '600' }}>
+                  <Text style={{ color: '#64748B', fontFamily: F.bodyB }}>
                     {lang === 'en' ? 'Cancel' : 'Cancelar'}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={saveName}
                   style={[styles.nameModalBtn, { backgroundColor: BLUE.primary }]}>
-                  <Text style={{ color: 'white', fontWeight: '700' }}>
+                  <Text style={{ color: 'white', fontFamily: F.bodyB }}>
                     {lang === 'en' ? 'Save' : 'Guardar'}
                   </Text>
                 </TouchableOpacity>
@@ -633,7 +633,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
               <TouchableOpacity key={opt.id} onPress={() => setAL(opt.id)}
                 style={[styles.optRow, activityLevel === opt.id && styles.optRowActive]}>
                 <Text style={styles.optEmoji}>{opt.emoji}</Text>
-                <Text style={[styles.optLabel, activityLevel === opt.id && { color: BLUE.primary, fontWeight: '700' }]}>{opt.label}</Text>
+                <Text style={[styles.optLabel, activityLevel === opt.id && { color: BLUE.primary, fontFamily: F.bodyB }]}>{opt.label}</Text>
                 <View style={[styles.radio, activityLevel === opt.id && styles.radioActive]}>
                   {activityLevel === opt.id && <View style={styles.radioDot} />}
                 </View>
@@ -644,7 +644,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
               <TouchableOpacity key={opt.id} onPress={() => setGoal(opt.id)}
                 style={[styles.optRow, goal === opt.id && styles.optRowActive]}>
                 <Text style={styles.optEmoji}>{opt.emoji}</Text>
-                <Text style={[styles.optLabel, goal === opt.id && { color: BLUE.primary, fontWeight: '700' }]}>{opt.label}</Text>
+                <Text style={[styles.optLabel, goal === opt.id && { color: BLUE.primary, fontFamily: F.bodyB }]}>{opt.label}</Text>
                 <View style={[styles.radio, goal === opt.id && styles.radioActive]}>
                   {goal === opt.id && <View style={styles.radioDot} />}
                 </View>
@@ -730,7 +730,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
                   style={[styles.optRow, editGoals.includes(o.v) && styles.optRowActive]}>
                   <Text style={styles.optEmoji}>{o.ico}</Text>
                   <View style={{ flex: 1 }}>
-                    <Text style={[styles.optLabel, editGoals.includes(o.v) && { color: BLUE.primary, fontWeight: '700' }]}>{o.l}</Text>
+                    <Text style={[styles.optLabel, editGoals.includes(o.v) && { color: BLUE.primary, fontFamily: F.bodyB }]}>{o.l}</Text>
                     {o.d ? <Text style={{ fontSize: 11, color: '#94A3B8' }}>{o.d}</Text> : null}
                   </View>
                   {editGoals.includes(o.v) && <Check size={16} color={BLUE.primary} />}
@@ -1013,7 +1013,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
                     <TouchableOpacity key={o.v} onPress={() => setEditLifeStage(o.v)}
                       style={[styles.optRow, editLifeStage === o.v && styles.optRowActive]}>
                       <View style={{ flex: 1 }}>
-                        <Text style={[styles.optLabel, editLifeStage === o.v && { color: BLUE.primary, fontWeight: '700' }]}>{o.l}</Text>
+                        <Text style={[styles.optLabel, editLifeStage === o.v && { color: BLUE.primary, fontFamily: F.bodyB }]}>{o.l}</Text>
                         {o.d ? <Text style={{ fontSize: 11, color: '#94A3B8' }}>{o.d}</Text> : null}
                       </View>
                       <View style={[styles.radio, editLifeStage === o.v && styles.radioActive]}>
@@ -1041,7 +1041,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
                     return (
                       <TouchableOpacity key={o.v} onPress={() => toggleExtArr(editConditions, setEditConditions, o.v)}
                         style={[styles.chip, sel && { backgroundColor: '#FEE2E2', borderWidth: 1, borderColor: '#EF4444' }]}>
-                        <Text style={[styles.chipText, sel && { color: '#EF4444', fontWeight: '600' }]}>{o.l}</Text>
+                        <Text style={[styles.chipText, sel && { color: '#EF4444', fontFamily: F.bodyB }]}>{o.l}</Text>
                       </TouchableOpacity>
                     );
                   })}
@@ -1071,7 +1071,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
                       return (
                         <TouchableOpacity key={o.v} onPress={() => setEditContraType(o.v)}
                           style={[styles.chip, sel && { backgroundColor: BLUE.light, borderWidth: 1, borderColor: BLUE.primary }]}>
-                          <Text style={[styles.chipText, sel && { color: BLUE.primary, fontWeight: '600' }]}>{o.l}</Text>
+                          <Text style={[styles.chipText, sel && { color: BLUE.primary, fontFamily: F.bodyB }]}>{o.l}</Text>
                         </TouchableOpacity>
                       );
                     })}
@@ -1093,7 +1093,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
                           setEditMedications(without.includes(o.v) ? without.filter(x => x !== o.v) : [...without, o.v]);
                         }}
                         style={[styles.chip, sel && { backgroundColor: BLUE.light, borderWidth: 1, borderColor: BLUE.primary }]}>
-                        <Text style={[styles.chipText, sel && { color: BLUE.primary, fontWeight: '600' }]}>{o.l}</Text>
+                        <Text style={[styles.chipText, sel && { color: BLUE.primary, fontFamily: F.bodyB }]}>{o.l}</Text>
                       </TouchableOpacity>
                     );
                   })}
@@ -1505,15 +1505,15 @@ const styles = StyleSheet.create({
   avatarWrap: { position: 'relative', marginBottom: 10 },
   avatar:     { width: 70, height: 70, borderRadius: 35, backgroundColor: '#1A56DB', justifyContent: 'center', alignItems: 'center' },
   avatarImg:  { width: 70, height: 70, borderRadius: 35, backgroundColor: '#1A56DB' },
-  avatarText: { fontSize: 30, color: 'white', fontWeight: '700' },
+  avatarText: { fontSize: 30, color: 'white', fontFamily: F.bodyB },
   avatarEdit: { position: 'absolute', bottom: 0, right: 0, width: 26, height: 26, borderRadius: 13, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, elevation: 3, borderWidth: 1, borderColor: '#E2E8F0' },
   avatarEditTxt: { fontSize: 12 },
-  headerName: { fontSize: 22, fontWeight: '700', color: '#1E293B', marginBottom: 6, fontFamily: F.heading },
+  headerName: { fontSize: 22, color: '#1E293B', marginBottom: 6, fontFamily: F.heading },
 
   // Modal de edición de nombre
   nameModalOverlay: { position: 'absolute', top: 0, left: -14, right: -14, bottom: -300, backgroundColor: 'rgba(15,31,74,0.5)', justifyContent: 'center', alignItems: 'center', zIndex: 100 },
   nameModal:        { width: '90%', maxWidth: 360, backgroundColor: 'white', borderRadius: 18, padding: 20 },
-  nameModalTitle:   { fontSize: 16, fontWeight: '700', color: '#1E293B', marginBottom: 12, fontFamily: F.heading },
+  nameModalTitle:   { fontSize: 16, color: '#1E293B', marginBottom: 12, fontFamily: F.heading },
   nameInput:        { borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 12, padding: 12, fontSize: 16, color: '#1E293B', backgroundColor: '#F8FAFC' },
   nameModalBtn:     { flex: 1, padding: 12, borderRadius: 12, alignItems: 'center' },
   headerMeta: { flexDirection: 'row', gap: 8, marginBottom: 6, flexWrap: 'wrap', justifyContent: 'center' },
@@ -1523,8 +1523,8 @@ const styles = StyleSheet.create({
 
   card: { backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  cardTitle: { fontSize: 14, fontWeight: '600', color: '#1E293B' },
-  editBtn: { fontSize: 13, color: '#1A56DB', fontWeight: '600' },
+  cardTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#1E293B' },
+  editBtn: { fontSize: 13, color: '#1A56DB', fontFamily: F.bodyB },
 
   // Language picker
   langRow: { flexDirection: 'row', gap: 8, marginTop: 8 },
@@ -1532,11 +1532,11 @@ const styles = StyleSheet.create({
   langBtnActive: { borderColor: '#1A56DB', backgroundColor: '#EFF6FF' },
   langFlag: { fontSize: 22 },
   langName: { fontSize: 11, color: '#94A3B8', marginTop: 2, fontWeight: '500' },
-  langNameActive: { color: '#1A56DB', fontWeight: '700' },
+  langNameActive: { color: '#1A56DB', fontFamily: F.bodyB },
 
   infoGrid: { flexDirection: 'row', gap: 10 },
   infoBox: { flex: 1, backgroundColor: '#F8FAFC', borderRadius: 12, padding: 12, alignItems: 'center' },
-  infoVal: { fontSize: 22, fontWeight: '700', color: '#1A56DB' },
+  infoVal: { fontSize: 22, fontFamily: F.bodyB, color: '#1A56DB' },
   infoLbl: { fontSize: 11, color: '#94A3B8', marginTop: 2 },
 
   inputRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
@@ -1545,7 +1545,7 @@ const styles = StyleSheet.create({
   input: { width: 90, padding: 8, borderRadius: 10, borderWidth: 1, borderColor: '#E2E8F0', fontSize: 16, textAlign: 'center' },
   inputUnit: { fontSize: 13, color: '#94A3B8' },
   saveBtn: { marginTop: 12, padding: 12, borderRadius: 12, backgroundColor: '#1A56DB', alignItems: 'center' },
-  saveBtnText: { color: 'white', fontWeight: '700', fontSize: 14 },
+  saveBtnText: { color: 'white', fontFamily: F.bodyB, fontSize: 14 },
 
   row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, backgroundColor: '#F1F5F9', marginRight: 6, marginBottom: 6 },
@@ -1553,7 +1553,7 @@ const styles = StyleSheet.create({
   chipTextBlue: { fontSize: 13, color: '#1A56DB', fontWeight: '500' },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 4, marginBottom: 4 },
 
-  editSection: { fontSize: 12, color: '#94A3B8', fontWeight: '600', letterSpacing: 0.5, marginBottom: 8 },
+  editSection: { fontSize: 12, color: '#94A3B8', fontFamily: F.bodyB, letterSpacing: 0.5, marginBottom: 8 },
   optRow: { flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 12, borderWidth: 1, borderColor: '#F1F5F9', marginBottom: 6 },
   optRowActive: { borderColor: '#1A56DB', backgroundColor: '#EFF6FF' },
   optEmoji: { fontSize: 20, marginRight: 10 },
@@ -1564,17 +1564,17 @@ const styles = StyleSheet.create({
 
   daysRow: { flexDirection: 'row', gap: 5 },
   dayChip: { flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: 'center' },
-  dayChipText: { fontSize: 11, fontWeight: '600' },
+  dayChipText: { fontSize: 11, fontFamily: F.bodyB },
 
   infoRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10 },
   infoRowIcon: { fontSize: 18, marginRight: 10, marginTop: 1 },
   infoRowBody: { flex: 1 },
-  infoRowTitle: { fontSize: 11, color: '#94A3B8', fontWeight: '600', letterSpacing: 0.3, marginBottom: 2 },
+  infoRowTitle: { fontSize: 11, color: '#94A3B8', fontFamily: F.bodyB, letterSpacing: 0.3, marginBottom: 2 },
   infoRowValue: { fontSize: 14, color: '#334155', fontWeight: '500' },
-  subLabel: { fontSize: 11, color: '#94A3B8', fontWeight: '600', letterSpacing: 0.3, marginTop: 6, marginBottom: 4 },
+  subLabel: { fontSize: 11, color: '#94A3B8', fontFamily: F.bodyB, letterSpacing: 0.3, marginTop: 6, marginBottom: 4 },
 
   accordionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4, elevation: 1 },
-  accordionTitle: { fontSize: 14, fontWeight: '600', color: '#475569' },
+  accordionTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#475569' },
   accordionArrow: { fontSize: 11, color: '#94A3B8' },
   accordionNote: { fontSize: 12, color: '#94A3B8', marginBottom: 12, lineHeight: 18 },
   accordionSection: { marginBottom: 10 },
@@ -1593,60 +1593,60 @@ const styles = StyleSheet.create({
 
   // Medical disclaimer
   medCard:      { backgroundColor: '#FEF3C7', borderRadius: 14, padding: 14, marginTop: 8, marginBottom: 8, borderWidth: 1, borderColor: '#FDE68A' },
-  medCardTitle: { fontSize: 13, fontWeight: '700', color: '#92400E', marginBottom: 6 },
+  medCardTitle: { fontSize: 13, fontFamily: F.bodyB, color: '#92400E', marginBottom: 6 },
   medCardBody:  { fontSize: 12, color: '#78350F', lineHeight: 18 },
 
   pageTitleRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
-  pageTitle:    { fontSize: 32, fontFamily: 'BricolageGrotesque_800ExtraBold', fontWeight: '800', color: '#0A0A0A' },
+  pageTitle:    { fontSize: 32, fontFamily: 'BricolageGrotesque_800ExtraBold', color: '#0A0A0A' },
   signOutBtn:  { marginTop: 8, padding: 16, borderRadius: 14, backgroundColor: '#0A0A0A', alignItems: 'center' },
-  signOutText: { fontSize: 15, color: '#FFFFFF', fontWeight: '700' },
+  signOutText: { fontSize: 15, color: '#FFFFFF', fontFamily: F.bodyB },
 
   // Delete account
   deleteBtn:           { marginTop: 8, padding: 16, borderRadius: 14, backgroundColor: '#FEE2E2', alignItems: 'center' },
-  deleteBtnTxt:        { fontSize: 15, color: '#DC2626', fontWeight: '700' },
+  deleteBtnTxt:        { fontSize: 15, color: '#DC2626', fontFamily: F.bodyB },
   deleteConfirmBox:    { marginTop: 8, padding: 16, borderRadius: 14, backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FECACA' },
-  deleteConfirmTitle:  { fontSize: 15, fontWeight: '700', color: '#EF4444', marginBottom: 8, textAlign: 'center' },
+  deleteConfirmTitle:  { fontSize: 15, fontFamily: F.bodyB, color: '#EF4444', marginBottom: 8, textAlign: 'center' },
   deleteConfirmBody:   { fontSize: 13, color: '#64748B', lineHeight: 20, textAlign: 'center', marginBottom: 16 },
   deleteConfirmBtns:   { flexDirection: 'row', gap: 10 },
   deleteCancelBtn:     { flex: 1, padding: 12, borderRadius: 10, borderWidth: 1, borderColor: '#E2E8F0', alignItems: 'center' },
   deleteCancelTxt:     { fontSize: 14, color: '#64748B', fontWeight: '500' },
   deleteConfirmBtn:    { flex: 1, padding: 12, borderRadius: 10, backgroundColor: '#EF4444', alignItems: 'center' },
-  deleteConfirmTxt:    { fontSize: 14, color: 'white', fontWeight: '700' },
+  deleteConfirmTxt:    { fontSize: 14, color: 'white', fontFamily: F.bodyB },
 
   // Metrics card
   metaBadge:     { paddingHorizontal: 10, paddingVertical: 3, borderRadius: 20 },
-  metaBadgeText: { fontSize: 11, fontWeight: '600' },
+  metaBadgeText: { fontSize: 11, fontFamily: F.bodyB },
   statsRow:      { flexDirection: 'row', gap: 8, marginBottom: 12 },
   statBox:       { flex: 1, backgroundColor: '#F8FAFC', borderRadius: 12, padding: 10, alignItems: 'center' },
-  statVal:       { fontSize: 18, fontWeight: '700', color: '#1E293B' },
+  statVal:       { fontSize: 18, fontFamily: F.bodyB, color: '#1E293B' },
   statLbl:       { fontSize: 10, color: '#94A3B8', marginTop: 2, textAlign: 'center' },
   progressWrap:  { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 14 },
   progressBg:    { flex: 1, height: 8, backgroundColor: '#F1F5F9', borderRadius: 4, overflow: 'hidden' },
   progressFill:  { height: 8, borderRadius: 4 },
-  progressLbl:   { fontSize: 12, fontWeight: '700', minWidth: 32, textAlign: 'right' },
+  progressLbl:   { fontSize: 12, fontFamily: F.bodyB, minWidth: 32, textAlign: 'right' },
   // Weight logger
   wLogRow:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 },
   wLogLabel: { fontSize: 13, color: '#475569', fontWeight: '500' },
   wControls: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   wBtn:      { width: 32, height: 32, borderRadius: 16, backgroundColor: '#F0F4FA', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#E2E8F0' },
-  wBtnTxt:   { fontSize: 18, fontWeight: '700', color: '#1A56DB', lineHeight: 22 },
-  wVal:      { fontSize: 20, fontWeight: '800', color: '#1E293B', minWidth: 72, textAlign: 'center' },
+  wBtnTxt:   { fontSize: 18, fontFamily: F.bodyB, color: '#1A56DB', lineHeight: 22 },
+  wVal:      { fontSize: 20, fontFamily: F.headingX, color: '#1E293B', minWidth: 72, textAlign: 'center' },
   wSaveBtn:      { backgroundColor: '#EFF6FF', borderRadius: 12, paddingVertical: 10, alignItems: 'center', marginBottom: 8, borderWidth: 1, borderColor: '#BFDBFE' },
   wSaveBtnDone:  { backgroundColor: '#F0FDF4', borderColor: '#BBF7D0' },
-  wSaveBtnTxt:   { fontSize: 14, fontWeight: '700', color: '#1A56DB' },
+  wSaveBtnTxt:   { fontSize: 14, fontFamily: F.bodyB, color: '#1A56DB' },
   setTargetBtn:  { paddingVertical: 8, alignItems: 'center' },
   setTargetTxt:  { fontSize: 13, color: '#1A56DB', fontWeight: '500' },
   targetRow:     { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
   targetInput:   { flex: 1, padding: 10, borderRadius: 10, borderWidth: 1, borderColor: '#E2E8F0', fontSize: 16, textAlign: 'center', color: '#1E293B' },
   targetUnit:    { fontSize: 14, color: '#94A3B8' },
   targetSave:    { width: 36, height: 36, borderRadius: 18, backgroundColor: '#1A56DB', justifyContent: 'center', alignItems: 'center' },
-  targetSaveTxt: { color: 'white', fontSize: 18, fontWeight: '700' },
+  targetSaveTxt: { color: 'white', fontSize: 18, fontFamily: F.bodyB },
   chartHint:     { fontSize: 12, color: '#94A3B8', textAlign: 'center', paddingVertical: 8 },
 
   // Notification rows
   notifRow:   { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
   notifEmoji: { fontSize: 22, width: 30 },
-  notifLabel: { fontSize: 14, fontWeight: '600', color: '#1E293B' },
+  notifLabel: { fontSize: 14, fontFamily: F.bodyB, color: '#1E293B' },
   notifSub:   { fontSize: 12, color: '#94A3B8', marginTop: 1 },
 
   // Calendar sync
@@ -1657,8 +1657,8 @@ const styles = StyleSheet.create({
   calInfoTxt:      { fontSize: 12, color: '#1E40AF', lineHeight: 18 },
   calOk:           { fontSize: 13, color: '#16A34A', backgroundColor: '#F0FDF4', borderRadius: 10, padding: 10, marginBottom: 8 },
   calTodayBox:     { backgroundColor: '#F8FAFC', borderRadius: 12, padding: 12, marginTop: 4 },
-  calTodayLabel:   { fontSize: 11, color: '#94A3B8', fontWeight: '600', letterSpacing: 0.5, marginBottom: 4 },
-  calTodayWorkout: { fontSize: 15, color: '#1E293B', fontWeight: '600' },
+  calTodayLabel:   { fontSize: 11, color: '#94A3B8', fontFamily: F.bodyB, letterSpacing: 0.5, marginBottom: 4 },
+  calTodayWorkout: { fontSize: 15, color: '#1E293B', fontFamily: F.bodyB },
   toggle:          { width: 50, height: 28, borderRadius: 14, backgroundColor: '#E2E8F0', padding: 2, justifyContent: 'center' },
   toggleOn:        { backgroundColor: '#1A56DB' },
   toggleDot:       { width: 24, height: 24, borderRadius: 12, backgroundColor: 'white', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.2, shadowRadius: 2, elevation: 2 },
@@ -1667,17 +1667,17 @@ const styles = StyleSheet.create({
   hourBtn:         { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10, borderWidth: 1, borderColor: '#E2E8F0', backgroundColor: '#F8FAFC' },
   hourBtnActive:   { backgroundColor: BLUE.light, borderColor: BLUE.primary },
   hourTxt:         { fontSize: 13, color: '#64748B', fontWeight: '500' },
-  hourTxtActive:   { color: BLUE.primary, fontWeight: '700' },
+  hourTxtActive:   { color: BLUE.primary, fontFamily: F.bodyB },
   resyncBtn:       { backgroundColor: '#F1F5F9', borderRadius: 12, padding: 12, alignItems: 'center', borderWidth: 1, borderColor: '#E2E8F0' },
   resyncTxt:       { fontSize: 14, color: '#475569', fontWeight: '500' },
 
-  dietCatLabel: { fontSize: 11, fontWeight: '700', color: '#64748B', letterSpacing: 0.6, marginTop: 12, marginBottom: 4, textTransform: 'uppercase' },
+  dietCatLabel: { fontSize: 11, fontFamily: F.bodyB, color: '#64748B', letterSpacing: 0.6, marginTop: 12, marginBottom: 4, textTransform: 'uppercase' },
   fastingNote:  { fontSize: 12, color: '#94A3B8', marginBottom: 8, fontStyle: 'italic' },
   optionDesc: { fontSize: 13, color: '#94A3B8', textAlign: 'center', paddingVertical: 8 },
   pregnantNote: { fontSize: 13, color: '#92400E', backgroundColor: '#FEF3C7', borderRadius: 10, padding: 10, marginTop: 6, marginBottom: 4, lineHeight: 18 },
   yesNoRow: { flexDirection: 'row', gap: 10, marginBottom: 6 },
   yesNoBtn: { flex: 1, paddingVertical: 12, borderRadius: 12, borderWidth: 1.5, borderColor: '#E2E8F0', alignItems: 'center', backgroundColor: '#F8FAFC' },
   yesNoBtnActive: { backgroundColor: BLUE.light, borderColor: BLUE.primary },
-  yesNoTxt: { fontSize: 14, fontWeight: '600', color: '#64748B' },
+  yesNoTxt: { fontSize: 14, fontFamily: F.bodyB, color: '#64748B' },
   yesNoTxtActive: { color: BLUE.primary },
 });

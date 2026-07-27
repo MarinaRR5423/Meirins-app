@@ -5,6 +5,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { captureError } from '../lib/analytics';
+import { F } from '../theme/fonts';
 
 export default class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -49,9 +50,9 @@ export default class ErrorBoundary extends React.Component {
 const s = StyleSheet.create({
   container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32, backgroundColor: '#F0F4FA' },
   emoji:     { fontSize: 64, marginBottom: 16 },
-  title:     { fontSize: 22, fontWeight: '700', color: '#1E293B', marginBottom: 10, textAlign: 'center' },
+  title:     { fontSize: 22, fontFamily: F.bodyB, color: '#1E293B', marginBottom: 10, textAlign: 'center' },
   body:      { fontSize: 14, color: '#64748B', textAlign: 'center', lineHeight: 22, marginBottom: 24 },
   devDetail: { fontSize: 11, color: '#EF4444', fontFamily: 'monospace', backgroundColor: '#FEF2F2', padding: 10, borderRadius: 8, marginBottom: 20, maxWidth: '100%' },
   btn:       { backgroundColor: '#1A56DB', paddingHorizontal: 28, paddingVertical: 14, borderRadius: 50 },
-  btnTxt:    { color: 'white', fontWeight: '700', fontSize: 15 },
+  btnTxt:    { color: 'white', fontFamily: F.bodyB, fontSize: 15 },
 });

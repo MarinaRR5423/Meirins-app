@@ -8,6 +8,7 @@
  */
 import React from 'react';
 import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import { F } from '../theme/fonts';
 
 export default function Loading({ variant = 'inline', label, color }) {
   if (variant === 'fullscreen') {
@@ -41,7 +42,7 @@ export default function Loading({ variant = 'inline', label, color }) {
 const s = StyleSheet.create({
   fullscreen: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5C400' },
   fsEmoji:    { fontSize: 48, marginBottom: 16 },
-  fsBrand:    { color: '#1A1A1A', fontSize: 18, fontWeight: '700', letterSpacing: 1.5, marginBottom: 18 },
+  fsBrand:    { color: '#1A1A1A', fontSize: 18, fontFamily: F.bodyB, letterSpacing: 1.5, marginBottom: 18 },
   fsLabel:    { color: 'rgba(0,0,0,0.5)', fontSize: 13, marginTop: 12 },
 
   inline:      { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 16, justifyContent: 'center' },

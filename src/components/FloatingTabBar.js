@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Modal, Platform } from 'react
 import { BlurView } from 'expo-blur';
 import { Home, Moon, Salad, SportShoe, Plus, Droplets } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { F } from '../theme/fonts';
 
 const ROUTE_ICONS  = { Inicio: Home, Ciclo: Moon, "Nutrición": Salad, Gimnasio: SportShoe };
 const ROUTE_COLORS = { Inicio: '#49CF38', Ciclo: '#22C55E', "Nutrición": '#FE6004', Gimnasio: '#429FE7' };
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
   itemActive:      { backgroundColor: 'white' },
   iconCircle:      { width: 32, height: 32, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   itemLabel: {
-    fontSize: 8, fontWeight: '600', color: '#525252',
+    fontSize: 8, fontFamily: F.bodyB, color: '#525252',
     textTransform: 'uppercase', letterSpacing: 0.2,
   },
   itemLabelActive: { color: '#0A0A0A' },
@@ -139,12 +140,12 @@ const styles = StyleSheet.create({
   modalBackdrop:    { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'flex-end', alignItems: 'center' },
   sheet:            { width: '90%', backgroundColor: 'white', borderRadius: 24, padding: 20, paddingTop: 12 },
   sheetHandle:      { width: 36, height: 4, borderRadius: 2, backgroundColor: '#E5E5E5', alignSelf: 'center', marginBottom: 14 },
-  sheetTitle:       { fontSize: 16, fontWeight: '800', color: '#0A0A0A', marginBottom: 4 },
+  sheetTitle:       { fontSize: 16, fontFamily: F.headingX, color: '#0A0A0A', marginBottom: 4 },
   actionList:       { gap: 0 },
   actionRow:        { flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 14 },
   actionRowBorder:  { borderBottomWidth: 1, borderBottomColor: '#F5F5F5' },
   actionIconCircle: { width: 48, height: 48, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  actionLabel:      { flex: 1, fontSize: 15, fontWeight: '600', color: '#0A0A0A' },
+  actionLabel:      { flex: 1, fontSize: 15, fontFamily: F.bodyB, color: '#0A0A0A' },
   actionPlusCircle: { width: 30, height: 30, borderRadius: 15, backgroundColor: '#F5F5F5', alignItems: 'center', justifyContent: 'center' },
   actionPlusTxt:    { fontSize: 18, color: '#0A0A0A', lineHeight: 22 },
 });
