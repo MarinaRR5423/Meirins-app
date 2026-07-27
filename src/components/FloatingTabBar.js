@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { Home, Moon, Salad, SportShoe, Plus } from 'lucide-react-native';
+import { Home, Moon, Salad, SportShoe, Plus, Droplets } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ROUTE_ICONS = { Inicio: Home, Ciclo: Moon, "Nutrición": Salad, Gimnasio: SportShoe };
@@ -69,9 +69,9 @@ export default function FloatingTabBar({ state, descriptors, navigation, enabled
 
             <View style={styles.actionGrid}>
               {[
-                { key: 'ciclo',     emoji: '🌙', screen: 'Ciclo' },
-                { key: 'agua',      emoji: '💧', screen: null },
-                { key: 'ejercicio', emoji: '👟', screen: 'Gimnasio' },
+                { key: 'ciclo',     Icon: Moon,     bg: '#22C55E', screen: 'Ciclo' },
+                { key: 'agua',      Icon: Droplets, bg: '#FE6004', screen: null },
+                { key: 'ejercicio', Icon: SportShoe,bg: '#429FE7', screen: 'Gimnasio' },
               ].map(item => (
                 <TouchableOpacity
                   key={item.key}
@@ -81,7 +81,9 @@ export default function FloatingTabBar({ state, descriptors, navigation, enabled
                     if (item.screen) navigation.navigate(item.screen);
                   }}
                 >
-                  <Text style={styles.actionEmoji}>{item.emoji}</Text>
+                  <View style={[styles.actionIconCircle, { backgroundColor: item.bg }]}>
+                    <item.Icon size={24} color="white" strokeWidth={2} />
+                  </View>
                   <Text style={styles.actionLabel}>{tr(item.key)}</Text>
                 </TouchableOpacity>
               ))}
@@ -131,9 +133,9 @@ const styles = StyleSheet.create({
   sheetHandle:   { width: 36, height: 4, borderRadius: 2, backgroundColor: '#E5E5E5', alignSelf: 'center', marginBottom: 14 },
   sheetTitle:    { fontSize: 16, fontWeight: '800', color: '#0A0A0A', marginBottom: 18, textAlign: 'center' },
   actionGrid:    { flexDirection: 'row', justifyContent: 'space-between', gap: 10, marginBottom: 4 },
-  actionBtn:     { flex: 1, alignItems: 'center', backgroundColor: '#F5F5F5', borderRadius: 16, paddingVertical: 18 },
-  actionEmoji:   { fontSize: 28, marginBottom: 6 },
-  actionLabel:   { fontSize: 12, fontWeight: '700', color: '#0A0A0A' },
+  actionBtn:        { flex: 1, alignItems: 'center', backgroundColor: '#F5F5F5', borderRadius: 16, paddingVertical: 18 },
+  actionIconCircle: { width: 48, height: 48, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+  actionLabel:      { fontSize: 12, fontWeight: '700', color: '#0A0A0A' },
   closeBtn:      { marginTop: 14, alignItems: 'center', paddingVertical: 10 },
   closeBtnTxt:   { color: '#737373', fontWeight: '600', fontSize: 13 },
 });

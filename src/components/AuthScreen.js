@@ -109,9 +109,9 @@ export default function AuthScreen({ lang = 'es' }) {
       <View style={styles.glassContainer}>
         <BlurView intensity={40} tint="light" style={StyleSheet.absoluteFill} />
         <View style={styles.glassInner}>
-          <Text style={styles.headline}>Tu ciclo,{'\n'}tu centro.</Text>
+          <Text style={styles.headline}>Sincroniza tu cuerpo y entrenamiento</Text>
           <Text style={styles.body}>
-            Salud femenina guiada por tu biología. Nutrición, movimiento y bienestar en sintonía con tu ciclo.
+            Descubre el poder de entrenar y nutrirte en sintonía con las diferentes fases de tu ciclo menstrual.
           </Text>
 
           {/* Email button */}

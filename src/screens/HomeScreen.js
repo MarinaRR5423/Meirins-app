@@ -356,7 +356,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
         </WidgetWrap>
 
         {/* ── HÁBITO / RACHA ── */}
-        {widgets.streak && adhStreak.streak >= 1 && (() => {
+        {widgets.streak && (() => {
           const streakMsg = {
             m1:  { es: 'Vas genial, sigue así', en: "You're doing great, keep going", fr: 'Tu es sur la bonne voie', it: 'Stai andando alla grande' },
             m7:  { es: '¡Una semana entera! Tu cuerpo ya lo nota.', en: 'A full week! Your body can already feel it.', fr: 'Une semaine entière ! Ton corps le ressent déjà.', it: 'Una settimana intera! Il tuo corpo lo sente già.' },

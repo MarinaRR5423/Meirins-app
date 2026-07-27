@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, TouchableOpacity, StyleSheet, ScrollView,
-  TextInput, Modal, SafeAreaView, Platform,
+  TextInput, Modal, SafeAreaView, Platform, ImageBackground,
 } from 'react-native';
 import { Check, X, ChevronRight, Calendar, CalendarDays } from 'lucide-react-native';
 import T from '../i18n/translations';
@@ -475,16 +475,18 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
   return (
     <>
       {!hasNutriData ? (
-        <View style={s.gymEmptyCard}>
-          <View style={[s.gymEmptyAvatar, { backgroundColor: '#49CF38' }]}>
-            <Text style={{ fontSize: 22 }}>🥗</Text>
-          </View>
-          <Text style={s.gymEmptyTitle}>{emptyTxt.title}</Text>
-          <Text style={s.gymEmptySub}>{emptyTxt.sub}</Text>
-          <TouchableOpacity style={s.gymEmptyBtn} onPress={openModal} activeOpacity={0.85}>
-            <Text style={s.gymEmptyBtnTxt}>{emptyTxt.cta}</Text>
+        <ImageBackground
+          source={require('../../assets/phases/ovulation.png')}
+          style={s.nutriEmptyCard}
+          imageStyle={{ borderRadius: 24 }}
+        >
+          <View style={s.nutriEmptyOverlay} />
+          <Text style={s.nutriEmptyTitle}>{L('Plan de nutrición', 'Nutrition Plan', 'Plan de nutrition', 'Piano nutrizionale')}</Text>
+          <Text style={s.nutriEmptySub}>{emptyTxt.sub}</Text>
+          <TouchableOpacity style={s.nutriEmptyBtn} onPress={openModal} activeOpacity={0.85}>
+            <Text style={s.nutriEmptyBtnTxt}>{emptyTxt.cta}</Text>
           </TouchableOpacity>
-        </View>
+        </ImageBackground>
       ) : (
         <TouchableOpacity style={s.gymEditBanner} onPress={openModal} activeOpacity={0.85}>
           <View style={{ flex: 1 }}>
@@ -1124,6 +1126,28 @@ const s = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', width: '100%',
   },
   gymEmptyBtnTxt: { color: '#FAFAFA', fontWeight: '700', fontSize: 16 },
+  nutriEmptyCard: {
+    borderRadius: 24, padding: 24, marginBottom: 12, overflow: 'hidden',
+    minHeight: 200, justifyContent: 'flex-end',
+  },
+  nutriEmptyOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(10,10,10,0.5)', borderRadius: 24,
+  },
+  nutriEmptyTitle: {
+    fontSize: 26, fontWeight: '800', color: '#FFFFFF',
+    marginBottom: 8, fontFamily: F.headingX,
+  },
+  nutriEmptySub: {
+    fontSize: 13, color: 'rgba(255,255,255,0.8)',
+    lineHeight: 18, marginBottom: 20,
+  },
+  nutriEmptyBtn: {
+    backgroundColor: '#171717', borderRadius: 12, height: 48,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  nutriEmptyBtnTxt: { color: '#FAFAFA', fontWeight: '700', fontSize: 16 },
+
   gymEditBanner: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     backgroundColor: '#FAFAFA', borderRadius: 24, padding: 16,
