@@ -55,7 +55,7 @@ export default function TipsCard({ articles = [], lang = 'es', variant = 'defaul
                     <Text style={a.summary} numberOfLines={2}>{article.summary[lang] || article.summary.es}</Text>
                     <View style={a.tagsRow}>
                       <View style={[a.tag, { backgroundColor: c.bg }]}>
-                        <Text style={[a.tagTxt, { color: c.color }]}>{c.icon} {article.category}</Text>
+                        <Text style={[a.tagTxt, { color: c.color }]}>{article.category}</Text>
                       </View>
                       <View style={a.tagNeutral}>
                         <Text style={a.tagNeutralTxt}>{article.readTime} {tips.readTime}</Text>
@@ -100,7 +100,7 @@ export default function TipsCard({ articles = [], lang = 'es', variant = 'defaul
     <>
       <View style={styles.card}>
         <View style={styles.header}>
-          <Text style={styles.title}>📚 {tips.title}</Text>
+          <Text style={styles.title}>{tips.title}</Text>
         </View>
 
         {articles.map((article, idx) => {

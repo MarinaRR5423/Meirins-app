@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Image, ImageBackground } from 'react-native';
 import { F } from '../theme/fonts';
 import { ChevronRight, ChevronLeft } from 'lucide-react-native';
 import { PHASES } from '../data/phases';
@@ -107,8 +107,9 @@ const orbitStyles = StyleSheet.create({
 
 // ─── Calendar helpers ──────────────────────────────────────────────────────────
 // Paleta Azote (tags-stack del diseño): menstrual=verde, folicular=morado, ovulación=amarillo, lútea=naranja
-const PHASE_BG   = { menstrual:'#FEE2E2', follicular:'#EDE9FE', ovulation:'#FEF9C3', luteal:'#FFF7ED' };
-const PHASE_TEXT = { menstrual:'#991B1B', follicular:'#5B21B6', ovulation:'#92400E', luteal:'#9A3412' };
+const PHASE_BG     = { menstrual:'#FEE2E2', follicular:'#EDE9FE', ovulation:'#FEF9C3', luteal:'#FFF7ED' };
+const PHASE_TEXT   = { menstrual:'#991B1B', follicular:'#5B21B6', ovulation:'#92400E', luteal:'#9A3412' };
+const PHASE_COLORS = { menstrual:'#86EFAC', follicular:'#C4B5FD', ovulation:'#FDE68A', luteal:'#FDC7A0' };
 
 function getPhaseForDate(dateStr, lastPeriodStr, cycleLen) {
   if (!lastPeriodStr) return null;
@@ -378,35 +379,44 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
         saveProfileExtended={saveProfileExtended}
       />
 
-      {/* ── HOY BANNER ── */}
-      <View style={[styles.card, { backgroundColor: isHormonalContra ? '#6B7280' : (d?.color || BLUE.primary) }]}>
+      {/* ── HOY BANNER — píldora compacta ── */}
+      <ImageBackground
+        source={isHormonalContra ? null : (PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual)}
+        style={styles.todayPill}
+        imageStyle={{ borderRadius: 20 }}
+      >
+        <View style={styles.todayPillOverlay} />
         <View style={styles.todayRow}>
           <View style={styles.todayBlock}>
-            <Text style={styles.todayLabel}>{cy.cycleDay}</Text>
+            <Text style={styles.todayLabel}>{tr('día', 'day', 'jour', 'giorno')}</Text>
             <Text style={styles.todayDay}>{pi?.day ?? '—'}</Text>
           </View>
           <View style={styles.todayPhase}>
             {isHormonalContra ? (
               <>
-                <Text style={{ fontSize: 34 }}>💊</Text>
-                <Text style={styles.todayPhaseName}>{tr('Ciclo con AC', 'Cycle on BC', 'Cycle sous CO', 'Ciclo con AC')}</Text>
-                <Text style={[styles.todayTagline, { opacity: 0.8 }]}>{tr('Fases no aplican', 'Phases don\'t apply', 'Phases non applicables', 'Fasi non applicable')}</Text>
+                <Text style={styles.todayTagline}>{tr('Ciclo con AC', 'Cycle on BC', 'Cycle sous CO', 'Ciclo con AC')}</Text>
+                <Text style={styles.todayPhaseName}>{tr('Anticoncepción', 'Contraception', 'Contraception', 'Anticoncezionale')}</Text>
               </>
             ) : (
               <>
-                <Text style={{ fontSize: 34 }}>{d?.emoji}</Text>
-                <Text style={styles.todayPhaseName}>{d?.name}</Text>
                 <Text style={styles.todayTagline}>{d?.tagline}</Text>
+                <Text style={styles.todayPhaseName}>{d?.name}</Text>
               </>
             )}
           </View>
           <View style={styles.todayBlock}>
-            <Text style={styles.todayLabel}>{cy.remaining}</Text>
+            <Text style={styles.todayLabel}>
+              {isHormonalContra ? '' : (() => {
+                const nextPhaseKey = pi?.phase === 'menstrual' ? 'follicular' : pi?.phase === 'follicular' ? 'ovulation' : pi?.phase === 'ovulation' ? 'luteal' : 'menstrual';
+                const nextPh = getPhaseDisplay(lang, nextPhaseKey, PHASES[nextPhaseKey]);
+                return `${nextPh.name} ${tr('en', 'in', 'dans', 'tra')}`;
+              })()}
+            </Text>
             <Text style={styles.todayDay}>{pi?.daysLeft ?? '—'}</Text>
-            <Text style={styles.todayLabel}>{cy.days}</Text>
+            <Text style={styles.todayLabel}>{tr('días', 'days', 'jours', 'giorni')}</Text>
           </View>
         </View>
-      </View>
+      </ImageBackground>
 
       {/* ── WHEEL VIEW ── */}
       {view === 'wheel' && (
@@ -537,17 +547,13 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
                   ]}
                 >
                   {phase && !isMarked && (
-                    <Image
-                      source={PHASE_IMAGES[phase]}
-                      style={[styles.calCellImg, isFuture && { opacity: 0.4 }]}
-                      resizeMode="cover"
-                    />
+                    <View style={[styles.calCellDot, { backgroundColor: PHASE_COLORS[phase], opacity: isFuture ? 0.35 : 1 }]} />
                   )}
                   {isMarked && <View style={styles.calCellMark} />}
                   <Text style={[
                     styles.calDayNum,
-                    phase && { color: PHASE_TEXT[phase] },
-                    isMarked && { color: 'white', fontWeight: '700' },
+                    phase && { color: isMarked ? 'white' : PHASE_TEXT[phase] },
+                    isMarked && { fontWeight: '700' },
                     isToday && styles.calDayNumToday,
                     isSelected && styles.calDayNumSelected,
                   ]}>{dayNum}</Text>
@@ -656,45 +662,30 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
         </TouchableOpacity>
       </View>
 
-      {/* ── Información de las fases — carrusel con imágenes reales ── */}
+      {/* ── Información de las fases — grid 2 columnas ── */}
       {!isHormonalContra && (
-        <View style={styles.phaseInfoCard}>
+        <View style={{ marginBottom: 12 }}>
           <Text style={styles.phaseInfoTitle}>{tr('Información de las fases', 'Phase information', 'Infos sur les phases', 'Informazioni sulle fasi')}</Text>
-          <ScrollView
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ gap: 12 }}
-            decelerationRate="fast"
-            snapToInterval={SCREEN_W - 44}
-          >
+          <View style={styles.phaseGrid}>
             {Object.entries(PHASES).map(([key, ph]) => {
               const phTr = getPhaseDisplay(lang, key, ph);
-              const info = phaseInfo[key];
               const isActive = key === pi?.phase;
               return (
-                <View key={key} style={styles.phaseCarouselItem}>
-                  <Image source={PHASE_IMAGES[key]} style={styles.phaseCarouselImg} resizeMode="cover" />
-                  <View style={styles.phaseCarouselOverlay}>
+                <View key={key} style={styles.phaseGridItem}>
+                  <View style={styles.phaseGridImgWrap}>
+                    <Image source={PHASE_IMAGES[key]} style={styles.phaseGridImg} resizeMode="cover" />
                     {isActive && (
-                      <View style={styles.phaseCarouselActiveBadge}>
-                        <Text style={styles.phaseCarouselActiveTxt}>{cy.todayBadge}</Text>
+                      <View style={styles.phaseGridActiveBadge}>
+                        <Text style={styles.phaseGridActiveTxt}>{cy.todayBadge}</Text>
                       </View>
                     )}
-                    <Text style={styles.phaseCarouselName}>{phTr.name}</Text>
-                    <Text style={styles.phaseCarouselDays}>{pDays[key]}</Text>
-                    <Text style={styles.phaseCarouselDesc} numberOfLines={3}>{phTr.desc}</Text>
-                    {info?.tips?.slice(0, 2).map((tip, i) => (
-                      <View key={i} style={{ flexDirection: 'row', gap: 6, marginTop: 4 }}>
-                        <Text style={{ color: 'rgba(255,255,255,0.7)', fontSize: 11 }}>·</Text>
-                        <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 11, flex: 1, lineHeight: 16 }}>{tip}</Text>
-                      </View>
-                    ))}
                   </View>
+                  <Text style={styles.phaseGridName}>{phTr.name}</Text>
+                  <Text style={styles.phaseGridDays}>{pDays[key]}</Text>
                 </View>
               );
             })}
-          </ScrollView>
+          </View>
         </View>
       )}
 
@@ -726,14 +717,16 @@ const styles = StyleSheet.create({
   content: { padding:14, paddingTop:60, paddingBottom:30 },
   card: { backgroundColor:'white', borderRadius:18, padding:16, marginBottom:12, shadowColor:'#000', shadowOffset:{ width:0, height:2 }, shadowOpacity:0.06, shadowRadius:8, elevation:2 },
 
-  // Banner
-  todayRow: { flexDirection:'row', justifyContent:'space-between', alignItems:'center' },
-  todayBlock: { alignItems:'center' },
-  todayLabel: { fontSize:10, fontWeight:'700', color:'rgba(255,255,255,0.7)', letterSpacing:0.8 },
-  todayDay: { fontSize:32, fontWeight:'800', color:'white', fontFamily: F.headingX },
-  todayPhase: { alignItems:'center' },
-  todayPhaseName: { fontSize:15, fontWeight:'700', color:'white', marginTop:2 },
-  todayTagline: { fontSize:10, color:'rgba(255,255,255,0.8)', marginTop:2, textAlign:'center' },
+  // Banner — píldora compacta
+  todayPill: { borderRadius:20, overflow:'hidden', marginBottom:12 },
+  todayPillOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor:'rgba(0,0,0,0.42)', borderRadius:20 },
+  todayRow: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', padding:16, paddingVertical:14 },
+  todayBlock: { alignItems:'center', minWidth:60 },
+  todayLabel: { fontSize:10, fontWeight:'600', color:'rgba(255,255,255,0.7)', letterSpacing:0.5, textAlign:'center' },
+  todayDay: { fontSize:28, fontWeight:'800', color:'white', fontFamily: F.headingX, lineHeight:32 },
+  todayPhase: { alignItems:'center', flex:1 },
+  todayPhaseName: { fontSize:16, fontWeight:'800', color:'white', textAlign:'center', fontFamily: F.headingX },
+  todayTagline: { fontSize:11, color:'rgba(255,255,255,0.75)', textAlign:'center', marginBottom:2 },
 
   // Card header
   cardHeader: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginBottom:12 },
@@ -759,7 +752,7 @@ const styles = StyleSheet.create({
   calHeaderText: { flex:1, textAlign:'center', fontSize:12, fontWeight:'700', color:'#94A3B8' },
   calGrid: { flexDirection:'row', flexWrap:'wrap' },
   calCell: { width:'14.28%', aspectRatio:1, justifyContent:'center', alignItems:'center', borderRadius:6, overflow:'hidden' },
-  calCellImg: { position:'absolute', width:'100%', height:'100%', opacity:0.75 },
+  calCellDot: { position:'absolute', width:'78%', height:'78%', borderRadius:10 },
   calCellMark: { position:'absolute', width:'100%', height:'100%', backgroundColor:'#EF4444' },
   calCellToday: { borderWidth:2, borderColor:'#171717' },
   calDayNum: { fontSize:12, fontWeight:'600', color:'#334155', zIndex:1 },
@@ -807,16 +800,15 @@ const styles = StyleSheet.create({
   noDataText: { fontSize:12, color:'#94A3B8', textAlign:'center', marginTop:8 },
 
   // Información de las fases — carrusel con imágenes
-  phaseInfoCard: { backgroundColor:'#0A0A0A', borderRadius:24, padding:16, paddingBottom:20, marginBottom:12 },
-  phaseInfoTitle: { fontSize:20, fontWeight:'800', color:'#FFFFFF', marginBottom:16, fontFamily: F.headingX },
-  phaseCarouselItem: { width: SCREEN_W - 44, borderRadius:20, overflow:'hidden', height:320 },
-  phaseCarouselImg: { width:'100%', height:'100%', position:'absolute' },
-  phaseCarouselOverlay: { flex:1, backgroundColor:'rgba(0,0,0,0.45)', padding:20, justifyContent:'flex-end' },
-  phaseCarouselActiveBadge: { position:'absolute', top:16, right:16, backgroundColor:'white', borderRadius:20, paddingHorizontal:10, paddingVertical:4 },
-  phaseCarouselActiveTxt: { fontSize:10, fontWeight:'700', color:'#0A0A0A' },
-  phaseCarouselName: { fontSize:26, fontWeight:'800', color:'white', fontFamily: F.headingX, marginBottom:4 },
-  phaseCarouselDays: { fontSize:13, color:'rgba(255,255,255,0.7)', marginBottom:10 },
-  phaseCarouselDesc: { fontSize:13, color:'rgba(255,255,255,0.85)', lineHeight:20 },
+  phaseInfoTitle: { fontSize:18, fontWeight:'800', color:'#0A0A0A', marginBottom:12, fontFamily: F.headingX },
+  phaseGrid: { flexDirection:'row', flexWrap:'wrap', gap:10 },
+  phaseGridItem: { width:'48%', backgroundColor:'white', borderRadius:18, overflow:'hidden', shadowColor:'#000', shadowOffset:{width:0,height:2}, shadowOpacity:0.07, shadowRadius:8, elevation:2 },
+  phaseGridImgWrap: { width:'100%', height:130, borderRadius:14, overflow:'hidden', position:'relative' },
+  phaseGridImg: { width:'100%', height:'100%' },
+  phaseGridActiveBadge: { position:'absolute', top:8, right:8, backgroundColor:'rgba(0,0,0,0.65)', borderRadius:20, paddingHorizontal:8, paddingVertical:3 },
+  phaseGridActiveTxt: { fontSize:9, fontWeight:'700', color:'white' },
+  phaseGridName: { fontSize:14, fontWeight:'800', color:'#0A0A0A', marginTop:10, marginHorizontal:12, fontFamily: F.heading },
+  phaseGridDays: { fontSize:11, color:'#737373', marginBottom:12, marginHorizontal:12 },
 
 
   // Edit
