@@ -630,9 +630,9 @@ export default function GimnasioScreen({
             </TouchableOpacity>
           )}
 
-          {/* Actividad extra */}
-          <View style={styles.card}>
-            <Text style={styles.sectionTitle}>{g.addExtra}</Text>
+          {/* Actividad extra — tarjeta verde Figma */}
+          <View style={styles.addExtraCard}>
+            <Text style={styles.addExtraTitle}>{g.addExtra}</Text>
             {todayLog?.extraSport ? (
               <View style={styles.extraRow}>
                 <Text style={styles.extraText}>🏅 {todayLog.extraSport}{todayLog.extraMinutes ? ` · ${todayLog.extraMinutes} min` : ''}</Text>
@@ -647,8 +647,8 @@ export default function GimnasioScreen({
                   setAddingSport(false);
                 }} />
             ) : (
-              <TouchableOpacity style={styles.dashedBtn} onPress={() => setAddingSport(true)}>
-                <Text style={styles.dashedBtnText}>{g.addActivity}</Text>
+              <TouchableOpacity style={styles.addExtraBtn} onPress={() => setAddingSport(true)}>
+                <Text style={styles.addExtraBtnTxt}>{g.addActivity}</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -683,17 +683,41 @@ export default function GimnasioScreen({
           </View>
         </>}
 
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>{g.myProgram}</Text>
-          {g.programRows.map((row, i) => (
-            <View key={i} style={styles.progRow}>
-              <Text style={{ fontSize: 22, flexShrink: 0 }}>{row.ico}</Text>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.progLabel}>{row.label}</Text>
-                <Text style={styles.progDetail}>{row.detail}</Text>
-              </View>
-            </View>
-          ))}
+        {/* Tu plan de ejercicios — Figma */}
+        <View style={styles.planExercCard}>
+          <View style={styles.planExercHeader}>
+            <Text style={styles.planExercHeaderTxt}>{g.myProgram}</Text>
+            <ChevronRight size={16} color="#0A0A0A" />
+          </View>
+          {progState && (
+            <>
+              <Text style={styles.planExercTitle}>{progState.program?.name?.[lang] || progState.program?.name?.es || progState.program?.id || ''}</Text>
+              {progState.program?.description && (
+                <Text style={styles.planExercDesc} numberOfLines={2}>{progState.program.description[lang] || progState.program.description.es}</Text>
+              )}
+            </>
+          )}
+          <View style={styles.planExercDays}>
+            {g.programRows.map((row, i) => {
+              const letter = i === 0 ? 'A' : i === 1 ? 'B' : 'C';
+              return (
+                <View key={i} style={styles.planExercRow}>
+                  <View style={styles.planExercAvatar}>
+                    <Text style={styles.planExercAvatarTxt}>{letter}</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.planExercLabel}>{row.label}</Text>
+                    <Text style={styles.planExercDetail}>{row.detail}</Text>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+          <TouchableOpacity style={styles.planExercEditBtn}>
+            <Text style={styles.planExercEditTxt}>
+              {lang === 'en' ? 'Edit plan' : lang === 'fr' ? 'Modifier le plan' : 'Editar plan'}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         <TipsCard articles={gymArticles} lang={lang} variant="azote" />
@@ -1217,6 +1241,27 @@ const styles = StyleSheet.create({
   progRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: 'rgba(26,86,219,0.08)' },
   progLabel: { fontSize: 13, fontWeight: '600', color: '#1E293B' },
   progDetail: { fontSize: 12, color: '#475569', marginTop: 1 },
+
+  // Tu plan de ejercicios — Figma blue card
+  planExercCard:      { backgroundColor: '#EFF6FF', borderRadius: 24, padding: 20, marginBottom: 2 },
+  planExercHeader:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  planExercHeaderTxt: { fontSize: 12, fontFamily: F.bodyB, color: '#1A56DB', textTransform: 'uppercase', letterSpacing: 0.5 },
+  planExercTitle:     { fontSize: 20, fontFamily: F.headingX, color: '#0A0A0A', marginBottom: 6, lineHeight: 24 },
+  planExercDesc:      { fontSize: 13, color: '#475569', marginBottom: 14, lineHeight: 18 },
+  planExercDays:      { gap: 2, marginBottom: 16 },
+  planExercRow:       { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: 'white', borderRadius: 16, padding: 12 },
+  planExercAvatar:    { width: 40, height: 40, borderRadius: 12, backgroundColor: '#1A56DB', alignItems: 'center', justifyContent: 'center' },
+  planExercAvatarTxt: { fontSize: 16, fontFamily: F.headingX, color: '#FFFFFF' },
+  planExercLabel:     { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A' },
+  planExercDetail:    { fontSize: 12, color: '#525252', marginTop: 1 },
+  planExercEditBtn:   { backgroundColor: '#0A0A0A', borderRadius: 14, height: 48, alignItems: 'center', justifyContent: 'center' },
+  planExercEditTxt:   { fontSize: 15, fontFamily: F.bodyB, color: '#FFFFFF' },
+
+  // Añadir deporte extra — tarjeta verde
+  addExtraCard:   { backgroundColor: '#22C55E', borderRadius: 24, padding: 20, marginBottom: 2 },
+  addExtraTitle:  { fontSize: 18, fontFamily: F.heading, color: '#FFFFFF', marginBottom: 12 },
+  addExtraBtn:    { backgroundColor: '#0A0A0A', borderRadius: 14, height: 48, alignItems: 'center', justifyContent: 'center' },
+  addExtraBtnTxt: { fontSize: 15, fontFamily: F.bodyB, color: '#FFFFFF' },
   weekDetail: { marginTop: -4, marginBottom: 6, backgroundColor: '#F8FBFF', borderWidth: 1.5, borderTopWidth: 0, borderColor: '#1A56DB', borderBottomLeftRadius: 12, borderBottomRightRadius: 12, padding: 12, gap: 6 },
   weekExRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 5, borderBottomWidth: 1, borderBottomColor: '#EFF6FF' },
   weekExNum: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#EFF6FF', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },

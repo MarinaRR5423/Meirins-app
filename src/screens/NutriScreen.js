@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Share, Modal, TextInput } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { F } from '../theme/fonts';
 import { Check, X, ChevronRight, ChevronLeft, RefreshCcw, Heart } from 'lucide-react-native';
 import SwipeableTabs from '../components/SwipeableTabs';
@@ -158,6 +159,7 @@ const mc = StyleSheet.create({
 
 export default function NutriScreen({ pi, program, lang = 'es', goal, activityLevel, dietary, profileExtended, saveAll, saveProfileExtended, age, weight, height, trainDays, toggleFavoriteRecipe, skipRecipe, logRecipeDone }) {
   useEffect(() => { trackScreen('Nutrición', { phase: pi?.phase, goal }); }, []);
+  const navigation = useNavigation();
   const [sub, setSub] = useState('plan');
   const [weekOffset, setWeekOffset] = useState(0);
   const [checkedItems, setCheckedItems] = useState({});
@@ -221,7 +223,6 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
   const { getDiet } = useDiets(lang);
   const currentDietId = normalizeDietId(profileExtended?.diet || '');
   const dietData      = currentDietId ? getDiet(currentDietId) : null;
-  const [dietOpen, setDietOpen] = useState(false);
 
   // ── Contexto nutricional del día (fase + dieta + condiciones) ────────────────
   const nutritionCtx = getDayNutritionContext(
@@ -660,21 +661,72 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
           );
         })()}
 
-        {/* Tu plan nutricional — solo visible con batch cooking activo */}
-        {profileExtended?.batchCooking && (() => {
+        {/* ── TU PLAN NUTRICIONAL — Figma ── */}
+        {(() => {
           const dtl = getDayTypeLabels(lang);
+          const planTitle = lang === 'en' ? 'Your nutrition plan' : lang === 'fr' ? 'Ton plan nutritionnel' : 'Tu plan nutricional';
+          const editLabel = lang === 'en' ? 'Edit plan' : lang === 'fr' ? 'Modifier le plan' : 'Editar plan';
+          const PHASE_PILLS = [
+            { label: lang === 'en' ? 'MENSTRUAL' : 'MENSTRUAL',   bg: '#86EFAC', color: '#14532D' },
+            { label: lang === 'en' ? 'FOLLICULAR' : 'FOLICULAR',  bg: '#C4B5FD', color: '#4C1D95' },
+            { label: lang === 'en' ? 'OVULATION' : 'OVULACIÓN',   bg: '#FDE68A', color: '#78350F' },
+            { label: lang === 'en' ? 'LUTEAL' : 'LÚTEA',          bg: '#FDC7A0', color: '#7C2D12' },
+          ];
           return (
-            <View style={styles.nutriPlanCard}>
-              <Text style={styles.sectionTitle}>{n.dayTypes}</Text>
-              {['A', 'B', 'free'].map(key => (
-                <View key={key} style={styles.nutriPlanRow}>
-                  <View style={styles.nutriPlanAvatar}><Text style={styles.nutriPlanAvatarTxt}>{key === 'free' ? '🌿' : key}</Text></View>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.nutriPlanLabel}>{dtl[key].label}</Text>
-                    <Text style={styles.nutriPlanTag}>{dtl[key].tag}</Text>
+            <View style={styles.planNutriCard}>
+              <View style={styles.planNutriHeader}>
+                <Text style={styles.planNutriHeaderTxt}>{planTitle}</Text>
+                <ChevronRight size={16} color="#0A0A0A" />
+              </View>
+
+              {dietData ? (
+                <>
+                  <Text style={styles.planNutriTitle}>{dietData.name[lang] || dietData.name.es}</Text>
+                  {dietData.macros && (
+                    <View style={styles.planNutriMacros}>
+                      {[
+                        { k: lang === 'en' ? 'PROTEIN' : 'PROTEÍNAS', v: dietData.macros.protein_pct },
+                        { k: lang === 'en' ? 'CARBS'   : 'CARBOS',    v: dietData.macros.carbs_pct },
+                        { k: lang === 'en' ? 'FAT'     : 'GRASAS',    v: dietData.macros.fat_pct },
+                      ].map(m => (
+                        <View key={m.k} style={styles.planNutriMacroPill}>
+                          <Text style={styles.planNutriMacroPillTxt}>{m.k} {m.v}%</Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+                </>
+              ) : (
+                <Text style={styles.planNutriTitle}>
+                  {lang === 'en' ? 'Configure your plan' : lang === 'fr' ? 'Configure ton plan' : 'Configura tu plan'}
+                </Text>
+              )}
+
+              <View style={styles.planNutriPills}>
+                {PHASE_PILLS.map(p => (
+                  <View key={p.label} style={[styles.planNutriPill, { backgroundColor: p.bg }]}>
+                    <Text style={[styles.planNutriPillTxt, { color: p.color }]}>{p.label}</Text>
                   </View>
-                </View>
-              ))}
+                ))}
+              </View>
+
+              <View style={styles.planNutriDays}>
+                {['A', 'B', 'free'].map(key => (
+                  <View key={key} style={styles.planNutriDayRow}>
+                    <View style={styles.planNutriAvatar}>
+                      <Text style={styles.planNutriAvatarTxt}>{key === 'free' ? 'C' : key}</Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.planNutriDayLabel}>{dtl[key].label}</Text>
+                      <Text style={styles.planNutriDayTag}>{dtl[key].tag}</Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
+
+              <TouchableOpacity style={styles.planNutriEditBtn} onPress={() => navigation.navigate('Perfil')}>
+                <Text style={styles.planNutriEditTxt}>{editLabel}</Text>
+              </TouchableOpacity>
             </View>
           );
         })()}
@@ -773,66 +825,6 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
         ))}
       </>}
 
-      {/* ── TARJETA DE DIETA ACTIVA (info de la dieta, antes de los consejos) ── */}
-      {dietData && (
-        <View style={styles.dietCard}>
-          <TouchableOpacity style={styles.dietHeader} onPress={() => setDietOpen(v => !v)} activeOpacity={0.8}>
-            <Text style={styles.dietIcon}>{dietData.icon}</Text>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.dietName}>{dietData.name[lang] || dietData.name.es}</Text>
-              {dietData.macros && (
-                <Text style={styles.dietMacros}>
-                  🌾 {dietData.macros.carbs_pct}% · 🥩 {dietData.macros.protein_pct}% · 🫒 {dietData.macros.fat_pct}%
-                </Text>
-              )}
-            </View>
-            <Text style={styles.dietArrow}>{dietOpen ? '▲' : '▼'}</Text>
-          </TouchableOpacity>
-
-          {dietOpen && (() => {
-            const allowed   = dietData.allowed_foods?.[lang]   || dietData.allowed_foods?.es   || [];
-            const forbidden = dietData.forbidden_foods?.[lang] || dietData.forbidden_foods?.es || [];
-            const benefits  = dietData.benefits?.[lang]        || dietData.benefits?.es        || [];
-            const warnings  = dietData.warnings?.[lang]        || dietData.warnings?.es        || [];
-            return (
-              <View style={styles.dietBody}>
-                {allowed.length > 0 && (
-                  <View style={styles.dietSection}>
-                    <Text style={styles.dietSectionLabel}>
-                      ✅ {lang === 'en' ? 'EAT FREELY' : lang === 'fr' ? 'À MANGER LIBREMENT' : 'COMER LIBREMENTE'}
-                    </Text>
-                    {allowed.slice(0, 6).map((f, i) => <Text key={i} style={styles.dietItem}>· {f}</Text>)}
-                  </View>
-                )}
-                {forbidden.length > 0 && (
-                  <View style={styles.dietSection}>
-                    <Text style={[styles.dietSectionLabel, { color: '#EF4444' }]}>
-                      ❌ {lang === 'en' ? 'AVOID' : lang === 'fr' ? 'ÉVITER' : 'EVITAR'}
-                    </Text>
-                    {forbidden.slice(0, 4).map((f, i) => <Text key={i} style={[styles.dietItem, { color: '#EF4444' }]}>· {f}</Text>)}
-                  </View>
-                )}
-                {benefits.length > 0 && (
-                  <View style={styles.dietSection}>
-                    <Text style={[styles.dietSectionLabel, { color: '#059669' }]}>
-                      💡 {lang === 'en' ? 'KEY BENEFITS' : lang === 'fr' ? 'BÉNÉFICES CLÉS' : 'BENEFICIOS CLAVE'}
-                    </Text>
-                    {benefits.slice(0, 3).map((b, i) => <Text key={i} style={[styles.dietItem, { color: '#065F46' }]}>· {b}</Text>)}
-                  </View>
-                )}
-                {warnings.length > 0 && (
-                  <View style={[styles.dietSection, { backgroundColor: '#FEF3C7', borderRadius: 10, padding: 8 }]}>
-                    <Text style={[styles.dietSectionLabel, { color: '#92400E' }]}>
-                      ⚠️ {lang === 'en' ? 'KEEP IN MIND' : lang === 'fr' ? 'À GARDER EN TÊTE' : 'TEN EN CUENTA'}
-                    </Text>
-                    {warnings.slice(0, 2).map((w, i) => <Text key={i} style={[styles.dietItem, { color: '#92400E' }]}>· {w}</Text>)}
-                  </View>
-                )}
-              </View>
-            );
-          })()}
-        </View>
-      )}
 
       {/* ── FAVORITOS ── */}
       {sub === 'favoritos' && (() => {
@@ -916,19 +908,19 @@ const styles = StyleSheet.create({
 
   // Tarjeta naranja kcal + foco
   orangeHeroCard:    { backgroundColor: '#FE6004', borderRadius: 24, padding: 20, marginBottom: 12 },
-  orangeHeroLabel:   { fontSize: 12, fontWeight: '600', color: 'rgba(255,255,255,0.75)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.5 },
+  orangeHeroLabel:   { fontSize: 12, fontFamily: F.bodyB, color: 'rgba(255,255,255,0.75)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.5 },
   orangeHeroKcal:    { fontSize: 40, fontWeight: '800', color: '#FFFFFF', lineHeight: 44, marginBottom: 12, fontFamily: F.headingX },
   orangeHeroPills:   { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 12 },
   orangeHeroPill:    { backgroundColor: 'rgba(255,255,255,0.22)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
-  orangeHeroPillTxt: { fontSize: 11, color: '#FFFFFF', fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.3 },
+  orangeHeroPillTxt: { fontSize: 11, fontFamily: F.bodyB, color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: 0.3 },
   orangeHeroTip:     { fontSize: 13, color: 'rgba(255,255,255,0.88)', lineHeight: 19, marginBottom: 6 },
 
   // Lista de la compra
   listNavRow:       { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 },
   listNavBtn:       { padding: 6 },
-  listNavLabel:     { flex: 1, fontSize: 14, fontWeight: '700', color: '#0A0A0A', textAlign: 'center' },
+  listNavLabel:     { flex: 1, fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A', textAlign: 'center' },
   listShareBtn:     { backgroundColor: '#0A0A0A', paddingHorizontal: 12, paddingVertical: 7, borderRadius: 20 },
-  listShareTxt:     { fontSize: 12, fontWeight: '700', color: 'white' },
+  listShareTxt:     { fontSize: 12, fontFamily: F.bodyB, color: 'white' },
   listPersonRow:    { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#F5F5F5', borderRadius: 20, padding: 14, marginBottom: 12 },
   listPersonBox:    { flex: 1 },
   listPersonLabel:  { fontSize: 11, color: '#737373', marginBottom: 6 },
@@ -942,21 +934,10 @@ const styles = StyleSheet.create({
   listCountBadgeTxt: { fontSize: 20, fontWeight: '800', color: '#0A0A0A', fontFamily: F.headingX },
   listCountBadgeSub: { fontSize: 10, color: '#737373' },
   listCatCard:      { backgroundColor: 'white', borderRadius: 20, padding: 16, marginBottom: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 2 },
-  listCatTitle:     { fontSize: 13, fontWeight: '700', color: '#0A0A0A', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.4 },
+  listCatTitle:     { fontSize: 13, fontFamily: F.bodyB, color: '#0A0A0A', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.4 },
   checkboxChecked:  { backgroundColor: '#0A0A0A', borderColor: '#0A0A0A' },
   shopNameChecked:  { textDecorationLine: 'line-through', color: '#94A3B8' },
 
-  // Diet info card
-  dietCard:         { backgroundColor: 'white', borderRadius: 16, marginBottom: 12, overflow: 'hidden', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 2 },
-  dietHeader:       { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14 },
-  dietIcon:         { fontSize: 26 },
-  dietName:         { fontSize: 14, fontWeight: '700', color: '#1E293B' },
-  dietMacros:       { fontSize: 11, color: '#94A3B8', marginTop: 2 },
-  dietArrow:        { fontSize: 11, color: '#94A3B8' },
-  dietBody:         { paddingHorizontal: 14, paddingBottom: 14, borderTopWidth: 1, borderTopColor: '#F1F5F9' },
-  dietSection:      { marginTop: 10 },
-  dietSectionLabel: { fontSize: 10, fontWeight: '700', color: '#94A3B8', letterSpacing: 0.8, marginBottom: 5 },
-  dietItem:         { fontSize: 13, color: '#475569', lineHeight: 20 },
   card: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2 },
   back: { fontSize: 14, color: '#0A0A0A', fontWeight: '600', marginBottom: 16 },
   recipeTag: { fontSize: 11, color: '#0A0A0A', fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 },
@@ -1007,13 +988,25 @@ const styles = StyleSheet.create({
   recipeBtn: { marginTop: 12, padding: 10, borderRadius: 12, borderWidth: 1.5, borderColor: '#1A56DB', backgroundColor: '#EFF6FF', alignItems: 'center' },
   recipeBtnText: { color: '#1A56DB', fontWeight: '600', fontSize: 13 },
 
-  // Tu plan nutricional — variante "marrón claro" (Figma)
-  nutriPlanCard: { backgroundColor: '#E8D5B9', borderRadius: 24, padding: 16, marginBottom: 2 },
-  nutriPlanRow: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#F5EBDA', borderRadius: 16, padding: 8, marginBottom: 2 },
-  nutriPlanAvatar: { width: 48, height: 48, borderRadius: 16, backgroundColor: '#D6C1A8', alignItems: 'center', justifyContent: 'center' },
-  nutriPlanAvatarTxt: { fontSize: 20, fontWeight: '800', color: '#3D2B1F' },
-  nutriPlanLabel: { fontSize: 16, fontWeight: '700', color: '#3D2B1F' },
-  nutriPlanTag: { fontSize: 13, color: '#6B4F3A', marginTop: 1 },
+  // Tu plan nutricional — Figma orange card
+  planNutriCard:      { backgroundColor: '#FE6004', borderRadius: 24, padding: 20, marginBottom: 2 },
+  planNutriHeader:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  planNutriHeaderTxt: { fontSize: 12, fontFamily: F.bodyB, color: 'rgba(255,255,255,0.8)', textTransform: 'uppercase', letterSpacing: 0.5 },
+  planNutriTitle:     { fontSize: 22, fontFamily: F.headingX, color: '#FFFFFF', marginBottom: 10, lineHeight: 26 },
+  planNutriMacros:    { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 12 },
+  planNutriMacroPill: { backgroundColor: 'rgba(0,0,0,0.2)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
+  planNutriMacroPillTxt: { fontSize: 10, fontFamily: F.bodyB, color: '#FFFFFF', textTransform: 'uppercase', letterSpacing: 0.3 },
+  planNutriPills:     { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 16 },
+  planNutriPill:      { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
+  planNutriPillTxt:   { fontSize: 10, fontFamily: F.bodyB, textTransform: 'uppercase', letterSpacing: 0.3 },
+  planNutriDays:      { gap: 2, marginBottom: 16 },
+  planNutriDayRow:    { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 16, padding: 12 },
+  planNutriAvatar:    { width: 40, height: 40, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center' },
+  planNutriAvatarTxt: { fontSize: 16, fontFamily: F.headingX, color: '#FFFFFF' },
+  planNutriDayLabel:  { fontSize: 14, fontFamily: F.bodyB, color: '#FFFFFF' },
+  planNutriDayTag:    { fontSize: 12, color: 'rgba(255,255,255,0.75)', marginTop: 1 },
+  planNutriEditBtn:   { backgroundColor: '#0A0A0A', borderRadius: 14, height: 48, alignItems: 'center', justifyContent: 'center' },
+  planNutriEditTxt:   { fontSize: 15, fontFamily: F.bodyB, color: '#FFFFFF' },
   dayTypeRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10, borderRadius: 12, marginBottom: 6 },
   dayTypeLabel: { fontSize: 13, fontWeight: '700' },
   dayTypeTag: { fontSize: 12 },

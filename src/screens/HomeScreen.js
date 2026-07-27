@@ -485,12 +485,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5', borderRadius: 24, padding: 8,
   },
   avatarCircle: { width: 40, height: 40, borderRadius: 16, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center' },
-  avatarInitialTxt: { color: 'white', fontWeight: '800', fontSize: 16 },
+  avatarInitialTxt: { color: 'white', fontFamily: F.headingX, fontSize: 16 },
   greetingHi: { fontSize: 14, color: '#0A0A0A' },
   greetingName: { fontSize: 18, fontWeight: '800', color: '#0A0A0A', fontFamily: F.headingX },
   customizeBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#F5F5F5', alignItems: 'center', justifyContent: 'center', marginLeft: 10 },
   doneBadge: { backgroundColor: '#171717', borderRadius: 20, paddingHorizontal: 14, paddingVertical: 10, marginLeft: 10 },
-  doneBadgeTxt: { color: 'white', fontSize: 13, fontWeight: '700' },
+  doneBadgeTxt: { color: 'white', fontSize: 13, fontFamily: F.bodyB },
 
   // Hero
   heroCard: { height: 200, borderRadius: 24, padding: 16, justifyContent: 'space-between', marginTop: 2, marginBottom: 2, overflow: 'hidden' },
@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
   heroHeadline: { fontSize: 26, fontWeight: '800', color: '#0A0A0A', lineHeight: 30, fontFamily: F.headingX },
   heroTags: { flexDirection: 'row', flexWrap: 'wrap', gap: 4 },
   heroTag: { backgroundColor: '#F5F5F5', height: 24, paddingHorizontal: 8, borderRadius: 8, justifyContent: 'center' },
-  heroTagTxt: { fontSize: 10, fontWeight: '600', color: '#0A0A0A', textTransform: 'uppercase', letterSpacing: 0.3 },
+  heroTagTxt: { fontSize: 10, fontFamily: F.bodyB, color: '#0A0A0A', textTransform: 'uppercase', letterSpacing: 0.3 },
 
   // 2-col mini cards
   row2col: { flexDirection: 'row', gap: 2, marginTop: 2, marginBottom: 2 },
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
   miniBigNum: { fontSize: 32, fontWeight: '800', lineHeight: 36, fontFamily: F.headingX },
   miniSub: { fontSize: 14, color: '#0A0A0A', marginTop: 2 },
   smallBtn: { backgroundColor: '#0A0A0A', height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginTop: 16 },
-  smallBtnTxt: { color: 'white', fontWeight: '600', fontSize: 14 },
+  smallBtnTxt: { color: 'white', fontFamily: F.bodyB, fontSize: 14 },
 
   // Meal card
   mealCard: { backgroundColor: '#FE6004', borderRadius: 24, padding: 16, marginTop: 2, marginBottom: 2 },
@@ -524,7 +524,7 @@ const styles = StyleSheet.create({
   mealTag: { backgroundColor: '#FFBF9B', height: 24, paddingHorizontal: 8, borderRadius: 8, justifyContent: 'center' },
   mealTagTxt: { fontSize: 10, fontWeight: '600', color: '#260E01', textTransform: 'uppercase', letterSpacing: 0.3 },
   mealBtn: { backgroundColor: '#0A0A0A', height: 48, borderRadius: 12, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8 },
-  mealBtnTxt: { color: '#FAFAFA', fontWeight: '700', fontSize: 18 },
+  mealBtnTxt: { color: '#FAFAFA', fontFamily: F.bodyB, fontSize: 18 },
   mealBtnDone: { backgroundColor: '#0A0A0A22' },
   mealBtnTxtDone: { color: '#49CF38' },
 
