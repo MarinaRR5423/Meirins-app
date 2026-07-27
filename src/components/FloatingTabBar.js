@@ -74,7 +74,12 @@ export default function FloatingTabBar({ state, descriptors, navigation, enabled
         <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setPickerOpen(false)}>
           <View style={[styles.sheet, { marginBottom: Math.max(insets.bottom, 16) + 90 }]}>
             <View style={styles.sheetHandle} />
-            <Text style={styles.sheetTitle}>{tr('addTitle')}</Text>
+            <View style={styles.sheetHeader}>
+              <Text style={styles.sheetTitle}>{tr('addTitle')}</Text>
+              <TouchableOpacity onPress={() => setPickerOpen(false)} style={styles.sheetCloseBtn}>
+                <Text style={styles.sheetCloseTxt}>✕</Text>
+              </TouchableOpacity>
+            </View>
 
             <View style={styles.actionList}>
               {[
@@ -140,7 +145,10 @@ const styles = StyleSheet.create({
   modalBackdrop:    { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'flex-end', alignItems: 'center' },
   sheet:            { width: '90%', backgroundColor: 'white', borderRadius: 24, padding: 20, paddingTop: 12 },
   sheetHandle:      { width: 36, height: 4, borderRadius: 2, backgroundColor: '#E5E5E5', alignSelf: 'center', marginBottom: 14 },
-  sheetTitle:       { fontSize: 16, fontFamily: F.headingX, color: '#0A0A0A', marginBottom: 4 },
+  sheetHeader:      { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
+  sheetTitle:       { fontSize: 16, fontFamily: F.headingX, color: '#0A0A0A' },
+  sheetCloseBtn:    { width: 28, height: 28, borderRadius: 14, backgroundColor: '#F5F5F5', alignItems: 'center', justifyContent: 'center' },
+  sheetCloseTxt:    { fontSize: 12, color: '#525252', lineHeight: 16 },
   actionList:       { gap: 0 },
   actionRow:        { flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 14 },
   actionRowBorder:  { borderBottomWidth: 1, borderBottomColor: '#F5F5F5' },

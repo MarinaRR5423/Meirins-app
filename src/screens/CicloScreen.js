@@ -735,7 +735,7 @@ const styles = StyleSheet.create({
   viewToggleBtnText: { fontSize:15 },
 
   // Registrar el día — tarjeta amarilla (Azote)
-  logDayCard: { backgroundColor:'#FECA04', borderRadius:24, padding:16, marginBottom:12 },
+  logDayCard: { backgroundColor:'#22C55E', borderRadius:24, padding:16, marginBottom:12 },
   logDayHeader: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginBottom:16 },
   logDayHeaderTxt: { fontSize:12, fontFamily: F.bodyB, color:'#261E01' },
   logDayTitle: { fontSize:26, color:'#261E01', lineHeight:30, marginBottom:8, fontFamily: F.headingX },

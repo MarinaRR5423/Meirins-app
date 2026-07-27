@@ -571,25 +571,38 @@ export default function PerfilScreen({ pi, profile, signOut }) {
           <Text style={styles.headerGoal}>{primaryGoals.map(g => goalMap[g] || g).join('  ·  ')}</Text>
         )}
         {pi && (
-          <Text style={styles.headerSub}>
-            {pi.data?.emoji} {p.profile.phase} {pi.data?.name} · {p.profile.day} {pi.day}
-          </Text>
+          <View style={[styles.phaseChip, { backgroundColor: pi.data?.color || '#E2E8F0' }]}>
+            <Text style={styles.phaseChipTxt}>
+              {pi.data?.emoji} {pi.data?.name?.toUpperCase()} · {p.profile.day?.toUpperCase()} {pi.day}/{pi.cycleLen}
+            </Text>
+          </View>
         )}
       </View>
 
       {/* ── DATOS PERSONALES ── */}
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>{p.profile.personalData}</Text>
+          <View style={styles.sectionPill}><Text style={styles.sectionPillTxt}>{p.profile.personalData}</Text></View>
           <TouchableOpacity onPress={() => setEditing(editing === 'personal' ? null : 'personal')}>
             <Text style={styles.editBtn}>{editing === 'personal' ? p.profile.close : p.profile.edit}</Text>
           </TouchableOpacity>
         </View>
         {editing !== 'personal' ? (
-          <View style={styles.infoGrid}>
-            <View style={styles.infoBox}><Text style={styles.infoVal}>{age || '—'}</Text><Text style={styles.infoLbl}>{p.profile.years}</Text></View>
-            <View style={styles.infoBox}><Text style={styles.infoVal}>{weight || '—'}</Text><Text style={styles.infoLbl}>{p.profile.kg}</Text></View>
-            <View style={styles.infoBox}><Text style={styles.infoVal}>{height || '—'}</Text><Text style={styles.infoLbl}>{p.profile.cm}</Text></View>
+          <View>
+            {[
+              { label: lang === 'fr' ? 'Âge' : lang === 'en' ? 'Age' : 'Edad', val: age, unit: p.profile.years },
+              { label: lang === 'fr' ? 'Poids' : lang === 'en' ? 'Weight' : 'Peso', val: weight, unit: p.profile.kg },
+              { label: lang === 'fr' ? 'Taille' : lang === 'en' ? 'Height' : 'Altura', val: height, unit: p.profile.cm },
+            ].map((f, i, arr) => (
+              <TouchableOpacity key={f.label} onPress={() => setEditing('personal')}
+                style={[styles.profileRow, i < arr.length - 1 && styles.profileRowBorder]}>
+                <Text style={styles.profileRowLabel}>{f.label}</Text>
+                <View style={styles.profileRowRight}>
+                  <Text style={styles.profileRowVal}>{f.val || '—'} <Text style={styles.profileRowUnit}>{f.unit}</Text></Text>
+                  <ChevronRight size={14} color="#94A3B8" />
+                </View>
+              </TouchableOpacity>
+            ))}
           </View>
         ) : (
           <View>
@@ -616,7 +629,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
       {/* ── ACTIVIDAD Y OBJETIVO ── */}
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>{p.profile.activityGoal}</Text>
+          <View style={styles.sectionPill}><Text style={styles.sectionPillTxt}>{p.profile.activityGoal}</Text></View>
           <TouchableOpacity onPress={() => setEditing(editing === 'goal' ? null : 'goal')}>
             <Text style={styles.editBtn}>{editing === 'goal' ? p.profile.close : p.profile.edit}</Text>
           </TouchableOpacity>
@@ -660,7 +673,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
       {/* ── PROGRAMA PERSONALIZADO (datos del onboarding) — editable ── */}
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>{p.profile.myProgram}</Text>
+          <View style={styles.sectionPill}><Text style={styles.sectionPillTxt}>{p.profile.myProgram}</Text></View>
           <TouchableOpacity onPress={() => setEditing(editing === 'program' ? null : 'program')}>
             <Text style={styles.editBtn}>{editing === 'program' ? p.profile.close : p.profile.edit}</Text>
           </TouchableOpacity>
@@ -949,7 +962,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
         return (
           <View style={styles.card}>
             <View style={styles.cardHeader}>
-              <Text style={styles.cardTitle}>{hTitle}</Text>
+              <View style={styles.sectionPill}><Text style={styles.sectionPillTxt}>{hTitle}</Text></View>
               <TouchableOpacity onPress={() => setEditing(editingHealth ? null : 'health')}>
                 <Text style={styles.editBtn}>{editingHealth ? p.profile.close : p.profile.edit}</Text>
               </TouchableOpacity>
@@ -1520,10 +1533,20 @@ const styles = StyleSheet.create({
   metaChip: { fontSize: 13, color: '#1A56DB', backgroundColor: '#EFF6FF', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 20, fontWeight: '500' },
   headerGoal: { fontSize: 13, color: '#475569', marginBottom: 4, textAlign: 'center' },
   headerSub: { fontSize: 12, color: '#94A3B8', marginTop: 4 },
+  phaseChip: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 20, marginTop: 6 },
+  phaseChipTxt: { fontSize: 10, fontFamily: F.bodyB, color: '#0A0A0A', letterSpacing: 0.5 },
 
   card: { backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
   cardTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#1E293B' },
+  sectionPill: { backgroundColor: '#F5F5F5', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
+  sectionPillTxt: { fontSize: 12, fontFamily: F.bodyB, color: '#525252' },
+  profileRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12 },
+  profileRowBorder: { borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
+  profileRowLabel: { fontSize: 14, color: '#334155' },
+  profileRowRight: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  profileRowVal: { fontSize: 14, color: '#1E293B', fontFamily: F.bodyB },
+  profileRowUnit: { fontSize: 12, color: '#94A3B8', fontFamily: F.body },
   editBtn: { fontSize: 13, color: '#1A56DB', fontFamily: F.bodyB },
 
   // Language picker
@@ -1602,8 +1625,8 @@ const styles = StyleSheet.create({
   signOutText: { fontSize: 15, color: '#FFFFFF', fontFamily: F.bodyB },
 
   // Delete account
-  deleteBtn:           { marginTop: 8, padding: 16, borderRadius: 14, backgroundColor: '#FEE2E2', alignItems: 'center' },
-  deleteBtnTxt:        { fontSize: 15, color: '#DC2626', fontFamily: F.bodyB },
+  deleteBtn:           { marginTop: 8, padding: 16, borderRadius: 14, backgroundColor: '#EF4444', alignItems: 'center' },
+  deleteBtnTxt:        { fontSize: 15, color: 'white', fontFamily: F.bodyB },
   deleteConfirmBox:    { marginTop: 8, padding: 16, borderRadius: 14, backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FECACA' },
   deleteConfirmTitle:  { fontSize: 15, fontFamily: F.bodyB, color: '#EF4444', marginBottom: 8, textAlign: 'center' },
   deleteConfirmBody:   { fontSize: 13, color: '#64748B', lineHeight: 20, textAlign: 'center', marginBottom: 16 },
