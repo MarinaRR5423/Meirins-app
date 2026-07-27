@@ -5,6 +5,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import T from '../i18n/translations';
+import { F } from '../theme/fonts';
 
 const QUALITY_MOONS  = ['🌑', '🌘', '🌗', '🌖', '🌕'];
 const QUALITY_COLORS = ['#94A3B8', '#F97316', '#F59E0B', '#3B82F6', '#7C3AED'];
@@ -179,7 +180,7 @@ const s = StyleSheet.create({
   avgText:    { fontSize: 11, color: BLUE.primary, fontWeight: '700' },
   hkBanner:   { flexDirection: 'row', backgroundColor: '#F8FAFF', borderRadius: 12, padding: 12, marginBottom: 12, gap: 8 },
   hkMetric:   { flex: 1, alignItems: 'center' },
-  hkValue:    { fontSize: 18, fontWeight: '800', color: '#1E293B' },
+  hkValue:    { fontSize: 18, fontWeight: '800', color: '#1E293B', fontFamily: F.headingX },
   hkLabel:    { fontSize: 10, color: '#94A3B8', marginTop: 2 },
   hkNote:     { fontSize: 11, color: '#94A3B8', marginBottom: 8, textAlign: 'center', fontStyle: 'italic' },
   row:        { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
@@ -187,7 +188,7 @@ const s = StyleSheet.create({
   hoursRow:   { flexDirection: 'row', alignItems: 'center', gap: 8 },
   hoursBtn:   { width: 32, height: 32, borderRadius: 16, backgroundColor: '#F0F4FA', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#E2E8F0' },
   hoursBtnText: { fontSize: 18, fontWeight: '700', color: BLUE.primary, lineHeight: 22 },
-  hoursValue: { fontSize: 20, fontWeight: '800', color: '#1E293B', minWidth: 50, textAlign: 'center' },
+  hoursValue: { fontSize: 20, fontWeight: '800', color: '#1E293B', minWidth: 50, textAlign: 'center', fontFamily: F.headingX },
   qualityRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
   qualityBtns: { flexDirection: 'row', gap: 6 },
   qualityBtn:  { width: 36, height: 36, borderRadius: 18, borderWidth: 1.5, borderColor: '#E2E8F0', justifyContent: 'center', alignItems: 'center' },

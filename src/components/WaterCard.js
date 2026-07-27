@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { F } from '../theme/fonts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GlassWater, ChevronRight } from 'lucide-react-native';
 import T from '../i18n/translations';
@@ -71,7 +72,7 @@ const s = StyleSheet.create({
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
   headerLabel: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   headerLabelTxt: { fontSize: 12, color: '#0A0A0A' },
-  mlValue: { fontSize: 32, fontWeight: '800', color: '#429FE7', lineHeight: 36 },
+  mlValue: { fontSize: 32, fontWeight: '800', color: '#429FE7', lineHeight: 36, fontFamily: F.headingX },
   mlSubLabel: { fontSize: 14, color: '#0A0A0A', marginTop: 2 },
   barBg: { height: 4, borderRadius: 2, backgroundColor: '#E5E5E5', marginTop: 14, overflow: 'hidden' },
   barFill: { height: '100%', borderRadius: 2, backgroundColor: '#429FE7' },

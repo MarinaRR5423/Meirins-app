@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Share, Modal, TextInput } from 'react-native';
+import { F } from '../theme/fonts';
 import { Check, X, ChevronRight, ChevronLeft, RefreshCcw, Heart } from 'lucide-react-native';
 import SwipeableTabs from '../components/SwipeableTabs';
 import T, { getMealLabel, getPhaseDisplay } from '../i18n/translations';
@@ -140,7 +141,7 @@ const mc = StyleSheet.create({
   card: { backgroundColor: '#FE6004', borderRadius: 24, padding: 16, marginBottom: 2 },
   header: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
   slot: { fontSize: 14, color: '#260E01' },
-  title: { fontSize: 20, fontWeight: '800', color: '#260E01', marginTop: 2 },
+  title: { fontSize: 20, fontWeight: '800', color: '#260E01', marginTop: 2, fontFamily: F.headingX },
   chevron: { color: '#260E01', fontSize: 14, flexShrink: 0 },
   tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginBottom: 12 },
   tag: { height: 24, paddingHorizontal: 8, borderRadius: 8, backgroundColor: 'white', justifyContent: 'center' },
@@ -394,25 +395,23 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
           <Text style={[styles.recipeTitle, { textAlign: 'center' }]}>{recipe.title}</Text>
         </View>
 
-        {/* Macros con barras */}
+        {/* Macros con barras — tarjeta naranja Figma */}
         {m?.kcal != null && (
-          <View style={styles.card}>
-            <View style={{ flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 14 }}>
-              <Text style={styles.sectionTitle}>🔥 {m.kcal} kcal</Text>
-              {m.fiber != null && <Text style={{ fontSize: 12, color: '#94A3B8' }}>🌿 {m.fiber}g fibra</Text>}
-            </View>
+          <View style={{ backgroundColor: '#FE6004', borderRadius: 16, padding: 16, marginBottom: 12 }}>
+            <Text style={{ fontSize: 22, fontWeight: '800', color: '#FFFFFF', marginBottom: 4 }}>{m.kcal} kcal</Text>
             {[
-              { label: lang === 'en' ? 'Protein' : 'Proteína', value: m.protein, color: '#EF4444', pct: proteinPct },
-              { label: lang === 'en' ? 'Carbs'   : 'Carbohidratos', value: m.carbs,   color: '#F59E0B', pct: carbsPct },
-              { label: lang === 'en' ? 'Fats'    : 'Grasas', value: m.fat, color: '#3B82F6', pct: fatPct },
+              { label: lang === 'en' ? 'Protein' : 'Proteínas', value: m.protein, pct: proteinPct },
+              { label: lang === 'en' ? 'Carbs'   : 'Carbohidratos', value: m.carbs, pct: carbsPct },
+              { label: lang === 'en' ? 'Fats'    : 'Grasas', value: m.fat, pct: fatPct },
+              ...(m.fiber != null ? [{ label: lang === 'en' ? 'Fibre' : 'Fibra', value: m.fiber, pct: Math.round((m.fiber / 30) * 100) }] : []),
             ].map(macro => (
-              <View key={macro.label} style={{ marginBottom: 10 }}>
+              <View key={macro.label} style={{ marginBottom: 8 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 }}>
-                  <Text style={{ fontSize: 13, color: '#475569', fontWeight: '500' }}>{macro.label}</Text>
-                  <Text style={{ fontSize: 13, color: macro.color, fontWeight: '700' }}>{macro.value}g · {macro.pct}%</Text>
+                  <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', fontWeight: '500' }}>{macro.label}</Text>
+                  <Text style={{ fontSize: 12, color: '#FFFFFF', fontWeight: '700' }}>{macro.value}g</Text>
                 </View>
-                <View style={{ height: 8, backgroundColor: '#F1F5F9', borderRadius: 4, overflow: 'hidden' }}>
-                  <View style={{ width: `${macro.pct}%`, height: 8, backgroundColor: macro.color }} />
+                <View style={{ height: 6, backgroundColor: 'rgba(255,255,255,0.3)', borderRadius: 3, overflow: 'hidden' }}>
+                  <View style={{ width: `${Math.min(macro.pct, 100)}%`, height: 6, backgroundColor: '#FFFFFF', borderRadius: 3 }} />
                 </View>
               </View>
             ))}
@@ -950,8 +949,8 @@ const styles = StyleSheet.create({
   card: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2 },
   back: { fontSize: 14, color: '#0A0A0A', fontWeight: '600', marginBottom: 16 },
   recipeTag: { fontSize: 11, color: '#0A0A0A', fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 4 },
-  recipeTitle: { fontSize: 18, fontWeight: '700', color: '#0A0A0A', marginBottom: 4 },
-  sectionTitle: { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 10 },
+  recipeTitle: { fontSize: 18, fontWeight: '700', color: '#0A0A0A', marginBottom: 4, fontFamily: F.heading },
+  sectionTitle: { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 10, fontFamily: F.heading },
   listRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: '#F8FAFC' },
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#0A0A0A', marginTop: 5, marginRight: 10, flexShrink: 0 },
   listText: { fontSize: 13, color: '#334155', flex: 1, lineHeight: 20 },
@@ -978,7 +977,7 @@ const styles = StyleSheet.create({
 
   planHeaderCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2 },
   planHeaderTag: { fontSize: 12, fontWeight: '600', color: '#525252', marginBottom: 2, textTransform: 'uppercase', letterSpacing: 0.5 },
-  planHeaderTitle: { fontSize: 20, fontWeight: '800', color: '#0A0A0A' },
+  planHeaderTitle: { fontSize: 20, fontWeight: '800', color: '#0A0A0A', fontFamily: F.headingX },
   planSub: { fontSize: 12, lineHeight: 18, opacity: 0.85 },
   mealRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   mealIco: { fontSize: 26, flexShrink: 0 },

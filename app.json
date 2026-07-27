@@ -60,7 +60,8 @@
         }
       ],
       "expo-localization",
-      "react-native-health"
+      "react-native-health",
+      "expo-font"
     ],
     "web": {
       "favicon": "./assets/favicon.png"

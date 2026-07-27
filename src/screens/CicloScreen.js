@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { F } from '../theme/fonts';
 import { ChevronRight, ChevronLeft } from 'lucide-react-native';
 import { PHASES } from '../data/phases';
 import T, { getPhaseDisplay, getDayLetters } from '../i18n/translations';
@@ -741,14 +742,14 @@ const styles = StyleSheet.create({
   todayRow: { flexDirection:'row', justifyContent:'space-between', alignItems:'center' },
   todayBlock: { alignItems:'center' },
   todayLabel: { fontSize:10, fontWeight:'700', color:'rgba(255,255,255,0.7)', letterSpacing:0.8 },
-  todayDay: { fontSize:32, fontWeight:'800', color:'white' },
+  todayDay: { fontSize:32, fontWeight:'800', color:'white', fontFamily: F.headingX },
   todayPhase: { alignItems:'center' },
   todayPhaseName: { fontSize:15, fontWeight:'700', color:'white', marginTop:2 },
   todayTagline: { fontSize:10, color:'rgba(255,255,255,0.8)', marginTop:2, textAlign:'center' },
 
   // Card header
   cardHeader: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginBottom:12 },
-  cardTitle: { fontSize:14, fontWeight:'700', color:'#1E293B' },
+  cardTitle: { fontSize:14, fontWeight:'700', color:'#1E293B', fontFamily: F.heading },
   viewToggleBtn: { backgroundColor:'#F0F4FA', borderRadius:20, paddingHorizontal:12, paddingVertical:6, borderWidth:1, borderColor:'#E2E8F0' },
   viewToggleBtnText: { fontSize:15 },
 
@@ -756,7 +757,7 @@ const styles = StyleSheet.create({
   logDayCard: { backgroundColor:'#FECA04', borderRadius:24, padding:16, marginBottom:12 },
   logDayHeader: { flexDirection:'row', justifyContent:'space-between', alignItems:'center', marginBottom:16 },
   logDayHeaderTxt: { fontSize:12, fontWeight:'600', color:'#261E01' },
-  logDayTitle: { fontSize:26, fontWeight:'800', color:'#261E01', lineHeight:30, marginBottom:8 },
+  logDayTitle: { fontSize:26, fontWeight:'800', color:'#261E01', lineHeight:30, marginBottom:8, fontFamily: F.headingX },
   logDaySub: { fontSize:14, color:'#261E01', lineHeight:20, marginBottom:20 },
   logDayBtn: { backgroundColor:'#0A0A0A', height:48, borderRadius:12, alignItems:'center', justifyContent:'center', width:'100%' },
   logDayBtnTxt: { color:'#FAFAFA', fontWeight:'700', fontSize:16 },

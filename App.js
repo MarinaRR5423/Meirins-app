@@ -3,8 +3,13 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Text, View, ActivityIndicator, Platform, StyleSheet } from 'react-native';
+import { useFonts } from 'expo-font';
+import {
+  BricolageGrotesque_700Bold,
+  BricolageGrotesque_800ExtraBold,
+} from '@expo-google-fonts/bricolage-grotesque';
 import Loading from './src/components/Loading';
-import { Home, Moon, Salad, Footprints, User } from 'lucide-react-native';
+import { Home, Moon, Salad, SportShoe, User } from 'lucide-react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
 import * as Linking from 'expo-linking';
@@ -36,6 +41,9 @@ function PostHogBridge() {
   useEffect(() => { setPostHogClient(ph || null); }, [ph]);
   return null;
 }
+
+// Apply Aglet Mono as the default font for all Text components app-wide
+Text.defaultProps = { ...(Text.defaultProps || {}), style: [{ fontFamily: 'AgletMono_Regular' }] };
 
 const Tab = createBottomTabNavigator();
 
@@ -106,6 +114,14 @@ function OfflineBanner({ lang }) {
 }
 
 function App() {
+  const [fontsLoaded, fontError] = useFonts({
+    BricolageGrotesque_700Bold,
+    BricolageGrotesque_800ExtraBold,
+    AgletMono_Regular: require('./assets/fonts/AgletMono-Regular.otf'),
+    AgletMono_Bold:    require('./assets/fonts/AgletMono-Bold.otf'),
+  });
+  if (fontError) console.warn('[Fonts] Error loading fonts:', fontError);
+  console.log('[Fonts] loaded:', fontsLoaded, 'error:', fontError?.message);
   const profile    = useProfile();
   const healthData = useHealthData();
   const [setupLang, setSetupLang] = React.useState(getDeviceLang);
@@ -183,7 +199,7 @@ function App() {
     ? (programContent[`data_${lang}`] ?? (lang === 'es' ? programContent.data_es : null))
     : null;
 
-  if (authState === 'loading' || (authState === 'authenticated' && !profileLoaded)) {
+  if (authState === 'loading' || (authState === 'authenticated' && !profileLoaded) || (!fontsLoaded && !fontError)) {
     return <Loading variant="fullscreen" />;
   }
 
@@ -239,7 +255,7 @@ function App() {
             skipRecipe={profile.skipRecipe}
             logRecipeDone={profile.logRecipeDone} />}
         </Tab.Screen>
-        <Tab.Screen name="Gimnasio" options={{ tabBarLabel: tabs.gym, tabBarIcon: ({ color, size }) => <Footprints color={color} size={size} />, unmountOnBlur: true }}>
+        <Tab.Screen name="Gimnasio" options={{ tabBarLabel: tabs.gym, tabBarIcon: ({ color, size }) => <SportShoe color={color} size={size} />, unmountOnBlur: true }}>
           {() => <GimnasioScreen lang={lang} pi={pi} trainDays={profile.trainDays} setTrainDays={profile.setTrainDays} program={programData} healthData={healthData} goal={profile.goal}
             profileExtended={profile.profileExtended} saveProfileExtended={profile.saveProfileExtended}
             toggleFavoriteWorkout={profile.toggleFavoriteWorkout}

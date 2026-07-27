@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Check, X, ChevronRight, Calendar, CalendarDays } from 'lucide-react-native';
 import T from '../i18n/translations';
+import { F } from '../theme/fonts';
 import RangeCalendar from './RangeCalendar';
 import TrainerCard from './TrainerCard';
 import { useDiets, DIET_CATEGORIES, normalizeDietId } from '../hooks/useDiets';
@@ -1088,7 +1089,7 @@ const s = StyleSheet.create({
   },
   cicloEmptyTitle: {
     fontSize: 20, fontWeight: '800', color: '#171717',
-    textAlign: 'center', marginBottom: 8,
+    textAlign: 'center', marginBottom: 8, fontFamily: F.headingX,
   },
   cicloEmptySub: {
     fontSize: 14, color: '#525252', textAlign: 'center',
@@ -1112,7 +1113,7 @@ const s = StyleSheet.create({
   },
   gymEmptyTitle: {
     fontSize: 20, fontWeight: '800', color: '#171717',
-    textAlign: 'center', marginBottom: 8,
+    textAlign: 'center', marginBottom: 8, fontFamily: F.headingX,
   },
   gymEmptySub: {
     fontSize: 14, color: '#525252', textAlign: 'center',

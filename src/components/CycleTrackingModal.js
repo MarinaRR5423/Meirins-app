@@ -8,6 +8,7 @@ import {
   TextInput, StyleSheet, Platform,
 } from 'react-native';
 import { CYCLE_CATEGORIES } from '../data/cycleTracking';
+import { F } from '../theme/fonts';
 import { getInsight } from '../data/symptomInsights';
 import { X } from 'lucide-react-native';
 
@@ -194,7 +195,7 @@ const s = StyleSheet.create({
   header:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
   closeBtn:  { width: 32, height: 32, borderRadius: 8, backgroundColor: '#F5F5F5', justifyContent: 'center', alignItems: 'center' },
   closeTxt:  { fontSize: 14, color: '#64748B', fontWeight: '600' },
-  title:     { fontSize: 24, fontWeight: '800', color: '#0A0A0A' },
+  title:     { fontSize: 24, fontWeight: '800', color: '#0A0A0A', fontFamily: F.headingX },
 
   dateRow:   { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, paddingBottom: 12, gap: 4 },
   dateBtn:   { flex: 1, alignItems: 'center', paddingVertical: 8, borderRadius: 4, backgroundColor: '#FAFAFA', position: 'relative', borderWidth: 1, borderColor: 'transparent' },

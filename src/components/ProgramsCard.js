@@ -10,6 +10,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import { X, ChevronRight, ChevronLeft, Check, Footprints } from 'lucide-react-native';
+import { F } from '../theme/fonts';
 import {
   PROGRAMS, totalSessions, getSession, formatSession, sessionMinutes,
   LEVEL_LABEL, isRecommended,
@@ -85,6 +86,7 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
           <View style={st.tagsRow}>
             <View style={st.tag}><Text style={st.tagTxt}>{program.weeks.length} {tr('semanas', 'weeks', 'semaines', 'settimane')}</Text></View>
             <View style={st.tag}><Text style={st.tagTxt}>{done}/{total} {tr('sesiones', 'sessions', 'séances', 'sessioni')}</Text></View>
+            {session && <View style={st.tag}><Text style={st.tagTxt}>{sessionMinutes(session.spec)}'</Text></View>}
           </View>
 
           {/* Barra de progreso */}
@@ -247,7 +249,7 @@ const st = StyleSheet.create({
   headerRow:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
   headerLabel:    { flexDirection: 'row', alignItems: 'center', gap: 4 },
   headerLabelTxt: { fontSize: 12, color: '#0A1823' },
-  title:       { fontSize: 20, fontWeight: '800', color: '#0A1823', marginBottom: 8 },
+  title:       { fontSize: 20, fontWeight: '800', color: '#0A1823', marginBottom: 8, fontFamily: F.headingX },
   link:        { fontSize: 13, color: '#0A1823', fontWeight: '600' },
   tagsRow:     { flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginBottom: 16 },
   tag:         { height: 24, paddingHorizontal: 8, borderRadius: 8, backgroundColor: '#B3D9F5', justifyContent: 'center' },

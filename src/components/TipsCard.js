@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Modal, ScrollView, SafeAreaView, StyleSheet } from 'react-native';
+import { F } from '../theme/fonts';
 import { ChevronRight, BookOpen } from 'lucide-react-native';
 import { ARTICLE_CATEGORIES } from '../data/articles';
 import T from '../i18n/translations';
@@ -189,7 +190,7 @@ const styles = StyleSheet.create({
   catChip: { width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
   modalContent: { padding: 24, paddingTop: 32 },
   modalIcon: { fontSize: 48, textAlign: 'center', marginBottom: 16 },
-  modalTitle: { fontSize: 22, fontWeight: '800', color: '#1E293B', textAlign: 'center', lineHeight: 28, marginBottom: 8 },
+  modalTitle: { fontSize: 22, fontWeight: '800', color: '#1E293B', textAlign: 'center', lineHeight: 28, marginBottom: 8, fontFamily: F.headingX },
   modalMeta: { fontSize: 12, color: '#94A3B8', textAlign: 'center', marginBottom: 20 },
   divider: { height: 3, borderRadius: 2, width: 40, alignSelf: 'center', marginBottom: 24 },
   para: { fontSize: 15, color: '#334155', lineHeight: 26, marginBottom: 16 },
@@ -201,14 +202,14 @@ const a = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
   headerLabel: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   headerLabelTxt: { fontSize: 12, fontWeight: '600', color: '#0A0A0A' },
-  title: { fontSize: 20, fontWeight: '800', color: '#0A0A0A', marginBottom: 4 },
+  title: { fontSize: 20, fontWeight: '800', color: '#0A0A0A', marginBottom: 4, fontFamily: F.headingX },
   subtitle: { fontSize: 14, color: '#525252', marginBottom: 16, lineHeight: 20 },
 
   row: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, backgroundColor: 'white', borderRadius: 16, padding: 8 },
   iconBg: { width: 48, height: 48, borderRadius: 16, justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
   icon: { fontSize: 22 },
   body: { flex: 1, gap: 8 },
-  articleTitle: { fontSize: 16, fontWeight: '800', color: '#0A0A0A', marginBottom: 2, lineHeight: 20 },
+  articleTitle: { fontSize: 16, fontWeight: '800', color: '#0A0A0A', marginBottom: 2, lineHeight: 20, fontFamily: F.heading },
   summary: { fontSize: 13, color: '#525252', lineHeight: 18 },
   tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 4 },
   tag: { height: 24, paddingHorizontal: 8, borderRadius: 8, justifyContent: 'center', alignItems: 'center' },

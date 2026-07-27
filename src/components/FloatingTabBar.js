@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Modal, Switch, Platform } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Modal, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { Home, Moon, Salad, Footprints, Plus } from 'lucide-react-native';
+import { Home, Moon, Salad, SportShoe, Plus } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const ROUTE_ICONS = { Inicio: Home, Ciclo: Moon, Nutrición: Salad, Gimnasio: Footprints };
-const OPTIONAL_ROUTES = { Nutrición: 'nutricion', Gimnasio: 'ejercicio' };
+const ROUTE_ICONS = { Inicio: Home, Ciclo: Moon, "Nutrición": Salad, Gimnasio: SportShoe };
+const OPTIONAL_ROUTES = { "Nutrición": 'nutricion', Gimnasio: 'ejercicio' };
 
 const TXT = {
-  title:  { es: 'Pestañas visibles', en: 'Visible tabs', fr: 'Onglets visibles', it: 'Schede visibili' },
-  nutri:  { es: 'Nutrición', en: 'Nutrition', fr: 'Nutrition', it: 'Nutrizione' },
-  gym:    { es: 'Ejercicio', en: 'Exercise', fr: 'Exercice', it: 'Esercizio' },
-  close:  { es: 'Cerrar', en: 'Close', fr: 'Fermer', it: 'Chiudi' },
+  close:    { es: 'Cerrar', en: 'Close', fr: 'Fermer', it: 'Chiudi' },
+  addTitle: { es: 'Añadir', en: 'Add', fr: 'Ajouter', it: 'Aggiungi' },
+  ciclo:    { es: 'Ciclo', en: 'Cycle', fr: 'Cycle', it: 'Ciclo' },
+  agua:     { es: 'Agua', en: 'Water', fr: 'Eau', it: 'Acqua' },
+  ejercicio:{ es: 'Ejercicio', en: 'Exercise', fr: 'Exercice', it: 'Esercizio' },
 };
 
 export default function FloatingTabBar({ state, descriptors, navigation, enabledTabs, onToggleTab, lang = 'es' }) {
   const insets = useSafeAreaInsets();
   const [pickerOpen, setPickerOpen] = useState(false);
-  const tr = (key) => (TXT[key][lang] || TXT[key].es);
+  const tr = (key) => (TXT[key]?.[lang] || TXT[key]?.es || key);
 
   const visibleRoutes = state.routes.filter((route) => {
     if (route.name === 'Perfil') return false;
@@ -60,26 +61,30 @@ export default function FloatingTabBar({ state, descriptors, navigation, enabled
         <Plus size={24} color="white" strokeWidth={2.5} />
       </TouchableOpacity>
 
-      <Modal visible={pickerOpen} transparent animationType="fade" onRequestClose={() => setPickerOpen(false)}>
+      <Modal visible={pickerOpen} transparent animationType="slide" onRequestClose={() => setPickerOpen(false)}>
         <TouchableOpacity style={styles.modalBackdrop} activeOpacity={1} onPress={() => setPickerOpen(false)}>
           <View style={[styles.sheet, { marginBottom: Math.max(insets.bottom, 16) + 90 }]}>
-            <Text style={styles.sheetTitle}>{tr('title')}</Text>
+            <View style={styles.sheetHandle} />
+            <Text style={styles.sheetTitle}>{tr('addTitle')}</Text>
 
-            <View style={styles.toggleRow}>
-              <Text style={styles.toggleLabel}>🥗 {tr('nutri')}</Text>
-              <Switch
-                value={enabledTabs?.nutricion !== false}
-                onValueChange={(v) => onToggleTab?.('nutricion', v)}
-                trackColor={{ false: '#E2E8F0', true: '#171717' }}
-              />
-            </View>
-            <View style={styles.toggleRow}>
-              <Text style={styles.toggleLabel}>👟 {tr('gym')}</Text>
-              <Switch
-                value={enabledTabs?.ejercicio !== false}
-                onValueChange={(v) => onToggleTab?.('ejercicio', v)}
-                trackColor={{ false: '#E2E8F0', true: '#171717' }}
-              />
+            <View style={styles.actionGrid}>
+              {[
+                { key: 'ciclo',     emoji: '🌙', screen: 'Ciclo' },
+                { key: 'agua',      emoji: '💧', screen: null },
+                { key: 'ejercicio', emoji: '👟', screen: 'Gimnasio' },
+              ].map(item => (
+                <TouchableOpacity
+                  key={item.key}
+                  style={styles.actionBtn}
+                  onPress={() => {
+                    setPickerOpen(false);
+                    if (item.screen) navigation.navigate(item.screen);
+                  }}
+                >
+                  <Text style={styles.actionEmoji}>{item.emoji}</Text>
+                  <Text style={styles.actionLabel}>{tr(item.key)}</Text>
+                </TouchableOpacity>
+              ))}
             </View>
 
             <TouchableOpacity style={styles.closeBtn} onPress={() => setPickerOpen(false)}>
@@ -122,15 +127,13 @@ const styles = StyleSheet.create({
     }),
   },
   modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'flex-end', alignItems: 'center' },
-  sheet: {
-    width: '90%', backgroundColor: 'white', borderRadius: 20, padding: 20,
-  },
-  sheetTitle: { fontSize: 15, fontWeight: '700', color: '#1E293B', marginBottom: 14 },
-  toggleRow: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#F1F5F9',
-  },
-  toggleLabel: { fontSize: 14, color: '#334155', fontWeight: '500' },
-  closeBtn: { marginTop: 16, alignItems: 'center', paddingVertical: 10 },
-  closeBtnTxt: { color: '#64748B', fontWeight: '600', fontSize: 13 },
+  sheet:         { width: '90%', backgroundColor: 'white', borderRadius: 24, padding: 20, paddingTop: 12 },
+  sheetHandle:   { width: 36, height: 4, borderRadius: 2, backgroundColor: '#E5E5E5', alignSelf: 'center', marginBottom: 14 },
+  sheetTitle:    { fontSize: 16, fontWeight: '800', color: '#0A0A0A', marginBottom: 18, textAlign: 'center' },
+  actionGrid:    { flexDirection: 'row', justifyContent: 'space-between', gap: 10, marginBottom: 4 },
+  actionBtn:     { flex: 1, alignItems: 'center', backgroundColor: '#F5F5F5', borderRadius: 16, paddingVertical: 18 },
+  actionEmoji:   { fontSize: 28, marginBottom: 6 },
+  actionLabel:   { fontSize: 12, fontWeight: '700', color: '#0A0A0A' },
+  closeBtn:      { marginTop: 14, alignItems: 'center', paddingVertical: 10 },
+  closeBtnTxt:   { color: '#737373', fontWeight: '600', fontSize: 13 },
 });

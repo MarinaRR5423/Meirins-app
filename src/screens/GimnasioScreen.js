@@ -3,6 +3,7 @@ import {
   View, Text, ScrollView, TouchableOpacity,
   TextInput, StyleSheet, ActivityIndicator, Platform,
 } from 'react-native';
+import { F } from '../theme/fonts';
 import { Check, X, ChevronRight, ChevronLeft } from 'lucide-react-native';
 import { TouchableOpacity as GHTouchable } from 'react-native-gesture-handler';
 import T, { getDayLabels } from '../i18n/translations';
@@ -52,62 +53,64 @@ function fmtNum(n) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ─── Selector de deporte extra: lista de deportes + "Otro" + duración ────────
+// ─── Panel "Añadir actividad" — diseño Figma ─────────────────────────────────
 function ExtraSportPicker({ lang, g, onPick }) {
-  const [other, setOther] = useState(false);
-  const [txt, setTxt]     = useState('');
-  const [sport, setSport] = useState(null);   // deporte elegido, pendiente de duración
+  const [other, setOther]         = useState(false);
+  const [txt, setTxt]             = useState('');
+  const [sport, setSport]         = useState(null);
+  const [durationH, setDurationH] = useState(0.5);   // horas, pasos de 0.5
+  const [intensity, setIntensity] = useState('media');
   const tr = (es, en, fr, it) => ({ es, en, fr, it }[lang] || es);
-  const DURATIONS = [15, 30, 45, 60, 90, 120];
 
-  // Paso 2: ¿cuánto tiempo?
-  if (sport) return (
-    <View>
-      <Text style={{ fontSize: 13, color: '#334155', fontWeight: '600', marginBottom: 8 }}>
-        🏅 {sport} — {tr('¿cuánto tiempo?', 'how long?', 'combien de temps ?', 'quanto tempo?')}
+  const INTENSITIES = [
+    { id: 'baja',  label: tr('Baja', 'Low', 'Faible', 'Bassa') },
+    { id: 'media', label: tr('Media', 'Medium', 'Moyenne', 'Media') },
+    { id: 'alta',  label: tr('Alta', 'High', 'Haute', 'Alta') },
+  ];
+
+  const handleAdd = () => {
+    if (!sport) return;
+    onPick(sport, Math.round(durationH * 60), intensity);
+  };
+
+  return (
+    <View style={{ gap: 16 }}>
+      {/* Título */}
+      <Text style={{ fontSize: 14, fontWeight: '700', color: '#0A0A0A' }}>
+        {tr('Deportes', 'Sports', 'Sports', 'Sport')}
       </Text>
+
+      {/* Nube de deportes */}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-        {DURATIONS.map(m => (
-          <TouchableOpacity key={m} onPress={() => onPick(sport, m)}
-            style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 50, backgroundColor: '#EFF6FF', borderWidth: 1, borderColor: '#BFDBFE' }}>
-            <Text style={{ fontSize: 12, fontWeight: '600', color: '#1E40AF' }}>{m} min</Text>
-          </TouchableOpacity>
-        ))}
-        <TouchableOpacity onPress={() => onPick(sport, null)}
-          style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 50, backgroundColor: '#F1F5F9', borderWidth: 1, borderColor: '#E2E8F0' }}>
-          <Text style={{ fontSize: 12, fontWeight: '500', color: '#64748B' }}>
-            {tr('Sin tiempo', 'Skip time', 'Sans durée', 'Senza tempo')}
+        {SPORTS_LIST.filter(o => o.id !== 'other').map(o => {
+          const label = o.label[lang] || o.label.es;
+          const isSelected = sport === label;
+          return (
+            <TouchableOpacity key={o.id} onPress={() => setSport(isSelected ? null : label)}
+              style={{
+                paddingHorizontal: 12, paddingVertical: 7, borderRadius: 50,
+                backgroundColor: isSelected ? '#0A0A0A' : '#F1F5F9',
+                borderWidth: 1, borderColor: isSelected ? '#0A0A0A' : '#E2E8F0',
+              }}>
+              <Text style={{ fontSize: 12, fontWeight: '500', color: isSelected ? 'white' : '#334155' }}>
+                {o.emoji} {label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+        <TouchableOpacity onPress={() => setOther(v => !v)}
+          style={{
+            paddingHorizontal: 12, paddingVertical: 7, borderRadius: 50,
+            backgroundColor: other ? '#0A0A0A' : '#F1F5F9',
+            borderWidth: 1, borderColor: other ? '#0A0A0A' : '#E2E8F0',
+          }}>
+          <Text style={{ fontSize: 12, fontWeight: '500', color: other ? 'white' : '#334155' }}>
+            ✏️ {tr('Otro', 'Other', 'Autre', 'Altro')}
           </Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={() => setSport(null)} style={{ marginTop: 8 }}>
-        <Text style={{ fontSize: 12, color: '#94A3B8', textAlign: 'center' }}>
-          {tr('Cambiar deporte', 'Change sport', 'Changer de sport', 'Cambia sport')}
-        </Text>
-      </TouchableOpacity>
-    </View>
-  );
-
-  // Paso 1: ¿qué deporte?
-  return (
-    <View>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-        {SPORTS_LIST.map(o => (
-          <TouchableOpacity key={o.id}
-            onPress={() => o.id === 'other' ? setOther(!other) : setSport(o.label[lang] || o.label.es)}
-            style={{
-              paddingHorizontal: 12, paddingVertical: 8, borderRadius: 50,
-              backgroundColor: (o.id === 'other' && other) ? BLUE.primary : '#F1F5F9',
-              borderWidth: 1, borderColor: (o.id === 'other' && other) ? BLUE.primary : '#E2E8F0',
-            }}>
-            <Text style={{ fontSize: 12, fontWeight: '500', color: (o.id === 'other' && other) ? 'white' : '#334155' }}>
-              {o.emoji} {o.label[lang] || o.label.es}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
       {other && (
-        <View style={[styles.extraInput, { marginTop: 10 }]}>
+        <View style={[styles.extraInput]}>
           <TextInput style={styles.input} value={txt} onChangeText={setTxt}
             placeholder={g.extraPlaceholder} autoFocus />
           <TouchableOpacity style={styles.addBtn} onPress={() => txt.trim() && setSport(txt.trim())}>
@@ -115,6 +118,61 @@ function ExtraSportPicker({ lang, g, onPick }) {
           </TouchableOpacity>
         </View>
       )}
+
+      {/* Control de tiempo */}
+      <View>
+        <Text style={{ fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 10 }}>
+          {tr('Tiempo', 'Time', 'Temps', 'Tempo')}
+        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+          <TouchableOpacity onPress={() => setDurationH(h => Math.max(0.5, h - 0.5))}
+            style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#F1F5F9', alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontSize: 20, color: '#0A0A0A', fontWeight: '700' }}>−</Text>
+          </TouchableOpacity>
+          <Text style={{ fontSize: 16, fontWeight: '700', color: '#0A0A0A', minWidth: 50, textAlign: 'center' }}>
+            {durationH} h
+          </Text>
+          <TouchableOpacity onPress={() => setDurationH(h => Math.min(8, h + 0.5))}
+            style={{ width: 36, height: 36, borderRadius: 18, backgroundColor: '#F1F5F9', alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontSize: 20, color: '#0A0A0A', fontWeight: '700' }}>+</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Intensidad */}
+      <View>
+        <Text style={{ fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 10 }}>
+          {tr('Intensidad', 'Intensity', 'Intensité', 'Intensità')}
+        </Text>
+        {INTENSITIES.map(item => (
+          <TouchableOpacity key={item.id} onPress={() => setIntensity(item.id)}
+            style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8, gap: 12 }}>
+            <View style={{
+              width: 20, height: 20, borderRadius: 10,
+              borderWidth: 2, borderColor: intensity === item.id ? '#0A0A0A' : '#D1D5DB',
+              backgroundColor: 'white', alignItems: 'center', justifyContent: 'center',
+            }}>
+              {intensity === item.id && <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: '#0A0A0A' }} />}
+            </View>
+            <Text style={{ fontSize: 14, color: '#0A0A0A', fontWeight: intensity === item.id ? '600' : '400' }}>{item.label}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {/* Botón Añadir */}
+      <TouchableOpacity onPress={handleAdd}
+        style={{ height: 48, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center', opacity: sport ? 1 : 0.4 }}
+        disabled={!sport}>
+        <Text style={{ color: 'white', fontSize: 16, fontWeight: '700' }}>
+          {tr('Añadir', 'Add', 'Ajouter', 'Aggiungi')} ♡
+        </Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => { setSport(null); setOther(false); }} style={{ alignItems: 'center' }}>
+        <Text style={{ fontSize: 12, color: '#94A3B8' }}>
+          {tr('Cancelar', 'Cancel', 'Annuler', 'Annulla')}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -455,7 +513,7 @@ export default function GimnasioScreen({
         {todaySession ? <>
           {/* Bannière de séance — compatible con datos de fase y datos legacy */}
           {(() => {
-            const bgColor   = todaySession.phaseColor || todaySession.color   || BLUE.light;
+            const bgColor   = todaySession.phaseColor || todaySession.color   || '#1C1C2E';
             // Si el fondo es claro, texto oscuro; si es oscuro, blanco
             const isLightBg = (() => {
               const m = /^#?([0-9a-f]{6})/i.exec(String(bgColor));
@@ -584,8 +642,8 @@ export default function GimnasioScreen({
               </View>
             ) : addingSport ? (
               <ExtraSportPicker lang={lang} g={g}
-                onPick={(label, minutes) => {
-                  saveLog({ ...(todayLog || { status: 'done' }), extraSport: label, extraMinutes: minutes || null });
+                onPick={(label, minutes, intensity) => {
+                  saveLog({ ...(todayLog || { status: 'done' }), extraSport: label, extraMinutes: minutes || null, extraIntensity: intensity || null });
                   setAddingSport(false);
                 }} />
             ) : (
@@ -1059,14 +1117,14 @@ const styles = StyleSheet.create({
   weekStripDot: { position: 'absolute', bottom: 4, width: 4, height: 4, borderRadius: 2 },
 
   weekDetailAzote: { marginTop: 12, backgroundColor: 'white', borderRadius: 16, padding: 12 },
-  weekDetailWorkout: { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 8 },
+  weekDetailWorkout: { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 8, fontFamily: F.heading },
   weekDetailStatus: { fontSize: 13, fontWeight: '600', color: '#0A0A0A' },
   weekActionBtn: { paddingVertical: 11, borderRadius: 12, backgroundColor: '#FAFAFA', alignItems: 'center' },
   weekActionBtnTxt: { fontSize: 13, fontWeight: '700', color: '#0A0A0A' },
 
   // cards
   card: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2 },
-  sectionTitle: { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 10 },
+  sectionTitle: { fontSize: 14, fontWeight: '700', color: '#0A0A0A', marginBottom: 10, fontFamily: F.heading },
 
   // health banner (mini, on top of hoy)
   healthBanner: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#F5F5F5', borderRadius: 24, padding: 12, marginBottom: 2 },
@@ -1077,7 +1135,7 @@ const styles = StyleSheet.create({
   // session
   sessionBanner:  { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
   sessionTag:     { fontSize: 10, fontWeight: '700', letterSpacing: 0.8, marginBottom: 4 },
-  sessionName:    { fontSize: 20, fontWeight: '700', marginBottom: 2 },
+  sessionName:    { fontSize: 26, fontWeight: '800', marginBottom: 4, fontFamily: F.headingX, lineHeight: 30 },
   fitnessNote:    { fontSize: 12, color: 'rgba(255,255,255,0.9)', backgroundColor: 'rgba(0,0,0,0.15)', borderRadius: 8, padding: 8, marginTop: 8, lineHeight: 18 },
   conditionNote:  { fontSize: 12, color: 'rgba(255,255,255,0.9)', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: 8, padding: 8, marginTop: 6, lineHeight: 18 },
   sessionDur: { fontSize: 13, opacity: 0.8 },

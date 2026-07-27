@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, Keyboa
 import { Check, ChevronLeft } from 'lucide-react-native';
 import T from '../i18n/translations';
 import { trackEvent, Events } from '../lib/analytics';
+import { F } from '../theme/fonts';
 
 const LANG_OPTIONS = [
   { code: 'es', flag: '🇪🇸' },
@@ -389,14 +390,14 @@ const styles = StyleSheet.create({
   scrollContainer: { flex: 1, backgroundColor: 'white' },
   scrollContent: { padding: 20, paddingTop: 60, paddingBottom: 40 },
   emoji: { fontSize: 64, marginBottom: 16 },
-  title: { fontSize: 36, color: '#0A0A0A', fontWeight: '800', marginBottom: 4 },
-  tagline: { fontSize: 11, color: '#737373', letterSpacing: 3, marginBottom: 20 },
+  title: { fontSize: 36, fontFamily: F.headingX, color: '#0A0A0A', marginBottom: 4 },
+  tagline: { fontSize: 11, fontFamily: F.body, color: '#737373', letterSpacing: 3, marginBottom: 20 },
   divider: { width: 40, height: 2, backgroundColor: '#E5E5E5', marginBottom: 22 },
   feature: { backgroundColor: '#F5F5F5', borderRadius: 16, padding: 12, marginBottom: 8, width: '100%' },
-  featureText: { color: '#0A0A0A', fontSize: 14 },
+  featureText: { color: '#0A0A0A', fontSize: 14, fontFamily: F.body },
   btn: { width: '100%', height: 48, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center', marginTop: 24 },
   btnDisabled: { opacity: 0.4 },
-  btnText: { color: '#FAFAFA', fontSize: 18, fontWeight: '700' },
+  btnText: { color: '#FAFAFA', fontSize: 18, fontFamily: F.body },
 
   // Volver
   backBtn: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', backgroundColor: '#F5F5F5', borderRadius: 8, paddingHorizontal: 8, height: 32, marginBottom: 20 },
@@ -407,20 +408,20 @@ const styles = StyleSheet.create({
   stepBarSeg: { flex: 1, height: 4, borderRadius: 2, backgroundColor: '#E5E5E5' },
   stepBarSegActive: { backgroundColor: '#171717' },
 
-  stepTitle: { fontSize: 24, color: '#0A0A0A', fontWeight: '800', marginBottom: 6 },
-  stepSub: { fontSize: 14, color: '#0A0A0A', marginBottom: 24, lineHeight: 20 },
-  sectionLabel: { fontSize: 16, fontWeight: '700', color: '#171717', marginBottom: 10 },
+  stepTitle: { fontSize: 24, fontFamily: F.heading, color: '#0A0A0A', marginBottom: 6 },
+  stepSub: { fontSize: 14, fontFamily: F.body, color: '#0A0A0A', marginBottom: 24, lineHeight: 20 },
+  sectionLabel: { fontSize: 16, fontFamily: F.bodyB, color: '#171717', marginBottom: 10 },
   inputGroup: { marginBottom: 16 },
-  inputLabel: { fontSize: 16, color: '#171717', marginBottom: 8 },
+  inputLabel: { fontSize: 14, fontFamily: F.body, color: '#171717', marginBottom: 8 },
   input: { flexDirection: 'row', alignItems: 'center', height: 48, borderRadius: 16, backgroundColor: '#FAFAFA', paddingLeft: 8, paddingRight: 4, gap: 8 },
-  inputTxt: { flex: 1, fontSize: 16, color: '#0A0A0A' },
+  inputTxt: { flex: 1, fontSize: 15, fontFamily: F.body, color: '#0A0A0A' },
   inputUnitBadge: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#262626', alignItems: 'center', justifyContent: 'center' },
-  inputUnitBadgeTxt: { color: 'white', fontSize: 14 },
+  inputUnitBadgeTxt: { color: 'white', fontSize: 12, fontFamily: F.bodyB },
 
   optionCard: { flexDirection: 'row', alignItems: 'center', gap: 8, backgroundColor: '#FAFAFA', borderRadius: 24, padding: 16, minHeight: 56, borderWidth: 1, borderColor: 'transparent' },
   optionCardActive: { backgroundColor: '#F5F5F5', borderColor: '#262626' },
-  optionLabel: { fontSize: 16, color: '#0A0A0A' },
-  optionDesc: { fontSize: 12, color: '#737373', marginTop: 2 },
+  optionLabel: { fontSize: 14, fontFamily: F.body, color: '#0A0A0A' },
+  optionDesc: { fontSize: 11, fontFamily: F.body, color: '#737373', marginTop: 2 },
   checkbox: { width: 20, height: 20, borderRadius: 6, borderWidth: 1, borderColor: '#737373', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
   checkboxActive: { backgroundColor: '#262626', borderColor: '#262626' },
 

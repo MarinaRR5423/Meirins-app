@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, TextInput, LayoutAnimation, Platform, UIManager, Dimensions, ActivityIndicator } from 'react-native';
+import { F } from '../theme/fonts';
 import { Check, ChevronRight } from 'lucide-react-native';
 import T, { LANGUAGES, t } from '../i18n/translations';
 import ProgressChart from '../components/ProgressChart';
@@ -499,6 +500,11 @@ export default function PerfilScreen({ pi, profile, signOut }) {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+
+      {/* ── TÍTULO "Perfil" ── */}
+      <View style={styles.pageTitleRow}>
+        <Text style={styles.pageTitle}>{lang === 'en' ? 'Profile' : lang === 'fr' ? 'Profil' : lang === 'it' ? 'Profilo' : 'Perfil'}</Text>
+      </View>
 
       {/* ── CABECERA ── */}
       <View style={styles.header}>
@@ -1427,7 +1433,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
         const setStep = setDeleteStep;
 
         const deleteLabel = {
-          btn:      { es: 'Eliminar mi cuenta y datos', en: 'Delete my account and data', fr: 'Supprimer mon compte et mes données', it: 'Elimina il mio account e i dati' },
+          btn:      { es: 'Eliminar cuenta y datos', en: 'Delete account and data', fr: 'Supprimer compte et données', it: 'Elimina account e dati' },
           title:    { es: '⚠️ ¿Eliminar tu cuenta?', en: '⚠️ Delete your account?', fr: '⚠️ Supprimer ton compte ?', it: '⚠️ Eliminare il tuo account?' },
           body:     { es: 'Esta acción es irreversible. Se borrarán todos tus datos: ciclo, peso, programa y perfil. No podrás recuperarlos.', en: 'This action is irreversible. All your data will be deleted: cycle, weight, programme and profile. You cannot recover them.', fr: 'Cette action est irréversible. Toutes tes données seront supprimées : cycle, poids, programme et profil.', it: 'Questa azione è irreversibile. Tutti i tuoi dati verranno eliminati: ciclo, peso, programma e profilo.' },
           confirm:  { es: 'Sí, eliminar todo', en: 'Yes, delete everything', fr: 'Oui, tout supprimer', it: 'Sì, elimina tutto' },
@@ -1440,11 +1446,9 @@ export default function PerfilScreen({ pi, profile, signOut }) {
           setDeleting(true);
           try {
             const { supabase: sb } = require('../lib/supabase');
-            // 1. Llamar a la función RPC que borra datos + auth user
             const { error } = await sb.rpc('delete_user_account');
             if (error) throw error;
           } catch (e) {
-            // Si falla la RPC, al menos borramos el perfil y cerramos sesión
             const { supabase: sb } = require('../lib/supabase');
             const user = (await sb.auth.getUser())?.data?.user;
             if (user) await sb.from('profiles').delete().eq('id', user.id);
@@ -1494,8 +1498,8 @@ export default function PerfilScreen({ pi, profile, signOut }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F0F4FA' },
-  content: { padding: 14, paddingTop: 60, paddingBottom: 40 },
+  container: { flex: 1, backgroundColor: '#FFFFFF' },
+  content: { padding: 16, paddingTop: 56, paddingBottom: 40 },
 
   header: { alignItems: 'center', marginBottom: 20 },
   avatarWrap: { position: 'relative', marginBottom: 10 },
@@ -1504,12 +1508,12 @@ const styles = StyleSheet.create({
   avatarText: { fontSize: 30, color: 'white', fontWeight: '700' },
   avatarEdit: { position: 'absolute', bottom: 0, right: 0, width: 26, height: 26, borderRadius: 13, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, elevation: 3, borderWidth: 1, borderColor: '#E2E8F0' },
   avatarEditTxt: { fontSize: 12 },
-  headerName: { fontSize: 22, fontWeight: '700', color: '#1E293B', marginBottom: 6 },
+  headerName: { fontSize: 22, fontWeight: '700', color: '#1E293B', marginBottom: 6, fontFamily: F.heading },
 
   // Modal de edición de nombre
   nameModalOverlay: { position: 'absolute', top: 0, left: -14, right: -14, bottom: -300, backgroundColor: 'rgba(15,31,74,0.5)', justifyContent: 'center', alignItems: 'center', zIndex: 100 },
   nameModal:        { width: '90%', maxWidth: 360, backgroundColor: 'white', borderRadius: 18, padding: 20 },
-  nameModalTitle:   { fontSize: 16, fontWeight: '700', color: '#1E293B', marginBottom: 12 },
+  nameModalTitle:   { fontSize: 16, fontWeight: '700', color: '#1E293B', marginBottom: 12, fontFamily: F.heading },
   nameInput:        { borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 12, padding: 12, fontSize: 16, color: '#1E293B', backgroundColor: '#F8FAFC' },
   nameModalBtn:     { flex: 1, padding: 12, borderRadius: 12, alignItems: 'center' },
   headerMeta: { flexDirection: 'row', gap: 8, marginBottom: 6, flexWrap: 'wrap', justifyContent: 'center' },
@@ -1592,12 +1596,14 @@ const styles = StyleSheet.create({
   medCardTitle: { fontSize: 13, fontWeight: '700', color: '#92400E', marginBottom: 6 },
   medCardBody:  { fontSize: 12, color: '#78350F', lineHeight: 18 },
 
-  signOutBtn:  { marginTop: 8, padding: 14, borderRadius: 14, borderWidth: 1, borderColor: '#E2E8F0', backgroundColor: 'white', alignItems: 'center' },
-  signOutText: { fontSize: 14, color: '#64748B', fontWeight: '500' },
+  pageTitleRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 20 },
+  pageTitle:    { fontSize: 32, fontFamily: 'BricolageGrotesque_800ExtraBold', fontWeight: '800', color: '#0A0A0A' },
+  signOutBtn:  { marginTop: 8, padding: 16, borderRadius: 14, backgroundColor: '#0A0A0A', alignItems: 'center' },
+  signOutText: { fontSize: 15, color: '#FFFFFF', fontWeight: '700' },
 
   // Delete account
-  deleteBtn:           { marginTop: 8, padding: 14, borderRadius: 14, alignItems: 'center' },
-  deleteBtnTxt:        { fontSize: 13, color: '#CBD5E1', fontWeight: '400' },
+  deleteBtn:           { marginTop: 8, padding: 16, borderRadius: 14, backgroundColor: '#FEE2E2', alignItems: 'center' },
+  deleteBtnTxt:        { fontSize: 15, color: '#DC2626', fontWeight: '700' },
   deleteConfirmBox:    { marginTop: 8, padding: 16, borderRadius: 14, backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FECACA' },
   deleteConfirmTitle:  { fontSize: 15, fontWeight: '700', color: '#EF4444', marginBottom: 8, textAlign: 'center' },
   deleteConfirmBody:   { fontSize: 13, color: '#64748B', lineHeight: 20, textAlign: 'center', marginBottom: 16 },

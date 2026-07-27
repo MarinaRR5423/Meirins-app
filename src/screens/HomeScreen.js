@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Modal, Switch, Animated, ImageBackground } from 'react-native';
+import { F } from '../theme/fonts';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Settings, ChevronRight, Salad, Footprints, Flame, CalendarDays, Info, Check } from 'lucide-react-native';
@@ -486,7 +487,7 @@ const styles = StyleSheet.create({
   avatarCircle: { width: 40, height: 40, borderRadius: 16, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center' },
   avatarInitialTxt: { color: 'white', fontWeight: '800', fontSize: 16 },
   greetingHi: { fontSize: 14, color: '#0A0A0A' },
-  greetingName: { fontSize: 18, fontWeight: '800', color: '#0A0A0A' },
+  greetingName: { fontSize: 18, fontWeight: '800', color: '#0A0A0A', fontFamily: F.headingX },
   customizeBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#F5F5F5', alignItems: 'center', justifyContent: 'center', marginLeft: 10 },
   doneBadge: { backgroundColor: '#171717', borderRadius: 20, paddingHorizontal: 14, paddingVertical: 10, marginLeft: 10 },
   doneBadgeTxt: { color: 'white', fontSize: 13, fontWeight: '700' },
@@ -494,7 +495,7 @@ const styles = StyleSheet.create({
   // Hero
   heroCard: { height: 200, borderRadius: 24, padding: 16, justifyContent: 'space-between', marginTop: 2, marginBottom: 2, overflow: 'hidden' },
   heroCardImg: { borderRadius: 24 },
-  heroHeadline: { fontSize: 26, fontWeight: '800', color: '#0A0A0A', lineHeight: 30 },
+  heroHeadline: { fontSize: 26, fontWeight: '800', color: '#0A0A0A', lineHeight: 30, fontFamily: F.headingX },
   heroTags: { flexDirection: 'row', flexWrap: 'wrap', gap: 4 },
   heroTag: { backgroundColor: '#F5F5F5', height: 24, paddingHorizontal: 8, borderRadius: 8, justifyContent: 'center' },
   heroTagTxt: { fontSize: 10, fontWeight: '600', color: '#0A0A0A', textTransform: 'uppercase', letterSpacing: 0.3 },
@@ -505,7 +506,7 @@ const styles = StyleSheet.create({
   miniHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
   miniHeaderLabel: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   miniHeaderTxt: { fontSize: 12, color: '#0A0A0A' },
-  miniBigNum: { fontSize: 32, fontWeight: '800', lineHeight: 36 },
+  miniBigNum: { fontSize: 32, fontWeight: '800', lineHeight: 36, fontFamily: F.headingX },
   miniSub: { fontSize: 14, color: '#0A0A0A', marginTop: 2 },
   smallBtn: { backgroundColor: '#0A0A0A', height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginTop: 16 },
   smallBtnTxt: { color: 'white', fontWeight: '600', fontSize: 14 },
@@ -515,7 +516,7 @@ const styles = StyleSheet.create({
   mealHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 },
   mealHeaderTxt: { fontSize: 12, color: '#0A0A0A' },
   mealSlot: { fontSize: 14, color: '#0A0A0A' },
-  mealTitle: { fontSize: 26, fontWeight: '800', color: '#260E01', lineHeight: 30, marginTop: 2, marginBottom: 10 },
+  mealTitle: { fontSize: 26, fontWeight: '800', color: '#260E01', lineHeight: 30, marginTop: 2, marginBottom: 10, fontFamily: F.headingX },
   mealItemRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 2 },
   mealDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#260E01' },
   mealItemTxt: { fontSize: 14, color: '#0A0A0A', flex: 1 },
@@ -529,7 +530,7 @@ const styles = StyleSheet.create({
 
   // Habit / streak
   habitCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginTop: 2, marginBottom: 2 },
-  habitBigTxt: { fontSize: 28, fontWeight: '800', color: '#A157C9', marginBottom: 2 },
+  habitBigTxt: { fontSize: 28, fontWeight: '800', color: '#A157C9', marginBottom: 2, fontFamily: F.headingX },
   habitSub: { fontSize: 14, color: '#0A0A0A', marginBottom: 16 },
   habitDotsRow: { flexDirection: 'row', justifyContent: 'space-between' },
   habitDot: { width: 22, height: 22, borderRadius: 11 },
@@ -539,14 +540,14 @@ const styles = StyleSheet.create({
   // Tip
   tipCard: { borderRadius: 24, padding: 16, marginTop: 2, marginBottom: 2, overflow: 'hidden', minHeight: 160, justifyContent: 'space-between' },
   tipOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(10,10,10,0.35)', borderRadius: 24 },
-  tipQuote: { fontSize: 24, fontWeight: '800', color: 'white', lineHeight: 28, marginTop: 16 },
+  tipQuote: { fontSize: 24, fontWeight: '800', color: 'white', lineHeight: 28, marginTop: 16, fontFamily: F.headingX },
 
   // Modal personalizar
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' },
   modalSheet: { backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingBottom: 40, maxHeight: '75%' },
   modalHandle: { width: 36, height: 4, backgroundColor: '#E2E8F0', borderRadius: 2, alignSelf: 'center', marginTop: 12, marginBottom: 16 },
   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  modalTitle: { fontSize: 17, fontWeight: '700', color: '#0A0A0A' },
+  modalTitle: { fontSize: 17, fontWeight: '700', color: '#0A0A0A', fontFamily: F.heading },
   modalDoneBtn: { backgroundColor: '#171717', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 6 },
   modalDoneTxt: { color: 'white', fontSize: 13, fontWeight: '600' },
   modalDesc: { fontSize: 13, color: '#64748B', marginBottom: 16 },
