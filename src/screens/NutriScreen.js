@@ -477,30 +477,32 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
         activityLevel={activityLevel} dietary={dietary}
         saveAll={saveAll || (() => {})} saveProfileExtended={saveProfileExtended || (() => {})} />
 
-      {/* ── CONTEXTO NUTRICIONAL DEL DÍA ── */}
-      {nutritionCtx && (
-        <View style={styles.ctxCard}>
-          <Text style={styles.ctxTitle}>
-            🎯 {lang === 'en' ? 'Today\'s focus' : lang === 'fr' ? 'Focus du jour' : lang === 'it' ? 'Focus di oggi' : 'Foco de hoy'}
+      {/* ── TARJETA NARANJA: kcal + foco del día ── */}
+      {(cals || nutritionCtx) && (
+        <View style={styles.orangeHeroCard}>
+          <Text style={styles.orangeHeroLabel}>
+            {lang === 'en' ? 'Plan de hoy' : lang === 'fr' ? "Plan du jour" : 'Plan de hoy'}
           </Text>
-          <View style={styles.ctxNutrients}>
-            {(Array.isArray(nutritionCtx.nutrients) ? nutritionCtx.nutrients : [nutritionCtx.nutrients]).map((n, i) => (
-              <View key={i} style={styles.ctxPill}>
-                <Text style={styles.ctxPillTxt}>{n}</Text>
+          {cals && <Text style={styles.orangeHeroKcal}>{cals.total} kcal</Text>}
+          {nutritionCtx && (
+            <>
+              <View style={styles.orangeHeroPills}>
+                {(Array.isArray(nutritionCtx.nutrients) ? nutritionCtx.nutrients : [nutritionCtx.nutrients]).map((nu, i) => (
+                  <View key={i} style={styles.orangeHeroPill}>
+                    <Text style={styles.orangeHeroPillTxt}>{nu}</Text>
+                  </View>
+                ))}
               </View>
-            ))}
-          </View>
-          {!!nutritionCtx.tip && (
-            <Text style={styles.ctxTip}>{nutritionCtx.tip}</Text>
-          )}
-          {!!nutritionCtx.dietNote && (
-            <Text style={styles.ctxDietNote}>🥗 {nutritionCtx.dietNote}</Text>
-          )}
-          {nutritionCtx.conditionNotes?.map((note, i) => (
-            <Text key={i} style={styles.ctxCondNote}>{note}</Text>
-          ))}
-          {!!nutritionCtx.avoidNote && (
-            <Text style={styles.ctxAvoid}>⚠️ {nutritionCtx.avoidNote}</Text>
+              {!!nutritionCtx.tip && (
+                <Text style={styles.orangeHeroTip}>{nutritionCtx.tip}</Text>
+              )}
+              {!!nutritionCtx.dietNote && (
+                <Text style={styles.orangeHeroTip}>{nutritionCtx.dietNote}</Text>
+              )}
+              {!!nutritionCtx.avoidNote && (
+                <Text style={styles.orangeHeroTip}>{nutritionCtx.avoidNote}</Text>
+              )}
+            </>
           )}
         </View>
       )}
@@ -575,7 +577,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
                 </Text>
               </View>
 
-              {/* ── TRACKER CALORÍAS (solo hoy) ── */}
+              {/* ── TRACKER CALORÍAS (barra de progreso, solo hoy) ── */}
               {isToday && cals && (() => {
                 const consumedFromMeals = todayMenu.meals
                   .filter(m => todayActivityRecipes[m.id] === 'done' && m.macros?.kcal)
@@ -586,30 +588,26 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
                 const pct = Math.min(1, consumed / cals.total);
                 const over = consumed > cals.total;
                 const barColor = over ? '#DC2626' : pct > 0.85 ? '#FE6004' : '#49CF38';
-                const lbl = { es: ['Calorías de hoy', 'Consumidas', 'Restantes', 'Superado en'],
-                              en: ['Today\'s calories', 'Consumed', 'Remaining', 'Over by'],
-                              fr: ['Calories du jour', 'Consommées', 'Restantes', 'Dépassé de'],
-                              it: ['Calorie di oggi', 'Consumate', 'Rimanenti', 'Superato di'] }[lang] || [];
+                const lbl = { es: ['Consumidas', 'Restantes', 'Superado en'],
+                              en: ['Consumed', 'Remaining', 'Over by'],
+                              fr: ['Consommées', 'Restantes', 'Dépassé de'],
+                              it: ['Consumate', 'Rimanenti', 'Superato di'] }[lang] || [];
                 return (
                   <View style={styles.calCard}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                      <Text style={styles.calTitle}>🔥 {lbl[0]}</Text>
-                      <Text style={{ fontSize: 11, color: '#737373' }}>{cals.total} kcal objetivo</Text>
-                    </View>
                     <View style={styles.calBarBg}>
                       <View style={[styles.calBarFill, { width: `${pct * 100}%`, backgroundColor: barColor }]} />
                     </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 }}>
                       <View style={styles.calStat}>
                         <Text style={[styles.calStatNum, { color: barColor }]}>{consumed}</Text>
-                        <Text style={styles.calStatLbl}>{lbl[1]}</Text>
+                        <Text style={styles.calStatLbl}>{lbl[0]}</Text>
                       </View>
-                      <View style={[styles.calDivider]} />
+                      <View style={styles.calDivider} />
                       <View style={styles.calStat}>
                         <Text style={[styles.calStatNum, { color: over ? '#DC2626' : '#0A0A0A' }]}>
                           {over ? `+${consumed - cals.total}` : remaining}
                         </Text>
-                        <Text style={styles.calStatLbl}>{over ? lbl[3] : lbl[2]}</Text>
+                        <Text style={styles.calStatLbl}>{over ? lbl[2] : lbl[1]}</Text>
                       </View>
                     </View>
                   </View>
@@ -684,96 +682,88 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
         <TipsCard articles={nutriArticles} lang={lang} variant="azote" />
       </>}
 
-      {/* ── LISTE DE COURSES ── */}
+      {/* ── LISTA DE LA COMPRA ── */}
       {sub === 'lista' && <>
-        {/* Navegación semanas */}
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 4, marginBottom: 8 }}>
-          <TouchableOpacity onPress={() => setWeekOffset(w => w - 1)} style={{ padding: 8 }}>
-            <ChevronLeft size={20} color={BLUE.primary} />
+        {/* Navegación semanas — neutral */}
+        <View style={styles.listNavRow}>
+          <TouchableOpacity onPress={() => setWeekOffset(w => w - 1)} style={styles.listNavBtn}>
+            <ChevronLeft size={18} color="#0A0A0A" />
           </TouchableOpacity>
-          <Text style={{ fontSize: 13, fontWeight: '600', color: '#1E293B' }}>
+          <Text style={styles.listNavLabel}>
             {weekOffset === 0
-              ? (lang === 'en' ? 'This week' : lang === 'fr' ? 'Cette semaine' : lang === 'it' ? 'Questa settimana' : 'Esta semana')
+              ? (lang === 'en' ? 'This week' : lang === 'fr' ? 'Cette semaine' : 'Esta semana')
               : weekOffset === -1
-              ? (lang === 'en' ? 'Last week' : lang === 'fr' ? 'Semaine passée' : lang === 'it' ? 'Settimana scorsa' : 'Semana pasada')
+              ? (lang === 'en' ? 'Last week' : lang === 'fr' ? 'Semaine passée' : 'Semana pasada')
               : weekOffset === 1
-              ? (lang === 'en' ? 'Next week' : lang === 'fr' ? 'Semaine prochaine' : lang === 'it' ? 'Settimana prossima' : 'Semana siguiente')
-              : (weekOffset > 0 ? `+${weekOffset}` : weekOffset) + (lang === 'en' ? ' weeks' : ' semanas')}
+              ? (lang === 'en' ? 'Next week' : lang === 'fr' ? 'Semaine prochaine' : 'Semana siguiente')
+              : `${weekOffset > 0 ? '+' : ''}${weekOffset}w`}
           </Text>
-          <TouchableOpacity onPress={() => setWeekOffset(w => w + 1)} style={{ padding: 8 }}>
-            <ChevronRight size={20} color={BLUE.primary} />
+          <TouchableOpacity onPress={() => setWeekOffset(w => w + 1)} style={styles.listNavBtn}>
+            <ChevronRight size={18} color="#0A0A0A" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              const lines = Object.entries(finalShopData).map(([cat, items]) => {
+                const rows = items.map(item => {
+                  const qty = item.qty ?? item.totalQty;
+                  const label = shoppingListFromRecipes ? formatQuantity(qty, item.unit) : formatQty(qty, item.unit, lang);
+                  return `• ${item.name}${label ? ' — ' + label : ''}`;
+                }).join('\n');
+                return `${cat}\n${rows}`;
+              }).join('\n\n');
+              const shareLabel = lang === 'en' ? 'Shopping list' : 'Lista de la compra';
+              Share.share({ message: `🛒 ${shareLabel}\n\n${lines}` });
+            }}
+            style={styles.listShareBtn}>
+            <Text style={styles.listShareTxt}>
+              {lang === 'en' ? 'Share' : 'Compartir'}
+            </Text>
           </TouchableOpacity>
         </View>
-        <View style={[styles.card, { backgroundColor: BLUE.light }]}>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
-            <Text style={[styles.sectionTitle, { color: BLUE.primary }]}>{n.weekList}</Text>
-            <TouchableOpacity
-              onPress={() => {
-                const lines = Object.entries(finalShopData).map(([cat, items]) => {
-                  const rows = items.map(item => {
-                    const qty = item.qty ?? item.totalQty;
-                    const label = shoppingListFromRecipes ? formatQuantity(qty, item.unit) : formatQty(qty, item.unit, lang);
-                    return `• ${item.name}${label ? ' — ' + label : ''}`;
-                  }).join('\n');
-                  return `${cat}\n${rows}`;
-                }).join('\n\n');
-                const shareLabel = lang === 'en' ? 'Shopping list' : lang === 'fr' ? 'Liste de courses' : lang === 'it' ? 'Lista della spesa' : 'Lista de la compra';
-                Share.share({ message: `🛒 ${shareLabel}\n\n${lines}` });
-              }}
-              style={{ backgroundColor: BLUE.primary, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 12 }}>
-              <Text style={{ color: 'white', fontWeight: '700', fontSize: 12 }}>
-                {lang === 'en' ? '📤 Share' : lang === 'fr' ? '📤 Partager' : lang === 'it' ? '📤 Condividi' : '📤 Compartir'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-            <Text style={styles.listSub}>{n.weekListSub} · {adults} {adults > 1 ? n.adults2 : n.adult}</Text>
-            <View style={{ backgroundColor: BLUE.primary, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 12 }}>
-              <Text style={{ color: 'white', fontWeight: '700', fontSize: 12 }}>
-                {shopItemsCount} {lang === 'en' ? 'items' : lang === 'fr' ? 'articles' : 'productos'}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.personsRow}>
-            {[
-              { label: n.adults,   val: adults,   set: setAdults,   min: 1, max: 8, color: BLUE.primary },
-              { label: n.children, val: children, set: setChildren, min: 0, max: 6, color: '#64748B' },
-            ].map(p => (
-              <View key={p.label} style={styles.personBox}>
-                <Text style={styles.personLabel}>{p.label}</Text>
-                <View style={styles.counter}>
-                  <TouchableOpacity onPress={() => p.set(v => Math.max(p.min, v - 1))}
-                    style={[styles.counterBtn, { borderColor: p.color }]}>
-                    <Text style={[styles.counterBtnText, { color: p.color }]}>−</Text>
-                  </TouchableOpacity>
-                  <Text style={[styles.counterVal, { color: p.color }]}>{p.val}</Text>
-                  <TouchableOpacity onPress={() => p.set(v => Math.min(p.max, v + 1))}
-                    style={[styles.counterBtnFill, { backgroundColor: p.color }]}>
-                    <Text style={styles.counterBtnFillText}>+</Text>
-                  </TouchableOpacity>
-                </View>
+
+        {/* Personas */}
+        <View style={styles.listPersonRow}>
+          {[
+            { label: n.adults,   val: adults,   set: setAdults,   min: 1, max: 8 },
+            { label: n.children, val: children, set: setChildren, min: 0, max: 6 },
+          ].map(p => (
+            <View key={p.label} style={styles.listPersonBox}>
+              <Text style={styles.listPersonLabel}>{p.label}</Text>
+              <View style={styles.listCounter}>
+                <TouchableOpacity onPress={() => p.set(v => Math.max(p.min, v - 1))} style={styles.listCounterBtn}>
+                  <Text style={styles.listCounterTxt}>−</Text>
+                </TouchableOpacity>
+                <Text style={styles.listCounterVal}>{p.val}</Text>
+                <TouchableOpacity onPress={() => p.set(v => Math.min(p.max, v + 1))} style={styles.listCounterBtnFill}>
+                  <Text style={styles.listCounterFillTxt}>+</Text>
+                </TouchableOpacity>
               </View>
-            ))}
+            </View>
+          ))}
+          <View style={styles.listCountBadge}>
+            <Text style={styles.listCountBadgeTxt}>{shopItemsCount}</Text>
+            <Text style={styles.listCountBadgeSub}>{lang === 'en' ? 'items' : 'prod.'}</Text>
           </View>
         </View>
 
         {Object.entries(finalShopData).map(([cat, items]) => (
-          <View key={cat} style={styles.card}>
-            <Text style={styles.sectionTitle}>{cat}</Text>
+          <View key={cat} style={styles.listCatCard}>
+            <Text style={styles.listCatTitle}>{cat}</Text>
             {items.map(item => {
-              // Soporta tanto el formato antiguo (totalQty + unit) como el nuevo (qty + unit)
               const qty  = item.qty ?? item.totalQty;
               const unit = item.unit;
               const qtyLabel = shoppingListFromRecipes ? formatQuantity(qty, unit) : formatQty(qty, unit, lang);
               const itemKey = item.key || item.name;
               const checked = !!checkedItems[itemKey];
               return (
-                <TouchableOpacity key={itemKey} style={styles.shopRow} onPress={() => setCheckedItems(prev => ({ ...prev, [itemKey]: !prev[itemKey] }))} activeOpacity={0.7}>
+                <TouchableOpacity key={itemKey} style={styles.shopRow}
+                  onPress={() => setCheckedItems(prev => ({ ...prev, [itemKey]: !prev[itemKey] }))}
+                  activeOpacity={0.7}>
                   <View style={styles.shopLeft}>
-                    <View style={[styles.checkbox, checked && { backgroundColor: '#1A56DB', borderColor: '#1A56DB' }]}>
+                    <View style={[styles.checkbox, checked && styles.checkboxChecked]}>
                       {checked && <Check size={12} color="#fff" />}
                     </View>
-                    <Text style={[styles.shopName, checked && { textDecorationLine: 'line-through', color: '#94A3B8' }]}>{item.name}</Text>
+                    <Text style={[styles.shopName, checked && styles.shopNameChecked]}>{item.name}</Text>
                   </View>
                   <Text style={[styles.shopQty, checked && { color: '#94A3B8' }]}>{qtyLabel}</Text>
                 </TouchableOpacity>
@@ -924,16 +914,37 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: 'white' },
   content: { padding: 14, paddingTop: 60, paddingBottom: 30 },
 
-  // Nutrition context card
-  ctxCard:      { backgroundColor: 'white', borderRadius: 16, padding: 14, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 2 },
-  ctxTitle:     { fontSize: 13, fontWeight: '700', color: '#1E293B', marginBottom: 10 },
-  ctxNutrients: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 10 },
-  ctxPill:      { backgroundColor: '#EFF6FF', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
-  ctxPillTxt:   { fontSize: 12, color: '#1A56DB', fontWeight: '600' },
-  ctxTip:       { fontSize: 13, color: '#475569', lineHeight: 20, marginBottom: 6 },
-  ctxDietNote:  { fontSize: 12, color: '#059669', backgroundColor: '#F0FDF4', borderRadius: 8, padding: 8, marginBottom: 6, lineHeight: 18 },
-  ctxCondNote:  { fontSize: 12, color: '#7C3AED', backgroundColor: '#F5F3FF', borderRadius: 8, padding: 8, marginBottom: 6, lineHeight: 18 },
-  ctxAvoid:     { fontSize: 12, color: '#92400E', backgroundColor: '#FEF3C7', borderRadius: 8, padding: 8, lineHeight: 18 },
+  // Tarjeta naranja kcal + foco
+  orangeHeroCard:    { backgroundColor: '#FE6004', borderRadius: 24, padding: 20, marginBottom: 12 },
+  orangeHeroLabel:   { fontSize: 12, fontWeight: '600', color: 'rgba(255,255,255,0.75)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 0.5 },
+  orangeHeroKcal:    { fontSize: 40, fontWeight: '800', color: '#FFFFFF', lineHeight: 44, marginBottom: 12, fontFamily: F.headingX },
+  orangeHeroPills:   { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 12 },
+  orangeHeroPill:    { backgroundColor: 'rgba(255,255,255,0.22)', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
+  orangeHeroPillTxt: { fontSize: 11, color: '#FFFFFF', fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.3 },
+  orangeHeroTip:     { fontSize: 13, color: 'rgba(255,255,255,0.88)', lineHeight: 19, marginBottom: 6 },
+
+  // Lista de la compra
+  listNavRow:       { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 },
+  listNavBtn:       { padding: 6 },
+  listNavLabel:     { flex: 1, fontSize: 14, fontWeight: '700', color: '#0A0A0A', textAlign: 'center' },
+  listShareBtn:     { backgroundColor: '#0A0A0A', paddingHorizontal: 12, paddingVertical: 7, borderRadius: 20 },
+  listShareTxt:     { fontSize: 12, fontWeight: '700', color: 'white' },
+  listPersonRow:    { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#F5F5F5', borderRadius: 20, padding: 14, marginBottom: 12 },
+  listPersonBox:    { flex: 1 },
+  listPersonLabel:  { fontSize: 11, color: '#737373', marginBottom: 6 },
+  listCounter:      { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  listCounterBtn:   { width: 28, height: 28, borderRadius: 14, borderWidth: 1, borderColor: '#D4D4D4', alignItems: 'center', justifyContent: 'center' },
+  listCounterTxt:   { fontSize: 16, color: '#0A0A0A', lineHeight: 20 },
+  listCounterVal:   { fontSize: 16, fontWeight: '700', color: '#0A0A0A', minWidth: 20, textAlign: 'center' },
+  listCounterBtnFill: { width: 28, height: 28, borderRadius: 14, backgroundColor: '#0A0A0A', alignItems: 'center', justifyContent: 'center' },
+  listCounterFillTxt: { fontSize: 16, color: 'white', lineHeight: 20 },
+  listCountBadge:   { alignItems: 'center' },
+  listCountBadgeTxt: { fontSize: 20, fontWeight: '800', color: '#0A0A0A', fontFamily: F.headingX },
+  listCountBadgeSub: { fontSize: 10, color: '#737373' },
+  listCatCard:      { backgroundColor: 'white', borderRadius: 20, padding: 16, marginBottom: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 2 },
+  listCatTitle:     { fontSize: 13, fontWeight: '700', color: '#0A0A0A', marginBottom: 10, textTransform: 'uppercase', letterSpacing: 0.4 },
+  checkboxChecked:  { backgroundColor: '#0A0A0A', borderColor: '#0A0A0A' },
+  shopNameChecked:  { textDecorationLine: 'line-through', color: '#94A3B8' },
 
   // Diet info card
   dietCard:         { backgroundColor: 'white', borderRadius: 16, marginBottom: 12, overflow: 'hidden', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 6, elevation: 2 },
