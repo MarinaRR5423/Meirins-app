@@ -61,7 +61,8 @@
       ],
       "expo-localization",
       "react-native-health",
-      "expo-font"
+      "expo-font",
+      "expo-video"
     ],
     "web": {
       "favicon": "./assets/favicon.png"

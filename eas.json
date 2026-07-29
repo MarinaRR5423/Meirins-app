@@ -50,10 +50,10 @@
     },
     "production": {
       "ios": {
-        "appleId": "marina.r.1348@gmail.com"
+        "appleId": "marina.r.1348@gmail.com",
+        "ascAppId": "6782055959"
       },
       "android": {
-        "serviceAccountKeyPath": "./google-service-account.json",
         "track": "internal"
       }
     }

@@ -1,15 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react';
+﻿import React, { useEffect, useState, useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text, View, ActivityIndicator, Platform, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, Platform, StyleSheet } from 'react-native';
 import { useFonts } from 'expo-font';
 import {
   BricolageGrotesque_700Bold,
   BricolageGrotesque_800ExtraBold,
 } from '@expo-google-fonts/bricolage-grotesque';
 import Loading from './src/components/Loading';
-import { Home, Moon, Salad, SportShoe, User } from 'lucide-react-native';
+import SplashVideo from './src/components/SplashVideo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Home, Flower, Salad, SportShoe, User } from 'lucide-react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Notifications from 'expo-notifications';
 import * as Linking from 'expo-linking';
@@ -26,7 +28,7 @@ import HomeScreen from './src/screens/HomeScreen';
 import CicloScreen from './src/screens/CicloScreen';
 import NutriScreen from './src/screens/NutriScreen';
 import GimnasioScreen from './src/screens/GimnasioScreen';
-import PerfilScreen from './src/screens/IAScreen';
+import PerfilScreen from './src/screens/UserScreen';
 import { useHealthData } from './src/hooks/useHealthData';
 import { PostHogProvider, usePostHog } from 'posthog-react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -43,7 +45,7 @@ function PostHogBridge() {
 }
 
 // Apply Aglet Mono as the default font for all Text components app-wide
-Text.defaultProps = { ...(Text.defaultProps || {}), style: [{ fontFamily: 'AgletMono_Regular' }] };
+
 
 const Tab = createBottomTabNavigator();
 
@@ -101,10 +103,10 @@ async function handleAuthUrl(url) {
 // ─── Banner de sin conexión ────────────────────────────────────────────────────
 function OfflineBanner({ lang }) {
   const msg = {
-    es: '📡 Sin conexión — mostrando datos en caché',
-    en: '📡 Offline — showing cached data',
-    fr: '📡 Hors ligne — affichage des données en cache',
-    it: '📡 Offline — visualizzazione dati in cache',
+    es: 'Sin conexión — mostrando datos en caché',
+    en: 'Offline — showing cached data',
+    fr: 'Hors ligne — affichage des données en cache',
+    it: 'Offline — visualizzazione dati in cache',
   };
   return (
     <View style={{ backgroundColor: '#FEF3C7', paddingVertical: 6, paddingHorizontal: 16, alignItems: 'center' }}>
@@ -127,9 +129,18 @@ function App() {
   const [setupLang, setSetupLang] = React.useState(getDeviceLang);
   const [setupUnits, setSetupUnits] = React.useState(getDeviceUnitSystem);
   const [isOffline, setIsOffline] = useState(false);
+  const [cachedPhase, setCachedPhase] = useState(null);
 
   // Analytics init (no-op si no está configurado)
   useEffect(() => { initAnalytics(); }, []);
+
+  // Cache de fase para el splash video
+  useEffect(() => {
+    AsyncStorage.getItem('@blumm/lastPhase').then(v => { if (v) setCachedPhase(v); }).catch(() => {});
+  }, []);
+  useEffect(() => {
+    if (pi?.phase) AsyncStorage.setItem('@blumm/lastPhase', pi.phase).catch(() => {});
+  }, [pi?.phase]);
 
   // Identifica al usuario tras login
   useEffect(() => {
@@ -200,7 +211,7 @@ function App() {
     : null;
 
   if (authState === 'loading' || (authState === 'authenticated' && !profileLoaded) || (!fontsLoaded && !fontError)) {
-    return <Loading variant="fullscreen" />;
+    return <SplashVideo phase={cachedPhase} />;
   }
 
   if (authState === 'unauthenticated') return <ErrorBoundary><AuthScreen lang={setupLang} /></ErrorBoundary>;
@@ -241,7 +252,7 @@ function App() {
             profileExtended: profile.profileExtended,
           }} />}
         </Tab.Screen>
-        <Tab.Screen name="Ciclo" options={{ tabBarLabel: tabs.cycle, tabBarIcon: ({ color, size }) => <Moon color={color} size={size} /> }}>
+        <Tab.Screen name="Ciclo" options={{ tabBarLabel: tabs.cycle, tabBarIcon: ({ color, size }) => <Flower color={color} size={size} /> }}>
           {() => <CicloScreen lang={lang} pi={pi} lastPeriod={lastPeriod} setLastPeriod={profile.setLastPeriod} setCycleLength={profile.setCycleLength} periodEnd={periodEnd} setPeriodEnd={profile.setPeriodEnd} sleepLog={sleepLog} logSleep={profile.logSleep} profileExtended={profile.profileExtended} saveProfileExtended={profile.saveProfileExtended} logCycleDay={profile.logCycleDay} />}
         </Tab.Screen>
         <Tab.Screen name="Nutrición" options={{ tabBarLabel: tabs.nutri, tabBarIcon: ({ color, size }) => <Salad color={color} size={size} />, unmountOnBlur: true }}>
@@ -261,7 +272,8 @@ function App() {
             toggleFavoriteWorkout={profile.toggleFavoriteWorkout}
             skipWorkout={profile.skipWorkout}
             logWorkoutDone={profile.logWorkoutDone}
-            sleepLog={sleepLog} logSleep={profile.logSleep} />}
+            sleepLog={sleepLog} logSleep={profile.logSleep}
+            weight={profile.weight} height={profile.height} logWeight={profile.logWeight} />}
         </Tab.Screen>
         <Tab.Screen name="Perfil" options={{ tabBarLabel: tabs.profile, tabBarIcon: ({ color, size }) => <User color={color} size={size} /> }}>
           {() => <PerfilScreen pi={pi} profile={{

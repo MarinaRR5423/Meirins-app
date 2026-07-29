@@ -1,4 +1,4 @@
-/**
+﻿/**
  * TabSetupCard — tarjeta inline que aparece en la parte superior de una pestaña
  * cuando faltan datos necesarios para esa pestaña.
  * Se pliega/despliega y desaparece cuando el usuario guarda los datos.
@@ -27,12 +27,12 @@ const LIFE_STAGES_NEW = [
 ];
 
 const CONTRA_OPTIONS_NEW = [
-  { v: 'pill',          l: { es: '💊 Píldora contraceptiva', en: '💊 Contraceptive pill', fr: '💊 Pilule contraceptive', it: '💊 Pillola contraccettiva' } },
-  { v: 'hormonal_iud',  l: { es: '🌀 DIU hormonal',          en: '🌀 Hormonal IUD',       fr: '🌀 Stérilet hormonal',    it: '🌀 IUD ormonale' } },
-  { v: 'copper_iud',    l: { es: '🔩 DIU de cobre',          en: '🔩 Copper IUD',         fr: '🔩 Stérilet au cuivre',   it: '🔩 IUD al rame' } },
+  { v: 'pill',          l: { es: 'Píldora contraceptiva', en: 'Contraceptive pill', fr: 'Pilule contraceptive', it: 'Pillola contraccettiva' } },
+  { v: 'hormonal_iud',  l: { es: 'DIU hormonal',          en: 'Hormonal IUD',       fr: 'Stérilet hormonal',    it: 'IUD ormonale' } },
+  { v: 'copper_iud',    l: { es: 'DIU de cobre',          en: 'Copper IUD',         fr: 'Stérilet au cuivre',   it: 'IUD al rame' } },
   { v: 'ring',          l: { es: '⭕ Anillo vaginal',         en: '⭕ Vaginal ring',        fr: '⭕ Anneau vaginal',        it: '⭕ Anello vaginale' } },
-  { v: 'patch',         l: { es: '🩹 Parche',                 en: '🩹 Patch',              fr: '🩹 Patch',                it: '🩹 Cerotto' } },
-  { v: 'implant',       l: { es: '📌 Implante',               en: '📌 Implant',            fr: '📌 Implant',              it: '📌 Impianto' } },
+  { v: 'patch',         l: { es: 'Parche',                 en: 'Patch',              fr: 'Patch',                it: 'Cerotto' } },
+  { v: 'implant',       l: { es: 'Implante',               en: 'Implant',            fr: 'Implant',              it: 'Impianto' } },
 ];
 
 // Helper para traducir labels multilingüe
@@ -40,16 +40,16 @@ const tr = (obj, lang) => obj?.[lang] || obj?.es || '';
 
 // Top 10 complementos alimentarios + "Otros"
 const SUPPLEMENTS_OPTIONS = [
-  { v: 'omega3',        l: { es: '🐟 Omega-3',           en: '🐟 Omega-3',          fr: '🐟 Oméga-3',          it: '🐟 Omega-3' } },
-  { v: 'vitamin_d',     l: { es: '☀️ Vitamina D',         en: '☀️ Vitamin D',         fr: '☀️ Vitamine D',         it: '☀️ Vitamina D' } },
-  { v: 'magnesium',     l: { es: '🧂 Magnesio',           en: '🧂 Magnesium',         fr: '🧂 Magnésium',          it: '🧂 Magnesio' } },
-  { v: 'iron',          l: { es: '🩸 Hierro',             en: '🩸 Iron',              fr: '🩸 Fer',                it: '🩸 Ferro' } },
-  { v: 'vitamin_b12',   l: { es: '⚡ Vitamina B12',        en: '⚡ Vitamin B12',        fr: '⚡ Vitamine B12',        it: '⚡ Vitamina B12' } },
-  { v: 'creatine',      l: { es: '💪 Creatina',           en: '💪 Creatine',          fr: '💪 Créatine',           it: '💪 Creatina' } },
-  { v: 'whey_protein',  l: { es: '🥤 Proteína Whey',      en: '🥤 Whey protein',      fr: '🥤 Protéine Whey',      it: '🥤 Proteine Whey' } },
-  { v: 'multivitamin',  l: { es: '💊 Multivitamínico',    en: '💊 Multivitamin',      fr: '💊 Multivitamines',     it: '💊 Multivitaminico' } },
-  { v: 'probiotics',    l: { es: '🦠 Probióticos',        en: '🦠 Probiotics',        fr: '🦠 Probiotiques',       it: '🦠 Probiotici' } },
-  { v: 'collagen',      l: { es: '✨ Colágeno',           en: '✨ Collagen',           fr: '✨ Collagène',           it: '✨ Collagene' } },
+  { v: 'omega3',        l: { es: 'Omega-3',           en: 'Omega-3',          fr: 'Oméga-3',          it: 'Omega-3' } },
+  { v: 'vitamin_d',     l: { es: 'Vitamina D',         en: 'Vitamin D',         fr: 'Vitamine D',         it: 'Vitamina D' } },
+  { v: 'magnesium',     l: { es: 'Magnesio',           en: 'Magnesium',         fr: 'Magnésium',          it: 'Magnesio' } },
+  { v: 'iron',          l: { es: 'Hierro',             en: 'Iron',              fr: 'Fer',                it: 'Ferro' } },
+  { v: 'vitamin_b12',   l: { es: 'Vitamina B12',        en: 'Vitamin B12',        fr: 'Vitamine B12',        it: 'Vitamina B12' } },
+  { v: 'creatine',      l: { es: 'Creatina',           en: 'Creatine',          fr: 'Créatine',           it: 'Creatina' } },
+  { v: 'whey_protein',  l: { es: 'Proteína Whey',      en: 'Whey protein',      fr: 'Protéine Whey',      it: 'Proteine Whey' } },
+  { v: 'multivitamin',  l: { es: 'Multivitamínico',    en: 'Multivitamin',      fr: 'Multivitamines',     it: 'Multivitaminico' } },
+  { v: 'probiotics',    l: { es: 'Probióticos',        en: 'Probiotics',        fr: 'Probiotiques',       it: 'Probiotici' } },
+  { v: 'collagen',      l: { es: 'Colágeno',           en: 'Collagen',           fr: 'Collagène',           it: 'Collagene' } },
 ];
 
 const BLUE = '#1A56DB';
@@ -103,17 +103,39 @@ function Chip({ label, selected, onPress, danger, variant = 'default' }) {
 
 function DayPicker({ trainDays, onToggle, dayLetters, variant = 'default' }) {
   if (variant === 'azote') {
+    // Compute current week date number by JS day index (0=Sun … 6=Sat)
+    const today = new Date();
+    const dow = today.getDay();
+    const monday = new Date(today);
+    monday.setDate(today.getDate() - ((dow + 6) % 7));
+    const weekDateByDay = {};
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      weekDateByDay[d.getDay()] = d.getDate();
+    }
     return (
-      <View style={s.daysRowAzote}>
-        {[0, 1, 2, 3, 4, 5, 6].map(d => {
-          const on = trainDays.includes(d);
-          return (
-            <TouchableOpacity key={d} onPress={() => onToggle(d)}
-              style={[s.dayBtnAzote, on && s.dayBtnAzoteActive]}>
-              <Text style={[s.dayLetterAzote, on && s.dayLetterAzoteActive]}>{dayLetters[d]}</Text>
-            </TouchableOpacity>
-          );
-        })}
+      <View style={{ gap: 4, marginBottom: 8 }}>
+        {/* Day labels row */}
+        <View style={s.daysLabelRowAzote}>
+          {[0, 1, 2, 3, 4, 5, 6].map(d => (
+            <View key={d} style={s.dayLabelCellAzote}>
+              <Text style={s.dayLabelTxtAzote}>{dayLetters[d]}</Text>
+            </View>
+          ))}
+        </View>
+        {/* Day cells */}
+        <View style={s.daysRowAzote}>
+          {[0, 1, 2, 3, 4, 5, 6].map(d => {
+            const on = trainDays.includes(d);
+            return (
+              <TouchableOpacity key={d} onPress={() => onToggle(d)}
+                style={[s.dayBtnAzote, on && s.dayBtnAzoteActive]}>
+                <Text style={[s.dayLetterAzote, on && s.dayLetterAzoteActive]}>{weekDateByDay[d]}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
       </View>
     );
   }
@@ -125,7 +147,7 @@ function DayPicker({ trainDays, onToggle, dayLetters, variant = 'default' }) {
           <TouchableOpacity key={d} onPress={() => onToggle(d)}
             style={[s.dayBtn, on && s.dayBtnActive]}>
             <Text style={[s.dayLetter, on && s.dayLetterActive]}>{dayLetters[d]}</Text>
-            <Text style={{ fontSize: 12, marginTop: 2 }}>{on ? '💪' : '😴'}</Text>
+            <Text style={{ fontSize: 12, marginTop: 2 }}>{on ? '' : ''}</Text>
           </TouchableOpacity>
         );
       })}
@@ -190,7 +212,7 @@ export function CicloSetupCard({ lang, lastPeriod, setLastPeriod, cycleLength, s
     emptyTitle: { es: 'Registra tu primer ciclo', en: 'Log your first cycle', fr: 'Enregistre ton premier cycle', it: 'Registra il tuo primo ciclo' }[lang] || 'Registra tu primer ciclo',
     emptySub:   { es: 'Añade la fecha de tu último período y desbloquea tu programa personalizado', en: 'Add the date of your last period to unlock your personalised programme', fr: 'Ajoute la date de tes dernières règles pour débloquer ton programme personnalisé', it: 'Aggiungi la data del tuo ultimo ciclo per sbloccare il tuo programma personalizzato' }[lang] || 'Añade la fecha de tu último período y desbloquea tu programa personalizado',
     emptyCta:   { es: 'Registrar', en: 'Log it', fr: 'Enregistrer', it: 'Registra' }[lang] || 'Registrar',
-    modalTitle:  { es: '🌙 Tu ciclo', en: '🌙 Your cycle', fr: '🌙 Ton cycle', it: '🌙 Il tuo ciclo' }[lang] || '🌙 Tu ciclo',
+    modalTitle:  { es: 'Tu ciclo', en: 'Your cycle', fr: 'Ton cycle', it: 'Il tuo ciclo' }[lang] || 'Tu ciclo',
     yesLabel:    ob?.yes  || 'Sí',
     noLabel:     ob?.no   || 'No',
   };
@@ -319,7 +341,7 @@ export function CicloHealthCard({ lang, profileExtended, saveProfileExtended }) 
   const txt = {
     bannerTitle: { es: 'Tu salud menstrual', en: 'Your menstrual health', fr: 'Ta santé menstruelle', it: 'La tua salute mestruale' }[lang] || 'Tu salud menstrual',
     bannerSub:   { es: 'Condiciones, síndromes y anticoncepción', en: 'Conditions, syndromes & contraception', fr: 'Conditions, syndromes et contraception', it: 'Condizioni, sindromi e contraccezione' }[lang] || 'Condiciones, síndromes y anticoncepción',
-    modalTitle:  { es: '🩺 Salud menstrual', en: '🩺 Menstrual health', fr: '🩺 Santé menstruelle', it: '🩺 Salute mestruale' }[lang] || '🩺 Salud menstrual',
+    modalTitle:  { es: 'Salud menstrual', en: 'Menstrual health', fr: 'Santé menstruelle', it: 'Salute mestruale' }[lang] || 'Salud menstrual',
     yesLabel:    ob?.yes  || 'Sí',
     noLabel:     ob?.no   || 'No',
   };
@@ -327,7 +349,7 @@ export function CicloHealthCard({ lang, profileExtended, saveProfileExtended }) 
   return (
     <>
       <TouchableOpacity style={[s.banner, { backgroundColor: '#FFF1F2', borderColor: '#FECDD3' }]} onPress={() => setOpen(true)} activeOpacity={0.85}>
-        <Text style={s.bannerEmoji}>🩺</Text>
+        <Text style={s.bannerEmoji}></Text>
         <View style={{ flex: 1 }}>
           <Text style={[s.bannerTitle, { color: '#9F1239' }]}>{txt.bannerTitle}</Text>
           <Text style={[s.bannerSub, { color: '#FB7185' }]}>{txt.bannerSub}</Text>
@@ -466,9 +488,9 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
   const emptyTxt = {
     title: L('Configura tu nutrición', 'Set up your nutrition', 'Configure ta nutrition', 'Configura la tua nutrizione'),
     sub:   L('Configura tus preferencias para que nos podamos adaptar a tus necesidades y gustos',
-             'Set your preferences so we can adapt to your needs and tastes',
-             'Configure tes préférences pour qu\'on puisse s\'adapter à tes besoins et goûts',
-             'Configura le tue preferenze così possiamo adattarci alle tue esigenze e gusti'),
+            'Set your preferences so we can adapt to your needs and tastes',
+            'Configure tes préférences pour qu\'on puisse s\'adapter à tes besoins et goûts',
+            'Configura le tue preferenze così possiamo adattarci alle tue esigenze e gusti'),
     cta:   L('Configurar nutrición', 'Set up nutrition', 'Configurer la nutrition', 'Configura nutrizione'),
   };
 
@@ -502,25 +524,23 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
       )}
 
       <SetupModal visible={open} onClose={() => setOpen(false)} variant="azote"
-        title={lang === 'en' ? 'Nutrition setup' : lang === 'fr' ? 'Nutrition' : lang === 'it' ? 'Nutrizione' : 'Nutrición'}>
+        title={lang === 'en' ? 'Nutrition' : lang === 'fr' ? 'Nutrition' : lang === 'it' ? 'Nutrizione' : 'Nutrición'}>
 
-        {/* ── DIETA BASE (19 opciones agrupadas) ── */}
-        <Text style={s.secLabelAzote}>
-          {lang === 'en' ? 'Your diet' : lang === 'fr' ? 'Ton régime' : lang === 'it' ? 'La tua dieta' : 'Tu dieta'}
-        </Text>
+        {/* ── DIETA BASE (agrupada por categoría) ── */}
         {allDiets.length > 0
           ? Object.entries(dietsByCategory)
               .filter(([cat]) => cat !== 'fasting')
               .map(([cat, catDiets]) => {
-                const catInfo = DIET_CATEGORIES[cat] || { icon: '🍽️', label: { es: cat, en: cat } };
+                const catInfo = DIET_CATEGORIES[cat] || { label: { es: cat, en: cat } };
                 return (
-                  <View key={cat} style={{ marginBottom: 6 }}>
-                    <Text style={s.dietCatLabel}>{catInfo.icon} {catInfo.label[lang] || catInfo.label.es}</Text>
+                  <View key={cat} style={{ gap: 8 }}>
+                    <Text style={s.dietCatLabel}>{catInfo.label[lang] || catInfo.label.es}</Text>
                     <View style={{ gap: 2 }}>
                       {catDiets.map(d => {
                         const sel = normalizeDietId(localDiet) === d.id;
                         return (
-                          <OptionCard key={d.id} variant="azote" label={`${d.icon} ${d.name[lang] || d.name.es}`}
+                          <OptionCard key={d.id} variant="azote"
+                            label={d.name[lang] || d.name.es}
                             selected={sel} onPress={() => setLocalDiet(sel ? '' : d.id)} />
                         );
                       })}
@@ -529,63 +549,71 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
                 );
               })
           : (ob?.diets || []).map(o => (
-              <OptionCard key={o.v} variant="azote" label={`${o.ico} ${o.l}`} desc={o.d}
+              <OptionCard key={o.v} variant="azote" label={o.l} desc={o.d}
                 selected={localDiet === o.v} onPress={() => setLocalDiet(o.v)} />
             ))
         }
 
-        {/* ── PROTOCOLO DE AYUNO (opcional, combinable) ── */}
+        {/* ── INTOLERANCIAS ── */}
+        <View style={{ gap: 8 }}>
+          <Text style={s.dietCatLabel}>
+            {lang === 'en' ? 'Intolerances' : lang === 'fr' ? 'Intolérances' : lang === 'it' ? 'Intolleranze' : 'Intolerancias'}
+          </Text>
+          <View style={{ gap: 2 }}>
+            {[
+              { v: 'gluten_free',  l: { es: 'Sin gluten',  en: 'Gluten-free',  fr: 'Sans gluten',  it: 'Senza glutine' } },
+              { v: 'lactose_free', l: { es: 'Sin lactosa', en: 'Lactose-free', fr: 'Sans lactose', it: 'Senza lattosio' } },
+            ].map(o => (
+              <OptionCard key={o.v} variant="azote"
+                label={o.l[lang] || o.l.es}
+                selected={localModifiers.includes(o.v)}
+                onPress={() => toggleArr(localModifiers, setModifiers, o.v)} />
+            ))}
+          </View>
+        </View>
+
+        {/* ── TERAPÉUTICAS ── */}
+        <View style={{ gap: 8 }}>
+          <Text style={s.dietCatLabel}>
+            {lang === 'en' ? 'Therapeutic' : lang === 'fr' ? 'Thérapeutiques' : lang === 'it' ? 'Terapeutiche' : 'Terapéuticas'}
+          </Text>
+          <View style={{ gap: 2 }}>
+            {[
+              { v: 'low_fodmap',        l: { es: 'Low FODMAP',       en: 'Low FODMAP',        fr: 'Low FODMAP',        it: 'Low FODMAP' } },
+              { v: 'anti_inflammatory', l: { es: 'Antiinflamatoria', en: 'Anti-inflammatory', fr: 'Anti-inflammatoire', it: 'Antinfiammatoria' } },
+              { v: 'dash',              l: { es: 'DASH',              en: 'DASH',              fr: 'DASH',              it: 'DASH' } },
+            ].map(o => (
+              <OptionCard key={o.v} variant="azote"
+                label={o.l[lang] || o.l.es}
+                selected={localModifiers.includes(o.v)}
+                onPress={() => toggleArr(localModifiers, setModifiers, o.v)} />
+            ))}
+          </View>
+        </View>
+
+        {/* ── PROTOCOLO DE AYUNO ── */}
         {dietsByCategory?.['fasting']?.length > 0 && <>
-          <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
-            {lang === 'en' ? 'Fasting protocol (optional)'
-                : lang === 'fr' ? 'Protocole de jeûne (optionnel)'
-                : lang === 'it' ? 'Protocollo di digiuno (opzionale)'
-                : 'Protocolo de ayuno (opcional)'}
-          </Text>
-          <Text style={[s.secSub, { color: '#737373', marginTop: -6 }]}>
-            {lang === 'en' ? 'Combinable with any diet above'
-             : lang === 'fr' ? 'Combinable avec n\'importe quel régime'
-             : 'Combinable con cualquier dieta'}
-          </Text>
+          <View style={{ gap: 4 }}>
+            <Text style={s.dietCatLabel}>
+              {lang === 'en' ? 'Fasting protocol' : lang === 'fr' ? 'Protocole de jeûne' : lang === 'it' ? 'Protocollo di digiuno' : 'Protocolo de ayuna'}
+            </Text>
+            <Text style={{ fontSize: 16, fontFamily: F.body, color: '#737373', lineHeight: 20.8 }}>
+              {lang === 'en' ? 'Combinable with any diet' : lang === 'fr' ? 'Combinable avec n\'importe quel régime' : lang === 'it' ? 'Combinabile con qualsiasi dieta' : 'Combinable con cualquier dieta'}
+            </Text>
+          </View>
           <View style={{ gap: 2 }}>
             {dietsByCategory['fasting'].map(d => {
               const sel = localFasting === d.id;
               const fw  = d.fasting_window;
               return (
-                <OptionCard key={d.id} variant="azote" label={`${d.icon} ${d.name[lang] || d.name.es}`}
-                  desc={fw?.eating_hours ? `🍽 ${fw.eating_hours}h · 🚫 ${fw.fasting_hours}h` : undefined}
+                <OptionCard key={d.id} variant="azote"
+                  label={d.name[lang] || d.name.es}
+                  desc={fw?.eating_hours ? `${lang === 'es' ? 'Ventana de' : 'Window of'} ${fw.eating_hours}h` : undefined}
                   selected={sel} onPress={() => setFasting(sel ? '' : d.id)} />
               );
             })}
           </View>
         </>}
-
-        {/* ── MODIFICADORES DE DIETA ── */}
-        <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
-          {lang === 'en' ? 'Dietary modifiers (optional)'
-           : lang === 'fr' ? 'Modificateurs alimentaires (optionnel)'
-           : lang === 'it' ? 'Modificatori dietetici (opzionale)'
-           : 'Modificadores de dieta (opcional)'}
-        </Text>
-        <Text style={[s.secSub, { color: '#737373', marginTop: -6 }]}>
-          {lang === 'en' ? 'Combine with any diet. Only recipes that meet ALL selected filters will be shown.'
-           : lang === 'fr' ? 'Combinables avec n\'importe quel régime. Seules les recettes qui respectent TOUS les filtres seront affichées.'
-           : lang === 'it' ? 'Combinabili con qualsiasi dieta. Verranno mostrate solo le ricette che rispettano TUTTI i filtri selezionati.'
-           : 'Combinables con cualquier dieta. Solo se mostrarán recetas que cumplan TODOS los filtros seleccionados.'}
-        </Text>
-        <View style={s.chips}>
-          {[
-            { v: 'gluten_free',       l: { es: '🌾 Sin gluten',       en: '🌾 Gluten-free',       fr: '🌾 Sans gluten',        it: '🌾 Senza glutine' } },
-            { v: 'lactose_free',      l: { es: '🥛 Sin lactosa',      en: '🥛 Lactose-free',      fr: '🥛 Sans lactose',       it: '🥛 Senza lattosio' } },
-            { v: 'low_fodmap',        l: { es: '🫘 Low FODMAP',       en: '🫘 Low FODMAP',        fr: '🫘 Low FODMAP',         it: '🫘 Low FODMAP' } },
-            { v: 'anti_inflammatory', l: { es: '🌿 Antiinflamatoria', en: '🌿 Anti-inflammatory', fr: '🌿 Anti-inflammatoire',  it: '🌿 Antinfiammatoria' } },
-          ].map(o => (
-            <Chip key={o.v} variant="azote"
-              label={o.l[lang] || o.l.es}
-              selected={localModifiers.includes(o.v)}
-              onPress={() => toggleArr(localModifiers, setModifiers, o.v)} />
-          ))}
-        </View>
 
         {/* ── COMIDAS DEL DÍA ── */}
         <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
@@ -601,7 +629,7 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
             const sel = currentMeals.includes(mealId);
             const label = MEAL_LABELS[mealId][lang] || MEAL_LABELS[mealId].es;
             return (
-              <Chip key={mealId} variant="azote" label={`${sel ? '✓ ' : ''}${label}`} selected={sel}
+              <Chip key={mealId} variant="azote" label={`${sel ? '' : ''}${label}`} selected={sel}
                 onPress={() => toggleMeal(mealId)} />
             );
           })}
@@ -679,7 +707,7 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
               onPress={() => toggleArr(localSupps, setSupps, o.v)} />
           ))}
           <Chip variant="azote"
-            label={lang === 'en' ? '➕ Other' : lang === 'fr' ? '➕ Autre' : lang === 'it' ? '➕ Altro' : '➕ Otros'}
+            label={lang === 'en' ? 'Other' : lang === 'fr' ? 'Autre' : lang === 'it' ? 'Altro' : 'Otros'}
             selected={localSupps.includes('other')}
             onPress={() => toggleArr(localSupps, setSupps, 'other')}
           />
@@ -709,53 +737,53 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
 // ─── Catálogos del cuestionario deportivo según objetivo ─────────────────────
 // 10 deportes con competiciones populares + Otro
 const COMP_SPORTS = [
-  { id: 'triathlon',     emoji: '🏊', label: { es: 'Triatlón',        en: 'Triathlon',      fr: 'Triathlon',        it: 'Triathlon' } },
-  { id: 'marathon',      emoji: '🏃', label: { es: 'Maratón',         en: 'Marathon',       fr: 'Marathon',         it: 'Maratona' } },
-  { id: 'half_marathon', emoji: '🎽', label: { es: 'Media maratón',   en: 'Half marathon',  fr: 'Semi-marathon',    it: 'Mezza maratona' } },
-  { id: 'race_10k',      emoji: '👟', label: { es: 'Carrera 5K/10K',  en: '5K/10K race',    fr: 'Course 5K/10K',    it: 'Corsa 5K/10K' } },
-  { id: 'trail',         emoji: '⛰️', label: { es: 'Trail running',   en: 'Trail running',  fr: 'Trail',            it: 'Trail running' } },
-  { id: 'swimming',      emoji: '🌊', label: { es: 'Natación',        en: 'Swimming',       fr: 'Natation',         it: 'Nuoto' } },
-  { id: 'cycling',       emoji: '🚴', label: { es: 'Ciclismo',        en: 'Cycling',        fr: 'Cyclisme',         it: 'Ciclismo' } },
-  { id: 'duathlon',      emoji: '🚵', label: { es: 'Duatlón',         en: 'Duathlon',       fr: 'Duathlon',         it: 'Duathlon' } },
-  { id: 'crossfit',      emoji: '🏋️', label: { es: 'CrossFit',        en: 'CrossFit',       fr: 'CrossFit',         it: 'CrossFit' } },
-  { id: 'hyrox',         emoji: '🔥', label: { es: 'Hyrox',           en: 'Hyrox',          fr: 'Hyrox',            it: 'Hyrox' } },
-  { id: 'other',         emoji: '➕', label: { es: 'Otro',            en: 'Other',          fr: 'Autre',            it: 'Altro' } },
+  { id: 'triathlon',     emoji: '', label: { es: 'Triatlón',        en: 'Triathlon',      fr: 'Triathlon',        it: 'Triathlon' } },
+  { id: 'marathon',      emoji: '', label: { es: 'Maratón',         en: 'Marathon',       fr: 'Marathon',         it: 'Maratona' } },
+  { id: 'half_marathon', emoji: '', label: { es: 'Media maratón',   en: 'Half marathon',  fr: 'Semi-marathon',    it: 'Mezza maratona' } },
+  { id: 'race_10k',      emoji: '', label: { es: 'Carrera 5K/10K',  en: '5K/10K race',    fr: 'Course 5K/10K',    it: 'Corsa 5K/10K' } },
+  { id: 'trail',         emoji: '', label: { es: 'Trail running',   en: 'Trail running',  fr: 'Trail',            it: 'Trail running' } },
+  { id: 'swimming',      emoji: '', label: { es: 'Natación',        en: 'Swimming',       fr: 'Natation',         it: 'Nuoto' } },
+  { id: 'cycling',       emoji: '', label: { es: 'Ciclismo',        en: 'Cycling',        fr: 'Cyclisme',         it: 'Ciclismo' } },
+  { id: 'duathlon',      emoji: '', label: { es: 'Duatlón',         en: 'Duathlon',       fr: 'Duathlon',         it: 'Duathlon' } },
+  { id: 'crossfit',      emoji: '', label: { es: 'CrossFit',        en: 'CrossFit',       fr: 'CrossFit',         it: 'CrossFit' } },
+  { id: 'hyrox',         emoji: '', label: { es: 'Hyrox',           en: 'Hyrox',          fr: 'Hyrox',            it: 'Hyrox' } },
+  { id: 'other',         emoji: '', label: { es: 'Otro',            en: 'Other',          fr: 'Autre',            it: 'Altro' } },
 ];
 
 const COMP_LEVELS = [
-  { id: 'beginner',     emoji: '🌱', label: { es: 'Principiante',  en: 'Beginner',      fr: 'Débutante',     it: 'Principiante' } },
-  { id: 'intermediate', emoji: '🏃', label: { es: 'Intermedio',    en: 'Intermediate',  fr: 'Intermédiaire', it: 'Intermedio' } },
-  { id: 'advanced',     emoji: '💪', label: { es: 'Avanzado',      en: 'Advanced',      fr: 'Avancée',       it: 'Avanzato' } },
-  { id: 'elite',        emoji: '🏆', label: { es: 'Élite',         en: 'Elite',         fr: 'Élite',         it: 'Élite' } },
+  { id: 'beginner',     emoji: '', label: { es: 'Principiante',  en: 'Beginner',      fr: 'Débutante',     it: 'Principiante' } },
+  { id: 'intermediate', emoji: '', label: { es: 'Intermedio',    en: 'Intermediate',  fr: 'Intermédiaire', it: 'Intermedio' } },
+  { id: 'advanced',     emoji: '', label: { es: 'Avanzado',      en: 'Advanced',      fr: 'Avancée',       it: 'Avanzato' } },
+  { id: 'elite',        emoji: '', label: { es: 'Élite',         en: 'Elite',         fr: 'Élite',         it: 'Élite' } },
 ];
 
 // Deportes habituales para "¿qué deporte realizas?" (selección múltiple)
 // Exportado: también lo usa GimnasioScreen para "añadir deporte extra"
 export const SPORTS_LIST = [
-  { id: 'running',   emoji: '🏃', label: { es: 'Running',            en: 'Running',          fr: 'Running',            it: 'Corsa' } },
-  { id: 'gym',       emoji: '🏋️', label: { es: 'Musculación',        en: 'Weight training',  fr: 'Musculation',        it: 'Pesi' } },
-  { id: 'yoga',      emoji: '🧘', label: { es: 'Yoga',               en: 'Yoga',             fr: 'Yoga',               it: 'Yoga' } },
-  { id: 'pilates',   emoji: '🤸', label: { es: 'Pilates',            en: 'Pilates',          fr: 'Pilates',            it: 'Pilates' } },
-  { id: 'swimming',  emoji: '🏊', label: { es: 'Natación',           en: 'Swimming',         fr: 'Natation',           it: 'Nuoto' } },
-  { id: 'cycling',   emoji: '🚴', label: { es: 'Ciclismo',           en: 'Cycling',          fr: 'Vélo',               it: 'Ciclismo' } },
-  { id: 'padel',     emoji: '🎾', label: { es: 'Pádel / Tenis',      en: 'Padel / Tennis',   fr: 'Padel / Tennis',     it: 'Padel / Tennis' } },
-  { id: 'football',  emoji: '⚽', label: { es: 'Fútbol',             en: 'Football',         fr: 'Football',           it: 'Calcio' } },
-  { id: 'rugby',     emoji: '🏉', label: { es: 'Rugby',              en: 'Rugby',            fr: 'Rugby',              it: 'Rugby' } },
-  { id: 'basketball',emoji: '🏀', label: { es: 'Baloncesto',         en: 'Basketball',       fr: 'Basket',             it: 'Basket' } },
-  { id: 'crossfit',  emoji: '🔥', label: { es: 'CrossFit / HIIT',    en: 'CrossFit / HIIT',  fr: 'CrossFit / HIIT',    it: 'CrossFit / HIIT' } },
-  { id: 'dance',     emoji: '💃', label: { es: 'Baile',              en: 'Dance',            fr: 'Danse',              it: 'Danza' } },
-  { id: 'hiking',    emoji: '🥾', label: { es: 'Senderismo',         en: 'Hiking',           fr: 'Randonnée',          it: 'Escursionismo' } },
-  { id: 'martial',   emoji: '🥊', label: { es: 'Boxeo / Artes marciales', en: 'Boxing / Martial arts', fr: 'Boxe / Arts martiaux', it: 'Boxe / Arti marziali' } },
-  { id: 'climbing',  emoji: '🧗', label: { es: 'Escalada',           en: 'Climbing',         fr: 'Escalade',           it: 'Arrampicata' } },
-  { id: 'other',     emoji: '➕', label: { es: 'Otro',               en: 'Other',            fr: 'Autre',              it: 'Altro' } },
+  { id: 'running',   emoji: '', label: { es: 'Running',            en: 'Running',          fr: 'Running',            it: 'Corsa' } },
+  { id: 'gym',       emoji: '', label: { es: 'Musculación',        en: 'Weight training',  fr: 'Musculation',        it: 'Pesi' } },
+  { id: 'yoga',      emoji: '', label: { es: 'Yoga',               en: 'Yoga',             fr: 'Yoga',               it: 'Yoga' } },
+  { id: 'pilates',   emoji: '', label: { es: 'Pilates',            en: 'Pilates',          fr: 'Pilates',            it: 'Pilates' } },
+  { id: 'swimming',  emoji: '', label: { es: 'Natación',           en: 'Swimming',         fr: 'Natation',           it: 'Nuoto' } },
+  { id: 'cycling',   emoji: '', label: { es: 'Ciclismo',           en: 'Cycling',          fr: 'Vélo',               it: 'Ciclismo' } },
+  { id: 'padel',     emoji: '', label: { es: 'Pádel / Tenis',      en: 'Padel / Tennis',   fr: 'Padel / Tennis',     it: 'Padel / Tennis' } },
+  { id: 'football',  emoji: '', label: { es: 'Fútbol',             en: 'Football',         fr: 'Football',           it: 'Calcio' } },
+  { id: 'rugby',     emoji: '', label: { es: 'Rugby',              en: 'Rugby',            fr: 'Rugby',              it: 'Rugby' } },
+  { id: 'basketball',emoji: '', label: { es: 'Baloncesto',         en: 'Basketball',       fr: 'Basket',             it: 'Basket' } },
+  { id: 'crossfit',  emoji: '', label: { es: 'CrossFit / HIIT',    en: 'CrossFit / HIIT',  fr: 'CrossFit / HIIT',    it: 'CrossFit / HIIT' } },
+  { id: 'dance',     emoji: '', label: { es: 'Baile',              en: 'Dance',            fr: 'Danse',              it: 'Danza' } },
+  { id: 'hiking',    emoji: '', label: { es: 'Senderismo',         en: 'Hiking',           fr: 'Randonnée',          it: 'Escursionismo' } },
+  { id: 'martial',   emoji: '', label: { es: 'Boxeo / Artes marciales', en: 'Boxing / Martial arts', fr: 'Boxe / Arts martiaux', it: 'Boxe / Arti marziali' } },
+  { id: 'climbing',  emoji: '', label: { es: 'Escalada',           en: 'Climbing',         fr: 'Escalade',           it: 'Arrampicata' } },
+  { id: 'other',     emoji: '', label: { es: 'Otro',               en: 'Other',            fr: 'Autre',              it: 'Altro' } },
 ];
 
 // Objetivos deportivos (mismos ids que el paso 3 del onboarding)
 const SPORT_GOALS = [
-  { id: 'competition', emoji: '🏆', label: { es: 'Competición',          en: 'Competition',   fr: 'Compétition',            it: 'Competizione' },      desc: { es: 'Preparación específica', en: 'Specific preparation', fr: 'Préparation spécifique', it: 'Preparazione specifica' } },
-  { id: 'muscle',      emoji: '💪', label: { es: 'Ganar músculo',        en: 'Build muscle',  fr: 'Prendre du muscle',      it: 'Costruire muscolo' }, desc: { es: 'Fuerza e hipertrofia',   en: 'Strength and hypertrophy', fr: 'Force et hypertrophie', it: 'Forza e ipertrofia' } },
-  { id: 'tone',        emoji: '✨', label: { es: 'Afinarme y tonificar', en: 'Tone up',       fr: "M'affiner et tonifier",  it: 'Tonificarmi' },       desc: { es: 'Definición y postura',   en: 'Definition and posture', fr: 'Définition et posture', it: 'Definizione e postura' } },
-  { id: 'resume',      emoji: '🌱', label: { es: 'Retomar el deporte',   en: 'Resume sport',  fr: 'Reprendre le sport',     it: 'Riprendere lo sport' },desc: { es: 'Volver con seguridad',   en: 'Come back safely', fr: 'Revenir en sécurité', it: 'Tornare in sicurezza' } },
+  { id: 'competition', emoji: '', label: { es: 'Competición',          en: 'Competition',   fr: 'Compétition',            it: 'Competizione' },      desc: { es: 'Preparación específica', en: 'Specific preparation', fr: 'Préparation spécifique', it: 'Preparazione specifica' } },
+  { id: 'muscle',      emoji: '', label: { es: 'Ganar músculo',        en: 'Build muscle',  fr: 'Prendre du muscle',      it: 'Costruire muscolo' }, desc: { es: 'Fuerza e hipertrofia',   en: 'Strength and hypertrophy', fr: 'Force et hypertrophie', it: 'Forza e ipertrofia' } },
+  { id: 'tone',        emoji: '', label: { es: 'Afinarme y tonificar', en: 'Tone up',       fr: "M'affiner et tonifier",  it: 'Tonificarmi' },       desc: { es: 'Definición y postura',   en: 'Definition and posture', fr: 'Définition et posture', it: 'Definizione e postura' } },
+  { id: 'resume',      emoji: '', label: { es: 'Retomar el deporte',   en: 'Resume sport',  fr: 'Reprendre le sport',     it: 'Riprendere lo sport' },desc: { es: 'Volver con seguridad',   en: 'Come back safely', fr: 'Revenir en sécurité', it: 'Tornare in sicurezza' } },
 ];
 
 const LAST_SESSION_OPTIONS = [
@@ -766,7 +794,7 @@ const LAST_SESSION_OPTIONS = [
 ];
 
 // ─── GIMNASIO ─────────────────────────────────────────────────────────────────
-export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, saveProfileExtended }) {
+export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, saveProfileExtended, openModalRef }) {
   const p  = T[lang] || T.es;
   const ob = p.onboarding;
   const DAY_LETTERS = p.dayLetters || ['D','L','M','X','J','V','S'];
@@ -876,29 +904,24 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
     setOpen(true);
   };
 
-  const emptyTxt = {
-    title: L('Plan de entrenamiento', 'Training plan', 'Plan d\'entraînement', 'Piano di allenamento'),
-    sub:   L('Configura tus preferencias para que nos podamos adaptar a tus necesidades y gustos',
-             'Set your preferences so we can adapt to your needs and tastes',
-             'Configure tes préférences pour qu\'on puisse s\'adapter à tes besoins et goûts',
-             'Configura le tue preferenze così possiamo adattarci alle tue esigenze e gusti'),
-    cta:   L('Configurar entrenamiento', 'Set up training', 'Configurer l\'entraînement', 'Configura allenamento'),
-  };
+  // Expose openModal to external ref (used by GimnasioScreen empty state)
+  if (openModalRef) openModalRef.current = openModal;
 
   return (
     <>
-      {!hasGymData ? (
+      {!hasGymData && !openModalRef && (
         <View style={s.gymEmptyCard}>
           <View style={s.gymEmptyAvatar}>
             <CalendarDays size={22} color="white" strokeWidth={2.2} />
           </View>
-          <Text style={s.gymEmptyTitle}>{emptyTxt.title}</Text>
-          <Text style={s.gymEmptySub}>{emptyTxt.sub}</Text>
+          <Text style={s.gymEmptyTitle}>{L('Plan de entrenamiento', 'Training plan', "Plan d'entraînement", 'Piano di allenamento')}</Text>
+          <Text style={s.gymEmptySub}>{L('Configura tus preferencias para que nos podamos adaptar a tus necesidades y gustos', 'Set your preferences so we can adapt to your needs and tastes', "Configure tes préférences pour qu'on puisse s'adapter", 'Configura le tue preferenze così possiamo adattarci')}</Text>
           <TouchableOpacity style={s.gymEmptyBtn} onPress={openModal} activeOpacity={0.85}>
-            <Text style={s.gymEmptyBtnTxt}>{emptyTxt.cta}</Text>
+            <Text style={s.gymEmptyBtnTxt}>{L('Configurar entrenamiento', 'Set up training', "Configurer l'entraînement", 'Configura allenamento')}</Text>
           </TouchableOpacity>
         </View>
-      ) : (
+      )}
+      {hasGymData && (
         <TouchableOpacity style={s.gymEditBanner} onPress={openModal} activeOpacity={0.85}>
           <View style={{ flex: 1 }}>
             <Text style={s.gymEditBannerTitle}>
@@ -925,7 +948,7 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
           onPress={() => setLocalDays([])}
         >
           <Text style={[s.noTrainingTxt, localDays.length === 0 && s.noTrainingTxtActive]}>
-            {localDays.length === 0 ? '✓ ' : ''}{noTrainingLabel}
+            {localDays.length === 0 ? '' : ''}{noTrainingLabel}
           </Text>
         </TouchableOpacity>
 
@@ -1172,8 +1195,8 @@ const s = StyleSheet.create({
   secLabelAzote:    { fontSize: 16, fontFamily: F.bodyB, color: '#171717', marginBottom: 10 },
   optCardAzote:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8, backgroundColor: '#FAFAFA', borderRadius: 24, padding: 16, minHeight: 56, borderWidth: 1, borderColor: 'transparent' },
   optCardAzoteActive: { backgroundColor: '#F5F5F5', borderColor: '#262626' },
-  optLabelAzote:      { fontSize: 16, color: '#0A0A0A' },
-  optDescAzote:       { fontSize: 12, color: '#737373', marginTop: 2 },
+  optLabelAzote:      { fontSize: 16, color: '#0A0A0A', fontFamily: F.body, lineHeight: 20.8 },
+  optDescAzote:       { fontSize: 12, color: '#525252', fontFamily: F.body, lineHeight: 15.6, marginTop: 2 },
   radioBase:       { width: 20, height: 20, borderRadius: 10, borderWidth: 1, borderColor: '#737373', backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
   radioBaseActive: { backgroundColor: '#262626', borderColor: '#262626' },
   radioDot:        { width: 8, height: 8, borderRadius: 4, backgroundColor: 'white' },
@@ -1182,7 +1205,7 @@ const s = StyleSheet.create({
   chipAzoteLabel:       { fontSize: 16, color: '#0A0A0A' },
   chipAzoteLabelActive: { color: 'white' },
   saveBtnAzote:    { marginTop: 28, height: 48, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center' },
-  saveBtnAzoteTxt: { color: '#FAFAFA', fontFamily: F.bodyB, fontSize: 18 },
+  saveBtnAzoteTxt: { color: '#FAFAFA', fontFamily: F.body, fontSize: 18 },
 
   // Section
   secLabel: { fontSize: 11, fontFamily: F.bodyB, color: 'rgba(255,255,255,0.5)', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginTop: 4 },
@@ -1213,10 +1236,13 @@ const s = StyleSheet.create({
   dayLetterActive:{ color: '#1A56DB' },
 
   // Day picker — variant "azote"
-  daysRowAzote:      { flexDirection: 'row', gap: 4, marginBottom: 8 },
+  daysLabelRowAzote:  { flexDirection: 'row' },
+  dayLabelCellAzote:  { flex: 1, alignItems: 'center', paddingVertical: 3 },
+  dayLabelTxtAzote:   { fontSize: 10, fontFamily: F.body, color: '#737373', textTransform: 'uppercase' },
+  daysRowAzote:      { flexDirection: 'row', gap: 4 },
   dayBtnAzote:       { flex: 1, aspectRatio: 1, borderRadius: 4, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
   dayBtnAzoteActive: { backgroundColor: '#0A0A0A' },
-  dayLetterAzote:      { fontSize: 12, color: '#0A0A0A' },
+  dayLetterAzote:      { fontSize: 12, color: '#0A0A0A', fontFamily: F.body },
   dayLetterAzoteActive:{ color: 'white' },
 
   // Date buttons
@@ -1233,10 +1259,10 @@ const s = StyleSheet.create({
   lenTxtActive:  { color: '#1A56DB', fontFamily: F.bodyB },
 
   // Sin días fijos
-  noTrainingBtn:       { marginTop: 4, marginBottom: 4, padding: 12, borderRadius: 12, backgroundColor: '#FAFAFA', alignItems: 'center' },
-  noTrainingBtnActive: { backgroundColor: '#F5F5F5' },
-  noTrainingTxt:       { fontSize: 13, color: '#525252', fontWeight: '500' },
-  noTrainingTxtActive: { color: '#0A0A0A', fontFamily: F.bodyB, textDecorationLine: 'underline' },
+  noTrainingBtn:       { marginTop: 8, marginBottom: 4, alignItems: 'center' },
+  noTrainingBtnActive: {},
+  noTrainingTxt:       { fontSize: 14, color: '#737373', fontFamily: F.body },
+  noTrainingTxtActive: { color: '#171717', fontFamily: F.body, textDecorationLine: 'underline' },
 
   // Save button
   saveBtn:    { marginTop: 28, padding: 16, borderRadius: 50, backgroundColor: 'white', alignItems: 'center' },
@@ -1256,7 +1282,7 @@ const s = StyleSheet.create({
   yesNoTxtActive:  { color: '#1A56DB' },
 
   // Label para categorías de dietas
-  dietCatLabel: { fontSize: 10, fontFamily: F.bodyB, color: 'rgba(255,255,255,0.55)', letterSpacing: 0.8, marginTop: 8, marginBottom: 4, textTransform: 'uppercase' },
+  dietCatLabel: { fontSize: 16, fontFamily: F.bodyB, color: '#171717', marginBottom: 8, marginTop: 16 },
 
   // Input "Otros" para complementos personalizados
   otherInput: {
