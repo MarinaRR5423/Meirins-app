@@ -490,7 +490,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  }}
  style={{ backgroundColor: 'white', borderWidth: 1, borderColor: '#171717', borderRadius: 12, height: 40, alignItems: 'center', justifyContent: 'center', alignSelf: 'stretch' }}>
  <BText style={{ color: '#171717', fontFamily: F.body, fontSize: 16 }}>
- {tr('Marcar regla en el calendario', 'Mark period on the calendar', 'Marquer les règles sur le calendrier', 'Segna il ciclo sul calendario')}
+ {tr('Marcar regla', 'Mark period', 'Marquer les règles', 'Segna il ciclo')}
  </BText>
  </TouchableOpacity>
  ) : (
