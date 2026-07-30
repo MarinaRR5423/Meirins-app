@@ -293,7 +293,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  <ImageBackground
  source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
  style={styles.heroCard}
- imageStyle={[styles.heroCardImg, pi?.phase === 'follicular' && { top: 30 }]}
+ imageStyle={[styles.heroCardImg, pi?.phase === 'follicular' && { top: -60, height: 260 }]}
  >
  <BText style={styles.heroHeadline}>{heroHeadline}</BText>
  <View style={styles.heroTags}>
@@ -324,7 +324,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
   </View>
   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
    <BText style={styles.kcalBarLabel}>0</BText>
-   <BText style={styles.kcalBarLabel}>{consumedKcal}</BText>
+   <BText style={styles.kcalBarLabel}>{kcalTarget}</BText>
   </View>
  </TouchableOpacity>
  ) : null}
