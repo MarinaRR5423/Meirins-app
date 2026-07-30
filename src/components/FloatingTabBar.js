@@ -49,8 +49,8 @@ export default function FloatingTabBar({ state, descriptors, navigation, enabled
  const renderIcon = () => {
   if (route.name === 'Inicio') return <Home size={20} color={iconColor} strokeWidth={2} />;
   if (route.name === 'Ciclo') return <FlowerIcon color={iconColor} size={20} />;
-  if (route.name === 'Nutrición') return <NutritionIcon color={iconColor} size={20} />;
-  if (route.name === 'Gimnasio') return <GymIcon color={iconColor} size={20} />;
+  if (route.name === 'Nutrición') return <Salad color={iconColor} size={20} strokeWidth={2} />;
+  if (route.name === 'Gimnasio') return <SportShoe color={iconColor} size={20} strokeWidth={2} />;
   return <Home size={20} color={iconColor} strokeWidth={2} />;
  };
 
