@@ -399,6 +399,8 @@ export default function GimnasioScreen({
  const wLabel = (type) => hl?.workoutTypes?.[type] ?? type ?? '—';
  const wEmoji = (type) => hl?.workoutEmoji?.[type] ?? '';
 
+ const hasGymData = !!profileExtended?.gymSetupDone;
+
  if (!hasGymData) {
   const emptyTxt = {
    title: { es: 'Plan de entrenamiento', en: 'Training plan', fr: "Plan d'entra\u00eenement", it: 'Piano di allenamento' },

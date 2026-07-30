@@ -319,6 +319,9 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
    <BText style={[styles.miniBigNum, { color: '#FE6004', fontSize: 48, lineHeight: 52 }]}>{consumedKcal}</BText>
    <BText style={styles.miniSub}>{kcalRemaining} {tr('restantes', 'remaining', 'restants', 'rimanenti')}</BText>
   </View>
+  <View style={styles.kcalTrack}>
+   <View style={[styles.kcalFill, { width: `${Math.min(100, kcalPct)}%` }]} />
+  </View>
   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
    <BText style={styles.kcalBarLabel}>0</BText>
    <BText style={styles.kcalBarLabel}>{consumedKcal}</BText>
