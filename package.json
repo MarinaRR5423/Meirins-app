@@ -6,7 +6,10 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "check": "node scripts/precheck.mjs",
+    "build": "powershell -ExecutionPolicy Bypass -File scripts/build.ps1",
+    "build:submit": "powershell -ExecutionPolicy Bypass -File scripts/build.ps1 -submit"
   },
   "dependencies": {
     "@azure/core-asynciterator-polyfill": "^1.0.2",

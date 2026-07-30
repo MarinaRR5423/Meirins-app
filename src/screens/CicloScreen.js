@@ -1,4 +1,5 @@
 ﻿import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { View, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Image, ImageBackground, Modal, SafeAreaView } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { F } from '../theme/fonts';
@@ -288,6 +289,31 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  const phaseInfo = cy.phaseInfo;
 
  const dateLocale = lang === 'en' ? 'en-GB' : lang === 'fr' ? 'fr-FR' : 'es-ES';
+ const navigation = useNavigation();
+
+ if (!lastPeriod) {
+  const emptyTxt = {
+   title: { es: 'Registra tu primer ciclo', en: 'Log your first cycle', fr: 'Enregistre ton premier cycle', it: 'Registra il tuo primo ciclo' },
+   sub: { es: 'Ve a la pesta\u00f1a Ciclo para introducir la fecha de tu \u00faltimo periodo y desbloquear todo tu programa personalizado', en: 'Enter your last period date to unlock your personalised programme.', fr: 'Saisis ta derni\u00e8re date de r\u00e8gles pour d\u00e9bloquer ton programme.', it: 'Inserisci la data dell\u2019ultimo periodo per sbloccare il tuo programma.' },
+   cta: { es: 'Registrar', en: 'Register', fr: 'Enregistrer', it: 'Registra' },
+  };
+  return (
+   <ImageBackground source={require('../../assets/Apartados/Blumm_ciclo_fondo.png')} style={{ flex: 1 }}>
+    <View style={es.wrap}>
+     <BlurView intensity={25} tint="light" style={es.card}>
+      <View style={es.iconWrap}><View style={es.iconInner} /></View>
+      <View style={{ alignSelf: 'stretch', gap: 8 }}>
+       <BText style={es.title}>{emptyTxt.title[lang] || emptyTxt.title.es}</BText>
+       <BText style={es.sub}>{emptyTxt.sub[lang] || emptyTxt.sub.es}</BText>
+      </View>
+      <TouchableOpacity style={es.btn} onPress={() => navigation.navigate('Ciclo')} activeOpacity={0.85}>
+       <BText style={es.btnTxt}>{emptyTxt.cta[lang] || emptyTxt.cta.es}</BText>
+      </TouchableOpacity>
+     </BlurView>
+    </View>
+   </ImageBackground>
+  );
+ }
 
  return (
  <>
@@ -419,7 +445,10 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  style={[styles.calCell, marking && !isMarked && { opacity: 0.3 }]}
  >
  {phase && !isMarked && (
+ <>
+ <View style={[styles.calCellArchGlow, { backgroundColor: isFuture ? PHASE_COLORS_FUTURE[phase] : PHASE_COLORS[phase] }]} />
  <View style={[styles.calCellArch, { backgroundColor: isFuture ? PHASE_COLORS_FUTURE[phase] : PHASE_COLORS[phase] }]} />
+ </>
  )}
  {isMarked && <View style={[styles.calCellArch, { backgroundColor: '#EF4444' }]} />}
  {isToday && <View style={styles.calCellTodayRing} />}
@@ -460,7 +489,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  setMarkEnd(periodEnd || null);
  }}
  style={{ backgroundColor: 'white', borderWidth: 1, borderColor: '#171717', borderRadius: 12, height: 40, alignItems: 'center', justifyContent: 'center', alignSelf: 'stretch' }}>
- <BText style={{ color: '#171717', fontFamily: F.bodyB, fontSize: 13 }}>
+ <BText style={{ color: '#171717', fontFamily: F.body, fontSize: 16 }}>
  {tr('Marcar regla en el calendario', 'Mark period on the calendar', 'Marquer les règles sur le calendrier', 'Segna il ciclo sul calendario')}
  </BText>
  </TouchableOpacity>
@@ -615,7 +644,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, paddingBottom: 48, gap: 48 }}>
        <View style={{ gap: 16 }}>
-        <Image source={PHASE_IMAGES[selectedPhaseKey]} style={{ width: '100%', aspectRatio: 1, borderRadius: 24 }} resizeMode="cover" />
+        <Image source={PHASE_IMAGES[selectedPhaseKey]} style={{ alignSelf: 'stretch', aspectRatio: 1, borderRadius: 24 }} resizeMode="cover" />
         <BText style={styles.phaseModalName}>{phTr.name}</BText>
         <BText style={styles.phaseModalDesc}>{phTr.desc || ph.desc}</BText>
        </View>
@@ -647,11 +676,11 @@ const styles = StyleSheet.create({
 
  // Banner
  todayPill: { borderRadius:24, overflow:'hidden' },
- todayRow: { flexDirection:'row', gap:8, padding:8 },
- todayMiniCard: { backgroundColor:'rgba(255,255,255,0.3)', borderRadius:16, padding:8, gap:16, width:80, overflow:'hidden' },
+ todayRow: { flexDirection:'row', gap:2, padding:8 },
+ todayMiniCard: { backgroundColor:'rgba(255,255,255,0.3)', borderRadius:16, padding:8, gap:0, width:80, overflow:'hidden' },
  todayLabel: { fontSize:12, fontFamily: F.body, color:'#0a0a0a', letterSpacing:-0.24 },
- todayDay: { fontSize:18, color:'#0a0a0a', fontFamily: F.headingX },
- todayPhaseName: { fontSize:18, color:'#0a0a0a', fontFamily: F.headingX },
+ todayDay: { fontSize:18, color:'#0a0a0a', fontFamily: F.heading, lineHeight:23.4 },
+ todayPhaseName: { fontSize:18, color:'#0a0a0a', fontFamily: F.heading, lineHeight:23.4 },
  todayTagline: { fontSize:12, color:'#0a0a0a', fontFamily: F.body, letterSpacing:-0.24 },
 
  // Card header
@@ -678,7 +707,8 @@ const styles = StyleSheet.create({
  calHeaderText: { flex:1, textAlign:'center', fontSize:10, fontFamily: F.body, color:'#737373', textTransform:'uppercase', letterSpacing:-0.2, padding:4 },
  calGrid: { flexDirection:'row', flexWrap:'wrap', alignItems:'flex-start', alignContent:'flex-start', gap:4, alignSelf:'stretch' },
  calCell: { width:43, height:43, overflow:'hidden', borderRadius:4, backgroundColor:'white', alignItems:'center', justifyContent:'center' },
- calCellArch: { position:'absolute', top:21, left:-1, width:44, height:44, borderRadius:22, opacity:0.85 },
+ calCellArchGlow: { position:'absolute', top:14, left:-7, width:58, height:58, borderRadius:29, opacity:0.30 },
+ calCellArch: { position:'absolute', top:21, left:-1, width:44, height:44, borderRadius:22, opacity:0.80 },
  calCellTodayRing: { position:'absolute', top:0, left:0, right:0, bottom:0, borderRadius:4, borderWidth:1, borderColor:'#0a0a0a' },
 
  calDayNum: { fontSize:12, fontFamily: F.body, color:'#0a0a0a', zIndex:1 },
@@ -744,10 +774,10 @@ const styles = StyleSheet.create({
  phaseModalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, gap: 48 },
  phaseModalTitle: { flex: 1, fontSize: 24, fontFamily: F.heading, color: '#0A0A0A' },
  phaseModalClose: { width: 32, height: 32, borderRadius: 8, backgroundColor: '#F5F5F5', alignItems: 'center', justifyContent: 'center' },
- phaseModalName: { fontSize: 28, fontFamily: F.heading, color: '#171717' },
- phaseModalDesc: { fontSize: 16, fontFamily: F.body, color: '#171717', lineHeight: 24 },
+ phaseModalName: { fontSize: 28, fontFamily: F.heading, color: '#171717', lineHeight: 32.2 },
+ phaseModalDesc: { fontSize: 16, fontFamily: F.body, color: '#171717', lineHeight: 20.8 },
  phaseModalSectionTitle: { fontSize: 16, fontFamily: F.bodyB, color: '#171717' },
- phaseModalBodyTxt: { fontSize: 16, fontFamily: F.body, color: '#171717', lineHeight: 24 },
+ phaseModalBodyTxt: { fontSize: 16, fontFamily: F.body, color: '#171717', lineHeight: 20.8 },
 
  // Edit
  editBtn: { fontSize:13, color:'#64748B', textAlign:'center', padding:4, fontFamily: F.body },
@@ -769,4 +799,14 @@ const styles = StyleSheet.create({
  cancelText: { fontSize:14, color:'#64748B', fontFamily: F.body },
  saveBtn: { flex:1, padding:10, borderRadius:10, backgroundColor:'#1A56DB', alignItems:'center' },
  saveText: { fontSize:14, color:'white', fontFamily: F.bodyB },
+});
+const es = StyleSheet.create({
+ wrap: { flex: 1, justifyContent: 'center', paddingHorizontal: 16 },
+ card: { borderRadius: 24, padding: 16, gap: 32, overflow: 'hidden', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.20)' },
+ iconWrap: { width: 48, height: 48, borderRadius: 16, backgroundColor: '#49CF38', alignItems: 'center', justifyContent: 'center' },
+ iconInner: { width: 32, height: 32, borderRadius: 8, backgroundColor: '#0B1F08' },
+ title: { fontSize: 24, fontFamily: F.heading, color: 'white', textAlign: 'center', lineHeight: 28.8 },
+ sub: { fontSize: 16, fontFamily: F.body, color: 'white', textAlign: 'center', lineHeight: 20.8 },
+ btn: { alignSelf: 'stretch', height: 48, backgroundColor: '#171717', borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+ btnTxt: { fontSize: 18, fontFamily: F.body, color: '#FAFAFA', lineHeight: 24 },
 });

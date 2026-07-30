@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { View, ScrollView, TouchableOpacity, StyleSheet, TextInput, LayoutAnimation, Platform, UIManager, Dimensions, ActivityIndicator, Modal, SafeAreaView } from 'react-native';
 import { F } from '../theme/fonts';
 import { Check, ChevronRight, X, UserRound, Salad, Heart, CalendarFold, Scale, Flag, CircleAlert, Camera } from 'lucide-react-native';
@@ -17,7 +17,6 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
  UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const BLUE = { primary: '#1A56DB', light: '#EFF6FF' };
 
 // ─── Label maps ───────────────────────────────────────────────────────────────
 // ─── Multilingual label maps ──────────────────────────────────────────────────
@@ -536,7 +535,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
     style={[s2.navItem, !last && s2.navItemBorder]}>
     <BText style={s2.navItemLabel}>{label}</BText>
     {!!value && <BText style={s2.navItemValue} numberOfLines={1}>{value}</BText>}
-    <ChevronRight size={24} color="#737373" />
+    <ChevronRight size={24} color="#0A0A0A" />
    </TouchableOpacity>
   );
  }
@@ -564,10 +563,10 @@ export default function PerfilScreen({ pi, profile, signOut }) {
  };
 
  const disclaimerText = tr(
-  'Meirins es una herramienta de información y bienestar. No sustituye el consejo médico, ginecológico ni nutricional. Las recomendaciones son guías personalizadas, no consultas profesionales.',
-  'Meirins is an information and wellness tool. It does not replace medical, gynaecological or nutritional advice.',
-  'Meirins est un outil d\'information et de bien-être. Il ne remplace pas l\'avis médical, gynécologique ou nutritionnel.',
-  'Meirins è uno strumento di informazione e benessere. Non sostituisce il parere medico.'
+  'Blumm es una herramienta de información y bienestar. No sustituye el consejo médico, ginecológico ni nutricional. Las recomendaciones son guías personalizadas, no consultas profesionales.',
+  'Blumm is an information and wellness tool. It does not replace medical, gynaecological or nutritional advice.',
+  'Blumm est un outil d\'information et de bien-être. Il ne remplace pas l\'avis médical, gynécologique ou nutritionnel.',
+  'Blumm è uno strumento di informazione e benessere. Non sostituisce il parere medico.'
  );
 
  return (
@@ -626,14 +625,14 @@ export default function PerfilScreen({ pi, profile, signOut }) {
  </Modal>
 
  {/* ── Datos personales ── */}
- <NavCard iconEl={<UserRound size={16} color="#0A0A0A" />} title={tr('Datos personales','Personal data')}>
+ <NavCard iconEl={<UserRound size={16} color="#FECA04" />} title={tr('Datos personales','Personal data')}>
   <NavItem label={tr('Edad','Age','Âge','Età')} value={age || '—'} onPress={() => setEditing('personal')} />
   <NavItem label={tr('Altura','Height','Taille','Altezza')} value={height ? `${height} cm` : '—'} onPress={() => setEditing('personal')} />
   <NavItem label={tr('Peso','Weight','Poids','Peso')} value={weight ? `${weight} kg` : '—'} last onPress={() => setEditing('personal')} />
  </NavCard>
 
  {/* ── Entrenamiento ── */}
- <NavCard iconEl={<UserRound size={16} color="#0A0A0A" />} title={tr('Entrenamiento','Training')}>
+ <NavCard iconEl={<UserRound size={16} color="#429FE7" />} title={tr('Entrenamiento','Training')}>
   <NavItem label={tr('Nivel de actividad','Activity level')} value={actOpt2?.label || '—'} onPress={() => setEditing('goal')} />
   <NavItem label={tr('Objetivo','Goal')} value={goalOpt2?.label || '—'} onPress={() => setEditing('goal')} />
   <NavItem label={p.profile.fitnessLevel || 'Nivel fitness'} value={lbl(FITNESS_L, editFitness, lang) || '—'} onPress={() => setEditing('program')} />
@@ -641,14 +640,14 @@ export default function PerfilScreen({ pi, profile, signOut }) {
  </NavCard>
 
  {/* ── Nutrición ── */}
- <NavCard iconEl={<Salad size={16} color="#0A0A0A" />} title={tr('Nutrición','Nutrition')}>
+ <NavCard iconEl={<Salad size={16} color="#FE6004" />} title={tr('Nutrición','Nutrition')}>
   <NavItem label={p.profile.dietType || 'Tipo de dieta'} value={[editDiet?(getDiet(normalizeDietId(editDiet))?.name?.[lang]||lbl(DIET_L,editDiet,lang)):null,editFasting?getDiet(editFasting)?.name?.[lang]:null].filter(Boolean).join(' + ')||'—'} onPress={() => setEditing('program')} />
   <NavItem label={p.profile.cookingTime || 'Tiempo cocina'} value={lbl(COOKING_L, editCooking) || '—'} onPress={() => setEditing('program')} />
   <NavItem label={p.profile.budget || 'Presupuesto'} value={lbl(BUDGET_L, editBudget, lang) || '—'} last onPress={() => setEditing('program')} />
  </NavCard>
 
  {/* ── Salud ── */}
- <NavCard iconEl={<Heart size={16} color="#0A0A0A" />} title={tr('Salud','Health')}>
+ <NavCard iconEl={<Heart size={16} color="#49CF38" />} title={tr('Salud','Health')}>
   <NavItem label={tr('Etapa vital','Life stage')} value={lbl(LIFE_L, editLifeStage, lang) || '—'} onPress={() => setEditing('health')} />
   <NavItem label={tr('Condiciones','Conditions')} value={editConditions.filter(c=>c!=='none').length ? String(editConditions.filter(c=>c!=='none').length) : '—'} onPress={() => setEditing('health')} />
   <NavItem label={tr('Anticonceptivos','Contraception')} value={editContraUse === true ? yesStr : editContraUse === false ? noStr : '—'} last onPress={() => setEditing('health')} />
@@ -656,7 +655,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
 
  {/* ── Agenda y recordatorios ── */}
  {Platform.OS !== 'web' && (
-  <NavCard iconEl={<CalendarFold size={16} color="#0A0A0A" />} title={tr('Agenda y recordatorios','Reminders & calendar')}>
+  <NavCard iconEl={<CalendarFold size={16} color="#F04747" />} title={tr('Agenda y recordatorios','Reminders & calendar')}>
    <NavItem label={tr('Ciclo','Cycle')} value={notifSettings.cycle !== false ? yesStr : noStr} onPress={() => setEditing('notifications')} />
    <NavItem label={tr('Entrenamiento','Training')} value={notifSettings.workout !== false ? yesStr : noStr} onPress={() => setEditing('notifications')} />
    <NavItem label={tr('Hidratación','Hydration')} value={notifSettings.hydration !== false ? yesStr : noStr} onPress={() => setEditing('notifications')} />
@@ -665,14 +664,14 @@ export default function PerfilScreen({ pi, profile, signOut }) {
  )}
 
  {/* ── Legal y soporte ── */}
- <NavCard iconEl={<Scale size={16} color="#0A0A0A" />} title={tr('Legal y soporte','Legal & support')}>
+ <NavCard iconEl={<Scale size={16} color="#737373" />} title={tr('Legal y soporte','Legal & support')}>
   <NavItem label={tr('Política de privacidad','Privacy policy')} onPress={() => Linking.openURL(PRIVACY_URL)} />
   <NavItem label={tr('Términos de uso','Terms of use')} onPress={() => Linking.openURL(TERMS_URL)} />
-  <NavItem label={tr('Contactar con soporte','Contact support')} last onPress={() => Linking.openURL(`mailto:${SUPPORT_EMAIL}?subject=Meirins%20support`)} />
+  <NavItem label={tr('Contactar con soporte','Contact support')} last onPress={() => Linking.openURL(`mailto:${SUPPORT_EMAIL}?subject=Blumm%20support`)} />
  </NavCard>
 
  {/* ── Idioma ── */}
- <NavCard iconEl={<Flag size={16} color="#0A0A0A" />} title={p.profile.language || 'Idioma'}>
+ <NavCard iconEl={<Flag size={16} color="#A157C9" />} title={p.profile.language || 'Idioma'}>
   <NavItem label={p.profile.language || 'Idioma'} value={LANGUAGES.find(l=>l.code===lang)?.name || lang} last onPress={() => setEditing('language')} />
  </NavCard>
 
@@ -797,14 +796,14 @@ export default function PerfilScreen({ pi, profile, signOut }) {
           style={[styles.optRow, editGoals.includes(o.v) && styles.optRowActive]}>
           <BText style={styles.optEmoji}>{o.ico}</BText>
           <View style={{ flex: 1 }}>
-           <BText style={[styles.optLabel, editGoals.includes(o.v) && { color: BLUE.primary, fontFamily: F.bodyB }]}>{o.l}</BText>
-           {o.d && <BText style={{ fontSize: 11, color: '#94A3B8' }}>{o.d}</BText>}
+           <BText style={[styles.optLabel, editGoals.includes(o.v) && { color: '#0A0A0A', fontFamily: F.bodyB }]}>{o.l}</BText>
+           {o.d && <BText style={{ fontSize: 11, color: '#737373', fontFamily: F.body }}>{o.d}</BText>}
           </View>
-          {editGoals.includes(o.v) && <Check size={16} color={BLUE.primary} />}
+          {editGoals.includes(o.v) && <Check size={16} color="#0A0A0A" />}
          </TouchableOpacity>
         ))}
        </>}
-       <BText style={{ fontSize: 12, color: '#94A3B8', textAlign: 'center', marginTop: 16, lineHeight: 18 }}>
+       <BText style={{ fontSize: 12, color: '#737373', fontFamily: F.body, textAlign: 'center', marginTop: 16, lineHeight: 18 }}>
         {tr('Edita dieta, ayuno, alergias y complementos desde la pestaña Nutrición. Edita días, nivel y lugar desde la pestaña Gimnasio.',
          'Edit diet, fasting, allergies and supplements from the Nutrition tab.')}
        </BText>
@@ -832,8 +831,8 @@ export default function PerfilScreen({ pi, profile, signOut }) {
           <TouchableOpacity key={o.v} onPress={() => setEditLifeStage(o.v)}
            style={[styles.optRow, editLifeStage === o.v && styles.optRowActive]}>
            <View style={{ flex: 1 }}>
-            <BText style={[styles.optLabel, editLifeStage === o.v && { color: BLUE.primary, fontFamily: F.bodyB }]}>{o.l}</BText>
-            {o.d && <BText style={{ fontSize: 11, color: '#94A3B8' }}>{o.d}</BText>}
+            <BText style={[styles.optLabel, editLifeStage === o.v && { color: '#0A0A0A', fontFamily: F.bodyB }]}>{o.l}</BText>
+            {o.d && <BText style={{ fontSize: 11, color: '#737373', fontFamily: F.body }}>{o.d}</BText>}
            </View>
            <View style={[styles.radio, editLifeStage === o.v && styles.radioActive]}>
             {editLifeStage === o.v && <View style={styles.radioDot} />}
@@ -867,8 +866,8 @@ export default function PerfilScreen({ pi, profile, signOut }) {
           {ob.contraOptions.map(o => {
            const sel = editContraType === o.v;
            return (<TouchableOpacity key={o.v} onPress={() => setEditContraType(o.v)}
-            style={[styles.chip, sel && { backgroundColor: BLUE.light, borderWidth: 1, borderColor: BLUE.primary }]}>
-            <BText style={[styles.chipText, sel && { color: BLUE.primary, fontFamily: F.bodyB }]}>{o.l}</BText>
+            style={[styles.chip, sel && { backgroundColor: '#F5F5F5', borderWidth: 1, borderColor: '#0A0A0A' }]}>
+            <BText style={[styles.chipText, sel && { color: '#0A0A0A', fontFamily: F.bodyB }]}>{o.l}</BText>
            </TouchableOpacity>);
           })}
          </View>
@@ -882,8 +881,8 @@ export default function PerfilScreen({ pi, profile, signOut }) {
             if (o.v==='none') { setEditMedications(sel?[]:['none']); return; }
             const without = editMedications.filter(x=>x!=='none');
             setEditMedications(without.includes(o.v)?without.filter(x=>x!==o.v):[...without,o.v]);
-           }} style={[styles.chip, sel && { backgroundColor: BLUE.light, borderWidth: 1, borderColor: BLUE.primary }]}>
-           <BText style={[styles.chipText, sel && { color: BLUE.primary, fontFamily: F.bodyB }]}>{o.l}</BText>
+           }} style={[styles.chip, sel && { backgroundColor: '#F5F5F5', borderWidth: 1, borderColor: '#0A0A0A' }]}>
+           <BText style={[styles.chipText, sel && { color: '#0A0A0A', fontFamily: F.bodyB }]}>{o.l}</BText>
           </TouchableOpacity>);
          })}
         </View>
@@ -990,68 +989,68 @@ const styles = StyleSheet.create({
 
  header: { alignItems: 'center', marginBottom: 20 },
  avatarWrap: { position: 'relative', marginBottom: 10 },
- avatar: { width: 70, height: 70, borderRadius: 35, backgroundColor: '#1A56DB', justifyContent: 'center', alignItems: 'center' },
- avatarImg: { width: 70, height: 70, borderRadius: 35, backgroundColor: '#1A56DB' },
+ avatar: { width: 70, height: 70, borderRadius: 35, backgroundColor: '#262626', justifyContent: 'center', alignItems: 'center' },
+ avatarImg: { width: 70, height: 70, borderRadius: 35, backgroundColor: '#262626' },
  avatarText: { fontSize: 30, color: 'white', fontFamily: F.bodyB },
  avatarEdit: { position: 'absolute', bottom: 0, right: 0, width: 26, height: 26, borderRadius: 13, backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, elevation: 3, borderWidth: 1, borderColor: '#E2E8F0' },
  avatarEditTxt: { fontSize: 12, fontFamily: F.body },
- headerName: { fontSize: 22, color: '#1E293B', marginBottom: 6, fontFamily: F.heading },
+ headerName: { fontSize: 22, color: '#0A0A0A', marginBottom: 6, fontFamily: F.heading },
 
  // Modal de edición de nombre
  nameModalOverlay: { position: 'absolute', top: 0, left: -14, right: -14, bottom: -300, backgroundColor: 'rgba(15,31,74,0.5)', justifyContent: 'center', alignItems: 'center', zIndex: 100 },
  nameModal: { width: '90%', maxWidth: 360, backgroundColor: 'white', borderRadius: 18, padding: 20 },
- nameModalTitle: { fontSize: 16, color: '#1E293B', marginBottom: 12, fontFamily: F.heading },
- nameInput: { borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 12, padding: 12, fontSize: 16, color: '#1E293B', backgroundColor: '#F8FAFC', fontFamily: F.body },
+ nameModalTitle: { fontSize: 16, color: '#0A0A0A', marginBottom: 12, fontFamily: F.heading },
+ nameInput: { borderWidth: 1, borderColor: '#E5E5E5', borderRadius: 12, padding: 12, fontSize: 16, color: '#0A0A0A', backgroundColor: '#FAFAFA', fontFamily: F.body },
  nameModalBtn: { flex: 1, padding: 12, borderRadius: 12, alignItems: 'center' },
  headerMeta: { flexDirection: 'row', gap: 8, marginBottom: 6, flexWrap: 'wrap', justifyContent: 'center' },
- metaChip: { fontSize: 13, color: '#1A56DB', backgroundColor: '#EFF6FF', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 20, fontWeight: '500', fontFamily: F.body },
- headerGoal: { fontSize: 13, color: '#475569', marginBottom: 4, textAlign: 'center', fontFamily: F.body },
- headerSub: { fontSize: 12, color: '#94A3B8', marginTop: 4, fontFamily: F.body },
+ metaChip: { fontSize: 13, color: '#0A0A0A', backgroundColor: '#F5F5F5', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 20, fontFamily: F.body },
+ headerGoal: { fontSize: 13, color: '#737373', marginBottom: 4, textAlign: 'center', fontFamily: F.body },
+ headerSub: { fontSize: 12, color: '#737373', marginTop: 4, fontFamily: F.body },
  phaseChip: { paddingHorizontal: 12, paddingVertical: 4, borderRadius: 20, marginTop: 6 },
  phaseChipTxt: { fontSize: 10, fontFamily: F.bodyB, color: '#0A0A0A', letterSpacing: 0.5 },
 
  card: { backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
  cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
- cardTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#1E293B' },
+ cardTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A' },
  sectionPill: { backgroundColor: '#F5F5F5', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20 },
  sectionPillTxt: { fontSize: 12, fontFamily: F.bodyB, color: '#525252' },
  profileRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12 },
  profileRowBorder: { borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
- profileRowLabel: { fontSize: 14, color: '#334155', fontFamily: F.body },
+ profileRowLabel: { fontSize: 14, color: '#0A0A0A', fontFamily: F.body },
  profileRowRight: { flexDirection: 'row', alignItems: 'center', gap: 6 },
- profileRowVal: { fontSize: 14, color: '#1E293B', fontFamily: F.bodyB },
- profileRowUnit: { fontSize: 12, color: '#94A3B8', fontFamily: F.body },
- editBtn: { fontSize: 13, color: '#1A56DB', fontFamily: F.bodyB },
+ profileRowVal: { fontSize: 14, color: '#0A0A0A', fontFamily: F.bodyB },
+ profileRowUnit: { fontSize: 12, color: '#737373', fontFamily: F.body },
+ editBtn: { fontSize: 13, color: '#0A0A0A', fontFamily: F.bodyB },
 
  // Language picker
  langRow: { flexDirection: 'row', gap: 8, marginTop: 8 },
- langBtn: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: 12, borderWidth: 1.5, borderColor: '#E2E8F0', backgroundColor: '#F8FAFC' },
- langBtnActive: { borderColor: '#1A56DB', backgroundColor: '#EFF6FF' },
+ langBtn: { flex: 1, alignItems: 'center', paddingVertical: 10, borderRadius: 12, borderWidth: 1.5, borderColor: '#E5E5E5', backgroundColor: '#FAFAFA' },
+ langBtnActive: { borderColor: '#0A0A0A', backgroundColor: '#F5F5F5' },
  langFlag: { fontSize: 22, fontFamily: F.body },
- langName: { fontSize: 11, color: '#94A3B8', marginTop: 2, fontWeight: '500', fontFamily: F.body },
- langNameActive: { color: '#1A56DB', fontFamily: F.bodyB },
+ langName: { fontSize: 11, color: '#737373', marginTop: 2, fontFamily: F.body },
+ langNameActive: { color: '#0A0A0A', fontFamily: F.bodyB },
 
  infoGrid: { flexDirection: 'row', gap: 10 },
  infoBox: { flex: 1, backgroundColor: '#F8FAFC', borderRadius: 12, padding: 12, alignItems: 'center' },
- infoVal: { fontSize: 22, fontFamily: F.bodyB, color: '#1A56DB' },
- infoLbl: { fontSize: 11, color: '#94A3B8', marginTop: 2, fontFamily: F.body },
+ infoVal: { fontSize: 22, fontFamily: F.bodyB, color: '#0A0A0A' },
+ infoLbl: { fontSize: 11, color: '#737373', marginTop: 2, fontFamily: F.body },
 
  inputRow: { flexDirection: 'column', gap: 8, marginBottom: 16 },
- inputLabel: { fontSize: 16, color: '#171717', fontFamily: F.body },
+ inputLabel: { fontSize: 16, color: '#0A0A0A', fontFamily: F.body },
  inputWrap: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FAFAFA', borderRadius: 16, height: 48, paddingLeft: 8, paddingRight: 4, gap: 8 },
  input: { flex: 1, fontSize: 16, color: '#737373', fontFamily: F.body, paddingVertical: 0 },
  inputUnit: { width: 40, height: 40, backgroundColor: '#262626', borderRadius: 12, justifyContent: 'center', alignItems: 'center' },
  inputUnitTxt: { fontSize: 16, color: 'white', fontFamily: F.body, textAlign: 'center' },
- saveBtn: { marginTop: 12, padding: 12, borderRadius: 12, backgroundColor: '#1A56DB', alignItems: 'center' },
+ saveBtn: { marginTop: 12, padding: 12, borderRadius: 12, backgroundColor: '#0A0A0A', alignItems: 'center' },
  saveBtnText: { color: 'white', fontFamily: F.bodyB, fontSize: 14 },
 
  row: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
  chip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, backgroundColor: '#F1F5F9', marginRight: 6, marginBottom: 6 },
- chipText: { fontSize: 12, color: '#334155', fontWeight: '500', fontFamily: F.body },
- chipTextBlue: { fontSize: 13, color: '#1A56DB', fontWeight: '500', fontFamily: F.body },
+ chipText: { fontSize: 12, color: '#0A0A0A', fontFamily: F.body },
+ chipTextBlue: { fontSize: 13, color: '#0A0A0A', fontFamily: F.body },
  chipRow: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 4, marginBottom: 4 },
 
- editSection: { fontSize: 12, color: '#94A3B8', fontFamily: F.bodyB, letterSpacing: 0.5, marginBottom: 8 },
+ editSection: { fontSize: 12, color: '#737373', fontFamily: F.bodyB, letterSpacing: 0.5, marginBottom: 8 },
  optRow: { flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 24, backgroundColor: '#FAFAFA', marginBottom: 2, minHeight: 56, gap: 8 },
  optRowActive: { backgroundColor: '#F5F5F5', borderWidth: 1, borderColor: '#262626' },
  optEmoji: { fontSize: 20, marginRight: 10, fontFamily: F.body },
@@ -1068,27 +1067,27 @@ const styles = StyleSheet.create({
  infoRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 10 },
  infoRowIcon: { fontSize: 18, marginRight: 10, marginTop: 1, fontFamily: F.body },
  infoRowBody: { flex: 1 },
- infoRowTitle: { fontSize: 11, color: '#94A3B8', fontFamily: F.bodyB, letterSpacing: 0.3, marginBottom: 2 },
- infoRowValue: { fontSize: 14, color: '#334155', fontWeight: '500', fontFamily: F.body },
- subLabel: { fontSize: 11, color: '#94A3B8', fontFamily: F.bodyB, letterSpacing: 0.3, marginTop: 6, marginBottom: 4 },
+ infoRowTitle: { fontSize: 11, color: '#737373', fontFamily: F.bodyB, letterSpacing: 0.3, marginBottom: 2 },
+ infoRowValue: { fontSize: 14, color: '#0A0A0A', fontFamily: F.body },
+ subLabel: { fontSize: 11, color: '#737373', fontFamily: F.bodyB, letterSpacing: 0.3, marginTop: 6, marginBottom: 4 },
 
  accordionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4, elevation: 1 },
- accordionTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#475569' },
- accordionArrow: { fontSize: 11, color: '#94A3B8', fontFamily: F.body },
- accordionNote: { fontSize: 12, color: '#94A3B8', marginBottom: 12, lineHeight: 18, fontFamily: F.body },
+ accordionTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A' },
+ accordionArrow: { fontSize: 11, color: '#737373', fontFamily: F.body },
+ accordionNote: { fontSize: 12, color: '#737373', marginBottom: 12, lineHeight: 18, fontFamily: F.body },
  accordionSection: { marginBottom: 10 },
 
- iaDesc: { fontSize: 13, color: '#475569', lineHeight: 20, marginBottom: 12, fontFamily: F.body },
+ iaDesc: { fontSize: 13, color: '#737373', lineHeight: 20, marginBottom: 12, fontFamily: F.body },
  iaExamples: { backgroundColor: 'white', borderRadius: 12, padding: 12 },
  iaQ: { paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
- iaQText: { fontSize: 13, color: '#475569', fontFamily: F.body },
+ iaQText: { fontSize: 13, color: '#737373', fontFamily: F.body },
 
  // Legal links
  legalLink: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
  legalEmoji: { fontSize: 18, width: 26, fontFamily: F.body },
- legalLabel: { flex: 1, fontSize: 14, color: '#334155', fontWeight: '500', fontFamily: F.body },
- legalArrow: { fontSize: 16, color: '#94A3B8', fontFamily: F.body },
- legalVersion: { fontSize: 11, color: '#94A3B8', textAlign: 'center', marginTop: 12, fontFamily: F.body },
+ legalLabel: { flex: 1, fontSize: 14, color: '#0A0A0A', fontFamily: F.body },
+ legalArrow: { fontSize: 16, color: '#737373', fontFamily: F.body },
+ legalVersion: { fontSize: 11, color: '#737373', textAlign: 'center', marginTop: 12, fontFamily: F.body },
 
  // Medical disclaimer
  medCard: { backgroundColor: '#FFF3EB', borderRadius: 14, padding: 14, marginTop: 8, marginBottom: 8, borderWidth: 1, borderColor: '#FDDCB5' },
@@ -1105,10 +1104,10 @@ const styles = StyleSheet.create({
  deleteBtnTxt: { fontSize: 15, color: 'white', fontFamily: F.bodyB },
  deleteConfirmBox: { marginTop: 8, padding: 16, borderRadius: 14, backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FECACA' },
  deleteConfirmTitle: { fontSize: 15, fontFamily: F.bodyB, color: '#EF4444', marginBottom: 8, textAlign: 'center' },
- deleteConfirmBody: { fontSize: 13, color: '#64748B', lineHeight: 20, textAlign: 'center', marginBottom: 16, fontFamily: F.body },
+ deleteConfirmBody: { fontSize: 13, color: '#737373', lineHeight: 20, textAlign: 'center', marginBottom: 16, fontFamily: F.body },
  deleteConfirmBtns: { flexDirection: 'row', gap: 10 },
  deleteCancelBtn: { flex: 1, padding: 12, borderRadius: 10, borderWidth: 1, borderColor: '#E2E8F0', alignItems: 'center' },
- deleteCancelTxt: { fontSize: 14, color: '#64748B', fontWeight: '500', fontFamily: F.body },
+ deleteCancelTxt: { fontSize: 14, color: '#737373', fontFamily: F.body },
  deleteConfirmBtn: { flex: 1, padding: 12, borderRadius: 10, backgroundColor: '#EF4444', alignItems: 'center' },
  deleteConfirmTxt: { fontSize: 14, color: 'white', fontFamily: F.bodyB },
 
@@ -1117,68 +1116,68 @@ const styles = StyleSheet.create({
  metaBadgeText: { fontSize: 11, fontFamily: F.bodyB },
  statsRow: { flexDirection: 'row', gap: 8, marginBottom: 12 },
  statBox: { flex: 1, backgroundColor: '#F8FAFC', borderRadius: 12, padding: 10, alignItems: 'center' },
- statVal: { fontSize: 18, fontFamily: F.bodyB, color: '#1E293B' },
- statLbl: { fontSize: 10, color: '#94A3B8', marginTop: 2, textAlign: 'center', fontFamily: F.body },
+ statVal: { fontSize: 18, fontFamily: F.bodyB, color: '#0A0A0A' },
+ statLbl: { fontSize: 10, color: '#737373', marginTop: 2, textAlign: 'center', fontFamily: F.body },
  progressWrap: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 14 },
  progressBg: { flex: 1, height: 8, backgroundColor: '#F1F5F9', borderRadius: 4, overflow: 'hidden' },
  progressFill: { height: 8, borderRadius: 4 },
  progressLbl: { fontSize: 12, fontFamily: F.bodyB, minWidth: 32, textAlign: 'right' },
  // Weight logger
  wLogRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 },
- wLogLabel: { fontSize: 13, color: '#475569', fontWeight: '500', fontFamily: F.body },
+ wLogLabel: { fontSize: 13, color: '#737373', fontFamily: F.body },
  wControls: { flexDirection: 'row', alignItems: 'center', gap: 8 },
  wBtn: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#F0F4FA', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: '#E2E8F0' },
- wBtnTxt: { fontSize: 18, fontFamily: F.bodyB, color: '#1A56DB', lineHeight: 22 },
- wVal: { fontSize: 20, fontFamily: F.headingX, color: '#1E293B', minWidth: 72, textAlign: 'center' },
- wSaveBtn: { backgroundColor: '#EFF6FF', borderRadius: 12, paddingVertical: 10, alignItems: 'center', marginBottom: 8, borderWidth: 1, borderColor: '#BFDBFE' },
+ wBtnTxt: { fontSize: 18, fontFamily: F.bodyB, color: '#0A0A0A', lineHeight: 22 },
+ wVal: { fontSize: 20, fontFamily: F.headingX, color: '#0A0A0A', minWidth: 72, textAlign: 'center' },
+ wSaveBtn: { backgroundColor: '#F5F5F5', borderRadius: 12, paddingVertical: 10, alignItems: 'center', marginBottom: 8, borderWidth: 1, borderColor: '#E5E5E5' },
  wSaveBtnDone: { backgroundColor: '#F0FDF4', borderColor: '#BBF7D0' },
- wSaveBtnTxt: { fontSize: 14, fontFamily: F.bodyB, color: '#1A56DB' },
+ wSaveBtnTxt: { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A' },
  setTargetBtn: { paddingVertical: 8, alignItems: 'center' },
- setTargetTxt: { fontSize: 13, color: '#1A56DB', fontWeight: '500', fontFamily: F.body },
+ setTargetTxt: { fontSize: 13, color: '#0A0A0A', fontFamily: F.body },
  targetRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
- targetInput: { flex: 1, padding: 10, borderRadius: 10, borderWidth: 1, borderColor: '#E2E8F0', fontSize: 16, textAlign: 'center', color: '#1E293B', fontFamily: F.body },
- targetUnit: { fontSize: 14, color: '#94A3B8', fontFamily: F.body },
- targetSave: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#1A56DB', justifyContent: 'center', alignItems: 'center' },
+ targetInput: { flex: 1, padding: 10, borderRadius: 10, borderWidth: 1, borderColor: '#E5E5E5', fontSize: 16, textAlign: 'center', color: '#0A0A0A', fontFamily: F.body },
+ targetUnit: { fontSize: 14, color: '#737373', fontFamily: F.body },
+ targetSave: { width: 36, height: 36, borderRadius: 18, backgroundColor: '#0A0A0A', justifyContent: 'center', alignItems: 'center' },
  targetSaveTxt: { color: 'white', fontSize: 18, fontFamily: F.bodyB },
- chartHint: { fontSize: 12, color: '#94A3B8', textAlign: 'center', paddingVertical: 8, fontFamily: F.body },
+ chartHint: { fontSize: 12, color: '#737373', textAlign: 'center', paddingVertical: 8, fontFamily: F.body },
 
  // Notification rows
  notifRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
  notifEmoji: { fontSize: 22, width: 30, fontFamily: F.body },
- notifLabel: { fontSize: 14, fontFamily: F.bodyB, color: '#1E293B' },
- notifSub: { fontSize: 12, color: '#94A3B8', marginTop: 1, fontFamily: F.body },
+ notifLabel: { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A' },
+ notifSub: { fontSize: 12, color: '#737373', marginTop: 1, fontFamily: F.body },
 
  // Calendar sync
- calSubtitle: { fontSize: 12, color: '#94A3B8', marginTop: 2, fontFamily: F.body },
+ calSubtitle: { fontSize: 12, color: '#737373', marginTop: 2, fontFamily: F.body },
  calAlertBox: { marginBottom: 8 },
  calAlert: { fontSize: 12, color: '#EF4444', backgroundColor: '#FEF2F2', borderRadius: 10, padding: 10, lineHeight: 18, marginBottom: 8, fontFamily: F.body },
- calInfoBox: { backgroundColor: '#EFF6FF', borderRadius: 10, padding: 10, marginBottom: 10 },
+ calInfoBox: { backgroundColor: '#F5F5F5', borderRadius: 10, padding: 10, marginBottom: 10 },
  calInfoTxt: { fontSize: 12, color: '#1E40AF', lineHeight: 18, fontFamily: F.body },
  calOk: { fontSize: 13, color: '#16A34A', backgroundColor: '#F0FDF4', borderRadius: 10, padding: 10, marginBottom: 8, fontFamily: F.body },
  calTodayBox: { backgroundColor: '#F8FAFC', borderRadius: 12, padding: 12, marginTop: 4 },
- calTodayLabel: { fontSize: 11, color: '#94A3B8', fontFamily: F.bodyB, letterSpacing: 0.5, marginBottom: 4 },
- calTodayWorkout: { fontSize: 15, color: '#1E293B', fontFamily: F.bodyB },
+ calTodayLabel: { fontSize: 11, color: '#737373', fontFamily: F.bodyB, letterSpacing: 0.5, marginBottom: 4 },
+ calTodayWorkout: { fontSize: 15, color: '#0A0A0A', fontFamily: F.bodyB },
  toggle: { width: 50, height: 28, borderRadius: 14, backgroundColor: '#E2E8F0', padding: 2, justifyContent: 'center' },
- toggleOn: { backgroundColor: '#1A56DB' },
+ toggleOn: { backgroundColor: '#0A0A0A' },
  toggleDot: { width: 24, height: 24, borderRadius: 12, backgroundColor: 'white', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.2, shadowRadius: 2, elevation: 2 },
  toggleDotOn: { alignSelf: 'flex-end' },
  hoursRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 },
- hourBtn: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10, borderWidth: 1, borderColor: '#E2E8F0', backgroundColor: '#F8FAFC' },
- hourBtnActive: { backgroundColor: BLUE.light, borderColor: BLUE.primary },
- hourTxt: { fontSize: 13, color: '#64748B', fontWeight: '500', fontFamily: F.body },
- hourTxtActive: { color: BLUE.primary, fontFamily: F.bodyB },
- resyncBtn: { backgroundColor: '#F1F5F9', borderRadius: 12, padding: 12, alignItems: 'center', borderWidth: 1, borderColor: '#E2E8F0' },
- resyncTxt: { fontSize: 14, color: '#475569', fontWeight: '500', fontFamily: F.body },
+ hourBtn: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10, borderWidth: 1, borderColor: '#E5E5E5', backgroundColor: '#FAFAFA' },
+ hourBtnActive: { backgroundColor: '#F5F5F5', borderColor: '#0A0A0A' },
+ hourTxt: { fontSize: 13, color: '#737373', fontFamily: F.body },
+ hourTxtActive: { color: '#0A0A0A', fontFamily: F.bodyB },
+ resyncBtn: { backgroundColor: '#F5F5F5', borderRadius: 12, padding: 12, alignItems: 'center', borderWidth: 1, borderColor: '#E5E5E5' },
+ resyncTxt: { fontSize: 14, color: '#0A0A0A', fontFamily: F.body },
 
- dietCatLabel: { fontSize: 11, fontFamily: F.bodyB, color: '#64748B', letterSpacing: 0.6, marginTop: 12, marginBottom: 4, textTransform: 'uppercase' },
- fastingNote: { fontSize: 12, color: '#94A3B8', marginBottom: 8, fontStyle: 'italic', fontFamily: F.body },
- optionDesc: { fontSize: 13, color: '#94A3B8', textAlign: 'center', paddingVertical: 8, fontFamily: F.body },
+ dietCatLabel: { fontSize: 11, fontFamily: F.bodyB, color: '#737373', letterSpacing: 0.6, marginTop: 12, marginBottom: 4, textTransform: 'uppercase' },
+ fastingNote: { fontSize: 12, color: '#737373', marginBottom: 8, fontStyle: 'italic', fontFamily: F.body },
+ optionDesc: { fontSize: 13, color: '#737373', textAlign: 'center', paddingVertical: 8, fontFamily: F.body },
  pregnantNote: { fontSize: 13, color: '#92400E', backgroundColor: '#FEF3C7', borderRadius: 10, padding: 10, marginTop: 6, marginBottom: 4, lineHeight: 18, fontFamily: F.body },
  yesNoRow: { flexDirection: 'row', gap: 10, marginBottom: 6 },
- yesNoBtn: { flex: 1, paddingVertical: 12, borderRadius: 12, borderWidth: 1.5, borderColor: '#E2E8F0', alignItems: 'center', backgroundColor: '#F8FAFC' },
- yesNoBtnActive: { backgroundColor: BLUE.light, borderColor: BLUE.primary },
- yesNoTxt: { fontSize: 14, fontFamily: F.bodyB, color: '#64748B' },
- yesNoTxtActive: { color: BLUE.primary },
+ yesNoBtn: { flex: 1, paddingVertical: 12, borderRadius: 12, borderWidth: 1.5, borderColor: '#E5E5E5', alignItems: 'center', backgroundColor: '#FAFAFA' },
+ yesNoBtnActive: { backgroundColor: '#F5F5F5', borderColor: '#0A0A0A' },
+ yesNoTxt: { fontSize: 14, fontFamily: F.bodyB, color: '#737373' },
+ yesNoTxtActive: { color: '#0A0A0A' },
 });
 
 const s2 = StyleSheet.create({
@@ -1189,18 +1188,18 @@ const s2 = StyleSheet.create({
  profileCard: { backgroundColor: '#FAFAFA', borderRadius: 24, padding: 8, gap: 24, alignItems: 'center' },
  avatar: { width: 64, height: 64, borderRadius: 16 },
  cameraBtn: { position: 'absolute', bottom: -4, right: -4, width: 24, height: 24, borderRadius: 8, backgroundColor: '#0A0A0A', justifyContent: 'center', alignItems: 'center' },
- profileName: { fontSize: 18, fontFamily: F.heading, color: '#0A0A0A' },
- tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 4, justifyContent: 'center' },
+ profileName: { fontSize: 18, fontFamily: F.heading, color: '#0A0A0A', lineHeight: 23.4 },
+ tagsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 2, justifyContent: 'center' },
  tag: { backgroundColor: 'white', borderRadius: 8, paddingHorizontal: 8, height: 24, justifyContent: 'center', alignItems: 'center' },
- tagTxt: { fontSize: 10, fontFamily: F.body, color: '#0A0A0A', letterSpacing: 0.3, textTransform: 'uppercase' },
+ tagTxt: { fontSize: 10, fontFamily: F.body, color: '#0A0A0A', letterSpacing: 0.3, textTransform: 'uppercase', lineHeight: 12 },
 
  sectionCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, gap: 24 },
- sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 4 },
- sectionHeaderTxt: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A' },
- navItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 16 },
+ sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+ sectionHeaderTxt: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A', lineHeight: 15.6 },
+ navItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: 16, gap: 8 },
  navItemBorder: { borderBottomWidth: 1, borderBottomColor: '#E5E5E5' },
- navItemLabel: { flex: 1, fontSize: 16, fontFamily: F.body, color: '#0A0A0A' },
- navItemValue: { fontSize: 16, fontFamily: F.body, color: '#737373', maxWidth: 120 },
+ navItemLabel: { flex: 1, fontSize: 16, fontFamily: F.body, color: '#0A0A0A', lineHeight: 20.8 },
+ navItemValue: { fontSize: 16, fontFamily: F.body, color: '#737373', lineHeight: 20.8, maxWidth: 120 },
 
  alertCard: { backgroundColor: '#FFDFCD', borderRadius: 8, padding: 8, flexDirection: 'column', gap: 8 },
  alertTxt: { fontSize: 14, fontFamily: F.body, color: '#0A0A0A', lineHeight: 20 },

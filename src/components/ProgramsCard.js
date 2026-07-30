@@ -9,7 +9,7 @@
  */
 import React, { useState } from 'react';
 import { View, TouchableOpacity, Modal, SafeAreaView, ScrollView, StyleSheet, ImageBackground } from 'react-native';
-import { X, ChevronRight, ChevronLeft, Check, Footprints } from 'lucide-react-native';
+import { X, ChevronRight, ChevronLeft, Check, SportShoe } from 'lucide-react-native';
 import { F } from '../theme/fonts';
 import BText from './BText';
 import {
@@ -77,7 +77,7 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
  imageStyle={{ borderRadius: 24, opacity: 0.35 }}>
  <View style={st.headerRow}>
  <View style={st.headerLabel}>
- <Footprints size={14} color="white" />
+ <SportShoe size={14} color="white" />
  <BText style={[st.headerLabelTxt, { color: 'rgba(255,255,255,0.85)' }]}>{tr('Mi programa', 'My programme', 'Mon programme', 'Il mio programma')}</BText>
  </View>
  <TouchableOpacity onPress={() => setOpen(true)}>
@@ -134,7 +134,7 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
  </ImageBackground>
  ) : (
  <TouchableOpacity style={st.banner} onPress={() => setOpen(true)} activeOpacity={0.85}>
- <Footprints size={26} color="#0A0A0A" />
+ <SportShoe size={26} color="#0A0A0A" />
  <View style={{ flex: 1 }}>
  <BText style={st.bannerTitle}>
  {tr('Programas de entrenamiento', 'Training programmes', 'Programmes d\'entraÃ®nement', 'Programmi di allenamento')}

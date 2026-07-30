@@ -409,6 +409,29 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  const finalShopData = shoppingListFromRecipes || shopData;
  const shopItemsCount = countItems(finalShopData);
 
+ if (!pi) {
+  const emptyTxt = {
+   title: { es: 'Plan de nutrici\u00f3n', en: 'Nutrition plan', fr: 'Plan de nutrition', it: 'Piano nutrizionale' },
+   sub: { es: 'Configura tus preferencias para que nos podamos adaptar a tus necesidades y gustos', en: 'Set your preferences so we can tailor your plan to your needs and tastes.', fr: 'Configure tes pr\u00e9f\u00e9rences pour que nous puissions adapter ton plan.', it: 'Configura le tue preferenze per personalizzare il tuo piano.' },
+   cta: { es: 'Configurar plan', en: 'Set up plan', fr: 'Configurer le plan', it: 'Configura il piano' },
+  };
+  return (
+   <ImageBackground source={require('../../assets/Apartados/Blumm_nutricion_fondo.png')} style={{ flex: 1 }}>
+    <View style={ne.wrap}>
+     <BlurView intensity={25} tint='light' style={ne.card}>
+      <View style={ne.iconWrap}><View style={ne.iconInner} /></View>
+      <View style={{ alignSelf: 'stretch', gap: 8 }}>
+       <BText style={ne.title}>{emptyTxt.title[lang] || emptyTxt.title.es}</BText>
+       <BText style={ne.sub}>{emptyTxt.sub[lang] || emptyTxt.sub.es}</BText>
+      </View>
+      <TouchableOpacity style={ne.btn} onPress={() => navigation.navigate('Perfil')} activeOpacity={0.85}>
+       <BText style={ne.btnTxt}>{emptyTxt.cta[lang] || emptyTxt.cta.es}</BText>
+      </TouchableOpacity>
+     </BlurView>
+    </View>
+   </ImageBackground>
+  );
+ }
 
  return (
  <SwipeableTabs tabs={['plan', 'lista', 'favoritos']} current={sub} onChange={setSub}>
@@ -430,39 +453,6 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  </TouchableOpacity>
  ))}
  </View>
-
- {/* ── FOCO DE HOY ── */}
- {(cals || nutritionCtx) && (
- <View style={styles.orangeHeroCard}>
- <BText style={styles.orangeHeroLabel}>
- {lang === 'en' ? 'Today\'s focus' : lang === 'fr' ? "Focus du jour" : 'Foco de hoy'}
- </BText>
- {nutritionCtx && (
- <>
- {(Array.isArray(nutritionCtx.nutrients) ? nutritionCtx.nutrients : [nutritionCtx.nutrients]).length > 0 && (
- <View style={styles.orangeHeroPills}>
- {(Array.isArray(nutritionCtx.nutrients) ? nutritionCtx.nutrients : [nutritionCtx.nutrients]).map((nu, i) => (
- <View key={i} style={styles.orangeHeroPill}>
- <BText style={styles.orangeHeroPillTxt}>{nu}</BText>
- </View>
- ))}
- </View>
- )}
- {!!(nutritionCtx.tip || nutritionCtx.dietNote) && (
- <View style={styles.orangeHeroWarn}>
- <BText style={styles.orangeHeroTip}>{nutritionCtx.tip || nutritionCtx.dietNote}</BText>
- </View>
- )}
- {!!nutritionCtx.avoidNote && (
- <View style={styles.orangeHeroWarn}>
- <BText style={styles.orangeHeroTip}>{nutritionCtx.avoidNote}</BText>
- </View>
- )}
- </>
- )}
- {cals && !nutritionCtx && <BText style={styles.orangeHeroKcal}>{cals.total} kcal</BText>}
- </View>
- )}
 
  {/* ── MI PLAN (fusiona plan + semana) ── */}
  {sub === 'plan' && <>
@@ -527,11 +517,11 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  return (
  <>
  <ImageBackground
- source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
+ source={require('../../assets/Apartados/Blumm_nutricion_fondo.png')}
  style={styles.planHeaderCard}
  imageStyle={{ borderRadius: 24 }}
  >
- <BlurView intensity={40} tint="light" style={styles.planHeaderBlur}>
+ <BlurView intensity={25} tint="light" style={styles.planHeaderBlur}>
  <BText style={styles.planHeaderTag}>
  {isToday ? cm.today : activeDay?.label}
  </BText>
@@ -630,6 +620,41 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  </>
  );
  })()}
+
+ {/* ── FOCO DE HOY ── */}
+ {(cals || nutritionCtx) && (
+ <View style={styles.orangeHeroCard}>
+ <BText style={styles.orangeHeroLabel}>
+ {lang === 'en' ? 'Today\'s focus' : lang === 'fr' ? "Focus du jour" : 'Foco de hoy'}
+ </BText>
+ {nutritionCtx && (
+ <>
+ {(Array.isArray(nutritionCtx.nutrients) ? nutritionCtx.nutrients : [nutritionCtx.nutrients]).length > 0 && (
+ <View style={styles.orangeHeroPills}>
+ {(Array.isArray(nutritionCtx.nutrients) ? nutritionCtx.nutrients : [nutritionCtx.nutrients]).map((nu, i) => (
+ <View key={i} style={styles.orangeHeroPill}>
+ <BText style={styles.orangeHeroPillTxt}>{nu}</BText>
+ </View>
+ ))}
+ </View>
+ )}
+ {!!(nutritionCtx.tip || nutritionCtx.dietNote) && (
+ <View style={styles.orangeHeroWarn}>
+ <BText style={styles.orangeHeroTip}>{nutritionCtx.tip || nutritionCtx.dietNote}</BText>
+ </View>
+ )}
+ {!!nutritionCtx.avoidNote && (
+ <View style={styles.orangeHeroWarn}>
+ <BText style={styles.orangeHeroTip}>{nutritionCtx.avoidNote}</BText>
+ </View>
+ )}
+ </>
+ )}
+ {cals && !nutritionCtx && <BText style={styles.orangeHeroKcal}>{cals.total} kcal</BText>}
+ </View>
+ )}
+
+ <WaterCard lang={lang} />
 
  {/* ── TU PLAN NUTRICIONAL — Figma ── */}
  {(() => {
@@ -849,7 +874,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  <View style={styles.favActions}>
  <TouchableOpacity style={styles.favRecipeBtn}
  onPress={() => setRecipe({ ...card.recipe, mealLabel: card.label, title: card.title, emoji: card.ico, macros: m, _recipeId: r.id })}>
- <BText style={styles.favRecipeBtnTxt}>{n.seeRecipe || 'Ver receta'}</BText>
+ <BText style={styles.favRecipeBtnTxt}>{n.seeRecipeShort || 'Ver receta'}</BText>
  </TouchableOpacity>
  <TouchableOpacity style={styles.favHeartBtn}
  onPress={() => toggleFavoriteRecipe && toggleFavoriteRecipe(r.id)}>
@@ -1078,9 +1103,9 @@ const styles = StyleSheet.create({
  weekCellNum: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A' },
 
  planHeaderCard: { borderRadius: 24, overflow: 'hidden', marginBottom: 2, height: 80 },
- planHeaderBlur: { flex: 1, padding: 16, justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.30)' },
- planHeaderTag: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A', textTransform: 'uppercase', letterSpacing: 0.5 },
- planHeaderTitle: { fontSize: 18, color: '#0A0A0A', fontFamily: F.headingX },
+ planHeaderBlur: { flex: 1, padding: 8, justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.30)' },
+ planHeaderTag: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A', lineHeight: 15.6 },
+ planHeaderTitle: { fontSize: 18, color: '#0A0A0A', fontFamily: F.heading, lineHeight: 23.4 },
  planSub: { fontSize: 12, lineHeight: 18, opacity: 0.85, fontFamily: F.body },
  mealsWrapper: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, gap: 16, marginBottom: 2 },
  mealsWrapperTitle: { fontSize: 12, fontFamily: F.body, color: '#737373', textTransform: 'uppercase', letterSpacing: 0.5 },
@@ -1201,4 +1226,14 @@ const styles = StyleSheet.create({
  extraModalHandle:{ width: 36, height: 4, backgroundColor: '#E2E8F0', borderRadius: 2, alignSelf: 'center', marginBottom: 8 },
  extraModalTitle: { fontSize: 17, fontFamily: F.bodyB, color: '#1E293B', marginBottom: 4 },
  extraInput: { borderWidth: 1.5, borderColor: '#E2E8F0', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, color: '#1E293B', fontFamily: F.body },
+});
+const ne = StyleSheet.create({
+ wrap: { flex: 1, justifyContent: 'center', paddingHorizontal: 16 },
+ card: { borderRadius: 24, padding: 16, gap: 32, overflow: 'hidden', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.20)' },
+ iconWrap: { width: 48, height: 48, borderRadius: 16, backgroundColor: '#FE6004', alignItems: 'center', justifyContent: 'center' },
+ iconInner: { width: 32, height: 32, borderRadius: 8, backgroundColor: '#260E01' },
+ title: { fontSize: 24, fontFamily: F.heading, color: 'white', textAlign: 'center', lineHeight: 28.8 },
+ sub: { fontSize: 16, fontFamily: F.body, color: 'white', textAlign: 'center', lineHeight: 20.8 },
+ btn: { alignSelf: 'stretch', height: 48, backgroundColor: '#171717', borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+ btnTxt: { fontSize: 18, fontFamily: F.body, color: '#FAFAFA', lineHeight: 24 },
 });

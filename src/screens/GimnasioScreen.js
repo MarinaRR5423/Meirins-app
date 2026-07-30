@@ -2,7 +2,7 @@
 import { View, ScrollView, TouchableOpacity, TextInput, StyleSheet, Platform, ImageBackground, Modal, SafeAreaView } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { F } from '../theme/fonts';
-import { Check, X, ChevronRight, ChevronLeft, Footprints, Pencil, RefreshCcw, Plus, Heart, BookOpen } from 'lucide-react-native';
+import { Check, X, ChevronRight, ChevronLeft, SportShoe, Pencil, RefreshCcw, Plus, Heart, BookOpen, Moon } from 'lucide-react-native';
 import { TouchableOpacity as GHTouchable } from 'react-native-gesture-handler';
 import T, { getDayLabels } from '../i18n/translations';
 import { GymSetupCard, SPORTS_LIST } from '../components/TabSetupCard';
@@ -399,26 +399,25 @@ export default function GimnasioScreen({
  const wLabel = (type) => hl?.workoutTypes?.[type] ?? type ?? '—';
  const wEmoji = (type) => hl?.workoutEmoji?.[type] ?? '';
 
- // ── Empty state: sin datos de gimnasio ────────────────────────────────────
- const hasGymData = !!profileExtended?.gymSetupDone;
  if (!hasGymData) {
-  const gymEmptyTitle = { es: 'Plan de entrenamiento', en: 'Training plan', fr: "Plan d'entraînement", it: 'Piano di allenamento' }[lang] || 'Plan de entrenamiento';
-  const gymEmptyCta = { es: 'Configurar entrenamiento', en: 'Set up training', fr: "Configurer l'entraînement", it: 'Configura allenamento' }[lang] || 'Configurar entrenamiento';
-  const gymEmptySub = { es: 'Configura tus preferencias para adaptar el plan a tus necesidades y gustos', en: 'Set your preferences to adapt the plan to your needs and tastes', fr: 'Configure tes préférences pour adapter le plan', it: 'Configura le tue preferenze per adattare il piano' }[lang] || 'Configura tus preferencias';
+  const emptyTxt = {
+   title: { es: 'Plan de entrenamiento', en: 'Training plan', fr: "Plan d'entra\u00eenement", it: 'Piano di allenamento' },
+   sub: { es: 'Configura tus preferencias para que nos podamos adaptar a tus necesidades y gustos', en: 'Set your preferences so we can adapt to your needs and tastes.', fr: 'Configure tes pr\u00e9f\u00e9rences pour que nous puissions adapter ton plan.', it: 'Configura le tue preferenze per personalizzare il piano.' },
+   cta: { es: 'Configurar entrenamiento', en: 'Set up training', fr: "Configurer l'entra\u00eenement", it: 'Configura allenamento' },
+  };
   return (
-   <ImageBackground source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.follicular} style={{ flex: 1 }}>
-    <View style={styles.gymEmptyScreen}>
-     <View style={styles.gymEmptyGlassCard}>
-      <BlurView intensity={25} tint="light" style={StyleSheet.absoluteFill} />
-      <View style={styles.gymEmptyIcon}>
-       <CalendarDays size={22} color="white" strokeWidth={2.2} />
+   <ImageBackground source={require('../../assets/Apartados/Blumm_ejercicio_fondo.png')} style={{ flex: 1 }}>
+    <View style={ge.wrap}>
+     <BlurView intensity={25} tint="light" style={ge.card}>
+      <View style={ge.iconWrap}><View style={ge.iconInner} /></View>
+      <View style={{ alignSelf: 'stretch', gap: 8 }}>
+       <BText style={ge.title}>{emptyTxt.title[lang] || emptyTxt.title.es}</BText>
+       <BText style={ge.sub}>{emptyTxt.sub[lang] || emptyTxt.sub.es}</BText>
       </View>
-      <BText style={styles.gymEmptyTitleTxt}>{gymEmptyTitle}</BText>
-      <BText style={styles.gymEmptySubTxt}>{gymEmptySub}</BText>
-      <TouchableOpacity style={styles.gymEmptyCtaBtn} onPress={() => gymOpenRef.current?.()} activeOpacity={0.85}>
-       <BText style={styles.gymEmptyCtaBtnTxt}>{gymEmptyCta}</BText>
+      <TouchableOpacity style={ge.btn} onPress={() => gymOpenRef.current?.()} activeOpacity={0.85}>
+       <BText style={ge.btnTxt}>{emptyTxt.cta[lang] || emptyTxt.cta.es}</BText>
       </TouchableOpacity>
-     </View>
+     </BlurView>
     </View>
     <GymSetupCard lang={lang} trainDays={trainDays} setTrainDays={setTrainDays}
      profileExtended={profileExtended} saveProfileExtended={saveProfileExtended || (() => {})}
@@ -479,7 +478,7 @@ export default function GimnasioScreen({
        onPress={() => setWeekAction(isExpanded ? null : { dateKey: day.dateKey, step: 'main' })}
        style={[styles.calDayCell, day.isToday && styles.calDayCellToday, isExpanded && styles.calDayCellSelected]}>
        <BText style={[styles.calDayNum, day.isToday && styles.calDayNumToday]}>{day.dayNum}</BText>
-       {day.dotColor && <View style={[styles.calDot, { backgroundColor: day.dotColor }]} />}
+       {day.dotColor && <View style={[styles.calDayGlow, { backgroundColor: day.dotColor }]} />}
       </TouchableOpacity>
      );
     })}
@@ -557,7 +556,7 @@ export default function GimnasioScreen({
  </View>
 
  {progState && (
- <ImageBackground source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.follicular}
+ <ImageBackground source={require('../../assets/Apartados/Blumm_ejercicio_fondo.png')}
   style={styles.progMiniCard} imageStyle={{ borderRadius: 24 }}>
   <BlurView intensity={25} tint="light" style={styles.progMiniBlur}>
    <BText style={styles.progMiniLabel}>{g.myProgram || 'Programa'}</BText>
@@ -598,7 +597,7 @@ export default function GimnasioScreen({
    {/* Title row */}
    <View style={styles.sessionTitleRow}>
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-     <Footprints size={16} color="#0A0A0A" />
+     <SportShoe size={16} color="#0A0A0A" />
      <BText style={styles.sectionLabel}>{g.todaySession || 'Sesión de hoy'}</BText>
     </View>
     <ChevronRight size={16} color="#737373" />
@@ -738,7 +737,7 @@ export default function GimnasioScreen({
  <View style={styles.planExercHeader}>
   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
    <BookOpen size={16} color="#0A1823" />
-   <BText style={styles.planExercHeaderTxt}>{g.myProgram}</BText>
+   <BText style={styles.planExercHeaderTxt}>{lang === 'en' ? 'My exercise plan' : lang === 'fr' ? 'Mon plan d\'exercice' : lang === 'it' ? 'Il mio piano' : 'Mi plan de ejercicio'}</BText>
   </View>
   <ChevronRight size={16} color="#0A1823" />
  </View>
@@ -989,22 +988,25 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
  const t = (obj) => obj[lang] ?? obj.es;
  return (
   <View style={styles.sleepHistCard}>
-   <BText style={styles.sectionLabel}>{hl?.sleepTitle || 'Calidad de sueño'}</BText>
+   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+    <Moon size={14} color='#FECA04' />
+    <BText style={styles.sectionLabel}>{hl?.sleepTitle || 'Calidad de sueño'}</BText>
+   </View>
    {/* 7-day stacked bar chart */}
-   <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 3, height: BAR_MAX + 20 }}>
+   <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 2, height: BAR_MAX + 20 }}>
     {displayed.map((n, i) => {
      const totalH = Math.max(8, Math.round((n.duration / maxDur) * BAR_MAX));
      const deepH = n.deepSleep > 0 ? Math.round((n.deepSleep / maxDur) * BAR_MAX) : 0;
      const remH = n.remSleep > 0 ? Math.round((n.remSleep / maxDur) * BAR_MAX) : 0;
      const isLatest = i === displayed.length - 1;
-     const dayLabel = new Date(n.date + 'T12:00:00').toLocaleDateString('default', { weekday: 'narrow' });
+     const _d = new Date(n.date + 'T12:00:00'); const dayLabel = `${_d.getDate()}/${_d.getMonth() + 1}`;
      return (
       <View key={n.date} style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', height: BAR_MAX + 20, gap: 3 }}>
        <View style={{ width: '100%', height: totalH, backgroundColor: isLatest ? '#FECA04' : '#FFF4CD', borderTopLeftRadius: 6, borderTopRightRadius: 6, justifyContent: 'flex-end', overflow: 'hidden' }}>
         {deepH > 0 && <View style={{ width: '100%', height: deepH, backgroundColor: isLatest ? '#FE6004' : '#FFDFCD' }} />}
         {remH > 0 && <View style={{ width: '100%', height: remH, backgroundColor: isLatest ? '#49CF38' : '#DBF5D7' }} />}
        </View>
-       <BText style={{ fontSize: 10, fontFamily: F.body, color: '#737373' }}>{dayLabel}</BText>
+       <BText style={{ fontSize: 12, fontFamily: F.body, color: '#737373', lineHeight: 15.6 }}>{dayLabel}</BText>
       </View>
      );
     })}
@@ -1012,8 +1014,8 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
    {/* Duration + data rows */}
    <View style={{ gap: 16 }}>
     <View>
-     <BText style={{ fontSize: 14, fontFamily: F.body, color: '#0A0A0A' }}>Duración</BText>
-     <BText style={{ fontSize: 48, fontFamily: F.headingX, color: '#FECA04', lineHeight: 52, letterSpacing: -0.96 }}>{latest.duration} h</BText>
+     <BText style={{ fontSize: 14, fontFamily: F.body, color: '#0A0A0A', lineHeight: 19.6 }}>Duración</BText>
+     <BText style={{ fontSize: 48, fontFamily: F.heading, color: '#FECA04', lineHeight: 52.8 }}>{latest.duration} h</BText>
     </View>
     <View style={{ gap: 4 }}>
      {latest.bedtime && (
@@ -1031,13 +1033,13 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
      {latest.deepSleep > 0 && (
       <View style={styles.sleepHistRow}>
        <BText style={styles.sleepHistRowLabel}>{t(labelDeep)}</BText>
-       <View style={[styles.sleepHistChip, { backgroundColor: '#FEA068' }]}><BText style={[styles.sleepHistChipTxt, { color: '#6E2A02' }]}>{latest.deepSleep} h</BText></View>
+       <View style={[styles.sleepHistChip, { backgroundColor: '#FEA068' }]}><BText style={[styles.sleepHistChipTxt, { color: '#6E2A02' }]}>{latest.deepSleep} {lang === 'en' ? 'hours' : lang === 'fr' ? 'heures' : 'horas'}</BText></View>
       </View>
      )}
      {latest.remSleep > 0 && (
       <View style={styles.sleepHistRow}>
        <BText style={styles.sleepHistRowLabel}>REM</BText>
-       <View style={[styles.sleepHistChip, { backgroundColor: '#92E288' }]}><BText style={[styles.sleepHistChipTxt, { color: '#205A18' }]}>{latest.remSleep} h</BText></View>
+       <View style={[styles.sleepHistChip, { backgroundColor: '#92E288' }]}><BText style={[styles.sleepHistChipTxt, { color: '#205A18' }]}>{latest.remSleep} {lang === 'en' ? 'hours' : lang === 'fr' ? 'heures' : 'horas'}</BText></View>
       </View>
      )}
     </View>
@@ -1139,10 +1141,10 @@ const styles = StyleSheet.create({
  weekStripDayToday: { color: 'white', fontFamily: F.bodyB },
  weekStripDot: { position: 'absolute', bottom: 4, width: 4, height: 4, borderRadius: 2 },
 
- progMiniCard: { borderRadius: 24, overflow: 'hidden' },
- progMiniBlur: { flex: 1, padding: 8, backgroundColor: 'rgba(255,255,255,0.30)', borderRadius: 16 },
- progMiniLabel: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A' },
- progMiniName: { fontSize: 18, fontFamily: F.headingX, color: '#0A0A0A' },
+ progMiniCard: { borderRadius: 24, overflow: 'hidden', padding: 8 },
+ progMiniBlur: { flex: 1, padding: 8, backgroundColor: 'rgba(255,255,255,0.30)', borderRadius: 16, justifyContent: 'center' },
+ progMiniLabel: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A', lineHeight: 15.6 },
+ progMiniName: { fontSize: 18, fontFamily: F.heading, color: '#0A0A0A', lineHeight: 23.4 },
  weekDetailAzote: { marginTop: 12, backgroundColor: 'white', borderRadius: 16, padding: 12 },
  weekDetailWorkout: { fontSize: 14, color: '#0A0A0A', marginBottom: 8, fontFamily: F.heading },
  weekDetailStatus: { fontSize: 13, fontFamily: F.bodyB, color: '#0A0A0A' },
@@ -1248,17 +1250,17 @@ const styles = StyleSheet.create({
  // Calendar — Figma Hoy tab
  calCard: { backgroundColor: '#F5F5F5', borderRadius: 32, padding: 16, marginBottom: 2, gap: 24 },
  calMonthRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
- calMonthLabel: { fontSize: 16, fontFamily: F.body, color: '#0A0A0A', letterSpacing: -0.32 },
+ calMonthLabel: { fontSize: 16, fontFamily: F.body, color: '#0A0A0A', lineHeight: 20.8 },
  calHeaderRow: { flexDirection: 'row', justifyContent: 'space-between' },
  calHeaderCell: { flex: 1, padding: 4, alignItems: 'center' },
- calHeaderTxt: { fontSize: 10, fontFamily: F.body, color: '#737373', textTransform: 'uppercase', letterSpacing: -0.2 },
+ calHeaderTxt: { fontSize: 10, fontFamily: F.body, color: '#737373', textTransform: 'uppercase', lineHeight: 13 },
  calDaysRow: { flexDirection: 'row', gap: 4 },
  calDayCell: { flex: 1, height: 43, backgroundColor: 'white', borderRadius: 4, alignItems: 'center', justifyContent: 'center' },
  calDayCellToday: { borderWidth: 1, borderColor: '#0A0A0A' },
  calDayCellSelected: { borderWidth: 2, borderColor: '#0A0A0A' },
- calDayNum: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A', letterSpacing: -0.24 },
- calDayNumToday: { fontFamily: F.bodyB },
- calDot: { position: 'absolute', bottom: 3, width: 4, height: 4, borderRadius: 2 },
+ calDayNum: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A', lineHeight: 15.6 },
+ calDayNumToday: {},
+ calDayGlow: { position: 'absolute', bottom: 0, left: -1, right: -1, height: 22, borderBottomLeftRadius: 4, borderBottomRightRadius: 4, opacity: 0.55 },
 
  // Session card — Figma Hoy tab
  sessionTitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
@@ -1266,6 +1268,8 @@ const styles = StyleSheet.create({
  sessionDurSmall: { fontSize: 14, fontFamily: F.body, color: '#525252' },
  realizadosLbl: { fontSize: 14, fontFamily: F.body, color: '#260E01' },
  realizadosCount: { fontSize: 12, fontFamily: F.body, color: '#260E01' },
+realizadosTrack: { height: 6, borderRadius: 3, backgroundColor: '#E5E5E5', flexDirection: 'row', overflow: 'hidden' },
+realizadosFill:  { backgroundColor: '#429FE7', borderRadius: 3 },
  todoRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 10 },
  todoDoneBox: { width: 20, height: 20, borderRadius: 6, backgroundColor: '#262626', alignItems: 'center', justifyContent: 'center' },
  todoPendingBox: { width: 20, height: 20, borderRadius: 6, borderWidth: 1.5, borderColor: '#D4D4D4', backgroundColor: 'white' },
@@ -1296,9 +1300,10 @@ const styles = StyleSheet.create({
  addExtraCard: { backgroundColor: '#429FE7', borderRadius: 24, padding: 16, marginBottom: 2, gap: 12 },
  addExtraTitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
  addExtraLabel: { fontSize: 12, fontFamily: F.body, color: '#0A1823' },
- addExtraTitle: { fontSize: 32, fontFamily: F.headingX, color: '#FAFAFA', lineHeight: 36, letterSpacing: -0.64 },
+ addExtraTitle: { fontSize: 32, fontFamily: F.headingX, color: '#0A0A0A', lineHeight: 36, letterSpacing: -0.64 },
  addExtraBtn: { backgroundColor: '#0A0A0A', borderRadius: 14, height: 48, alignItems: 'center', justifyContent: 'center' },
  addExtraBtnTxt: { fontSize: 18, fontFamily: F.body, color: '#FAFAFA' },
+addExtraSub: { fontSize: 13, fontFamily: F.body, color: '#0A1823', lineHeight: 17, opacity: 0.7 },
 
  // Consejos header card
  consejosCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2, gap: 8 },
@@ -1325,9 +1330,9 @@ const styles = StyleSheet.create({
 
  // health tab — last workout
  dateChip: { fontSize: 11, color: '#0A0A0A', backgroundColor: 'white', paddingHorizontal: 10, paddingVertical: 3, borderRadius: 8, alignSelf: 'flex-start', fontFamily: F.body },
- workoutHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 14 },
- workoutName: { fontSize: 48, fontFamily: F.headingX, color: '#0A0A0A', lineHeight: 52, letterSpacing: -0.96, marginBottom: 4 },
- workoutTime: { fontSize: 14, color: '#0A0A0A', fontFamily: F.body },
+ workoutHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
+ workoutName: { fontSize: 48, fontFamily: F.heading, color: '#0A0A0A', lineHeight: 52.8 },
+ workoutTime: { fontSize: 14, color: '#0A0A0A', fontFamily: F.body, lineHeight: 19.6 },
  metricRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
  pill: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, backgroundColor: 'white', borderWidth: 0 },
  pillLabel: { fontSize: 9, fontFamily: F.bodyB, textTransform: 'uppercase', letterSpacing: 0.4 },
@@ -1335,10 +1340,10 @@ const styles = StyleSheet.create({
 
  // health tab — metrics Figma (two white cards side by side)
  metricsOuterCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2, gap: 24 },
- metricsOuterTitle: { fontSize: 12, fontFamily: F.body, color: '#0A1823' },
+ metricsOuterTitle: { fontSize: 12, fontFamily: F.body, color: '#0A1823', lineHeight: 15.6 },
  metricsInnerCard: { flex: 1, backgroundColor: 'white', borderRadius: 24, padding: 16, gap: 24 },
- metricsInnerLabel: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A' },
- metricsInnerValue: { fontSize: 48, fontFamily: F.headingX, color: '#0A0A0A', lineHeight: 52, letterSpacing: -0.96 },
+ metricsInnerLabel: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A', lineHeight: 15.6 },
+ metricsInnerValue: { fontSize: 48, fontFamily: F.heading, color: '#0A0A0A', lineHeight: 52.8 },
 
  // health tab — recent workouts
  recentRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: 'white' },
@@ -1355,10 +1360,10 @@ const styles = StyleSheet.create({
 
  // health tab — sleep history (Calidad de sueño)
  sleepHistCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2, gap: 24 },
- sleepHistRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 6 },
- sleepHistRowLabel: { fontSize: 14, fontFamily: F.body, color: '#0A0A0A' },
- sleepHistChip: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
- sleepHistChipTxt: { fontSize: 10, fontFamily: F.body, color: '#0A0A0A', textTransform: 'uppercase', letterSpacing: 0.3 },
+ sleepHistRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 2 },
+ sleepHistRowLabel: { fontSize: 14, fontFamily: F.body, color: '#0A0A0A', lineHeight: 19.6 },
+ sleepHistChip: { paddingHorizontal: 8, height: 24, borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
+ sleepHistChipTxt: { fontSize: 10, fontFamily: F.body, color: '#0A0A0A', textTransform: 'uppercase', letterSpacing: 0.3, lineHeight: 12 },
 
  // legacy sleep fields
  sleepHours: { fontSize: 42, fontFamily: F.bodyB, color: '#171717' },
@@ -1375,14 +1380,21 @@ const styles = StyleSheet.create({
  gymEmptyCtaBtnTxt: { fontSize: 18, fontFamily: F.body, color: 'white' },
 
  // wearables Figma
- wearablesCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2, gap: 16 },
- wearablesRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10 },
- wearablesName: { flex: 1, fontSize: 16, fontFamily: F.bodyB, color: '#0A0A0A' },
- wearablesSync: { fontSize: 16, fontFamily: F.body, color: '#0A0A0A', marginRight: 8 },
+ wearablesCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2, gap: 24 },
+ wearablesRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 16, gap: 8 },
+ wearablesName: { flex: 1, fontSize: 16, fontFamily: F.bodyB, color: '#0A0A0A', lineHeight: 20.8 },
+ wearablesSync: { fontSize: 16, fontFamily: F.body, color: '#0A0A0A', lineHeight: 20.8 },
  wearablesBtn: { width: 32, height: 32, borderRadius: 8, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
  wearablesAddBtn: { backgroundColor: '#0A0A0A', borderRadius: 12, height: 48, alignItems: 'center', justifyContent: 'center' },
- wearablesAddTxt: { fontSize: 15, fontFamily: F.bodyB, color: 'white' },
+ wearablesAddTxt: { fontSize: 18, fontFamily: F.body, color: 'white', lineHeight: 24 },
 });
-
-
-
+const ge = StyleSheet.create({
+ wrap: { flex: 1, justifyContent: 'center', paddingHorizontal: 16 },
+ card: { borderRadius: 24, padding: 16, gap: 32, overflow: 'hidden', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.20)' },
+ iconWrap: { width: 48, height: 48, borderRadius: 16, backgroundColor: '#429FE7', alignItems: 'center', justifyContent: 'center' },
+ iconInner: { width: 32, height: 32, borderRadius: 8, backgroundColor: '#0A1823' },
+ title: { fontSize: 24, fontFamily: F.heading, color: 'white', textAlign: 'center', lineHeight: 28.8 },
+ sub: { fontSize: 16, fontFamily: F.body, color: 'white', textAlign: 'center', lineHeight: 20.8 },
+ btn: { alignSelf: 'stretch', height: 48, backgroundColor: '#171717', borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+ btnTxt: { fontSize: 18, fontFamily: F.body, color: '#FAFAFA', lineHeight: 24 },
+});

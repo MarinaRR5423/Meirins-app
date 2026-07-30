@@ -1,9 +1,9 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+﻿import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, ScrollView, StyleSheet, TouchableOpacity, Modal, Switch, Animated, ImageBackground, Image } from 'react-native';
 import { F } from '../theme/fonts';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ChevronRight, Salad, Footprints, Flame, CalendarDays, Info, Check } from 'lucide-react-native';
+import { ChevronRight, Salad, SportShoe, Flame, CalendarDays, Info, Check } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 import { FlowerIcon } from '../components/TabIcons';
 import { usePhaseData } from '../hooks/usePhaseData';
@@ -200,7 +200,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  cta: { es: 'Registrar', en: 'Register', fr: 'Enregistrer', it: 'Registra' },
  };
  return (
- <ImageBackground source={require('../../assets/phases/follicular.png')} style={styles.container}>
+ <ImageBackground source={require('../../assets/Apartados/Blumm_cover_01.png')} style={styles.container}>
  <View style={styles.topBar}>
  <View style={styles.greetingChip}>
   {avatarUri
@@ -328,14 +328,16 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  <TouchableOpacity style={styles.miniCard} onPress={() => navigation.navigate('Gimnasio')} activeOpacity={0.85}>
   <View style={styles.miniHeader}>
    <View style={styles.miniHeaderLabel}>
-    <Footprints size={14} color="#429FE7" />
+    <SportShoe size={14} color="#429FE7" />
     <BText style={styles.miniHeaderTxt}>{tr('Entreno', 'Workout', 'Entraînement', 'Allenamento')}</BText>
    </View>
    <ChevronRight size={14} color="#0A0A0A" />
   </View>
-  <BText style={[styles.miniBigNum, { fontSize: 48, color: '#429FE7', lineHeight: 53 }]} numberOfLines={2}>
-   {todaySession?.name ?? (lang === 'en' ? 'Rest' : lang === 'fr' ? 'Repos' : 'Descanso')}
-  </BText>
+  {(() => {
+   const wName = todaySession?.name ?? (lang === 'en' ? 'Rest' : lang === 'fr' ? 'Repos' : 'Descanso');
+   const wFs = wName.length > 14 ? 24 : wName.length > 9 ? 32 : 48;
+   return <BText style={[styles.miniBigNum, { fontSize: wFs, color: '#429FE7', lineHeight: wFs * 1.1 }]} numberOfLines={2}>{wName}</BText>;
+  })()}
   {todaySession?.dur ? <BText style={styles.miniSub}>{todaySession.dur}</BText> : null}
   {todaySession?.intensity ? (
    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
@@ -420,10 +422,12 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  </View>
  <ChevronRight size={14} color="#0A0A0A" />
  </View>
- <BText style={styles.habitBigTxt}>
- {adhStreak.streak} {adhStreak.streak === 1 ? c.day : c.days} {tr('seguidos', 'in a row', 'de suite', 'di fila')}
- </BText>
- <BText style={styles.habitSub}>{msg[lang] || msg.es}</BText>
+ <View>
+  <BText style={styles.habitBigTxt}>
+  {adhStreak.streak} {adhStreak.streak === 1 ? c.day : c.days} {tr('seguidos', 'in a row', 'de suite', 'di fila')}
+  </BText>
+  <BText style={styles.habitSub}>{msg[lang] || msg.es}</BText>
+ </View>
  <View style={styles.habitDotsRow}>
  {habitDots.map((dot, i) => (
  <View key={i} style={[styles.habitDot, dot.isFuture ? styles.habitDotFuture : dot.isToday ? styles.habitDotToday : dot.done ? styles.habitDotOn : styles.habitDotOff]} />
@@ -548,9 +552,9 @@ const styles = StyleSheet.create({
  doneBadgeTxt: { color: 'white', fontSize: 13, fontFamily: F.bodyB },
 
  // Hero
- heroCard: { height: 200, borderRadius: 24, padding: 16, justifyContent: 'space-between', marginTop: 2, marginBottom: 2, overflow: 'hidden' },
+ heroCard: { height: 200, borderRadius: 24, padding: 16, justifyContent: 'space-between', marginTop: 12, marginBottom: 2, overflow: 'hidden' },
  heroCardImg: { borderRadius: 24 },
- heroHeadline: { fontSize: 28, color: '#0A0A0A', lineHeight: 32, fontFamily: F.headingX },
+ heroHeadline: { fontSize: 28, color: '#0A0A0A', lineHeight: 32.2, fontFamily: F.heading },
  heroTags: { flexDirection: 'row', flexWrap: 'wrap', gap: 2 },
  heroTag: { backgroundColor: '#F5F5F5', height: 24, paddingHorizontal: 8, borderRadius: 8, justifyContent: 'center' },
  heroTagTxt: { fontSize: 10, fontFamily: F.body, color: '#0A0A0A', textTransform: 'uppercase', letterSpacing: 0.3 },
@@ -584,9 +588,9 @@ const styles = StyleSheet.create({
  mealBtnTxtDone: { color: '#49CF38' },
 
  // Habit / streak
- habitCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginTop: 2, marginBottom: 2 },
- habitBigTxt: { fontSize: 32, color: '#A157C9', fontFamily: F.headingX, lineHeight: 35 },
- habitSub: { fontSize: 14, color: '#0A0A0A', fontFamily: F.body },
+ habitCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginTop: 2, marginBottom: 2, gap: 24 },
+ habitBigTxt: { fontSize: 32, color: '#A157C9', fontFamily: F.heading, lineHeight: 35.2 },
+ habitSub: { fontSize: 14, color: '#0A0A0A', fontFamily: F.body, lineHeight: 19.6 },
  habitDotsRow: { flexDirection: 'row', justifyContent: 'space-between' },
  habitDot: { width: 26, height: 26, borderRadius: 13 },
  habitDotOn: { backgroundColor: '#A157C9' },
@@ -600,7 +604,9 @@ const styles = StyleSheet.create({
  tipTitle: { fontSize: 32, color: 'white', lineHeight: 35, fontFamily: F.headingX },
 
  // Kcal labels
- kcalBarLabel: { fontSize: 12, color: '#FE6004', fontFamily: F.body, textTransform: 'uppercase' },
+ kcalBarLabel: { fontSize: 12, color: '#FE6004', fontFamily: F.body, textTransform: 'uppercase', lineHeight: 15.6 },
+ kcalTrack: { height: 6, borderRadius: 3, backgroundColor: '#E5E5E5', flexDirection: 'row', overflow: 'hidden' },
+ kcalFill: { backgroundColor: '#FE6004', borderRadius: 3 },
 
  // Entreno intensity tag
  intensityTag: { backgroundColor: '#429FE7', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2, alignSelf: 'flex-start' },

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { View, TouchableOpacity, StyleSheet, Modal, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Home, Flower, Salad, SportShoe, Plus, Droplets } from 'lucide-react-native';
@@ -62,7 +62,7 @@ export default function FloatingTabBar({ state, descriptors, navigation, enabled
  style={[styles.item, isFocused && styles.itemActive]}
  >
  {renderIcon()}
- <BText style={[styles.itemLabel, isFocused && { color: accent }]} numberOfLines={1}>
+ <BText style={styles.itemLabel} numberOfLines={1}>
  {label}
  </BText>
  </TouchableOpacity>

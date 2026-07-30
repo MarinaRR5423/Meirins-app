@@ -1099,7 +1099,7 @@ const s = StyleSheet.create({
   },
   bannerEmoji: { fontSize: 28 },
   bannerTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#1E3A8A', marginBottom: 2 },
-  bannerSub:   { fontSize: 12, color: '#3B82F6' },
+  bannerSub:   { fontSize: 12, color: '#3B82F6', fontFamily: F.body },
   bannerArrow: { fontSize: 18, color: '#1E3A8A', fontFamily: F.bodyB },
 
   // Ciclo — tarjeta de estado vacío (Azote redesign)
@@ -1142,7 +1142,7 @@ const s = StyleSheet.create({
   },
   gymEmptySub: {
     fontSize: 14, color: '#525252', textAlign: 'center',
-    lineHeight: 20, marginBottom: 20,
+    lineHeight: 20, marginBottom: 20, fontFamily: F.body,
   },
   gymEmptyBtn: {
     backgroundColor: '#171717', borderRadius: 12, height: 48,
@@ -1163,7 +1163,7 @@ const s = StyleSheet.create({
   },
   nutriEmptySub: {
     fontSize: 13, color: 'rgba(255,255,255,0.8)',
-    lineHeight: 18, marginBottom: 20,
+    lineHeight: 18, marginBottom: 20, fontFamily: F.body,
   },
   nutriEmptyBtn: {
     backgroundColor: '#171717', borderRadius: 12, height: 48,
@@ -1177,7 +1177,7 @@ const s = StyleSheet.create({
     marginBottom: 12, borderWidth: 1, borderColor: '#E5E5E5',
   },
   gymEditBannerTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A', marginBottom: 2 },
-  gymEditBannerSub:   { fontSize: 12, color: '#525252' },
+  gymEditBannerSub:   { fontSize: 12, color: '#525252', fontFamily: F.body },
 
   // Modal
   modal:       { flex: 1, backgroundColor: BG },
@@ -1202,14 +1202,14 @@ const s = StyleSheet.create({
   radioDot:        { width: 8, height: 8, borderRadius: 4, backgroundColor: 'white' },
   chipAzote:            { height: 40, paddingHorizontal: 8, borderRadius: 16, backgroundColor: '#FAFAFA', alignItems: 'center', justifyContent: 'center' },
   chipAzoteActive:      { backgroundColor: '#0A0A0A' },
-  chipAzoteLabel:       { fontSize: 16, color: '#0A0A0A' },
-  chipAzoteLabelActive: { color: 'white' },
+  chipAzoteLabel:       { fontSize: 16, color: '#0A0A0A', fontFamily: F.body, lineHeight: 20.8 },
+  chipAzoteLabelActive: { color: 'white', fontFamily: F.body },
   saveBtnAzote:    { marginTop: 28, height: 48, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center' },
   saveBtnAzoteTxt: { color: '#FAFAFA', fontFamily: F.body, fontSize: 18 },
 
   // Section
   secLabel: { fontSize: 11, fontFamily: F.bodyB, color: 'rgba(255,255,255,0.5)', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginTop: 4 },
-  secSub:   { fontSize: 13, color: 'rgba(255,255,255,0.55)', marginBottom: 12 },
+  secSub:   { fontSize: 13, color: 'rgba(255,255,255,0.55)', marginBottom: 12, fontFamily: F.body, lineHeight: 16.9 },
 
   // Option card
   optCard:       { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: 14, padding: 14, marginBottom: 8, borderWidth: 1.5, borderColor: 'transparent' },
@@ -1291,6 +1291,7 @@ const s = StyleSheet.create({
     padding: 12,
     color: 'white',
     fontSize: 14,
+    fontFamily: F.body,
     marginTop: 10,
     minHeight: 60,
     textAlignVertical: 'top',
@@ -1305,6 +1306,7 @@ const s = StyleSheet.create({
     padding: 12,
     color: '#0A0A0A',
     fontSize: 14,
+    fontFamily: F.body,
     marginTop: 10,
     minHeight: 60,
     textAlignVertical: 'top',
