@@ -566,6 +566,39 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  );
  })()}
 
+ {/* ── FOCO DE HOY ── */}
+ {(cals || nutritionCtx) && (
+ <View style={styles.orangeHeroCard}>
+ <BText style={styles.orangeHeroLabel}>
+ {lang === 'en' ? 'Today\'s focus' : lang === 'fr' ? "Focus du jour" : 'Foco de hoy'}
+ </BText>
+ {nutritionCtx && (
+ <>
+ {(Array.isArray(nutritionCtx.nutrients) ? nutritionCtx.nutrients : [nutritionCtx.nutrients]).length > 0 && (
+  <View style={styles.orangeHeroPills}>
+  {(Array.isArray(nutritionCtx.nutrients) ? nutritionCtx.nutrients : [nutritionCtx.nutrients]).map((nu, i) => (
+   <View key={i} style={styles.orangeHeroPill}>
+   <BText style={styles.orangeHeroPillTxt}>{nu}</BText>
+   </View>
+  ))}
+  </View>
+ )}
+ {!!(nutritionCtx.tip || nutritionCtx.dietNote) && (
+  <View style={styles.orangeHeroWarn}>
+  <BText style={styles.orangeHeroTip}>{nutritionCtx.tip || nutritionCtx.dietNote}</BText>
+  </View>
+ )}
+ {!!nutritionCtx.avoidNote && (
+  <View style={styles.orangeHeroWarn}>
+  <BText style={styles.orangeHeroTip}>{nutritionCtx.avoidNote}</BText>
+  </View>
+ )}
+ </>
+ )}
+ {cals && !nutritionCtx && <BText style={styles.orangeHeroKcal}>{cals.total} kcal</BText>}
+ </View>
+ )}
+
  {/* Comidas del día seleccionado */}
  <View style={styles.mealsWrapper}>
  <BText style={styles.mealsWrapperTitle}>
@@ -620,39 +653,6 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  </>
  );
  })()}
-
- {/* ── FOCO DE HOY ── */}
- {(cals || nutritionCtx) && (
- <View style={styles.orangeHeroCard}>
- <BText style={styles.orangeHeroLabel}>
- {lang === 'en' ? 'Today\'s focus' : lang === 'fr' ? "Focus du jour" : 'Foco de hoy'}
- </BText>
- {nutritionCtx && (
- <>
- {(Array.isArray(nutritionCtx.nutrients) ? nutritionCtx.nutrients : [nutritionCtx.nutrients]).length > 0 && (
- <View style={styles.orangeHeroPills}>
- {(Array.isArray(nutritionCtx.nutrients) ? nutritionCtx.nutrients : [nutritionCtx.nutrients]).map((nu, i) => (
- <View key={i} style={styles.orangeHeroPill}>
- <BText style={styles.orangeHeroPillTxt}>{nu}</BText>
- </View>
- ))}
- </View>
- )}
- {!!(nutritionCtx.tip || nutritionCtx.dietNote) && (
- <View style={styles.orangeHeroWarn}>
- <BText style={styles.orangeHeroTip}>{nutritionCtx.tip || nutritionCtx.dietNote}</BText>
- </View>
- )}
- {!!nutritionCtx.avoidNote && (
- <View style={styles.orangeHeroWarn}>
- <BText style={styles.orangeHeroTip}>{nutritionCtx.avoidNote}</BText>
- </View>
- )}
- </>
- )}
- {cals && !nutritionCtx && <BText style={styles.orangeHeroKcal}>{cals.total} kcal</BText>}
- </View>
- )}
 
  <WaterCard lang={lang} />
 
