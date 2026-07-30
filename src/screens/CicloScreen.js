@@ -644,7 +644,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, paddingBottom: 48, gap: 48 }}>
        <View style={{ gap: 16 }}>
-        <Image source={PHASE_IMAGES[selectedPhaseKey]} style={{ alignSelf: 'stretch', aspectRatio: 1, borderRadius: 24 }} resizeMode="cover" />
+        <Image source={PHASE_IMAGES[selectedPhaseKey]} style={{ alignSelf: 'stretch', height: 200, borderRadius: 24 }} resizeMode="cover" />
         <BText style={styles.phaseModalName}>{phTr.name}</BText>
         <BText style={styles.phaseModalDesc}>{phTr.desc || ph.desc}</BText>
        </View>
