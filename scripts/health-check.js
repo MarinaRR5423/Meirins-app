@@ -3,10 +3,8 @@
  *
  * Checks:
  *   1. Supabase connectivity
- *   2. program_content has data_es (menus / tips)
- *   3. program_content has data_en + data_fr (translations populated)
- *   4. recipes table has rows
- *   5. Edge Function translate-program is reachable
+ *   2. recipes table has rows
+ *   3. Edge Function translate-program is reachable
  *
  * Exit 0 = all OK
  * Exit 1 = one or more failures → GitHub Actions marks the run as failed
@@ -54,20 +52,6 @@ function fail(name, detail) {
   errorCount++;
 }
 
-async function checkProgramContent() {
-  const { rows } = await restGet('program_content', 'id=eq.marina&select=id,data_es,data_en,data_fr');
-  if (!rows.length) throw new Error('Row id=marina not found');
-  const row = rows[0];
-  if (!row.data_es) throw new Error('data_es is null — menus not populated');
-  pass('program_content.data_es', 'Row exists and data_es is populated');
-
-  if (!row.data_en) fail('program_content.data_en', 'NULL — translate-program Edge Function has not run for English');
-  else pass('program_content.data_en', 'English translation present');
-
-  if (!row.data_fr) fail('program_content.data_fr', 'NULL — translate-program Edge Function has not run for French');
-  else pass('program_content.data_fr', 'French translation present');
-}
-
 async function checkRecipes() {
   const { total } = await restGet('recipes', 'select=id&limit=1');
   if (total === 0) throw new Error('No recipes found in table');
@@ -108,7 +92,6 @@ async function main() {
   console.log(`\n🔍 Meirins Health Check — ${date}`);
   console.log('='.repeat(50));
 
-  await run('program_content', checkProgramContent);
   await run('recipes',         checkRecipes);
   await run('profiles table',  checkProfiles);
   await run('Edge Function',   checkEdgeFunction);

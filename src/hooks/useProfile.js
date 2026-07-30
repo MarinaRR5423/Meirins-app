@@ -7,7 +7,6 @@ export const useProfile = () => {
  const [authState, setAuthState] = useState('loading');
  const [user, setUser] = useState(null);
  const [profileLoaded, setProfileLoaded] = useState(false);
- const [programContent, setProgramContent] = useState(null); // { data_es, data_en, data_fr }
  const [setupDone, setSetupDone] = useState(false);
  const [lastPeriod, setLP] = useState('');
  const [cycleLength, setCL] = useState(28);
@@ -54,20 +53,7 @@ export const useProfile = () => {
  setProfileLoaded(true);
  };
 
- // Load global program content (same for all users, all languages in one row)
- const loadProgramContent = async () => {
- const { data } = await supabase
- .from('program_content')
- .select('data_es, data_en, data_fr')
- .eq('id', 'marina')
- .single();
- if (data) setProgramContent(data);
- };
-
  useEffect(() => {
- // Program content is public — load it regardless of auth state
- loadProgramContent();
-
  supabase.auth.getSession().then(({ data }) => {
  const session = data?.session;
  if (session) { setUser(session.user); setAuthState('authenticated'); loadProfile(session.user.id); }
@@ -291,7 +277,6 @@ export const useProfile = () => {
  age, weight, height, activityLevel, goal, dietary,
  profileExtended, profileOnboardingDone,
  periodEnd, sleepLog,
- programContent,
  setLastPeriod, setCycleLength, setTrainDays,
  setPeriodEnd, logSleep, logWeight,
  toggleFavoriteRecipe, toggleFavoriteWorkout,
