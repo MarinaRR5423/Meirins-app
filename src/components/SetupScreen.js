@@ -1,6 +1,8 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, ScrollView, TextInput, KeyboardAvoidingView, Platform, ImageBackground, Dimensions } from 'react-native';
 import { Check, ChevronLeft } from 'lucide-react-native';
+
+const { width: SW, height: SH } = Dimensions.get('window');
 import T from '../i18n/translations';
 import { trackEvent, Events } from '../lib/analytics';
 import { F } from '../theme/fonts';
@@ -54,10 +56,24 @@ function UnitInput({ value, onChangeText, placeholder, unit, keyboardType = 'num
  );
 }
 
+const INTRO_SLIDES = [
+ {
+  key: 'nutrition',
+  title: { es: 'Nutrición adaptada a tu ciclo', en: 'Nutrition adapted to your cycle', fr: 'Nutrition adaptée à ton cycle', it: 'Nutrizione adattata al tuo ciclo' },
+  subtitle: { es: 'Descubre cómo comer en sintonía con las fases de tu ciclo para sentirte con más energía.', en: 'Discover how to eat in sync with your cycle phases to feel more energised.', fr: 'Découvre comment manger en harmonie avec ton cycle pour te sentir plus énergique.', it: 'Scopri come mangiare in armonia con le fasi del tuo ciclo per sentirti più energica.' },
+ },
+ {
+  key: 'training',
+  title: { es: 'Entrenamiento personalizado', en: 'Personalised training', fr: 'Entraînement personnalisé', it: 'Allenamento personalizzato' },
+  subtitle: { es: 'Entrena adaptado a tus fases hormonales para maximizar tu rendimiento y recuperación.', en: 'Train adapted to your hormonal phases to maximise performance and recovery.', fr: 'Entraîne-toi selon tes phases hormonales pour maximiser tes performances.', it: 'Allenati in base alle tue fasi ormonali per massimizzare le prestazioni.' },
+ },
+];
+
 export default function SetupScreen({ onDone, lang = 'es', onLangChange, unitSystem = 'metric', onUnitSystemChange }) {
  const su = (T[lang] || T.es).setup;
 
  const [step, setStep] = useState(0);
+ const [introSlide, setIntroSlide] = useState(0);
 
  useEffect(() => {
  trackEvent(Events.ONBOARDING_STARTED);
@@ -138,29 +154,73 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange, unitSys
  // Solo se piden objetivos de los módulos elegidos (excluyendo sueño)
  const goalModules = modules.filter(m => GOALS_BY_MODULE[m]);
 
- // ─── PASO 0 · Bienvenida ────────────────────────────────────────────────────
- if (step === 0) return (
- <View style={styles.container}>
- <View style={styles.langRow}>
- {LANG_OPTIONS.map(l => (
- <TouchableOpacity key={l.code} onPress={() => onLangChange?.(l.code)}
- style={[styles.langBtn, lang === l.code && styles.langBtnActive]}>
- <BText style={styles.langFlag}>{l.flag}</BText>
- </TouchableOpacity>
- ))}
- </View>
- <BText style={styles.emoji}></BText>
- <BText style={styles.title}>Blumm</BText>
- <BText style={styles.tagline}>{su.tagline}</BText>
- <View style={styles.divider} />
- {su.features.map(f => (
- <View key={f} style={styles.feature}><BText style={styles.featureText}>{f}</BText></View>
- ))}
- <TouchableOpacity style={styles.btn} onPress={() => setStep(1)}>
- <BText style={styles.btnText}>{su.start}</BText>
- </TouchableOpacity>
- </View>
+ // ─── PASO 0 · Slides de introducción ───────────────────────────────────────
+ if (step === 0) {
+ const slide = INTRO_SLIDES[introSlide];
+ const title = slide.title[lang] || slide.title.es;
+ const subtitle = slide.subtitle[lang] || slide.subtitle.es;
+ const isLast = introSlide === INTRO_SLIDES.length - 1;
+
+ return (
+  <ImageBackground source={require('../../assets/onboarding-bg.png')} style={{ flex: 1 }} resizeMode="cover">
+   <View style={styles.bgOverlay} />
+
+   {/* Pills flotantes */}
+   <View style={[styles.introPill, styles.pillGreen, { top: SH * 0.14, left: SW * 0.06 }]}>
+    <BText style={[styles.introPillTxt, { color: '#0B1F08' }]}>CICLO</BText>
+   </View>
+   <View style={[styles.introPill, styles.pillOrange, { top: SH * 0.22, right: SW * 0.12 }]}>
+    <BText style={[styles.introPillTxt, { color: '#260E01' }]}>NUTRICIÓN</BText>
+   </View>
+   <View style={[styles.introPill, styles.pillBlue, { top: SH * 0.08, right: SW * 0.06 }]}>
+    <BText style={[styles.introPillTxt, { color: '#0A1823' }]}>ENTRENAMIENTO</BText>
+   </View>
+
+   {/* Panel blanco desde abajo */}
+   <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+    <View style={styles.introPanel}>
+     {/* Botón Volver */}
+     {introSlide > 0 ? (
+      <TouchableOpacity style={styles.backBtn} onPress={() => setIntroSlide(i => i - 1)}>
+       <BText style={styles.backBtnTxt}>← Volver</BText>
+      </TouchableOpacity>
+     ) : (
+      <View style={{ height: 32 }} />
+     )}
+
+     {/* Imagen + dots + texto */}
+     <View style={{ gap: 16, alignItems: 'center', alignSelf: 'stretch' }}>
+      {/* Imagen placeholder */}
+      <View style={styles.introImg} />
+
+      {/* Dots de paginación */}
+      <View style={{ flexDirection: 'row', gap: 12, paddingVertical: 8 }}>
+       {INTRO_SLIDES.map((_, i) => (
+        <View key={i} style={[styles.introDot, i === introSlide && styles.introDotActive]} />
+       ))}
+      </View>
+
+      {/* Título + subtítulo */}
+      <View style={{ gap: 4, alignSelf: 'stretch' }}>
+       <BText style={styles.introTitle}>{title}</BText>
+       <BText style={styles.introSubtitle}>{subtitle}</BText>
+      </View>
+     </View>
+
+     {/* Botón Siguiente */}
+     <View style={{ alignSelf: 'stretch' }}>
+      <TouchableOpacity style={styles.btn} onPress={() => {
+       if (isLast) { setStep(1); }
+       else { setIntroSlide(i => i + 1); }
+      }}>
+       <BText style={styles.btnText}>Siguiente</BText>
+      </TouchableOpacity>
+     </View>
+    </View>
+   </View>
+  </ImageBackground>
  );
+ }
 
  // ─── PASO 1 · Datos personales ──────────────────────────────────────────────
  if (step === 1) return (
@@ -379,6 +439,20 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange, unitSys
 
 const styles = StyleSheet.create({
  container: { flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', padding: 28 },
+
+ // ── Intro slides ────────────────────────────────────────────────────────────
+ bgOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.40)' },
+ introPill: { position: 'absolute', paddingHorizontal: 8, height: 24, borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
+ introPillTxt: { fontSize: 10, fontFamily: F.body, letterSpacing: 0.3, textTransform: 'uppercase', lineHeight: 12 },
+ pillGreen: { backgroundColor: '#49CF38' },
+ pillOrange: { backgroundColor: '#FE6004' },
+ pillBlue: { backgroundColor: '#429FE7' },
+ introPanel: { backgroundColor: '#FFFFFF', borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 16, paddingBottom: 48, gap: 48 },
+ introImg: { width: 300, height: 400, borderRadius: 24, backgroundColor: '#E5E5E5' },
+ introDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#E5E5E5' },
+ introDotActive: { backgroundColor: '#0A0A0A', width: 24 },
+ introTitle: { fontSize: 24, fontFamily: F.heading, color: '#0A0A0A', lineHeight: 28.8, textAlign: 'center' },
+ introSubtitle: { fontSize: 14, fontFamily: F.body, color: '#0A0A0A', lineHeight: 19.6, textAlign: 'center' },
 
  // Aviso médico
  medDisclaimer: { backgroundColor: '#FFF7ED', borderWidth: 1, borderColor: '#FED7AA', borderRadius: 16, padding: 14, marginTop: 8, marginBottom: 16 },
