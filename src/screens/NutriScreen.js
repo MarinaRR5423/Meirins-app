@@ -1107,8 +1107,8 @@ const styles = StyleSheet.create({
  weekCellGlow: { position: 'absolute', top: 21, left: -2, right: -2, height: 43, borderRadius: 22, opacity: 0.7 },
  weekCellNum: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A' },
 
- planHeaderCard: { borderRadius: 24, overflow: 'hidden', marginBottom: 2, height: 80 },
- planHeaderBlur: { flex: 1, padding: 8, justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.30)' },
+ planHeaderCard: { borderRadius: 24, overflow: 'hidden', marginBottom: 2, padding: 8 },
+ planHeaderBlur: { flex: 1, padding: 8, borderRadius: 16, justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.30)' },
  planHeaderTag: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A', lineHeight: 15.6 },
  planHeaderTitle: { fontSize: 18, color: '#0A0A0A', fontFamily: F.heading, lineHeight: 23.4 },
  planSub: { fontSize: 12, lineHeight: 18, opacity: 0.85, fontFamily: F.body },
