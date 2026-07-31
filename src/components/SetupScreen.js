@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, ScrollView, TextInput, KeyboardAvoidingView, Platform, ImageBackground, Dimensions } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, ScrollView, TextInput, KeyboardAvoidingView, Platform, ImageBackground, Image, Dimensions } from 'react-native';
 import { Check, ChevronLeft } from 'lucide-react-native';
 
 const { width: SW, height: SH } = Dimensions.get('window');
@@ -59,11 +59,13 @@ function UnitInput({ value, onChangeText, placeholder, unit, keyboardType = 'num
 const INTRO_SLIDES = [
  {
   key: 'nutrition',
+  image: require('../../assets/Inicio Nutricion.png'),
   title: { es: 'Nutrición adaptada a tu ciclo', en: 'Nutrition adapted to your cycle', fr: 'Nutrition adaptée à ton cycle', it: 'Nutrizione adattata al tuo ciclo' },
   subtitle: { es: 'Descubre cómo comer en sintonía con las fases de tu ciclo para sentirte con más energía.', en: 'Discover how to eat in sync with your cycle phases to feel more energised.', fr: 'Découvre comment manger en harmonie avec ton cycle pour te sentir plus énergique.', it: 'Scopri come mangiare in armonia con le fasi del tuo ciclo per sentirti più energica.' },
  },
  {
   key: 'training',
+  image: require('../../assets/Inicio Hit.png'),
   title: { es: 'Entrenamiento personalizado', en: 'Personalised training', fr: 'Entraînement personnalisé', it: 'Allenamento personalizzato' },
   subtitle: { es: 'Entrena adaptado a tus fases hormonales para maximizar tu rendimiento y recuperación.', en: 'Train adapted to your hormonal phases to maximise performance and recovery.', fr: 'Entraîne-toi selon tes phases hormonales pour maximiser tes performances.', it: 'Allenati in base alle tue fasi ormonali per massimizzare le prestazioni.' },
  },
@@ -190,8 +192,8 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange, unitSys
 
      {/* Imagen + dots + texto */}
      <View style={{ gap: 16, alignItems: 'center', alignSelf: 'stretch' }}>
-      {/* Imagen placeholder */}
-      <View style={styles.introImg} />
+      {/* Imagen */}
+      <Image source={slide.image} style={styles.introImg} resizeMode="cover" />
 
       {/* Dots de paginación */}
       <View style={{ flexDirection: 'row', gap: 12, paddingVertical: 8 }}>
