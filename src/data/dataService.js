@@ -28,17 +28,30 @@ export async function fetchRecipesByPhase(phase, lang = 'es') {
 
  if (error || !data?.length) return null;
 
- return data.map(r => ({
+ // Cargar macros calculados desde USDA para las recetas obtenidas
+ const recipeIds = data.map(r => r.id);
+ const { data: nutrition } = await supabase
+ .from('recipe_nutrition')
+ .select('recipe_id,kcal,protein_g,carbs_g,fat_g,fiber_g')
+ .in('recipe_id', recipeIds);
+
+ const nutritionMap = {};
+ if (nutrition) nutrition.forEach(n => { nutritionMap[n.recipe_id] = n; });
+
+ return data.map(r => {
+ const calc = nutritionMap[r.id];
+ return {
  id: r.id,
  phase,
  meal_type: r.meal_type,
  title: r.title?.[lang] || r.title?.es || '',
  emoji: '',
- kcal: r.kcal,
- protein_g: r.protein_g,
- carbs_g: r.carbs_g,
- fat_g: r.fat_g,
- fiber_g: r.fiber_g,
+ // Macros calculados desde USDA tienen prioridad; fallback a columnas manuales
+ kcal: calc?.kcal != null ? Math.round(calc.kcal) : r.kcal,
+ protein_g: calc?.protein_g != null ? Math.round(calc.protein_g) : r.protein_g,
+ carbs_g: calc?.carbs_g != null ? Math.round(calc.carbs_g) : r.carbs_g,
+ fat_g: calc?.fat_g != null ? Math.round(calc.fat_g) : r.fat_g,
+ fiber_g: calc?.fiber_g != null ? Math.round(calc.fiber_g) : r.fiber_g,
  diets: r.diets || [],
  phases: r.phases || [],
  goals: r.goals || [],
@@ -46,7 +59,8 @@ export async function fetchRecipesByPhase(phase, lang = 'es') {
  difficulty: r.difficulty,
  ingredients: r.ingredients?.[lang] || r.ingredients?.es || [],
  steps: r.steps?.[lang] || r.steps?.es || [],
- }));
+ };
+ });
  } catch (e) {
  console.error('fetchRecipesByPhase error:', e);
  return null;
