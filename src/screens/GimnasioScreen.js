@@ -2,7 +2,7 @@
 import { View, ScrollView, TouchableOpacity, TextInput, StyleSheet, Platform, ImageBackground, Modal, SafeAreaView } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { F } from '../theme/fonts';
-import { Check, X, ChevronRight, ChevronLeft, SportShoe, Pencil, RefreshCcw, Plus, Heart, BookOpen, Moon } from 'lucide-react-native';
+import { Check, X, ChevronRight, ChevronLeft, SportShoe, Pencil, RefreshCcw, Plus, Heart, BookOpen, BedDouble } from 'lucide-react-native';
 import { TouchableOpacity as GHTouchable } from 'react-native-gesture-handler';
 import T, { getDayLabels } from '../i18n/translations';
 import { GymSetupCard, SPORTS_LIST } from '../components/TabSetupCard';
@@ -990,8 +990,8 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
  const t = (obj) => obj[lang] ?? obj.es;
  return (
   <View style={styles.sleepHistCard}>
-   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-    <Moon size={14} color='#FECA04' />
+   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+    <BedDouble size={16} color='#FECA04' />
     <BText style={styles.sectionLabel}>{hl?.sleepTitle || 'Calidad de sueño'}</BText>
    </View>
    {/* 7-day stacked bar chart */}
@@ -1003,8 +1003,8 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
      const isLatest = i === displayed.length - 1;
      const _d = new Date(n.date + 'T12:00:00'); const dayLabel = `${_d.getDate()}/${_d.getMonth() + 1}`;
      return (
-      <View key={n.date} style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', height: BAR_MAX + 20, gap: 3 }}>
-       <View style={{ width: '100%', height: totalH, backgroundColor: isLatest ? '#FECA04' : '#FFF4CD', borderTopLeftRadius: 6, borderTopRightRadius: 6, justifyContent: 'flex-end', overflow: 'hidden' }}>
+      <View key={n.date} style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end', height: BAR_MAX + 20, gap: 4 }}>
+       <View style={{ width: '100%', height: totalH, backgroundColor: isLatest ? '#FECA04' : '#FFF4CD', borderTopLeftRadius: 8, borderTopRightRadius: 8, justifyContent: 'flex-end', overflow: 'hidden' }}>
         {deepH > 0 && <View style={{ width: '100%', height: deepH, backgroundColor: isLatest ? '#FE6004' : '#FFDFCD' }} />}
         {remH > 0 && <View style={{ width: '100%', height: remH, backgroundColor: isLatest ? '#49CF38' : '#DBF5D7' }} />}
        </View>
@@ -1019,7 +1019,7 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
      <BText style={{ fontSize: 14, fontFamily: F.body, color: '#0A0A0A', lineHeight: 19.6 }}>Duración</BText>
      <BText style={{ fontSize: 48, fontFamily: F.heading, color: '#FECA04', lineHeight: 52.8 }}>{latest.duration} h</BText>
     </View>
-    <View style={{ gap: 4 }}>
+    <View style={{ gap: 2 }}>
      {latest.bedtime && (
       <View style={styles.sleepHistRow}>
        <BText style={styles.sleepHistRowLabel}>{t(labelBed)}</BText>
@@ -1362,7 +1362,7 @@ addExtraSub: { fontSize: 13, fontFamily: F.body, color: '#0A1823', lineHeight: 1
 
  // health tab — sleep history (Calidad de sueño)
  sleepHistCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2, gap: 24 },
- sleepHistRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 2 },
+ sleepHistRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
  sleepHistRowLabel: { fontSize: 14, fontFamily: F.body, color: '#0A0A0A', lineHeight: 19.6 },
  sleepHistChip: { paddingHorizontal: 8, height: 24, borderRadius: 8, justifyContent: 'center', alignItems: 'center' },
  sleepHistChipTxt: { fontSize: 10, fontFamily: F.body, color: '#0A0A0A', textTransform: 'uppercase', letterSpacing: 0.3, lineHeight: 12 },
