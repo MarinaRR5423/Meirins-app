@@ -35,6 +35,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ErrorBoundary from './src/components/ErrorBoundary';
 import FloatingTabBar from './src/components/FloatingTabBar';
 import { initAnalytics, wrapWithSentry, trackEvent, identifyUser, setPostHogClient, Events } from './src/lib/analytics';
+import { Audio } from 'expo-av';
 
 // Conector entre el contexto de PostHog y nuestro módulo analytics.js
 function PostHogBridge() {
@@ -132,6 +133,16 @@ function App() {
 
   // Analytics init (no-op si no está configurado)
   useEffect(() => { initAnalytics(); }, []);
+
+  // Permite que la música del sistema siga sonando cuando se abre la app
+  useEffect(() => {
+    Audio.setAudioModeAsync({
+      allowsRecordingIOS: false,
+      playsInSilentModeIOS: false,
+      staysActiveInBackground: false,
+      shouldDuckAndroid: false,
+    }).catch(() => {});
+  }, []);
 
   // Cache de fase para el splash video
   useEffect(() => {
