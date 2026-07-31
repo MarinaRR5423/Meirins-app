@@ -370,6 +370,27 @@ export default function PerfilScreen({ pi, profile, signOut }) {
  setEditing(null);
  };
 
+ const saveDiet = async () => {
+ setSavingExt(true);
+ await profile.saveProfileExtended({ diet: editDiet });
+ setSavingExt(false);
+ setEditing(null);
+ };
+
+ const saveCooking = async () => {
+ setSavingExt(true);
+ await profile.saveProfileExtended({ cookingTime: editCooking });
+ setSavingExt(false);
+ setEditing(null);
+ };
+
+ const saveBudget = async () => {
+ setSavingExt(true);
+ await profile.saveProfileExtended({ weeklyBudget: editBudget });
+ setSavingExt(false);
+ setEditing(null);
+ };
+
  const saveFitness = async () => {
  setSavingExt(true);
  await profile.saveProfileExtended({ fitnessLevel: editFitness });
@@ -652,9 +673,9 @@ export default function PerfilScreen({ pi, profile, signOut }) {
 
  {/* ── Nutrición ── */}
  <NavCard iconEl={<Salad size={16} color="#FE6004" />} title={tr('Nutrición','Nutrition')}>
-  <NavItem label={p.profile.dietType || 'Tipo de dieta'} value={[editDiet?(getDiet(normalizeDietId(editDiet))?.name?.[lang]||lbl(DIET_L,editDiet,lang)):null,editFasting?getDiet(editFasting)?.name?.[lang]:null].filter(Boolean).join(' + ')||'—'} onPress={() => setEditing('program')} />
-  <NavItem label={p.profile.cookingTime || 'Tiempo cocina'} value={lbl(COOKING_L, editCooking) || '—'} onPress={() => setEditing('program')} />
-  <NavItem label={p.profile.budget || 'Presupuesto'} value={lbl(BUDGET_L, editBudget, lang) || '—'} last onPress={() => setEditing('program')} />
+  <NavItem label={p.profile.dietType || tr('Tipo de dieta','Diet type')} value={[editDiet?(getDiet(normalizeDietId(editDiet))?.name?.[lang]||lbl(DIET_L,editDiet,lang)):null,editFasting?getDiet(editFasting)?.name?.[lang]:null].filter(Boolean).join(' + ')||'—'} onPress={() => setEditing('diet')} />
+  <NavItem label={p.profile.cookingTime || tr('Tiempo cocina','Cooking time')} value={lbl(COOKING_L, editCooking) || '—'} onPress={() => setEditing('cooking')} />
+  <NavItem label={p.profile.budget || tr('Presupuesto','Budget')} value={lbl(BUDGET_L, editBudget, lang) || '—'} last onPress={() => setEditing('budget')} />
  </NavCard>
 
  {/* ── Salud ── */}
@@ -819,6 +840,69 @@ export default function PerfilScreen({ pi, profile, signOut }) {
          'Edit diet, fasting, allergies and supplements from the Nutrition tab.')}
        </BText>
        <TouchableOpacity style={s2.modalSaveBtn} onPress={saveProgram} disabled={savingExt}>
+        <BText style={s2.modalSaveBtnTxt}>{savingExt ? p.profile.saving : p.profile.save}</BText>
+       </TouchableOpacity>
+      </View>
+     )}
+
+     {/* ── diet ── */}
+     {editing === 'diet' && (
+      <View>
+       <BText style={styles.editSection}>{tr('TIPO DE DIETA','DIET TYPE')}</BText>
+       {Object.entries(DIET_L[lang] || DIET_L.es).map(([id, label]) => (
+        <TouchableOpacity key={id} onPress={() => setEditDiet(id)}
+         style={[styles.optRow, editDiet === id && styles.optRowActive]}>
+         <View style={{ flex: 1 }}>
+          <BText style={[styles.optLabel, editDiet === id && { color: '#0A0A0A', fontFamily: F.bodyB }]}>{label}</BText>
+         </View>
+         <View style={[styles.radio, editDiet === id && styles.radioActive]}>
+          {editDiet === id && <View style={styles.radioDot} />}
+         </View>
+        </TouchableOpacity>
+       ))}
+       <TouchableOpacity style={s2.modalSaveBtn} onPress={saveDiet} disabled={savingExt}>
+        <BText style={s2.modalSaveBtnTxt}>{savingExt ? p.profile.saving : p.profile.save}</BText>
+       </TouchableOpacity>
+      </View>
+     )}
+
+     {/* ── cooking time ── */}
+     {editing === 'cooking' && (
+      <View>
+       <BText style={styles.editSection}>{tr('TIEMPO DE COCINA','COOKING TIME')}</BText>
+       {Object.entries(COOKING_L).map(([id, label]) => (
+        <TouchableOpacity key={id} onPress={() => setEditCooking(id)}
+         style={[styles.optRow, editCooking === id && styles.optRowActive]}>
+         <View style={{ flex: 1 }}>
+          <BText style={[styles.optLabel, editCooking === id && { color: '#0A0A0A', fontFamily: F.bodyB }]}>{label}</BText>
+         </View>
+         <View style={[styles.radio, editCooking === id && styles.radioActive]}>
+          {editCooking === id && <View style={styles.radioDot} />}
+         </View>
+        </TouchableOpacity>
+       ))}
+       <TouchableOpacity style={s2.modalSaveBtn} onPress={saveCooking} disabled={savingExt}>
+        <BText style={s2.modalSaveBtnTxt}>{savingExt ? p.profile.saving : p.profile.save}</BText>
+       </TouchableOpacity>
+      </View>
+     )}
+
+     {/* ── budget ── */}
+     {editing === 'budget' && (
+      <View>
+       <BText style={styles.editSection}>{tr('PRESUPUESTO SEMANAL','WEEKLY BUDGET')}</BText>
+       {Object.entries(BUDGET_L[lang] || BUDGET_L.es).map(([id, label]) => (
+        <TouchableOpacity key={id} onPress={() => setEditBudget(id)}
+         style={[styles.optRow, editBudget === id && styles.optRowActive]}>
+         <View style={{ flex: 1 }}>
+          <BText style={[styles.optLabel, editBudget === id && { color: '#0A0A0A', fontFamily: F.bodyB }]}>{label}</BText>
+         </View>
+         <View style={[styles.radio, editBudget === id && styles.radioActive]}>
+          {editBudget === id && <View style={styles.radioDot} />}
+         </View>
+        </TouchableOpacity>
+       ))}
+       <TouchableOpacity style={s2.modalSaveBtn} onPress={saveBudget} disabled={savingExt}>
         <BText style={s2.modalSaveBtnTxt}>{savingExt ? p.profile.saving : p.profile.save}</BText>
        </TouchableOpacity>
       </View>
