@@ -37,7 +37,7 @@ const PHASE_IMAGES = {
  luteal:     require('../../assets/phases/luteal.png'),
 };
 
-const BLUE = { primary: '#1A56DB', light: '#EFF6FF', mid: 'rgba(26,86,219,0.10)' };
+const BLUE = { primary: '#429FE7', light: '#EFF6FF', mid: 'rgba(26,86,219,0.10)' };
 const GREEN = { bg: '#F0FDF4', border: '#86EFAC', text: '#16A34A' };
 const RED = { bg: '#FEF2F2', text: '#DC2626' };
 
@@ -379,7 +379,7 @@ export default function GimnasioScreen({
  else if (isPast) dotColor = '#EF4444'; // rojo — día de entreno pasado sin marcar
  // futuro: sin punto
  } else {
- dotColor = '#CBD5E1'; // gris — día de descanso
+ dotColor = '#E5E5E5'; // gris — día de descanso
  }
  return {
  date, dow, session,
@@ -859,7 +859,7 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
 
  const SportIdentifyPicker = ({ workoutId }) => (
  <View style={{ marginTop: 10, padding: 10, backgroundColor: '#F8FAFC', borderRadius: 10 }}>
- <BText style={{ fontSize: 12, fontFamily: F.bodyB, color: '#475569', marginBottom: 8 }}>
+ <BText style={{ fontSize: 12, fontFamily: F.bodyB, color: '#737373', marginBottom: 8 }}>
  {{ es: '¿Qué deporte fue?', en: 'What sport was it?', fr: 'Quel sport était-ce ?', it: 'Che sport era?' }[lang] || '¿Qué deporte fue?'}
  </BText>
  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
@@ -871,7 +871,7 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
  ))}
  </View>
  <TouchableOpacity onPress={() => setIdentifyingId(null)} style={{ marginTop: 8 }}>
- <BText style={{ fontSize: 12, color: '#94A3B8', textAlign: 'center' }}>
+ <BText style={{ fontSize: 12, color: '#737373', textAlign: 'center' }}>
  {{ es: 'Cancelar', en: 'Cancel', fr: 'Annuler', it: 'Annulla' }[lang] || 'Cancelar'}
  </BText>
  </TouchableOpacity>
@@ -912,7 +912,7 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
  setDurationInput(dur != null ? String(dur) : '');
  }}
  style={{ padding: 6 }}>
- {(isIdentifying || isEditingDur) ? <X size={18} color="#64748B" /> : <Pencil size={16} color="#737373" />}
+ {(isIdentifying || isEditingDur) ? <X size={18} color="#737373" /> : <Pencil size={16} color="#737373" />}
  </TouchableOpacity>
  </View>
 
@@ -921,7 +921,7 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
  {isEditingDur && (
  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 10, padding: 10, backgroundColor: '#F8FAFC', borderRadius: 10 }}>
  <TextInput
- style={{ flex: 1, borderWidth: 1, borderColor: '#BFDBFE', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, fontSize: 15, color: '#1E293B', backgroundColor: 'white' }}
+ style={{ flex: 1, borderWidth: 1, borderColor: '#BFDBFE', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 6, fontSize: 15, color: '#0A0A0A', backgroundColor: 'white' }}
  keyboardType="number-pad"
  placeholder={{ es: 'Minutos', en: 'Minutes', fr: 'Minutes', it: 'Minuti' }[lang] || 'Minutos'}
  value={durationInput}
@@ -929,13 +929,13 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
  maxLength={3}
  autoFocus
  />
- <BText style={{ fontSize: 13, color: '#64748B' }}>{hl?.min}</BText>
+ <BText style={{ fontSize: 13, color: '#737373' }}>{hl?.min}</BText>
  <TouchableOpacity onPress={() => saveDurationOverride(w.id)}
  style={{ backgroundColor: BLUE.primary, paddingHorizontal: 14, paddingVertical: 7, borderRadius: 8 }}>
  <Check size={16} color="white" />
  </TouchableOpacity>
  <TouchableOpacity onPress={() => setEditingDurationId(null)}>
- <X size={16} color="#94A3B8" />
+ <X size={16} color="#737373" />
  </TouchableOpacity>
  </View>
  )}
@@ -1191,26 +1191,26 @@ const styles = StyleSheet.create({
  exReps: { fontSize: 13, fontFamily: F.bodyB, color: '#0A0A0A', flexShrink: 0 },
  restRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 6 },
  restIco: { fontSize: 16, fontFamily: F.body },
- restText: { fontSize: 13, color: '#64748B', fontFamily: F.body },
- variationBtn: { marginTop: 10, padding: 10, borderRadius: 12, borderWidth: 1.5, borderStyle: 'dashed', borderColor: '#1A56DB', alignItems: 'center' },
- variationBtnText: { color: '#1A56DB', fontFamily: F.bodyB, fontSize: 13 },
+ restText: { fontSize: 13, color: '#737373', fontFamily: F.body },
+ variationBtn: { marginTop: 10, padding: 10, borderRadius: 12, borderWidth: 1.5, borderStyle: 'dashed', borderColor: '#429FE7', alignItems: 'center' },
+ variationBtnText: { color: '#429FE7', fontFamily: F.bodyB, fontSize: 13 },
  variationBox: { marginTop: 8, backgroundColor: '#F0FDF4', borderRadius: 12, padding: 12 },
  tipBox: { marginTop: 12, backgroundColor: '#F8FAFC', borderRadius: 12, padding: 12 },
- tipTitle: { fontSize: 12, fontFamily: F.bodyB, color: '#475569', marginBottom: 6 },
- tipText: { fontSize: 12, color: '#64748B', lineHeight: 20, fontFamily: F.body },
+ tipTitle: { fontSize: 12, fontFamily: F.bodyB, color: '#737373', marginBottom: 6 },
+ tipText: { fontSize: 12, color: '#737373', lineHeight: 20, fontFamily: F.body },
  phaseRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 12 },
  phaseNum: { width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
  phaseNumText: { fontSize: 12, fontFamily: F.bodyB },
  phaseHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 2 },
- phaseLabel: { fontSize: 14, fontFamily: F.bodyB, color: '#1E293B' },
- phaseDur: { fontSize: 12, color: '#1A56DB', fontFamily: F.bodyB },
- phaseDetail: { fontSize: 12, color: '#64748B', lineHeight: 18, fontFamily: F.body },
+ phaseLabel: { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A' },
+ phaseDur: { fontSize: 12, color: '#429FE7', fontFamily: F.bodyB },
+ phaseDetail: { fontSize: 12, color: '#737373', lineHeight: 18, fontFamily: F.body },
 
  // log buttons
  quickActions: { flexDirection: 'row', gap: 2, marginBottom: 2 },
  quickBtn: { flex: 1, padding: 12, borderRadius: 16, backgroundColor: '#F5F5F5', alignItems: 'center' },
  quickBtnTxt: { fontSize: 22, marginBottom: 2, fontFamily: F.body },
- quickBtnLbl: { fontSize: 11, color: '#0A0A0A', fontWeight: '500', fontFamily: F.body },
+ quickBtnLbl: { fontSize: 11, color: '#0A0A0A', fontFamily: F.body },
 
  logBtns: { flexDirection: 'row', gap: 2, marginBottom: 2 },
  doneBtn: { flex: 1, padding: 14, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center' },
@@ -1220,7 +1220,7 @@ const styles = StyleSheet.create({
  undoBtn: { padding: 10, borderRadius: 12, backgroundColor: '#F5F5F5', alignItems: 'center', marginBottom: 2 },
  undoBtnText: { fontSize: 13, color: '#0A0A0A', fontFamily: F.body },
  extraRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10, backgroundColor: '#B6ECAF', borderRadius: 16 },
- extraText: { fontSize: 13, color: '#0B1F08', fontWeight: '500', fontFamily: F.body },
+ extraText: { fontSize: 13, color: '#0B1F08', fontFamily: F.body },
  extraRemove: { color: '#0B1F08', fontSize: 18, fontFamily: F.body },
  extraInput: { flexDirection: 'row', gap: 8 },
  input: { flex: 1, padding: 10, borderRadius: 12, backgroundColor: '#FAFAFA', fontSize: 13, color: '#0A0A0A', fontFamily: F.body },
@@ -1235,19 +1235,19 @@ const styles = StyleSheet.create({
  weekNav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8, paddingHorizontal: 4 },
  weekNavBtn: { padding: 8 },
  weekNavArrow: { fontSize: 28, color: BLUE.primary, fontFamily: F.bodyB, lineHeight: 32 },
- weekNavLabel: { fontSize: 14, fontFamily: F.bodyB, color: '#1E293B' },
+ weekNavLabel: { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A' },
 
  // week
  weekRow: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 10, borderRadius: 12, borderWidth: 1, marginBottom: 6 },
  weekDate: { width: 60, alignItems: 'center', flexShrink: 0 },
- weekDayLabel: { fontSize: 10, color: '#94A3B8', fontFamily: F.body },
- weekDayNum: { fontSize: 18, fontFamily: F.bodyB, color: '#1E293B', lineHeight: 22 },
+ weekDayLabel: { fontSize: 10, color: '#737373', fontFamily: F.body },
+ weekDayNum: { fontSize: 18, fontFamily: F.bodyB, color: '#0A0A0A', lineHeight: 22 },
  weekWorkout: { fontSize: 13, fontFamily: F.body },
- weekDur: { fontSize: 11, color: '#94A3B8', fontFamily: F.body },
- weekExtra: { fontSize: 11, color: '#1A56DB', marginTop: 1, fontFamily: F.body },
+ weekDur: { fontSize: 11, color: '#737373', fontFamily: F.body },
+ weekExtra: { fontSize: 11, color: '#429FE7', marginTop: 1, fontFamily: F.body },
  progRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: 'rgba(26,86,219,0.08)' },
- progLabel: { fontSize: 13, fontFamily: F.bodyB, color: '#1E293B' },
- progDetail: { fontSize: 12, color: '#475569', marginTop: 1, fontFamily: F.body },
+ progLabel: { fontSize: 13, fontFamily: F.bodyB, color: '#0A0A0A' },
+ progDetail: { fontSize: 12, color: '#737373', marginTop: 1, fontFamily: F.body },
 
  // Calendar — Figma Hoy tab
  calCard: { backgroundColor: '#F5F5F5', borderRadius: 32, padding: 16, marginBottom: 2, gap: 24 },
@@ -1311,12 +1311,12 @@ addExtraSub: { fontSize: 13, fontFamily: F.body, color: '#0A1823', lineHeight: 1
  consejosCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2, gap: 8 },
  consejosHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
  consejosTitle: { fontSize: 20, fontFamily: F.heading, color: '#0A0A0A', lineHeight: 24 },
- weekDetail: { marginTop: -4, marginBottom: 6, backgroundColor: '#F8FBFF', borderWidth: 1.5, borderTopWidth: 0, borderColor: '#1A56DB', borderBottomLeftRadius: 12, borderBottomRightRadius: 12, padding: 12, gap: 6 },
+ weekDetail: { marginTop: -4, marginBottom: 6, backgroundColor: '#F8FBFF', borderWidth: 1.5, borderTopWidth: 0, borderColor: '#429FE7', borderBottomLeftRadius: 12, borderBottomRightRadius: 12, padding: 12, gap: 6 },
  weekExRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 5, borderBottomWidth: 1, borderBottomColor: '#EFF6FF' },
  weekExNum: { width: 22, height: 22, borderRadius: 11, backgroundColor: '#EFF6FF', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
- weekExNumText: { fontSize: 11, fontFamily: F.bodyB, color: '#1A56DB' },
- weekExName: { flex: 1, fontSize: 13, color: '#1E293B', fontWeight: '500', fontFamily: F.body },
- weekExReps: { fontSize: 12, fontFamily: F.bodyB, color: '#1A56DB' },
+ weekExNumText: { fontSize: 11, fontFamily: F.bodyB, color: '#429FE7' },
+ weekExName: { flex: 1, fontSize: 13, color: '#0A0A0A', fontFamily: F.body },
+ weekExReps: { fontSize: 12, fontFamily: F.bodyB, color: '#429FE7' },
 
  // health tab — connection
  connectedDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#49CF38', flexShrink: 0 },
@@ -1358,7 +1358,7 @@ addExtraSub: { fontSize: 13, fontFamily: F.body, color: '#0A1823', lineHeight: 1
  metricsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
  bigMetric: { flex: 1, minWidth: '40%', backgroundColor: 'white', borderRadius: 16, padding: 14, alignItems: 'center' },
  bigMetricValue: { fontSize: 20, fontFamily: F.bodyB, marginBottom: 2 },
- bigMetricLabel: { fontSize: 11, color: '#737373', fontWeight: '500', fontFamily: F.body },
+ bigMetricLabel: { fontSize: 11, color: '#737373', fontFamily: F.body },
 
  // health tab — sleep history (Calidad de sueño)
  sleepHistCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2, gap: 24 },

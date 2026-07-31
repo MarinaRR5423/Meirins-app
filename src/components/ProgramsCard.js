@@ -17,7 +17,7 @@ import {
  LEVEL_LABEL, isRecommended,
 } from '../data/trainingPrograms';
 
-const BLUE = '#1A56DB';
+const BLUE = '#429FE7';
 
 export default function ProgramsCard({ lang = 'es', profileExtended, saveProfileExtended, compact = false }) {
  const tr = (es, en, fr, it) => ({ es, en, fr, it }[lang] || es);
@@ -153,7 +153,7 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
  <View style={st.modalHeader}>
  {detail ? (
  <TouchableOpacity onPress={() => setDetail(null)} style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
- <ChevronLeft size={18} color="#1A56DB" />
+ <ChevronLeft size={18} color="#429FE7" />
  <BText style={st.backTxt}>{tr('Programas', 'Programmes', 'Programmes', 'Programmi')}</BText>
  </TouchableOpacity>
  ) : (
@@ -162,7 +162,7 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
  </BText>
  )}
  <TouchableOpacity onPress={() => { setOpen(false); setDetail(null); }} style={st.closeBtn}>
- <X size={20} color="#64748B" />
+ <X size={20} color="#737373" />
  </TouchableOpacity>
  </View>
 
@@ -234,7 +234,7 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
  {p.weeks.length} {tr('semanas', 'weeks', 'semaines', 'settimane')} Â· {p.spw}Ã—/{tr('sem', 'wk', 'sem', 'sett')} Â· {L(LEVEL_LABEL[p.level])}
  </BText>
  </View>
- <ChevronRight size={20} color="#94A3B8" />
+ <ChevronRight size={20} color="#737373" />
  </TouchableOpacity>
  );
  })}
@@ -281,7 +281,7 @@ const st = StyleSheet.create({
  bannerArrow: { fontSize: 18, color: '#0A0A0A', fontFamily: F.bodyB },
 
  // Modal
- modal: { flex: 1, backgroundColor: '#0F172A' },
+ modal: { flex: 1, backgroundColor: '#0A0A0A' },
  modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 8, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.1)' },
  modalTitle: { fontSize: 18, fontFamily: F.bodyB, color: 'white' },
  backTxt: { fontSize: 15, color: '#93C5FD', fontFamily: F.bodyB },

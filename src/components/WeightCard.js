@@ -194,7 +194,7 @@ export default function WeightCard({ lang = 'es', weight, height, goal, profileE
       onChangeText={setTargetW}
       keyboardType="decimal-pad"
       placeholder="65.0"
-      placeholderTextColor="#CBD5E1"
+      placeholderTextColor="#E5E5E5"
      />
      <BText style={{ fontSize: 14, color: '#737373', fontFamily: F.body }}>kg</BText>
      <TouchableOpacity style={s.targetSave} onPress={async () => {
@@ -206,7 +206,7 @@ export default function WeightCard({ lang = 'es', weight, height, goal, profileE
    )}
    {tgt && (
     <TouchableOpacity onPress={() => saveProfileExtended?.({ targetWeight: null })}>
-     <BText style={[s.setTargetLink, { color: '#94A3B8' }]}>
+     <BText style={[s.setTargetLink, { color: '#737373' }]}>
       × {tr('Eliminar objetivo', 'Remove target')}
      </BText>
     </TouchableOpacity>

@@ -26,7 +26,7 @@ export default function Loading({ variant = 'inline', label, color }) {
  if (variant === 'subtle') {
  return (
  <View style={s.subtle}>
- <ActivityIndicator size="small" color={color || '#94A3B8'} />
+ <ActivityIndicator size="small" color={color || '#737373'} />
  </View>
  );
  }
@@ -34,7 +34,7 @@ export default function Loading({ variant = 'inline', label, color }) {
  // inline
  return (
  <View style={s.inline}>
- <ActivityIndicator size="small" color={color || '#1A56DB'} />
+ <ActivityIndicator size="small" color={color || '#0A0A0A'} />
  {label && <BText style={s.inlineLabel}>{label}</BText>}
  </View>
  );
@@ -47,7 +47,7 @@ const s = StyleSheet.create({
  fsLabel: { color: 'rgba(0,0,0,0.5)', fontSize: 13, marginTop: 12, fontFamily: F.body },
 
  inline: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 16, justifyContent: 'center' },
- inlineLabel: { fontSize: 13, color: '#64748B', fontFamily: F.body },
+ inlineLabel: { fontSize: 13, color: '#737373', fontFamily: F.body },
 
  subtle: { padding: 8, alignItems: 'center' },
 });

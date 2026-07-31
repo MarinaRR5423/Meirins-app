@@ -20,7 +20,7 @@ import WaterCard from '../components/WaterCard';
 import CycleTrackingModal from '../components/CycleTrackingModal';
 import BText from '../components/BText';
 
-const BLUE = { primary: '#1A56DB', light: '#EFF6FF', mid: 'rgba(26,86,219,0.10)' };
+const BLUE = { primary: '#429FE7', light: '#EFF6FF', mid: 'rgba(26,86,219,0.10)' };
 
 const PHASE_IMAGES = {
  menstrual: require('../../assets/phases/menstrual.png'),
@@ -52,7 +52,7 @@ function WidgetWrap({ id, widgets, editMode, onLongPress, onRemove, wiggleRotate
  );
 }
 const wwStyles = StyleSheet.create({
- xBadge: { position: 'absolute', top: -6, left: -6, width: 22, height: 22, borderRadius: 11, backgroundColor: '#1E293B', justifyContent: 'center', alignItems: 'center', zIndex: 10, borderWidth: 2, borderColor: 'white' },
+ xBadge: { position: 'absolute', top: -6, left: -6, width: 22, height: 22, borderRadius: 11, backgroundColor: '#0A0A0A', justifyContent: 'center', alignItems: 'center', zIndex: 10, borderWidth: 2, borderColor: 'white' },
  xBadgeTxt: { fontSize: 10, color: 'white', fontFamily: F.bodyB, lineHeight: 12 },
 });
 const HORMONAL_CONTRA = ['pill', 'hormonal_iud', 'ring', 'patch', 'implant'];
@@ -628,9 +628,9 @@ const styles = StyleSheet.create({
  modalTitle: { fontSize: 17, color: '#0A0A0A', fontFamily: F.heading },
  modalDoneBtn: { backgroundColor: '#171717', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 6 },
  modalDoneTxt: { color: 'white', fontSize: 13, fontFamily: F.bodyB },
- modalDesc: { fontSize: 13, color: '#64748B', marginBottom: 16, fontFamily: F.body },
+ modalDesc: { fontSize: 13, color: '#737373', marginBottom: 16, fontFamily: F.body },
  widgetRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, gap: 12 },
  widgetRowBorder: { borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
  widgetEmoji: { fontSize: 20, width: 28, fontFamily: F.body },
- widgetLabel: { flex: 1, fontSize: 15, color: '#1E293B', fontWeight: '500', fontFamily: F.body },
+ widgetLabel: { flex: 1, fontSize: 15, color: '#0A0A0A', fontFamily: F.body },
 });

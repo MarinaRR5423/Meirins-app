@@ -52,7 +52,7 @@ const SUPPLEMENTS_OPTIONS = [
   { v: 'collagen',      l: { es: 'Colágeno',           en: 'Collagen',           fr: 'Collagène',           it: 'Collagene' } },
 ];
 
-const BLUE = '#1A56DB';
+const BLUE = '#429FE7';
 const BG   = '#0F1F4A';
 
 // ─── Componentes internos ─────────────────────────────────────────────────────
@@ -80,7 +80,7 @@ function OptionCard({ label, desc, icon, selected, onPress, variant = 'default' 
         <Text style={[s.optLabel, selected && s.optLabelActive]}>{label}</Text>
         {desc ? <Text style={s.optDesc}>{desc}</Text> : null}
       </View>
-      {selected && <Check size={16} color="#1A56DB" />}
+      {selected && <Check size={16} color="#429FE7" />}
     </TouchableOpacity>
   );
 }
@@ -165,7 +165,7 @@ function SetupModal({ visible, onClose, title, children, variant = 'default' }) 
         <View style={[s.modalHeader, azote && s.modalHeaderAzote]}>
           <Text style={[s.modalTitle, azote && s.modalTitleAzote]}>{title}</Text>
           <TouchableOpacity onPress={onClose} style={[s.closeBtn, azote && s.closeBtnAzote]}>
-            <X size={16} color={azote ? '#0A0A0A' : '#64748B'} />
+            <X size={16} color={azote ? '#0A0A0A' : '#737373'} />
           </TouchableOpacity>
         </View>
         <ScrollView contentContainerStyle={s.modalBody} keyboardShouldPersistTaps="handled">
@@ -1232,14 +1232,14 @@ const s = StyleSheet.create({
   chipActive:     { backgroundColor: 'white', borderColor: 'white' },
   chipDanger:     { backgroundColor: '#FEE2E2', borderColor: '#EF4444' },
   chipLabel:      { fontSize: 13, color: 'white', fontWeight: '500' },
-  chipLabelActive:{ color: '#1A56DB' },
+  chipLabelActive:{ color: '#429FE7' },
 
   // Day picker
   daysRow:       { flexDirection: 'row', gap: 6, marginBottom: 8 },
   dayBtn:        { flex: 1, paddingVertical: 10, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', alignItems: 'center' },
   dayBtnActive:  { backgroundColor: 'white', borderColor: 'white' },
   dayLetter:     { fontSize: 11, color: 'rgba(255,255,255,0.6)', fontFamily: F.bodyB },
-  dayLetterActive:{ color: '#1A56DB' },
+  dayLetterActive:{ color: '#429FE7' },
 
   // Day picker — variant "azote"
   daysLabelRowAzote:  { flexDirection: 'row' },
@@ -1255,14 +1255,14 @@ const s = StyleSheet.create({
   dateBtn:       { padding: 12, borderRadius: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', marginRight: 8, alignItems: 'center' },
   dateBtnActive: { backgroundColor: 'white' },
   dateBtnTxt:    { color: 'rgba(255,255,255,0.7)', fontSize: 13 },
-  dateBtnTxtActive: { color: '#1A56DB', fontFamily: F.bodyB },
+  dateBtnTxtActive: { color: '#429FE7', fontFamily: F.bodyB },
 
   // Cycle length
   lenRow:        { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
   lenBtn:        { padding: 10, borderRadius: 10, borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', minWidth: 44, alignItems: 'center' },
   lenBtnActive:  { backgroundColor: 'white' },
   lenTxt:        { color: 'rgba(255,255,255,0.7)', fontSize: 14 },
-  lenTxtActive:  { color: '#1A56DB', fontFamily: F.bodyB },
+  lenTxtActive:  { color: '#429FE7', fontFamily: F.bodyB },
 
   // Sin días fijos
   noTrainingBtn:       { marginTop: 8, marginBottom: 4, alignItems: 'center' },
@@ -1272,7 +1272,7 @@ const s = StyleSheet.create({
 
   // Save button
   saveBtn:    { marginTop: 28, padding: 16, borderRadius: 50, backgroundColor: 'white', alignItems: 'center' },
-  saveBtnTxt: { color: '#1A56DB', fontFamily: F.bodyB, fontSize: 16 },
+  saveBtnTxt: { color: '#429FE7', fontFamily: F.bodyB, fontSize: 16 },
 
   // Divider
   divider: { height: 1, backgroundColor: 'rgba(255,255,255,0.12)', marginVertical: 8 },
@@ -1285,7 +1285,7 @@ const s = StyleSheet.create({
   yesNoBtn:        { flex: 1, paddingVertical: 12, borderRadius: 12, borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.25)', alignItems: 'center' },
   yesNoBtnActive:  { backgroundColor: 'white', borderColor: 'white' },
   yesNoTxt:        { fontSize: 14, fontFamily: F.bodyB, color: 'rgba(255,255,255,0.75)' },
-  yesNoTxtActive:  { color: '#1A56DB' },
+  yesNoTxtActive:  { color: '#429FE7' },
 
   // Label para categorías de dietas
   dietCatLabel: { fontSize: 16, fontFamily: F.bodyB, color: '#171717', marginBottom: 8, marginTop: 16 },

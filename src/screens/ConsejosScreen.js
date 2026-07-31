@@ -97,7 +97,7 @@ export default function ConsejosScreen({ lang = 'es' }) {
  onPress={() => setActiveCategory(cat)}
  style={[
  styles.filterChip,
- isActive && { backgroundColor: catData?.color || '#1A56DB', borderColor: catData?.color || '#1A56DB' },
+ isActive && { backgroundColor: catData?.color || '#429FE7', borderColor: catData?.color || '#429FE7' },
  ]}
  >
  <BText style={[styles.filterChipText, isActive && styles.filterChipTextActive]}>
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
  container: { flex: 1, backgroundColor: '#F0F4FA' },
 
  header: {
- backgroundColor: '#1A56DB',
+ backgroundColor: '#429FE7',
  paddingTop: 60,
  paddingBottom: 20,
  paddingHorizontal: 20,
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
  paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,
  backgroundColor: 'white', borderWidth: 1.5, borderColor: '#E2E8F0',
  },
- filterChipText: { fontSize: 13, fontFamily: F.bodyB, color: '#64748B' },
+ filterChipText: { fontSize: 13, fontFamily: F.bodyB, color: '#737373' },
  filterChipTextActive: { color: 'white' },
 
  list: { padding: 14, paddingBottom: 100 },
@@ -164,9 +164,9 @@ const styles = StyleSheet.create({
  cardBody: { flex: 1 },
  catChip: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 10, marginBottom: 6 },
  catChipText: { fontSize: 10, fontFamily: F.bodyB, textTransform: 'capitalize' },
- cardTitle: { fontSize: 15, fontFamily: F.bodyB, color: '#1E293B', marginBottom: 4, lineHeight: 20 },
- cardSummary: { fontSize: 12, color: '#64748B', lineHeight: 18, marginBottom: 8, fontFamily: F.body },
- cardReadTime: { fontSize: 11, color: '#94A3B8', fontFamily: F.body },
+ cardTitle: { fontSize: 15, fontFamily: F.bodyB, color: '#0A0A0A', marginBottom: 4, lineHeight: 20 },
+ cardSummary: { fontSize: 12, color: '#737373', lineHeight: 18, marginBottom: 8, fontFamily: F.body },
+ cardReadTime: { fontSize: 11, color: '#737373', fontFamily: F.body },
 
  // Modal
  modal: { flex: 1, backgroundColor: '#FAFCFF', paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 },
@@ -175,12 +175,12 @@ const styles = StyleSheet.create({
  paddingHorizontal: 20, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F1F5F9',
  },
  backBtn: { paddingVertical: 4 },
- backText: { fontSize: 15, color: '#1A56DB', fontFamily: F.bodyB },
+ backText: { fontSize: 15, color: '#429FE7', fontFamily: F.bodyB },
  modalScroll: { flex: 1 },
  modalContent: { padding: 24, paddingTop: 32 },
  modalIcon: { fontSize: 48, textAlign: 'center', marginBottom: 16, fontFamily: F.body },
- modalTitle: { fontSize: 24, fontFamily: F.headingX, color: '#1E293B', textAlign: 'center', lineHeight: 30, marginBottom: 8 },
- modalMeta: { fontSize: 12, color: '#94A3B8', textAlign: 'center', marginBottom: 20, fontFamily: F.body },
+ modalTitle: { fontSize: 24, fontFamily: F.headingX, color: '#0A0A0A', textAlign: 'center', lineHeight: 30, marginBottom: 8 },
+ modalMeta: { fontSize: 12, color: '#737373', textAlign: 'center', marginBottom: 20, fontFamily: F.body },
  modalDivider: { height: 3, borderRadius: 2, width: 40, alignSelf: 'center', marginBottom: 24 },
- modalPara: { fontSize: 15, color: '#334155', lineHeight: 26, marginBottom: 16, fontFamily: F.body },
+ modalPara: { fontSize: 15, color: '#0A0A0A', lineHeight: 26, marginBottom: 16, fontFamily: F.body },
 });

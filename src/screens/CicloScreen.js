@@ -18,7 +18,7 @@ import ErrorBoundary from '../components/ErrorBoundary';
 const CICLO_ARTICLE_IDS = ['sleep-cycle', 'cycle-training'];
 const cicloArticles = ARTICLES.filter(a => CICLO_ARTICLE_IDS.includes(a.id));
 
-const BLUE = { primary: '#1A56DB', light: '#EFF6FF' };
+const BLUE = { primary: '#429FE7', light: '#EFF6FF' };
 const SCREEN_W = Dimensions.get('window').width;
 
 
@@ -30,7 +30,7 @@ const PHASE_IMAGES = {
 };
 
 const QUALITY_MOONS = ['','','','',''];
-const QUALITY_COLORS = ['#94A3B8','#F97316','#F59E0B','#3B82F6','#7C3AED'];
+const QUALITY_COLORS = ['#737373','#F97316','#F59E0B','#3B82F6','#7C3AED'];
 
 // ─── Cycle visual (pure RN, no SVG) ───────────────────────────────────────────
 
@@ -395,7 +395,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  </View>
  </View>
  {calOffset > 0 && (
- <BText style={{ fontSize: 11, color: '#94A3B8', textAlign: 'center', marginBottom: 8 }}>
+ <BText style={{ fontSize: 11, color: '#737373', textAlign: 'center', marginBottom: 8 }}>
  {tr('Pronóstico estimado', 'Estimated forecast', 'Prévision estimée', 'Previsione stimata')}
  </BText>
  )}
@@ -501,7 +501,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  </TouchableOpacity>
  ) : (
  <View style={{ alignSelf: 'stretch' }}>
- <BText style={{ fontSize: 12, color: '#64748B', textAlign: 'center', marginBottom: 10 }}>
+ <BText style={{ fontSize: 12, color: '#737373', textAlign: 'center', marginBottom: 10 }}>
  {!markStart
  ? tr('Toca el día de inicio de tu regla', 'Tap the first day of your period', 'Touche le premier jour de tes règles', 'Tocca il primo giorno del tuo ciclo')
  : !markEnd
@@ -512,7 +512,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  <TouchableOpacity
  onPress={() => { setMarking(false); setMarkStart(null); setMarkEnd(null); }}
  style={{ flex: 1, backgroundColor: '#F1F5F9', borderRadius: 12, padding: 12, alignItems: 'center' }}>
- <BText style={{ color: '#64748B', fontFamily: F.bodyB, fontSize: 13 }}>
+ <BText style={{ color: '#737373', fontFamily: F.bodyB, fontSize: 13 }}>
  {tr('Cancelar', 'Cancel', 'Annuler', 'Annulla')}
  </BText>
  </TouchableOpacity>
@@ -722,7 +722,7 @@ const styles = StyleSheet.create({
  calDayNumToday: { fontFamily: F.bodyB, color:'#0a0a0a' },
  calCellSelected: {},
  calDayNumSelected: { fontFamily: F.bodyB },
- noDataNote: { fontSize:12, color:'#94A3B8', textAlign:'center', marginTop:8, lineHeight:18, fontFamily: F.body },
+ noDataNote: { fontSize:12, color:'#737373', textAlign:'center', marginTop:8, lineHeight:18, fontFamily: F.body },
 
  // Day detail panel
  dayDetail: { marginTop:14, borderRadius:14, padding:14, borderWidth:1 },
@@ -736,31 +736,31 @@ const styles = StyleSheet.create({
 
  // Sleep card
  sleepLogRow: { flexDirection:'row', alignItems:'center', justifyContent:'space-between', marginBottom:12 },
- sleepLabel: { fontSize:13, color:'#475569', fontWeight:'500', fontFamily: F.body },
+ sleepLabel: { fontSize:13, color:'#737373', fontFamily: F.body },
  hoursRow: { flexDirection:'row', alignItems:'center', gap:8 },
  hoursBtn: { width:32, height:32, borderRadius:16, backgroundColor:'#F0F4FA', justifyContent:'center', alignItems:'center', borderWidth:1, borderColor:'#E2E8F0' },
- hoursBtnText: { fontSize:18, fontFamily: F.bodyB, color:'#1A56DB', lineHeight:22 },
- hoursValue: { fontSize:20, fontFamily: F.headingX, color:'#1E293B', minWidth:50, textAlign:'center' },
+ hoursBtnText: { fontSize:18, fontFamily: F.bodyB, color:'#429FE7', lineHeight:22 },
+ hoursValue: { fontSize:20, fontFamily: F.headingX, color:'#0A0A0A', minWidth:50, textAlign:'center' },
  qualityRow: { flexDirection:'row', alignItems:'center', justifyContent:'space-between', marginBottom:4 },
  qualityBtns: { flexDirection:'row', gap:6 },
  qualityBtn: { width:36, height:36, borderRadius:18, borderWidth:1.5, borderColor:'#E2E8F0', justifyContent:'center', alignItems:'center' },
  qualityMoon: { fontSize:18, fontFamily: F.body },
- qualityLabelText: { fontSize:11, color:'#94A3B8', textAlign:'right', marginBottom:12, fontFamily: F.body },
+ qualityLabelText: { fontSize:11, color:'#737373', textAlign:'right', marginBottom:12, fontFamily: F.body },
  logBtn: { backgroundColor:'#EFF6FF', borderRadius:12, paddingVertical:10, alignItems:'center', marginBottom:16, borderWidth:1, borderColor:'#BFDBFE' },
  logBtnSaved: { backgroundColor:'#F0FDF4', borderColor:'#BBF7D0' },
- logBtnText: { fontSize:14, fontFamily: F.bodyB, color:'#1A56DB' },
+ logBtnText: { fontSize:14, fontFamily: F.bodyB, color:'#429FE7' },
  logBtnTextSaved: { color:'#16A34A' },
  sleepChart: { marginTop:4 },
- chartLabel: { fontSize:11, color:'#94A3B8', fontFamily: F.bodyB, marginBottom:8 },
+ chartLabel: { fontSize:11, color:'#737373', fontFamily: F.bodyB, marginBottom:8 },
  barsRow: { flexDirection:'row', justifyContent:'space-between', alignItems:'flex-end' },
  barItem: { flex:1, alignItems:'center' },
  barBg: { width:24, height:60, backgroundColor:'#F1F5F9', borderRadius:6, justifyContent:'flex-end', overflow:'hidden' },
  barFill: { width:'100%', borderRadius:6 },
- barDay: { fontSize:9, color:'#94A3B8', marginTop:4, fontFamily: F.body },
- barHours: { fontSize:8, color:'#64748B', marginTop:1, fontFamily: F.body },
+ barDay: { fontSize:9, color:'#737373', marginTop:4, fontFamily: F.body },
+ barHours: { fontSize:8, color:'#737373', marginTop:1, fontFamily: F.body },
  avgBadge: { backgroundColor:'#EFF6FF', paddingHorizontal:10, paddingVertical:4, borderRadius:10 },
- avgText: { fontSize:11, color:'#1A56DB', fontFamily: F.bodyB },
- noDataText: { fontSize:12, color:'#94A3B8', textAlign:'center', marginTop:8, fontFamily: F.body },
+ avgText: { fontSize:11, color:'#429FE7', fontFamily: F.bodyB },
+ noDataText: { fontSize:12, color:'#737373', textAlign:'center', marginTop:8, fontFamily: F.body },
 
  // Información de las fases — carrusel con imágenes
  phaseInfoTitle: { fontSize:20, color:'#0A0A0A', fontFamily: F.headingX, letterSpacing:-0.2 },
@@ -787,24 +787,24 @@ const styles = StyleSheet.create({
  phaseModalBodyTxt: { fontSize: 16, fontFamily: F.body, color: '#171717', lineHeight: 20.8 },
 
  // Edit
- editBtn: { fontSize:13, color:'#64748B', textAlign:'center', padding:4, fontFamily: F.body },
- editTitle: { fontSize:14, fontFamily: F.bodyB, color:'#1E293B', marginBottom:12 },
- editLabel: { fontSize:12, color:'#64748B', marginBottom:8, fontFamily: F.body },
+ editBtn: { fontSize:13, color:'#737373', textAlign:'center', padding:4, fontFamily: F.body },
+ editTitle: { fontSize:14, fontFamily: F.bodyB, color:'#0A0A0A', marginBottom:12 },
+ editLabel: { fontSize:12, color:'#737373', marginBottom:8, fontFamily: F.body },
  periodEndHeader: { flexDirection:'row', justifyContent:'space-between', alignItems:'center' },
  periodEndClear: { fontSize:12, color:'#EF4444', fontFamily: F.bodyB },
  dateBtn: { padding:10, borderRadius:10, borderWidth:1, borderColor:'#E2E8F0', marginRight:8, alignItems:'center', minWidth:60 },
  dateBtnSmall: { minWidth:50, padding:8 },
- dateBtnActive: { backgroundColor:'#1A56DB', borderColor:'#1A56DB' },
- dateBtnText: { fontSize:12, color:'#475569', fontFamily: F.body },
+ dateBtnActive: { backgroundColor:'#429FE7', borderColor:'#429FE7' },
+ dateBtnText: { fontSize:12, color:'#737373', fontFamily: F.body },
  lenRow: { flexDirection:'row', flexWrap:'wrap', gap:8, marginBottom:16 },
  lenBtn: { padding:8, borderRadius:10, borderWidth:1, borderColor:'#E2E8F0', minWidth:40, alignItems:'center' },
- lenBtnActive: { backgroundColor:'#1A56DB', borderColor:'#1A56DB' },
- lenBtnText: { fontSize:13, color:'#475569', fontFamily: F.body },
+ lenBtnActive: { backgroundColor:'#429FE7', borderColor:'#429FE7' },
+ lenBtnText: { fontSize:13, color:'#737373', fontFamily: F.body },
  lenBtnTextActive: { color:'white', fontFamily: F.bodyB },
  editBtns: { flexDirection:'row', gap:8 },
  cancelBtn: { flex:1, padding:10, borderRadius:10, borderWidth:1, borderColor:'#E2E8F0', alignItems:'center' },
- cancelText: { fontSize:14, color:'#64748B', fontFamily: F.body },
- saveBtn: { flex:1, padding:10, borderRadius:10, backgroundColor:'#1A56DB', alignItems:'center' },
+ cancelText: { fontSize:14, color:'#737373', fontFamily: F.body },
+ saveBtn: { flex:1, padding:10, borderRadius:10, backgroundColor:'#429FE7', alignItems:'center' },
  saveText: { fontSize:14, color:'white', fontFamily: F.bodyB },
 });
 const es = StyleSheet.create({

@@ -52,7 +52,7 @@ async function ensureAndroidChannels() {
  Notifications.setNotificationChannelAsync(CHANNEL_WORKOUT, {
  name: 'Entrenamientos',
  importance: Notifications.AndroidImportance.DEFAULT,
- lightColor: '#1A56DB',
+ lightColor: '#429FE7',
  }),
  Notifications.setNotificationChannelAsync(CHANNEL_HYDRATION, {
  name: 'Hidratación',

@@ -37,7 +37,7 @@ const PHASE_IMAGES = {
 const NUTRI_ARTICLE_IDS = ['nutrition-menstrual', 'endometriosis-nutrition', 'pcos-hormones', 'pregnancy-nutrition'];
 const nutriArticles = ARTICLES.filter(a => NUTRI_ARTICLE_IDS.includes(a.id));
 
-const BLUE = { primary: '#1A56DB', light: '#EFF6FF', mid: 'rgba(26,86,219,0.10)' };
+const BLUE = { primary: '#429FE7', light: '#EFF6FF', mid: 'rgba(26,86,219,0.10)' };
 
 // Batch cooking: tipos de día (estructura sin comidas — contenido viene de Supabase)
 function getDayType(jsDay) {
@@ -875,9 +875,9 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  const hintTxt = { es: 'Pulsa el corazon en cualquier receta para guardarla aqui.', en: 'Tap the heart on any recipe to save it here.', fr: 'Appuie sur le coeur sur une recette pour la sauvegarder ici.', it: 'Tocca il cuore su una ricetta per salvarla qui.' };
  if (!favRecipes.length) return (
  <View style={{ alignItems: 'center', paddingTop: 48, paddingHorizontal: 24 }}>
- <Heart size={40} color="#CBD5E1" style={{ marginBottom: 12 }} />
- <BText style={{ fontSize: 16, fontFamily: F.bodyB, color: '#1E293B', marginBottom: 8, textAlign: 'center' }}>{emptyTxt[lang] || emptyTxt.es}</BText>
- <BText style={{ fontSize: 13, color: '#94A3B8', textAlign: 'center', lineHeight: 20 }}>{hintTxt[lang] || hintTxt.es}</BText>
+ <Heart size={40} color="#E5E5E5" style={{ marginBottom: 12 }} />
+ <BText style={{ fontSize: 16, fontFamily: F.bodyB, color: '#0A0A0A', marginBottom: 8, textAlign: 'center' }}>{emptyTxt[lang] || emptyTxt.es}</BText>
+ <BText style={{ fontSize: 13, color: '#737373', textAlign: 'center', lineHeight: 20 }}>{hintTxt[lang] || hintTxt.es}</BText>
  </View>
  );
  return favRecipes.map(r => {
@@ -927,14 +927,14 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  <TextInput
  style={styles.extraInput}
  placeholder={{ es: 'Nombre (ej. Croissant)', en: 'Name (e.g. Croissant)', fr: 'Nom (ex. Croissant)', it: 'Nome (es. Croissant)' }[lang] || 'Nombre'}
- placeholderTextColor="#94A3B8"
+ placeholderTextColor="#737373"
  value={extraName}
  onChangeText={setExtraName}
  />
  <TextInput
  style={styles.extraInput}
  placeholder="kcal"
- placeholderTextColor="#94A3B8"
+ placeholderTextColor="#737373"
  keyboardType="numeric"
  value={extraKcalStr}
  onChangeText={setExtraKcalStr}
@@ -1104,11 +1104,11 @@ const styles = StyleSheet.create({
  sectionTitle: { fontSize: 14, color: '#0A0A0A', marginBottom: 10, fontFamily: F.heading },
  listRow: { flexDirection: 'row', alignItems: 'flex-start', paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: '#F8FAFC' },
  dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#0A0A0A', marginTop: 5, marginRight: 10, flexShrink: 0 },
- listText: { fontSize: 13, color: '#334155', flex: 1, lineHeight: 20, fontFamily: F.body },
+ listText: { fontSize: 13, color: '#0A0A0A', flex: 1, lineHeight: 20, fontFamily: F.body },
  stepRow: { flexDirection: 'row', gap: 12, paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
  stepNum: { width: 26, height: 26, borderRadius: 13, backgroundColor: '#171717', justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
  stepNumText: { color: 'white', fontSize: 12, fontFamily: F.bodyB },
- stepText: { fontSize: 13, color: '#334155', lineHeight: 20, flex: 1, paddingTop: 4, fontFamily: F.body },
+ stepText: { fontSize: 13, color: '#0A0A0A', lineHeight: 20, flex: 1, paddingTop: 4, fontFamily: F.body },
  tabRow: { flexDirection: 'row', backgroundColor: '#0A0A0A', borderRadius: 20, padding: 4, marginBottom: 14 },
  tab: { flex: 1, height: 40, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
  tabActive: { backgroundColor: 'white' },
@@ -1147,10 +1147,10 @@ const styles = StyleSheet.create({
  actionBtnDone: { backgroundColor: '#F0FDF4', borderColor: '#16A34A' },
  actionBtnSkip: { backgroundColor: '#FEF2F2', borderColor: '#EF4444' },
  actionTxt: { fontSize: 16, fontFamily: F.body },
- chevron: { color: '#CBD5E1', fontSize: 14, flexShrink: 0, fontFamily: F.body },
+ chevron: { color: '#E5E5E5', fontSize: 14, flexShrink: 0, fontFamily: F.body },
  mealDetail: { marginTop: 14, paddingTop: 14, borderTopWidth: 1, borderTopColor: '#F1F5F9' },
- recipeBtn: { marginTop: 12, padding: 10, borderRadius: 12, borderWidth: 1.5, borderColor: '#1A56DB', backgroundColor: '#EFF6FF', alignItems: 'center' },
- recipeBtnText: { color: '#1A56DB', fontFamily: F.bodyB, fontSize: 13 },
+ recipeBtn: { marginTop: 12, padding: 10, borderRadius: 12, borderWidth: 1.5, borderColor: '#429FE7', backgroundColor: '#EFF6FF', alignItems: 'center' },
+ recipeBtnText: { color: '#429FE7', fontFamily: F.bodyB, fontSize: 13 },
 
  // Tu plan nutricional — Figma
  planNutriCard: { backgroundColor: '#FEA068', borderRadius: 24, padding: 20, marginBottom: 2 },
@@ -1176,21 +1176,21 @@ const styles = StyleSheet.create({
  dayTypeTag: { fontSize: 12, fontFamily: F.body },
  dayRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
  dayDate: { width: 50, alignItems: 'center', flexShrink: 0 },
- dayLabel: { fontSize: 11, color: '#94A3B8', fontFamily: F.body },
- dayNum: { fontSize: 20, fontFamily: F.bodyB, color: '#1E293B', lineHeight: 24 },
+ dayLabel: { fontSize: 11, color: '#737373', fontFamily: F.body },
+ dayNum: { fontSize: 20, fontFamily: F.bodyB, color: '#0A0A0A', lineHeight: 24 },
  dayTypeBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 10, flexShrink: 0 },
  dayTypeBadgeText: { fontSize: 10, fontFamily: F.bodyB },
- dayMeals: { fontSize: 12, color: '#64748B', fontFamily: F.body },
+ dayMeals: { fontSize: 12, color: '#737373', fontFamily: F.body },
  personsRow: { flexDirection: 'row', gap: 10, marginTop: 10 },
  personBox: { flex: 1, backgroundColor: 'white', borderRadius: 12, padding: 10, alignItems: 'center' },
- personLabel: { fontSize: 11, color: '#64748B', marginBottom: 6, fontFamily: F.body },
+ personLabel: { fontSize: 11, color: '#737373', marginBottom: 6, fontFamily: F.body },
  counter: { flexDirection: 'row', alignItems: 'center', gap: 8 },
  counterBtn: { width: 28, height: 28, borderRadius: 14, borderWidth: 1.5, justifyContent: 'center', alignItems: 'center' },
  counterBtnText: { fontSize: 16, fontFamily: F.bodyB },
  counterVal: { fontSize: 20, fontFamily: F.bodyB, minWidth: 16, textAlign: 'center' },
  counterBtnFill: { width: 28, height: 28, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
  counterBtnFillText: { color: 'white', fontSize: 16, fontFamily: F.bodyB },
- listSub: { fontSize: 12, color: '#475569', marginBottom: 4, fontFamily: F.body },
+ listSub: { fontSize: 12, color: '#737373', marginBottom: 4, fontFamily: F.body },
  shopRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 16 },
  shopLeft: { flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 },
  checkbox: { width: 20, height: 20, borderRadius: 5, borderWidth: 1, borderColor: '#737373', backgroundColor: 'white', flexShrink: 0, alignItems: 'center', justifyContent: 'center' },
@@ -1198,23 +1198,23 @@ const styles = StyleSheet.create({
  shopQty: { fontSize: 16, fontFamily: F.bodyB, color: '#0A0A0A', flexShrink: 0 },
  // Calorie tracker
  calCard: { backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
- calTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#1E293B' },
+ calTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A' },
  calBarBg: { height: 10, backgroundColor: '#F1F5F9', borderRadius: 5, overflow: 'hidden' },
  calBarFill: { height: '100%', borderRadius: 5 },
  calStat: { flex: 1, alignItems: 'center' },
  calStatNum: { fontSize: 24, fontFamily: F.headingX },
- calStatLbl: { fontSize: 11, color: '#94A3B8', marginTop: 2, fontFamily: F.body },
+ calStatLbl: { fontSize: 11, color: '#737373', marginTop: 2, fontFamily: F.body },
  calDivider: { width: 1, backgroundColor: '#F1F5F9', marginVertical: 4 },
  macroRow: { flexDirection: 'row', gap: 6, marginTop: 12 },
  macroPill: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4, backgroundColor: '#F1F5F9', borderRadius: 10, paddingVertical: 6 },
- macroPillLbl: { fontSize: 10, fontFamily: F.bodyB, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5 },
- macroPillVal: { fontSize: 13, fontFamily: F.headingX, color: '#1E293B' },
+ macroPillLbl: { fontSize: 10, fontFamily: F.bodyB, color: '#737373', textTransform: 'uppercase', letterSpacing: 0.5 },
+ macroPillVal: { fontSize: 13, fontFamily: F.headingX, color: '#0A0A0A' },
  // Extras
  extrasCard: { backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
- addExtraBtn: { backgroundColor: '#1A56DB', paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20 },
+ addExtraBtn: { backgroundColor: '#429FE7', paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20 },
  addExtraBtnTxt:{ color: 'white', fontSize: 13, fontFamily: F.bodyB },
  extraRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8, borderTopWidth: 1, borderTopColor: '#F1F5F9', gap: 8 },
- extraName: { flex: 1, fontSize: 13, color: '#334155', fontFamily: F.body },
+ extraName: { flex: 1, fontSize: 13, color: '#0A0A0A', fontFamily: F.body },
  extraKcal: { fontSize: 12, color: '#F59E0B', fontFamily: F.bodyB },
  // Favoritos cards (Figma)
  favCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2 },
@@ -1254,8 +1254,8 @@ const styles = StyleSheet.create({
  // Modal extras
  extraModal: { backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, paddingBottom: 40, gap: 12 },
  extraModalHandle:{ width: 36, height: 4, backgroundColor: '#E2E8F0', borderRadius: 2, alignSelf: 'center', marginBottom: 8 },
- extraModalTitle: { fontSize: 17, fontFamily: F.bodyB, color: '#1E293B', marginBottom: 4 },
- extraInput: { borderWidth: 1.5, borderColor: '#E2E8F0', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, color: '#1E293B', fontFamily: F.body },
+ extraModalTitle: { fontSize: 17, fontFamily: F.bodyB, color: '#0A0A0A', marginBottom: 4 },
+ extraInput: { borderWidth: 1.5, borderColor: '#E2E8F0', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, fontSize: 15, color: '#0A0A0A', fontFamily: F.body },
 });
 const ne = StyleSheet.create({
  wrap: { flex: 1, justifyContent: 'center', paddingHorizontal: 16 },

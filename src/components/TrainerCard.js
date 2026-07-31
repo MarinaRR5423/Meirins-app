@@ -132,7 +132,7 @@ export default function TrainerCard({ lang = 'es' }) {
  value={code}
  onChangeText={t => setCode(t.toUpperCase())}
  placeholder={i18n.placeholder}
- placeholderTextColor="#94A3B8"
+ placeholderTextColor="#737373"
  autoCapitalize="characters"
  autoFocus
  maxLength={12}

@@ -1,6 +1,6 @@
 export const PHASES = {
  menstrual: {
- name: 'Menstrual', emoji: '', color: '#64748B', light: '#F8FAFC', mid: 'rgba(100,116,139,0.10)',
+ name: 'Menstrual', emoji: '', color: '#737373', light: '#F8FAFC', mid: 'rgba(100,116,139,0.10)',
  tagline: 'Restauración & Descanso',
  desc: 'Tu cuerpo se renueva. Nutríte con calma y respeta el descanso.',
  focus: ['Hierro', 'Magnesio', 'Omega-3', 'Antiinflamatorios'], kcal: 'Déficit suave · −200 kcal/día',
@@ -69,7 +69,7 @@ export const PHASES = {
  ]
  },
  luteal: {
- name: 'Lútea', emoji: '', color: '#475569', light: '#F8FAFC', mid: 'rgba(71,85,105,0.10)',
+ name: 'Lútea', emoji: '', color: '#737373', light: '#F8FAFC', mid: 'rgba(71,85,105,0.10)',
  tagline: 'Calma & Equilibrio',
  desc: 'La progesterona toma el mando. Nutre tu cuerpo para navegar el SPM con energía.',
  focus: ['Carbohidratos complejos', 'Triptófano', 'Magnesio', 'Anti-cravings'], kcal: 'Mantenimiento · +100–150 kcal',

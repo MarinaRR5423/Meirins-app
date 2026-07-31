@@ -61,7 +61,7 @@ function CardOption({ icon, label, description, selected, onPress }) {
  <BText style={[s.cardLabel, selected && s.cardLabelSelected]}>{label}</BText>
  {description ? <BText style={[s.cardDesc, selected && s.cardDescSelected]}>{description}</BText> : null}
  </View>
- {selected && <Check size={16} color="#1A56DB" />}
+ {selected && <Check size={16} color="#429FE7" />}
  </TouchableOpacity>
  );
 }
@@ -379,7 +379,7 @@ export default function ProfileOnboarding({ onDone, lang = 'es' }) {
 const s = StyleSheet.create({
  safe: { flex: 1, backgroundColor: '#0F1F4A' },
  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 12, paddingBottom: 8 },
- back: { color: 'rgba(255,255,255,0.7)', fontSize: 15, fontWeight: '500', fontFamily: F.body },
+ back: { color: 'rgba(255,255,255,0.7)', fontSize: 15, fontFamily: F.body },
  stepCounter: { color: 'rgba(255,255,255,0.55)', fontSize: 13, fontFamily: F.bodyB },
  progressTrack: { height: 3, backgroundColor: 'rgba(255,255,255,0.15)', marginHorizontal: 20, borderRadius: 2, marginBottom: 24 },
  progressFill: { height: '100%', backgroundColor: 'white', borderRadius: 2 },
@@ -389,7 +389,7 @@ const s = StyleSheet.create({
  footer: { paddingHorizontal: 24, paddingBottom: 32, paddingTop: 12 },
  nextBtn: { backgroundColor: 'white', borderRadius: 50, paddingVertical: 16, alignItems: 'center' },
  nextBtnDisabled: { backgroundColor: 'rgba(255,255,255,0.25)' },
- nextLabel: { fontSize: 16, fontFamily: F.bodyB, color: '#1A56DB' },
+ nextLabel: { fontSize: 16, fontFamily: F.bodyB, color: '#429FE7' },
  nextLabelDisabled: { color: 'rgba(255,255,255,0.4)' },
  secLabel: { fontSize: 11, fontFamily: F.bodyB, color: 'rgba(255,255,255,0.5)', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginTop: 4 },
  input: { backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: 50, paddingHorizontal: 20, paddingVertical: 14, fontSize: 15, color: 'white', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.25)', fontFamily: F.body },
@@ -397,23 +397,23 @@ const s = StyleSheet.create({
  cardSelected: { backgroundColor: 'rgba(255,255,255,0.92)', borderColor: 'white' },
  cardIcon: { fontSize: 22, width: 30, textAlign: 'center', fontFamily: F.body },
  cardLabel: { fontSize: 15, fontFamily: F.bodyB, color: 'white' },
- cardLabelSelected: { color: '#1A56DB' },
+ cardLabelSelected: { color: '#429FE7' },
  cardDesc: { fontSize: 12, color: 'rgba(255,255,255,0.6)', marginTop: 2, fontFamily: F.body },
- cardDescSelected: { color: '#475569' },
- cardCheck: { fontSize: 16, color: '#1A56DB', fontFamily: F.bodyB },
+ cardDescSelected: { color: '#737373' },
+ cardCheck: { fontSize: 16, color: '#429FE7', fontFamily: F.bodyB },
  chips: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 4 },
  chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 50, backgroundColor: 'rgba(255,255,255,0.12)', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.2)', margin: 4 },
  chipSelected: { backgroundColor: 'white', borderColor: 'white' },
  chipDanger: { backgroundColor: '#FEE2E2', borderColor: '#EF4444' },
- chipLabel: { fontSize: 13, color: 'white', fontWeight: '500', fontFamily: F.body },
- chipLabelSelected: { color: '#1A56DB' },
+ chipLabel: { fontSize: 13, color: 'white', fontFamily: F.body },
+ chipLabelSelected: { color: '#429FE7' },
  yesnoRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 4 },
  yesnoLabel: { fontSize: 14, color: 'white', flex: 1, paddingRight: 12, fontFamily: F.body },
  yesnoButtons: { flexDirection: 'row', gap: 8 },
  yesnoBtn: { paddingHorizontal: 20, paddingVertical: 8, borderRadius: 50, backgroundColor: 'rgba(255,255,255,0.12)', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.2)' },
  yesnoBtnActive: { backgroundColor: 'white', borderColor: 'white' },
  yesnoBtnText: { fontSize: 13, color: 'white', fontFamily: F.bodyB },
- yesnoBtnTextActive: { color: '#1A56DB' },
+ yesnoBtnTextActive: { color: '#429FE7' },
  infoBanner: { backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: 14, padding: 14, marginTop: 8, borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)' },
  infoBannerText: { fontSize: 13, color: 'rgba(255,255,255,0.85)', lineHeight: 19, fontFamily: F.body },
  allergyWarning: { fontSize: 12, color: '#FCA5A5', marginBottom: 8, lineHeight: 18, fontFamily: F.body },

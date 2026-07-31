@@ -20,7 +20,7 @@ import BText from './BText';
 
 const PAD = { top: 24, bottom: 28, left: 38, right: 14 };
 
-export default function ProgressChart({ data, color = '#1A56DB', unit = 'kg', goal, width }) {
+export default function ProgressChart({ data, color = '#429FE7', unit = 'kg', goal, width }) {
  const { width: screenW } = useWindowDimensions();
  const W = width || (screenW > 0 ? screenW - 56 : 320);
  const H = 160;
@@ -107,7 +107,7 @@ export default function ProgressChart({ data, color = '#1A56DB', unit = 'kg', go
  />
  <SvgText
  x={(PAD.left - 4).toFixed(1)} y={(y + 4).toFixed(1)}
- fontSize="9" fill="#CBD5E1" textAnchor="end"
+ fontSize="9" fill="#E5E5E5" textAnchor="end"
  >{val}</SvgText>
  </React.Fragment>
  ))}
@@ -160,7 +160,7 @@ export default function ProgressChart({ data, color = '#1A56DB', unit = 'kg', go
  key={i}
  x={toX(i).toFixed(1)}
  y={(H - 4).toFixed(1)}
- fontSize="9" fill="#94A3B8" textAnchor="middle"
+ fontSize="9" fill="#737373" textAnchor="middle"
  >{lbl}</SvgText>
  );
  })}
@@ -183,8 +183,8 @@ export default function ProgressChart({ data, color = '#1A56DB', unit = 'kg', go
 
 const s = StyleSheet.create({
  empty: { justifyContent: 'center', alignItems: 'center' },
- emptyTxt: { fontSize: 12, color: '#CBD5E1', textAlign: 'center', fontFamily: F.body },
+ emptyTxt: { fontSize: 12, color: '#E5E5E5', textAlign: 'center', fontFamily: F.body },
  deltaRow: { flexDirection: 'row', alignItems: 'baseline', gap: 4, marginTop: 2, paddingLeft: 38 },
  delta: { fontSize: 14, fontFamily: F.bodyB },
- deltaSub: { fontSize: 12, color: '#94A3B8', fontFamily: F.body },
+ deltaSub: { fontSize: 12, color: '#737373', fontFamily: F.body },
 });

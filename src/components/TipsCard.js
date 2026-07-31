@@ -100,7 +100,7 @@ export default function TipsCard({ articles = [], lang = 'es', variant = 'defaul
  <BText style={styles.summary} numberOfLines={1}>{article.summary[lang] || article.summary.es}</BText>
  <BText style={styles.meta}>{article.readTime} {tips.readTime}</BText>
  </View>
- <ChevronRight size={20} color="#94A3B8" />
+ <ChevronRight size={20} color="#737373" />
  </TouchableOpacity>
  );
  })}
@@ -162,17 +162,17 @@ const styles = StyleSheet.create({
  shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
  },
  header: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
- title: { fontSize: 14, fontFamily: F.bodyB, color: '#1E293B' },
+ title: { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A' },
 
  row: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
  rowBorder: { borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
  iconBg: { width: 44, height: 44, borderRadius: 12, justifyContent: 'center', alignItems: 'center', flexShrink: 0 },
  icon: { fontSize: 22, fontFamily: F.body },
  body: { flex: 1 },
- articleTitle: { fontSize: 13, fontFamily: F.bodyB, color: '#1E293B', marginBottom: 2, lineHeight: 18 },
- summary: { fontSize: 11, color: '#64748B', lineHeight: 16, marginBottom: 3, fontFamily: F.body },
- meta: { fontSize: 10, color: '#94A3B8', fontFamily: F.body },
- chevron: { fontSize: 22, color: '#CBD5E1', fontWeight: '300', fontFamily: F.body },
+ articleTitle: { fontSize: 13, fontFamily: F.bodyB, color: '#0A0A0A', marginBottom: 2, lineHeight: 18 },
+ summary: { fontSize: 11, color: '#737373', lineHeight: 16, marginBottom: 3, fontFamily: F.body },
+ meta: { fontSize: 10, color: '#737373', fontFamily: F.body },
+ chevron: { fontSize: 22, color: '#E5E5E5', fontFamily: F.body },
 
  // Modal
  modal: { flex: 1, backgroundColor: '#FAFCFF' },
@@ -182,13 +182,13 @@ const styles = StyleSheet.create({
  borderBottomWidth: 1, borderBottomColor: '#F1F5F9',
  },
  backBtn: { paddingVertical: 4 },
- backText: { fontSize: 15, color: '#1A56DB', fontFamily: F.bodyB },
+ backText: { fontSize: 15, color: '#429FE7', fontFamily: F.bodyB },
  catChip: { height: 28, paddingHorizontal: 10, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
  modalContent: { padding: 24, paddingTop: 32 },
- modalTitle: { fontSize: 22, color: '#1E293B', textAlign: 'center', lineHeight: 28, marginBottom: 8, fontFamily: F.headingX },
- modalMeta: { fontSize: 12, color: '#94A3B8', textAlign: 'center', marginBottom: 20, fontFamily: F.body },
+ modalTitle: { fontSize: 22, color: '#0A0A0A', textAlign: 'center', lineHeight: 28, marginBottom: 8, fontFamily: F.headingX },
+ modalMeta: { fontSize: 12, color: '#737373', textAlign: 'center', marginBottom: 20, fontFamily: F.body },
  divider: { height: 3, borderRadius: 2, width: 40, alignSelf: 'center', marginBottom: 24 },
- para: { fontSize: 15, color: '#334155', lineHeight: 26, marginBottom: 16, fontFamily: F.body },
+ para: { fontSize: 15, color: '#0A0A0A', lineHeight: 26, marginBottom: 16, fontFamily: F.body },
 });
 
 // ─── Article modal ────────────────────────────────────────────────────────────

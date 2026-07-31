@@ -48,16 +48,16 @@ const s = StyleSheet.create({
  // Full
  container: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 40, paddingVertical: 60 },
  emoji: { fontSize: 64, marginBottom: 20, fontFamily: F.body },
- title: { fontSize: 20, fontFamily: F.bodyB, color: '#1E293B', textAlign: 'center', marginBottom: 10 },
- subtitle: { fontSize: 14, color: '#64748B', textAlign: 'center', lineHeight: 22, marginBottom: 28, fontFamily: F.body },
- btn: { backgroundColor: '#1A56DB', paddingHorizontal: 28, paddingVertical: 14, borderRadius: 50 },
+ title: { fontSize: 20, fontFamily: F.bodyB, color: '#0A0A0A', textAlign: 'center', marginBottom: 10 },
+ subtitle: { fontSize: 14, color: '#737373', textAlign: 'center', lineHeight: 22, marginBottom: 28, fontFamily: F.body },
+ btn: { backgroundColor: '#171717', paddingHorizontal: 28, paddingVertical: 14, borderRadius: 50 },
  btnTxt: { color: 'white', fontFamily: F.bodyB, fontSize: 15 },
 
  // Compact (dentro de card)
  compact: { alignItems: 'center', paddingVertical: 24, paddingHorizontal: 20 },
  compactEmoji: { fontSize: 40, marginBottom: 10, fontFamily: F.body },
- compactTitle: { fontSize: 15, fontFamily: F.bodyB, color: '#334155', textAlign: 'center', marginBottom: 6 },
- compactSub: { fontSize: 13, color: '#94A3B8', textAlign: 'center', lineHeight: 20, marginBottom: 14, fontFamily: F.body },
- compactBtn: { backgroundColor: '#EFF6FF', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20, borderWidth: 1, borderColor: '#BFDBFE' },
- compactBtnTxt: { color: '#1A56DB', fontFamily: F.bodyB, fontSize: 13 },
+ compactTitle: { fontSize: 15, fontFamily: F.bodyB, color: '#0A0A0A', textAlign: 'center', marginBottom: 6 },
+ compactSub: { fontSize: 13, color: '#737373', textAlign: 'center', lineHeight: 20, marginBottom: 14, fontFamily: F.body },
+ compactBtn: { backgroundColor: '#F5F5F5', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20 },
+ compactBtnTxt: { color: '#0A0A0A', fontFamily: F.bodyB, fontSize: 13 },
 });
