@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { BedDouble } from 'lucide-react-native';
 import T from '../i18n/translations';
 import { F } from '../theme/fonts';
 import BText from './BText';
@@ -40,7 +41,10 @@ export default function SleepCard({ sleepLog = [], logSleep, lang = 'es', health
  return (
   <View style={s.card}>
    {/* Title */}
-   <BText style={s.title}>{sl.title || 'Registro de sueño'}</BText>
+   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+    <BedDouble size={16} color="#FECA04" />
+    <BText style={s.title}>{sl.title || 'Registro de sueño'}</BText>
+   </View>
 
    {/* Duration display */}
    <View>
