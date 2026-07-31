@@ -383,14 +383,14 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, flex: 1 }}>
  <TouchableOpacity onPress={() => setCalOffset(o => Math.max(-24, o - 1))}
  style={{ paddingHorizontal: 10, paddingVertical: 4 }}>
- <ChevronLeft size={20} color="#171717" />
+ <ChevronLeft size={16} color="#171717" />
  </TouchableOpacity>
- <BText style={[styles.cardTitle, { flex: 1, textAlign: 'center' }]}>
+ <BText style={[styles.cardTitle, { flex: 1, textAlign: 'center', letterSpacing: 0 }]}>
  {monthName.charAt(0).toUpperCase() + monthName.slice(1)}
  </BText>
  <TouchableOpacity onPress={() => setCalOffset(o => Math.min(6, o + 1))}
  style={{ paddingHorizontal: 10, paddingVertical: 4 }}>
- <ChevronRight size={20} color="#171717" />
+ <ChevronRight size={16} color="#171717" />
  </TouchableOpacity>
  </View>
  </View>
@@ -451,7 +451,8 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  >
  {phase && !isMarked && (
  <>
- <View style={[styles.calCellArchGlow, { backgroundColor: isFuture ? PHASE_COLORS_FUTURE[phase] : PHASE_COLORS[phase] }]} />
+ <View style={[styles.calCellGlow1, { backgroundColor: isFuture ? PHASE_COLORS_FUTURE[phase] : PHASE_COLORS[phase] }]} />
+ <View style={[styles.calCellGlow2, { backgroundColor: isFuture ? PHASE_COLORS_FUTURE[phase] : PHASE_COLORS[phase] }]} />
  <View style={[styles.calCellArch, { backgroundColor: isFuture ? PHASE_COLORS_FUTURE[phase] : PHASE_COLORS[phase] }]} />
  </>
  )}
@@ -712,8 +713,9 @@ const styles = StyleSheet.create({
  calHeaderText: { flex:1, textAlign:'center', fontSize:10, fontFamily: F.body, color:'#737373', textTransform:'uppercase', letterSpacing:-0.2, padding:4 },
  calGrid: { flexDirection:'row', flexWrap:'wrap', alignItems:'flex-start', alignContent:'flex-start', gap:4, alignSelf:'stretch' },
  calCell: { width:43, height:43, overflow:'hidden', borderRadius:4, backgroundColor:'white', alignItems:'center', justifyContent:'center' },
- calCellArchGlow: { position:'absolute', top:14, left:-7, width:58, height:58, borderRadius:29, opacity:0.30 },
- calCellArch: { position:'absolute', top:21, left:-1, width:44, height:44, borderRadius:22, opacity:0.80 },
+ calCellGlow1: { position:'absolute', top:10, left:-9, width:62, height:62, borderRadius:31, opacity:0.12 },
+ calCellGlow2: { position:'absolute', top:16, left:-4, width:52, height:52, borderRadius:26, opacity:0.25 },
+ calCellArch: { position:'absolute', top:21, left:-1, width:44, height:44, borderRadius:22, opacity:0.55 },
  calCellTodayRing: { position:'absolute', top:0, left:0, right:0, bottom:0, borderRadius:4, borderWidth:1, borderColor:'#0a0a0a' },
 
  calDayNum: { fontSize:12, fontFamily: F.body, color:'#0a0a0a', zIndex:1 },
