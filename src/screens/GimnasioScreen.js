@@ -901,7 +901,7 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
  {/* Header */}
  <View style={styles.workoutHeader}>
  <View style={{ flex: 1 }}>
- <BText style={styles.workoutName}>{resolvedLabel(w)}</BText>
+ <BText style={styles.workoutName} adjustsFontSizeToFit numberOfLines={1} minimumFontScale={0.5}>{resolvedLabel(w)}</BText>
  {dur != null && <BText style={styles.workoutTime}>{dur} {hl?.min}</BText>}
  </View>
  <TouchableOpacity
@@ -1333,7 +1333,7 @@ addExtraSub: { fontSize: 13, fontFamily: F.body, color: '#0A1823', lineHeight: 1
  // health tab — last workout
  dateChip: { fontSize: 11, color: '#0A0A0A', backgroundColor: 'white', paddingHorizontal: 10, paddingVertical: 3, borderRadius: 8, alignSelf: 'flex-start', fontFamily: F.body },
  workoutHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
- workoutName: { fontSize: 48, fontFamily: F.heading, color: '#0A0A0A', lineHeight: 52.8 },
+ workoutName: { fontSize: 48, fontFamily: F.heading, color: '#0A0A0A', lineHeight: 52.8, flexShrink: 1 },
  workoutTime: { fontSize: 14, color: '#0A0A0A', fontFamily: F.body, lineHeight: 19.6 },
  metricRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
  pill: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, backgroundColor: 'white', borderWidth: 0 },
