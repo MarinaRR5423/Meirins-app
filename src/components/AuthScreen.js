@@ -151,55 +151,89 @@ export default function AuthScreen({ lang = 'es' }) {
  const isLogin = mode === 'login';
 
  return (
- <KeyboardAvoidingView style={styles.formOuter} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
- <ScrollView
- contentContainerStyle={styles.formContainer}
- keyboardShouldPersistTaps="handled"
- showsVerticalScrollIndicator={false}
+ <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+ <ImageBackground
+  source={require('../../assets/onboarding-bg.png')}
+  style={{ flex: 1 }}
+  resizeMode="cover"
  >
- {/* Back to welcome */}
- <TouchableOpacity style={styles.backBtn} onPress={() => { setMode('welcome'); setError(''); }}>
- <BText style={styles.backBtnText}>←</BText>
- </TouchableOpacity>
+  <View style={styles.bgOverlay} />
 
- <View style={styles.brandChip}>
- <BText style={styles.brandTitle}>Blumm</BText>
- </View>
- <BText style={styles.formTitle}>{isLogin ? t.welcome : t.createAccount}</BText>
+  {/* Floating pills */}
+  <View style={[styles.pill, styles.pillGreen, { top: SH * 0.14, left: SW * 0.06 }]}>
+   <BText style={[styles.pillText, { color: '#0B1F08' }]}>CICLO</BText>
+  </View>
+  <View style={[styles.pill, styles.pillOrange, { top: SH * 0.22, right: SW * 0.12 }]}>
+   <BText style={[styles.pillText, { color: '#260E01' }]}>NUTRICIÓN</BText>
+  </View>
+  <View style={[styles.pill, styles.pillBlue, { top: SH * 0.08, right: SW * 0.06 }]}>
+   <BText style={[styles.pillText, { color: '#0A1823' }]}>ENTRENAMIENTO</BText>
+  </View>
 
- <View style={styles.toggle}>
- {[{ id: 'login', l: t.login }, { id: 'register', l: t.register }].map(tab => (
- <TouchableOpacity key={tab.id} style={[styles.toggleBtn, mode === tab.id && styles.toggleActive]}
- onPress={() => { setMode(tab.id); setError(''); }}>
- <BText style={[styles.toggleText, mode === tab.id && styles.toggleTextActive]}>{tab.l}</BText>
- </TouchableOpacity>
- ))}
- </View>
+  {/* White panel from bottom */}
+  <ScrollView
+   contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-end' }}
+   keyboardShouldPersistTaps="handled"
+   showsVerticalScrollIndicator={false}
+  >
+   <View style={styles.formPanel}>
+    {/* Back button */}
+    <TouchableOpacity style={styles.backBtn} onPress={() => { setMode('welcome'); setError(''); }}>
+     <BText style={styles.backBtnText}>← Volver</BText>
+    </TouchableOpacity>
 
- <TextInput style={styles.input} placeholder="tu@email.com" placeholderTextColor="#737373"
- value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
- <View style={{ position: 'relative', width: '100%' }}>
- <TextInput style={[styles.input, { paddingRight: 44 }]} placeholder={t.password} placeholderTextColor="#737373"
- value={password} onChangeText={setPassword} secureTextEntry={!showPassword} />
- <TouchableOpacity onPress={() => setShowPassword(v => !v)}
- style={{ position: 'absolute', right: 12, top: 0, bottom: 0, justifyContent: 'center' }}>
- <BText style={{ fontSize: 18 }}>{showPassword ? '' : ''}</BText>
- </TouchableOpacity>
- </View>
+    {/* Title + toggle */}
+    <View style={{ gap: 12 }}>
+     <BText style={styles.formTitle}>{isLogin ? t.welcome : t.createAccount}</BText>
+     <View style={styles.toggle}>
+      {[{ id: 'login', l: t.login }, { id: 'register', l: t.register }].map(tab => (
+       <TouchableOpacity key={tab.id} style={[styles.toggleBtn, mode === tab.id && styles.toggleActive]}
+        onPress={() => { setMode(tab.id); setError(''); }}>
+        <BText style={[styles.toggleText, mode === tab.id && styles.toggleTextActive]}>{tab.l}</BText>
+       </TouchableOpacity>
+      ))}
+     </View>
+    </View>
 
- {error ? <BText style={styles.errorText}>{error}</BText> : null}
+    {/* Fields */}
+    <View style={{ gap: 8 }}>
+     <View style={{ gap: 8 }}>
+      <BText style={styles.fieldLabel}>Email</BText>
+      <TextInput style={styles.input} placeholder="tu@email.com" placeholderTextColor="#737373"
+       value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" />
+     </View>
+     <View style={{ gap: 8 }}>
+      <BText style={styles.fieldLabel}>{t.password}</BText>
+      <View style={{ position: 'relative' }}>
+       <TextInput style={[styles.input, { paddingRight: 44 }]} placeholder={t.password} placeholderTextColor="#737373"
+        value={password} onChangeText={setPassword} secureTextEntry={!showPassword} />
+       <TouchableOpacity onPress={() => setShowPassword(v => !v)}
+        style={{ position: 'absolute', right: 12, top: 0, bottom: 0, justifyContent: 'center' }}>
+        <BText style={{ fontSize: 18 }}>{showPassword ? '' : ''}</BText>
+       </TouchableOpacity>
+      </View>
+     </View>
+     {isLogin && (
+      <View style={{ paddingHorizontal: 24, paddingVertical: 8, alignItems: 'center' }}>
+       <TouchableOpacity onPress={handleResetPassword} disabled={loading}>
+        <BText style={styles.forgotText}>{t.forgotPassword}</BText>
+       </TouchableOpacity>
+      </View>
+     )}
+    </View>
 
- <TouchableOpacity style={[styles.blackBtn, loading && styles.btnDisabled]}
- onPress={isLogin ? handleLogin : handleRegister} disabled={loading}>
- <BText style={styles.blackBtnText}>{loading ? '...' : isLogin ? t.enter : t.createBtn}</BText>
- </TouchableOpacity>
+    {error ? <BText style={styles.errorText}>{error}</BText> : null}
 
- {isLogin && (
- <TouchableOpacity onPress={handleResetPassword} disabled={loading} style={{ marginTop: 16 }}>
- <BText style={styles.forgotText}>{t.forgotPassword}</BText>
- </TouchableOpacity>
- )}
- </ScrollView>
+    {/* Submit */}
+    <View>
+     <TouchableOpacity style={[styles.blackBtn, loading && styles.btnDisabled]}
+      onPress={isLogin ? handleLogin : handleRegister} disabled={loading}>
+      <BText style={styles.blackBtnText}>{loading ? '...' : isLogin ? t.enter : t.createBtn}</BText>
+     </TouchableOpacity>
+    </View>
+   </View>
+  </ScrollView>
+ </ImageBackground>
  </KeyboardAvoidingView>
  );
 }
@@ -252,21 +286,19 @@ const styles = StyleSheet.create({
  btnDisabled: { opacity: 0.4 },
 
  // ── Email form ─────────────────────────────────────────────────────────────
- formOuter: { flex: 1, backgroundColor: '#FFFFFF' },
- formContainer: { flexGrow: 1, alignItems: 'center', justifyContent: 'center', padding: 28 },
- backBtn: { position: 'absolute', top: 56, left: 20, padding: 8 },
- backBtnText: { fontSize: 24, fontFamily: F.body, color: '#0A0A0A' },
- brandChip: { backgroundColor: '#FECA04', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 8, marginBottom: 16 },
- brandTitle: { fontSize: 24, fontFamily: F.headingX, color: '#0A0A0A' },
- formTitle: { fontSize: 22, fontFamily: F.heading, color: '#0A0A0A', marginBottom: 24 },
- toggle: { flexDirection: 'row', backgroundColor: '#F5F5F5', borderRadius: 16, padding: 3, marginBottom: 20, width: '100%' },
- toggleBtn: { flex: 1, paddingVertical: 9, borderRadius: 13, alignItems: 'center' },
- toggleActive: { backgroundColor: '#171717' },
- toggleText: { fontSize: 13, fontFamily: F.body, color: '#525252' },
- toggleTextActive: { fontFamily: F.bodyB, color: 'white' },
- input: { width: '100%', height: 48, borderRadius: 16, backgroundColor: '#FAFAFA', paddingHorizontal: 14, fontFamily: F.body, color: '#0A0A0A', fontSize: 15, marginBottom: 12, borderWidth: 1, borderColor: '#E5E5E5' },
+ formPanel: { backgroundColor: '#FFFFFF', borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 16, paddingBottom: 48, gap: 48 },
+ backBtn: { height: 32, paddingHorizontal: 8, backgroundColor: '#F5F5F5', borderRadius: 8, alignSelf: 'flex-start', justifyContent: 'center', alignItems: 'center' },
+ backBtnText: { fontSize: 14, fontFamily: F.body, color: '#0A0A0A', lineHeight: 24 },
+ formTitle: { fontSize: 24, fontFamily: F.heading, color: '#0A0A0A', lineHeight: 28.8 },
+ toggle: { flexDirection: 'row', backgroundColor: '#0A0A0A', borderRadius: 20, padding: 4 },
+ toggleBtn: { flex: 1, height: 40, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+ toggleActive: { backgroundColor: '#FFFFFF' },
+ toggleText: { fontSize: 16, fontFamily: F.body, color: 'white', lineHeight: 24 },
+ toggleTextActive: { color: '#0A0A0A' },
+ fieldLabel: { fontSize: 16, fontFamily: F.body, color: '#171717', lineHeight: 20.8 },
+ input: { width: '100%', height: 48, borderRadius: 16, backgroundColor: '#FAFAFA', paddingHorizontal: 8, fontFamily: F.body, color: '#0A0A0A', fontSize: 16, lineHeight: 20.8 },
  errorText: { fontFamily: F.body, color: '#DC2626', fontSize: 13, marginTop: 4, marginBottom: 4, textAlign: 'center' },
- forgotText: { fontFamily: F.body, color: '#525252', fontSize: 13, textDecorationLine: 'underline' },
+ forgotText: { fontFamily: F.bodyB, color: '#0A0A0A', fontSize: 14, textDecorationLine: 'underline', lineHeight: 19.6, textAlign: 'center' },
 
  // ── Feedback screens (confirm / reset) ────────────────────────────────────
  feedbackScreen: { flex: 1, backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center', padding: 32 },
