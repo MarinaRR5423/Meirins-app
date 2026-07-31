@@ -17,6 +17,8 @@ import {
  resolveSession,
 } from '../data/marinaProgram';
 import { buildWeekPlan, PHASE_CONFIG } from '../utils/programEngine';
+import { calcCalories } from '../utils/calories';
+import { PHASES } from '../data/phases';
 import SleepCard from '../components/SleepCard';
 import WeightCard from '../components/WeightCard';
 import { useWorkouts } from '../hooks/useWorkouts';
@@ -216,6 +218,7 @@ export default function GimnasioScreen({
  healthData, profileExtended, saveProfileExtended,
  toggleFavoriteWorkout, skipWorkout, logWorkoutDone,
  sleepLog = [], logSleep,
+ age, activityLevel,
  weight, height, logWeight,
 }) {
  useEffect(() => { trackScreen('Gimnasio', { phase: pi?.phase }); }, []);
@@ -557,15 +560,33 @@ export default function GimnasioScreen({
  })()}
  </View>
 
- {progState && (
- <ImageBackground source={require('../../assets/Apartados/Blumm_ejercicio_fondo.png')}
-  style={styles.progMiniCard} imageStyle={{ borderRadius: 24 }}>
-  <BlurView intensity={25} tint="light" style={styles.progMiniBlur}>
-   <BText style={styles.progMiniLabel}>{g.myProgram || 'Programa'}</BText>
-   <BText style={styles.progMiniName}>{progState.program?.name?.[lang] || progState.program?.name?.es || ''}</BText>
-  </BlurView>
- </ImageBackground>
- )}
+ {progState && (() => {
+  const spw = progState.program?.spw || 3;
+  const dayLetter = String.fromCharCode(65 + (progState.done % spw)); // A, B, C…
+  const dayLabel = { es: `Día ${dayLetter}`, en: `Day ${dayLetter}`, fr: `Jour ${dayLetter}`, it: `Giorno ${dayLetter}` }[lang] || `Día ${dayLetter}`;
+  const phaseName = PHASES[pi?.phase]?.name || '';
+  const cals = calcCalories({ weight, height, age, activityLevel, goal, trainDays }, pi?.phase);
+  const kcalLabel = cals ? `${cals.total} kcal` : null;
+  const doneLabel = { es: `${progState.done + 1}/${progState.total} días`, en: `${progState.done + 1}/${progState.total} days`, fr: `${progState.done + 1}/${progState.total} jours`, it: `${progState.done + 1}/${progState.total} giorni` }[lang];
+  const sessionName = todaySession?.name || '';
+  return (
+   <ImageBackground source={require('../../assets/Apartados/Blumm_ejercicio_fondo.png')}
+    style={styles.progMiniCard} imageStyle={{ borderRadius: 24 }}>
+    <BlurView intensity={25} tint="light" style={styles.progMiniBlur}>
+     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+      <BText style={styles.progMiniLabel}>{dayLabel}</BText>
+      {!!phaseName && <BText style={styles.progMiniLabel}>{phaseName}</BText>}
+     </View>
+     <BText style={styles.progMiniName}>{progState.program?.name?.[lang] || progState.program?.name?.es || ''}</BText>
+     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 6, flexWrap: 'wrap' }}>
+      {!!kcalLabel && <BText style={styles.progMiniMeta}>{kcalLabel}</BText>}
+      {!!doneLabel && <BText style={styles.progMiniMeta}>{doneLabel}</BText>}
+      {!!sessionName && <BText style={[styles.progMiniMeta, { flex: 1 }]} numberOfLines={1}>{sessionName}</BText>}
+     </View>
+    </BlurView>
+   </ImageBackground>
+  );
+ })()}
 
  {/* ════════════════════════ HOY ════════════════════════ */}
  {sub === 'hoy' && <>
@@ -1159,6 +1180,7 @@ const styles = StyleSheet.create({
  progMiniBlur: { flex: 1, padding: 8, backgroundColor: 'rgba(255,255,255,0.30)', borderRadius: 16, justifyContent: 'center' },
  progMiniLabel: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A', lineHeight: 15.6 },
  progMiniName: { fontSize: 18, fontFamily: F.heading, color: '#0A0A0A', lineHeight: 23.4 },
+ progMiniMeta: { fontSize: 11, fontFamily: F.body, color: 'rgba(10,10,10,0.65)', lineHeight: 14 },
  weekDetailAzote: { marginTop: 12, backgroundColor: 'white', borderRadius: 16, padding: 12 },
  weekDetailWorkout: { fontSize: 14, color: '#0A0A0A', marginBottom: 8, fontFamily: F.heading },
  weekDetailStatus: { fontSize: 13, fontFamily: F.bodyB, color: '#0A0A0A' },
