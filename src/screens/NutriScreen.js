@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useEffect } from 'react';
+﻿import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { View, ScrollView, TouchableOpacity, StyleSheet, Share, Modal, TextInput, ImageBackground, Image, SafeAreaView } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { useNavigation } from '@react-navigation/native';
@@ -195,6 +195,7 @@ const mc = StyleSheet.create({
 export default function NutriScreen({ pi, program, lang = 'es', goal, activityLevel, dietary, profileExtended, saveAll, saveProfileExtended, age, weight, height, trainDays, toggleFavoriteRecipe, skipRecipe, logRecipeDone }) {
  useEffect(() => { trackScreen('Nutrición', { phase: pi?.phase, goal }); }, []);
  const navigation = useNavigation();
+ const nutriOpenRef = useRef(null);
  const [sub, setSub] = useState('plan');
  const [weekOffset, setWeekOffset] = useState(0);
  const [checkedItems, setCheckedItems] = useState({});
@@ -424,11 +425,15 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
        <BText style={ne.title}>{emptyTxt.title[lang] || emptyTxt.title.es}</BText>
        <BText style={ne.sub}>{emptyTxt.sub[lang] || emptyTxt.sub.es}</BText>
       </View>
-      <TouchableOpacity style={ne.btn} onPress={() => navigation.navigate('Perfil')} activeOpacity={0.85}>
+      <TouchableOpacity style={ne.btn} onPress={() => nutriOpenRef.current?.()} activeOpacity={0.85}>
        <BText style={ne.btnTxt}>{emptyTxt.cta[lang] || emptyTxt.cta.es}</BText>
       </TouchableOpacity>
      </BlurView>
     </View>
+    <NutriSetupCard lang={lang} profileExtended={profileExtended} goal={goal}
+     activityLevel={activityLevel} dietary={dietary}
+     saveAll={saveAll || (() => {})} saveProfileExtended={saveProfileExtended || (() => {})}
+     openModalRef={nutriOpenRef} />
    </ImageBackground>
   );
  }

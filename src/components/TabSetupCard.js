@@ -177,7 +177,7 @@ function SetupModal({ visible, onClose, title, children, variant = 'default' }) 
 }
 
 // ─── CICLO ────────────────────────────────────────────────────────────────────
-export function CicloSetupCard({ lang, lastPeriod, setLastPeriod, cycleLength, setCycleLength, profileExtended, saveProfileExtended }) {
+export function CicloSetupCard({ lang, lastPeriod, setLastPeriod, cycleLength, setCycleLength, profileExtended, saveProfileExtended, openModalRef }) {
   const p  = T[lang] || T.es;
   const ob = p.onboarding;
   const [open, setOpen]             = useState(false);
@@ -231,18 +231,22 @@ export function CicloSetupCard({ lang, lastPeriod, setLastPeriod, cycleLength, s
     setOpen(true);
   };
 
+  if (openModalRef) openModalRef.current = openModal;
+
   return (
     <>
-      <View style={s.cicloEmptyCard}>
-        <View style={s.cicloEmptyAvatar}>
-          <Calendar size={22} color="white" strokeWidth={2.2} />
+      {!openModalRef && (
+        <View style={s.cicloEmptyCard}>
+          <View style={s.cicloEmptyAvatar}>
+            <Calendar size={22} color="white" strokeWidth={2.2} />
+          </View>
+          <Text style={s.cicloEmptyTitle}>{txt.emptyTitle}</Text>
+          <Text style={s.cicloEmptySub}>{txt.emptySub}</Text>
+          <TouchableOpacity style={s.cicloEmptyBtn} onPress={openModal} activeOpacity={0.85}>
+            <Text style={s.cicloEmptyBtnTxt}>{txt.emptyCta}</Text>
+          </TouchableOpacity>
         </View>
-        <Text style={s.cicloEmptyTitle}>{txt.emptyTitle}</Text>
-        <Text style={s.cicloEmptySub}>{txt.emptySub}</Text>
-        <TouchableOpacity style={s.cicloEmptyBtn} onPress={openModal} activeOpacity={0.85}>
-          <Text style={s.cicloEmptyBtnTxt}>{txt.emptyCta}</Text>
-        </TouchableOpacity>
-      </View>
+      )}
 
       <SetupModal visible={open} onClose={() => setOpen(false)} title={txt.modalTitle} variant="azote">
 
@@ -410,7 +414,7 @@ export function CicloHealthCard({ lang, profileExtended, saveProfileExtended }) 
 }
 
 // ─── NUTRICIÓN ────────────────────────────────────────────────────────────────
-export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExtended, activityLevel, goal, dietary }) {
+export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExtended, activityLevel, goal, dietary, openModalRef }) {
   const p    = T[lang] || T.es;
   const ob   = p.onboarding;
   const L    = (es, en, fr, it) => ({ es, en, fr, it }[lang] || es);
@@ -485,6 +489,8 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
     setOpen(true);
   };
 
+  if (openModalRef) openModalRef.current = openModal;
+
   const emptyTxt = {
     title: L('Configura tu nutrición', 'Set up your nutrition', 'Configure ta nutrition', 'Configura la tua nutrizione'),
     sub:   L('Configura tus preferencias para que nos podamos adaptar a tus necesidades y gustos',
@@ -496,7 +502,7 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
 
   return (
     <>
-      {!hasNutriData ? (
+      {!hasNutriData && !openModalRef ? (
         <ImageBackground
           source={require('../../assets/phases/ovulation.png')}
           style={s.nutriEmptyCard}

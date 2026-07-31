@@ -1,4 +1,4 @@
-﻿import React, { useState, useMemo, useEffect } from 'react';
+﻿import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Image, ImageBackground, Modal, SafeAreaView } from 'react-native';
 import { BlurView } from 'expo-blur';
@@ -159,6 +159,7 @@ function SleepCard({ sleepLog, logSleep, lang }) {
 // ─── Main component ────────────────────────────────────────────────────────────
 export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLength, periodEnd, setPeriodEnd, sleepLog = [], logSleep, lang = 'es', profileExtended, saveProfileExtended, logCycleDay }) {
  useEffect(() => { trackScreen('Ciclo', { phase: pi?.phase }); }, []);
+ const cicloOpenRef = useRef(null);
  const [trackingOpen, setTrackingOpen] = useState(false);
  const [expandedPhase, setExpanded] = useState(pi?.phase || null);
  const [selectedDate, setSelectedDate] = useState(null);
@@ -306,11 +307,15 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
        <BText style={es.title}>{emptyTxt.title[lang] || emptyTxt.title.es}</BText>
        <BText style={es.sub}>{emptyTxt.sub[lang] || emptyTxt.sub.es}</BText>
       </View>
-      <TouchableOpacity style={es.btn} onPress={() => navigation.navigate('Ciclo')} activeOpacity={0.85}>
+      <TouchableOpacity style={es.btn} onPress={() => cicloOpenRef.current?.()} activeOpacity={0.85}>
        <BText style={es.btnTxt}>{emptyTxt.cta[lang] || emptyTxt.cta.es}</BText>
       </TouchableOpacity>
      </BlurView>
     </View>
+    <CicloSetupCard lang={lang} lastPeriod={lastPeriod} setLastPeriod={setLastPeriod}
+     cycleLength={pi?.cycleLen} setCycleLength={setCycleLength}
+     profileExtended={profileExtended} saveProfileExtended={saveProfileExtended}
+     openModalRef={cicloOpenRef} />
    </ImageBackground>
   );
  }

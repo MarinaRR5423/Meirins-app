@@ -248,9 +248,10 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  const todayCycleKey = new Date().toISOString().split('T')[0];
  const hasCycleLogToday = !!ext.cycleLog?.[todayCycleKey];
 
- // Estado de "comido" de la siguiente comida sugerida
- const nextMealType = d?.meals?.[0]?.t;
+ // Estado de "comido" de la siguiente comida sugerida — avanza a la primera no comida
  const todayActivity = ext.activityLog?.[todayKeyH];
+ const nextMeal = d?.meals?.find(meal => todayActivity?.recipes?.[meal.t] !== 'done') ?? d?.meals?.[0];
+ const nextMealType = nextMeal?.t;
  const nextMealDone = !!(nextMealType && todayActivity?.recipes?.[nextMealType] === 'done');
 
  const consumedKcal = d?.meals?.reduce((sum, meal) => {
@@ -367,11 +368,11 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  </View>
  <View style={{ gap: 16 }}>
   <View>
-   <BText style={styles.mealSlot}>{getMealLabel(lang, d?.meals?.[0]?.t)}</BText>
-   <BText style={styles.mealTitle}>{d?.meals?.[0]?.title}</BText>
+   <BText style={styles.mealSlot}>{getMealLabel(lang, nextMeal?.t)}</BText>
+   <BText style={styles.mealTitle}>{nextMeal?.title}</BText>
   </View>
   <View style={{ gap: 2 }}>
-   {d?.meals?.[0]?.items?.slice(0, 3).map((it, i) => (
+   {nextMeal?.items?.slice(0, 3).map((it, i) => (
    <View key={i} style={styles.mealItemRow}>
    <View style={styles.mealDot} />
    <BText style={styles.mealItemTxt}>{it}</BText>
