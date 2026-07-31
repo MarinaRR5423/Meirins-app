@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { View, TouchableOpacity, StyleSheet, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { Check, ChevronLeft } from 'lucide-react-native';
 import T from '../i18n/translations';
@@ -348,12 +348,12 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange, unitSys
  </BText>
  <BText style={styles.medDisclaimerBody}>
  {lang === 'en'
- ? 'Meirins is an information and wellness tool. It does not replace medical, gynaecological or nutritional advice. Consult a healthcare professional for any medical concerns.'
+ ? 'Blumm is an information and wellness tool. It does not replace medical, gynaecological or nutritional advice. Consult a healthcare professional for any medical concerns.'
  : lang === 'fr'
- ? 'Meirins est un outil d\'information et de bien-être. Il ne remplace pas l\'avis médical, gynécologique ou nutritionnel. Consulte un professionnel de santé pour toute question médicale.'
+ ? 'Blumm est un outil d\'information et de bien-être. Il ne remplace pas l\'avis médical, gynécologique ou nutritionnel. Consulte un professionnel de santé pour toute question médicale.'
  : lang === 'it'
- ? 'Meirins è uno strumento di informazione e benessere. Non sostituisce il parere medico, ginecologico o nutrizionale. Consulta un professionista per qualsiasi dubbio.'
- : 'Meirins es una herramienta de información y bienestar. No sustituye el consejo médico, ginecológico ni nutricional. Consulta a un profesional de la salud ante cualquier duda.'}
+ ? 'Blumm è uno strumento di informazione e benessere. Non sostituisce il parere medico, ginecologico o nutrizionale. Consulta un professionista per qualsiasi dubbio.'
+ : 'Blumm es una herramienta de información y bienestar. No sustituye el consejo médico, ginecológico ni nutricional. Consulta a un profesional de la salud ante cualquier duda.'}
  </BText>
  </View>
 

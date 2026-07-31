@@ -1,4 +1,4 @@
-/**
+﻿/**
  * calendarSync.js — sincronización de entrenamientos con el calendario
  *
  * Dos estrategias:
@@ -85,7 +85,7 @@ function buildICSEvent({ workout, dateStr, hour }) {
  'BEGIN:VALARM',
  'TRIGGER:-PT15M',
  'ACTION:DISPLAY',
- 'DESCRIPTION:Entreno Meirins',
+ 'DESCRIPTION:Entreno Blumm',
  'END:VALARM',
  'END:VEVENT',
  ].filter(Boolean).join('\r\n');
@@ -95,10 +95,10 @@ function buildICS(events) {
  return [
  'BEGIN:VCALENDAR',
  'VERSION:2.0',
- 'PRODID:-//Meirins//Workout Calendar//ES',
+ 'PRODID:-//Blumm//Workout Calendar//ES',
  'CALSCALE:GREGORIAN',
  'METHOD:PUBLISH',
- 'X-WR-CALNAME:Meirins ',
+ 'X-WR-CALNAME:Blumm ',
  ...events,
  'END:VCALENDAR',
  ].join('\r\n');
@@ -152,7 +152,7 @@ export async function exportWeekICS({ phase, trainDays = [], hour = 7 }) {
  // Fallback: Share nativo con el texto ICS
  await Share.share({
  message: icsContent,
- title: 'Meirins — Entrenamientos de la semana',
+ title: 'Blumm — Entrenamientos de la semana',
  });
  return { method: 'ics_share', eventsCount: events.length };
 }
@@ -175,7 +175,7 @@ async function getOrCreateCalendarId() {
  const Calendar = require('expo-calendar');
  try {
  const cals = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
- const ours = cals.find(c => c.title === 'Meirins ');
+ const ours = cals.find(c => c.title === 'Blumm ');
  if (ours) return ours.id;
  } catch { /* ignorar */ }
  try {

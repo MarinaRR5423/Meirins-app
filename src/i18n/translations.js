@@ -308,7 +308,7 @@ const T = {
  step1Title: 'Datos personales', step1Sub: 'Para calcular tus calorías exactas',
  ageLabel: 'Edad', weightLabel: 'Peso', heightLabel: 'Altura',
  ageUnit: 'años', agePh: 'Ej: 28', weightPh: 'Ej: 62.5', heightPh: 'Ej: 165',
- step2Title: 'Nivel de actividad', step2Sub: 'Tu rutina habitual fuera de Meirins',
+ step2Title: 'Nivel de actividad', step2Sub: 'Tu rutina habitual fuera de Blumm',
  activityOpts: [
  { id: 'sedentary', emoji: '', label: 'Sedentaria', desc: 'Sin ejercicio o muy poco' },
  { id: 'light', emoji: '', label: 'Ligera', desc: '1–3 días de ejercicio/semana' },
@@ -857,7 +857,7 @@ const T = {
  step1Title: 'Personal data', step1Sub: 'To calculate your exact calories',
  ageLabel: 'Age', weightLabel: 'Weight', heightLabel: 'Height',
  ageUnit: 'yrs', agePh: 'E.g.: 28', weightPh: 'E.g.: 62.5', heightPh: 'E.g.: 165',
- step2Title: 'Activity level', step2Sub: 'Your usual routine outside Meirins',
+ step2Title: 'Activity level', step2Sub: 'Your usual routine outside Blumm',
  activityOpts: [
  { id: 'sedentary', emoji: '', label: 'Sedentary', desc: 'Little or no exercise' },
  { id: 'light', emoji: '', label: 'Light', desc: '1–3 days of exercise/week' },
@@ -1406,7 +1406,7 @@ const T = {
  step1Title: 'Données personnelles', step1Sub: 'Pour calculer tes calories exactes',
  ageLabel: 'Âge', weightLabel: 'Poids', heightLabel: 'Taille',
  ageUnit: 'ans', agePh: 'Ex : 28', weightPh: 'Ex : 62,5', heightPh: 'Ex : 165',
- step2Title: "Niveau d'activité", step2Sub: 'Ta routine habituelle en dehors de Meirins',
+ step2Title: "Niveau d'activité", step2Sub: 'Ta routine habituelle en dehors de Blumm',
  activityOpts: [
  { id: 'sedentary', emoji: '', label: 'Sédentaire', desc: "Peu ou pas d'exercice" },
  { id: 'light', emoji: '', label: 'Légère', desc: "1–3 jours d'exercice/semaine" },
@@ -1955,7 +1955,7 @@ const T = {
  step1Title: 'Dati personali', step1Sub: 'Per calcolare le tue calorie esatte',
  ageLabel: 'Età', weightLabel: 'Peso', heightLabel: 'Altezza',
  ageUnit: 'anni', agePh: 'Es: 28', weightPh: 'Es: 62,5', heightPh: 'Es: 165',
- step2Title: 'Livello di attività', step2Sub: 'La tua routine abituale al di fuori di Meirins',
+ step2Title: 'Livello di attività', step2Sub: 'La tua routine abituale al di fuori di Blumm',
  activityOpts: [
  { id: 'sedentary', emoji: '', label: 'Sedentaria', desc: 'Poca o nessuna attività' },
  { id: 'light', emoji: '', label: 'Leggera', desc: '1–3 giorni di esercizio/settimana' },
