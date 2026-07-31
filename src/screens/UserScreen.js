@@ -365,10 +365,21 @@ export default function PerfilScreen({ pi, profile, signOut }) {
 
  const saveProgram = async () => {
  setSavingExt(true);
- // Este formulario solo edita los objetivos. El resto (dieta, ayuno,
- // alergias, nivel, lugar…) se gestiona en las pestañas Nutrición y
- // Gimnasio — no se sobreescribe aquí para no machacar datos.
  await profile.saveProfileExtended({ primaryGoals: editGoals });
+ setSavingExt(false);
+ setEditing(null);
+ };
+
+ const saveFitness = async () => {
+ setSavingExt(true);
+ await profile.saveProfileExtended({ fitnessLevel: editFitness });
+ setSavingExt(false);
+ setEditing(null);
+ };
+
+ const saveGym = async () => {
+ setSavingExt(true);
+ await profile.saveProfileExtended({ gymAccess: editGym });
  setSavingExt(false);
  setEditing(null);
  };
@@ -635,8 +646,8 @@ export default function PerfilScreen({ pi, profile, signOut }) {
  <NavCard iconEl={<UserRound size={16} color="#429FE7" />} title={tr('Entrenamiento','Training')}>
   <NavItem label={tr('Nivel de actividad','Activity level')} value={actOpt2?.label || '—'} onPress={() => setEditing('goal')} />
   <NavItem label={tr('Objetivo','Goal')} value={goalOpt2?.label || '—'} onPress={() => setEditing('goal')} />
-  <NavItem label={p.profile.fitnessLevel || 'Nivel fitness'} value={lbl(FITNESS_L, editFitness, lang) || '—'} onPress={() => setEditing('program')} />
-  <NavItem label={tr('Lugar entreno','Training location')} value={(Array.isArray(editGym)?editGym:[editGym]).filter(Boolean).map(g=>lbl(GYM_L,g,lang)).filter(Boolean).join(', ')||'—'} last onPress={() => setEditing('program')} />
+  <NavItem label={tr('Nivel fitness','Fitness level')} value={lbl(FITNESS_L, editFitness, lang) || '—'} onPress={() => setEditing('fitness')} />
+  <NavItem label={tr('Lugar entreno','Training location')} value={(Array.isArray(editGym)?editGym:[editGym]).filter(Boolean).map(g=>lbl(GYM_L,g,lang)).filter(Boolean).join(', ')||'—'} last onPress={() => setEditing('gym')} />
  </NavCard>
 
  {/* ── Nutrición ── */}
@@ -808,6 +819,48 @@ export default function PerfilScreen({ pi, profile, signOut }) {
          'Edit diet, fasting, allergies and supplements from the Nutrition tab.')}
        </BText>
        <TouchableOpacity style={s2.modalSaveBtn} onPress={saveProgram} disabled={savingExt}>
+        <BText style={s2.modalSaveBtnTxt}>{savingExt ? p.profile.saving : p.profile.save}</BText>
+       </TouchableOpacity>
+      </View>
+     )}
+
+     {/* ── fitness level ── */}
+     {editing === 'fitness' && (
+      <View>
+       <BText style={styles.editSection}>{tr('NIVEL FITNESS','FITNESS LEVEL')}</BText>
+       {Object.entries(FITNESS_L[lang] || FITNESS_L.es).map(([id, label]) => (
+        <TouchableOpacity key={id} onPress={() => setEditFitness(id)}
+         style={[styles.optRow, editFitness === id && styles.optRowActive]}>
+         <View style={{ flex: 1 }}>
+          <BText style={[styles.optLabel, editFitness === id && { color: '#0A0A0A', fontFamily: F.bodyB }]}>{label}</BText>
+         </View>
+         <View style={[styles.radio, editFitness === id && styles.radioActive]}>
+          {editFitness === id && <View style={styles.radioDot} />}
+         </View>
+        </TouchableOpacity>
+       ))}
+       <TouchableOpacity style={s2.modalSaveBtn} onPress={saveFitness} disabled={savingExt}>
+        <BText style={s2.modalSaveBtnTxt}>{savingExt ? p.profile.saving : p.profile.save}</BText>
+       </TouchableOpacity>
+      </View>
+     )}
+
+     {/* ── gym location ── */}
+     {editing === 'gym' && (
+      <View>
+       <BText style={styles.editSection}>{tr('LUGAR DE ENTRENAMIENTO','TRAINING LOCATION')}</BText>
+       {Object.entries(GYM_L[lang] || GYM_L.es).map(([id, label]) => (
+        <TouchableOpacity key={id} onPress={() => setEditGym(id)}
+         style={[styles.optRow, editGym === id && styles.optRowActive]}>
+         <View style={{ flex: 1 }}>
+          <BText style={[styles.optLabel, editGym === id && { color: '#0A0A0A', fontFamily: F.bodyB }]}>{label}</BText>
+         </View>
+         <View style={[styles.radio, editGym === id && styles.radioActive]}>
+          {editGym === id && <View style={styles.radioDot} />}
+         </View>
+        </TouchableOpacity>
+       ))}
+       <TouchableOpacity style={s2.modalSaveBtn} onPress={saveGym} disabled={savingExt}>
         <BText style={s2.modalSaveBtnTxt}>{savingExt ? p.profile.saving : p.profile.save}</BText>
        </TouchableOpacity>
       </View>
