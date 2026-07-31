@@ -5,8 +5,8 @@
  * actualiza estas constantes y se reflejará en toda la app.
  */
 
-// Hosted on GitHub Pages
-export const PRIVACY_URL = 'https://marinarr5423.github.io/meirins-legal/privacy.html';
-export const TERMS_URL = 'https://marinarr5423.github.io/meirins-legal/terms.html';
-export const LANDING_URL = 'https://marinarr5423.github.io/meirins-legal/';
+// Hosted on blummapp.com
+export const PRIVACY_URL = 'https://blummapp.com/privacy.html';
+export const TERMS_URL = 'https://blummapp.com/terms.html';
+export const LANDING_URL = 'https://blummapp.com/';
 export const SUPPORT_EMAIL = 'marina.r.1348@gmail.com';

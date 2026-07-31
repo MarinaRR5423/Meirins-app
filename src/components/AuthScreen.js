@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, ScrollView, Platform, ImageBackground, Dimensions } from 'react-native';
 import { BlurView } from 'expo-blur';
 import * as Linking from 'expo-linking';
+import { TERMS_URL, PRIVACY_URL } from '../lib/legalLinks';
 import { supabase } from '../lib/supabase';
 import T from '../i18n/translations';
 import { F } from '../theme/fonts';
@@ -137,10 +138,10 @@ export default function AuthScreen({ lang = 'es' }) {
 
  {/* Terms */}
  <BText style={styles.terms}>
- Al continuar aceptas nuestras{''}
- <BText style={styles.termsBold}>condiciones de uso</BText>
- {''}y{''}
- <BText style={styles.termsBold}>política de privacidad</BText>
+ Al continuar aceptas nuestras{' '}
+ <BText style={styles.termsBold} onPress={() => Linking.openURL(TERMS_URL)}>condiciones de uso</BText>
+ {' '}y{' '}
+ <BText style={styles.termsBold} onPress={() => Linking.openURL(PRIVACY_URL)}>política de privacidad</BText>
  </BText>
  </View>
  </View>
