@@ -311,21 +311,25 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  <TouchableOpacity style={styles.miniCard} onPress={() => navigation.navigate('Nutrición')} activeOpacity={0.85}>
   <View style={styles.miniHeader}>
    <View style={styles.miniHeaderLabel}>
-    <Salad size={14} color="#FE6004" />
-    <BText style={styles.miniHeaderTxt}>{tr('Kcal. consumidas', 'Kcal. consumed', 'Kcal. consommées', 'Kcal. consumate')}</BText>
+    <Flame size={16} color="#FE6004" />
+    <BText style={styles.miniHeaderTxt}>{tr('Kcal.consumidas', 'Kcal.consumed', 'Kcal.consommées', 'Kcal.consumate')}</BText>
    </View>
-   <ChevronRight size={14} color="#0A0A0A" />
+   <ChevronRight size={16} color="#0A0A0A" />
   </View>
-  <View>
-   <BText style={[styles.miniBigNum, { color: '#FE6004', fontSize: 48, lineHeight: 52 }]}>{consumedKcal}</BText>
-   <BText style={styles.miniSub}>{kcalRemaining} {tr('restantes', 'remaining', 'restants', 'rimanenti')}</BText>
-  </View>
-  <View style={styles.kcalTrack}>
-   <View style={[styles.kcalFill, { width: `${Math.min(100, kcalPct)}%` }]} />
-  </View>
-  <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-   <BText style={styles.kcalBarLabel}>0</BText>
-   <BText style={styles.kcalBarLabel}>{kcalTarget}</BText>
+  <View style={{ gap: 16 }}>
+   <View>
+    <BText style={[styles.miniBigNum, { color: '#FE6004', fontSize: 48, lineHeight: 52.8 }]}>{consumedKcal}</BText>
+    <BText style={styles.miniSub}>{kcalRemaining} {tr('restantes', 'remaining', 'restants', 'rimanenti')}</BText>
+   </View>
+   <View style={{ paddingBottom: 4, gap: 4 }}>
+    <View style={styles.kcalTrack}>
+     <View style={[styles.kcalFill, { width: `${Math.min(100, kcalPct)}%` }]} />
+    </View>
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+     <BText style={styles.kcalBarLabel}>0</BText>
+     <BText style={styles.kcalBarLabel}>{kcalTarget}</BText>
+    </View>
+   </View>
   </View>
  </TouchableOpacity>
  ) : null}
@@ -570,7 +574,7 @@ const styles = StyleSheet.create({
  miniHeaderLabel: { flexDirection: 'row', alignItems: 'center', gap: 2 },
  miniHeaderTxt: { fontSize: 12, color: '#0A0A0A', fontFamily: F.body },
  miniBigNum: { fontSize: 32, lineHeight: 36, fontFamily: F.headingX },
- miniSub: { fontSize: 14, color: '#0A0A0A', marginTop: 2, fontFamily: F.body },
+ miniSub: { fontSize: 14, color: '#0A0A0A', lineHeight: 19.6, fontFamily: F.body },
  smallBtn: { backgroundColor: '#0A0A0A', height: 32, borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginTop: 16 },
  smallBtnTxt: { color: 'white', fontFamily: F.bodyB, fontSize: 14 },
 
