@@ -34,7 +34,6 @@ import { PostHogProvider, usePostHog } from 'posthog-react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ErrorBoundary from './src/components/ErrorBoundary';
 import FloatingTabBar from './src/components/FloatingTabBar';
-import ProfileAvatarButton from './src/components/ProfileAvatarButton';
 import { initAnalytics, wrapWithSentry, trackEvent, identifyUser, setPostHogClient, Events } from './src/lib/analytics';
 
 // Conector entre el contexto de PostHog y nuestro módulo analytics.js
@@ -197,18 +196,11 @@ function App() {
   const { authState, profileLoaded, setupDone, lastPeriod, cycleLength } = profile;
   const lang = profile.profileExtended?.language || 'es';
   const tabs = (T[lang] || T.es).tabs;
-  const { periodEnd, sleepLog, programContent } = profile;
+  const { periodEnd, sleepLog } = profile;
   const pi = lastPeriod ? getPhaseInfo(lastPeriod, cycleLength, periodEnd) : null;
   const enabledTabs = profile.profileExtended?.enabledTabs;
   const handleToggleTab = (key, value) =>
     profile.saveProfileExtended({ enabledTabs: { ...(profile.profileExtended?.enabledTabs || {}), [key]: value } });
-
-  // Pick the right language column from program_content table.
-  // For non-ES langs, fall back to null (→ static multilingual menus) instead
-  // of data_es (flat Spanish strings), which would bypass EN/FR/IT translations.
-  const programData = programContent
-    ? (programContent[`data_${lang}`] ?? (lang === 'es' ? programContent.data_es : null))
-    : null;
 
   if (authState === 'loading' || (authState === 'authenticated' && !profileLoaded) || (!fontsLoaded && !fontError)) {
     return <SplashVideo phase={cachedPhase} />;
@@ -255,8 +247,8 @@ function App() {
         <Tab.Screen name="Ciclo" options={{ tabBarLabel: tabs.cycle, tabBarIcon: ({ color, size }) => <Flower color={color} size={size} /> }}>
           {() => <CicloScreen lang={lang} pi={pi} lastPeriod={lastPeriod} setLastPeriod={profile.setLastPeriod} setCycleLength={profile.setCycleLength} periodEnd={periodEnd} setPeriodEnd={profile.setPeriodEnd} sleepLog={sleepLog} logSleep={profile.logSleep} profileExtended={profile.profileExtended} saveProfileExtended={profile.saveProfileExtended} logCycleDay={profile.logCycleDay} />}
         </Tab.Screen>
-        <Tab.Screen name="Nutrición" options={{ tabBarLabel: tabs.nutri, tabBarIcon: ({ color, size }) => <Salad color={color} size={size} />, unmountOnBlur: true }}>
-          {() => <NutriScreen lang={lang} pi={pi} program={programData}
+        <Tab.Screen name="Nutrición" options={{ tabBarLabel: tabs.nutri, tabBarIcon: ({ color, size, focused }) => <Salad color={focused ? "#F97316" : color} size={size} />, unmountOnBlur: true }}>
+          {() => <NutriScreen lang={lang} pi={pi}
             goal={profile.goal} activityLevel={profile.activityLevel} dietary={profile.dietary}
             profileExtended={profile.profileExtended}
             age={profile.age} weight={profile.weight} height={profile.height}
@@ -266,8 +258,8 @@ function App() {
             skipRecipe={profile.skipRecipe}
             logRecipeDone={profile.logRecipeDone} />}
         </Tab.Screen>
-        <Tab.Screen name="Gimnasio" options={{ tabBarLabel: tabs.gym, tabBarIcon: ({ color, size }) => <SportShoe color={color} size={size} />, unmountOnBlur: true }}>
-          {() => <GimnasioScreen lang={lang} pi={pi} trainDays={profile.trainDays} setTrainDays={profile.setTrainDays} program={programData} healthData={healthData} goal={profile.goal}
+        <Tab.Screen name="Gimnasio" options={{ tabBarLabel: tabs.gym, tabBarIcon: ({ color, size, focused }) => <SportShoe color={focused ? "#60A5FA" : color} size={size} />, unmountOnBlur: true }}>
+          {() => <GimnasioScreen lang={lang} pi={pi} trainDays={profile.trainDays} setTrainDays={profile.setTrainDays} healthData={healthData} goal={profile.goal}
             profileExtended={profile.profileExtended} saveProfileExtended={profile.saveProfileExtended}
             toggleFavoriteWorkout={profile.toggleFavoriteWorkout}
             skipWorkout={profile.skipWorkout}
@@ -291,7 +283,6 @@ function App() {
           }} signOut={profile.signOut} />}
         </Tab.Screen>
       </Tab.Navigator>
-      <ProfileAvatarButton navigationRef={navigationRef} />
     </NavigationContainer>
     </ErrorBoundary>
     </PostHogProvider>
