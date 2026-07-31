@@ -254,7 +254,10 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  const nextMealType = nextMeal?.id;
  const nextMealDone = !!(nextMealType && todayActivity?.recipes?.[nextMealType] === 'done');
 
+ const seenSlots = new Set();
  const consumedKcal = d?.meals?.reduce((sum, meal) => {
+   if (seenSlots.has(meal.id)) return sum;
+   seenSlots.add(meal.id);
    return todayActivity?.recipes?.[meal.id] === 'done' ? sum + (meal.macros?.kcal || 0) : sum;
  }, 0) || 0;
  const kcalTarget = cals?.total || 0;
