@@ -23,8 +23,9 @@ export default function TipsCard({ articles = [], lang = 'es', variant = 'defaul
  const tips = (T[lang] || T.es).tips;
  const [open, setOpen] = useState(null);
  const azote = variant === 'azote';
+ const visibleArticles = articles.slice(0, 2);
 
- if (!articles.length) return null;
+ if (!visibleArticles.length) return null;
  const cat = open ? ARTICLE_CATEGORIES[open.category] : null;
 
  if (azote) {
@@ -42,7 +43,7 @@ export default function TipsCard({ articles = [], lang = 'es', variant = 'defaul
  <BText style={a.subtitle}>{SUBTITLE[lang] || SUBTITLE.es}</BText>
 
  <View style={{ gap: 2 }}>
- {articles.map((article) => {
+ {visibleArticles.map((article) => {
  const c = ARTICLE_CATEGORIES[article.category];
  return (
  <TouchableOpacity
@@ -81,9 +82,9 @@ export default function TipsCard({ articles = [], lang = 'es', variant = 'defaul
  <BText style={styles.title}>{tips.title}</BText>
  </View>
 
- {articles.map((article, idx) => {
+ {visibleArticles.map((article, idx) => {
  const c = ARTICLE_CATEGORIES[article.category];
- const isLast = idx === articles.length - 1;
+ const isLast = idx === visibleArticles.length - 1;
  return (
  <TouchableOpacity
  key={article.id}

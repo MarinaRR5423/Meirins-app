@@ -280,7 +280,7 @@ const T = {
  },
 
  tips: {
- title: 'Consejos',
+ title: 'Tips y Consejos',
  all: 'Todos',
  readTime: 'min',
  readArticle: 'Leer artículo',
@@ -758,7 +758,7 @@ const T = {
  },
 
  tips: {
- title: 'Tips',
+ title: 'Tips & Advice',
  all: 'All',
  readTime: 'min',
  readArticle: 'Read article',
@@ -1307,7 +1307,7 @@ const T = {
  },
 
  tips: {
- title: 'Conseils',
+ title: 'Tips et Conseils',
  all: 'Tous',
  readTime: 'min',
  readArticle: "Lire l'article",
@@ -1856,7 +1856,7 @@ const T = {
  },
 
  tips: {
- title: 'Consigli',
+ title: 'Tips e Consigli',
  all: 'Tutti',
  readTime: 'min',
  readArticle: 'Leggi l\'articolo',
