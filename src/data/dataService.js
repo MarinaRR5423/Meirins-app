@@ -3,6 +3,14 @@ import { supabase } from '../lib/supabase';
 // ── RECETAS ────────────────────────────────────────────────────────────────────
 
 const MEAL_ORDER = ['breakfast', 'morning_snack', 'lunch', 'afternoon_snack', 'dinner', 'snack'];
+const DB_TO_SLOT_ID = {
+ breakfast: 'desayuno',
+ morning_snack: 'snack_manana',
+ lunch: 'almuerzo',
+ afternoon_snack: 'snack_tarde',
+ dinner: 'cena',
+ snack: 'snack_tarde',
+};
 const MEAL_LABELS = {
  es: { breakfast: 'Desayuno', morning_snack: 'Snack mañana', lunch: 'Almuerzo', afternoon_snack: 'Snack tarde', dinner: 'Cena', snack: 'Snack' },
  en: { breakfast: 'Breakfast', morning_snack: 'Morning snack', lunch: 'Lunch', afternoon_snack: 'Afternoon snack', dinner: 'Dinner', snack: 'Snack' },
@@ -55,6 +63,7 @@ export function mapRecipesToMeals(recipes, lang = 'es') {
  );
 
  return sorted.map(r => ({
+ id: DB_TO_SLOT_ID[r.meal_type] || r.meal_type,
  t: labels[r.meal_type] || r.meal_type,
  ico: '',
  title: r.title,

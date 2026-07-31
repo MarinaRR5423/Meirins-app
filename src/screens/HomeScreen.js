@@ -250,12 +250,12 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
 
  // Estado de "comido" de la siguiente comida sugerida — avanza a la primera no comida
  const todayActivity = ext.activityLog?.[todayKeyH];
- const nextMeal = d?.meals?.find(meal => todayActivity?.recipes?.[meal.t] !== 'done') ?? d?.meals?.[0];
- const nextMealType = nextMeal?.t;
+ const nextMeal = d?.meals?.find(meal => todayActivity?.recipes?.[meal.id] !== 'done') ?? d?.meals?.[0];
+ const nextMealType = nextMeal?.id;
  const nextMealDone = !!(nextMealType && todayActivity?.recipes?.[nextMealType] === 'done');
 
  const consumedKcal = d?.meals?.reduce((sum, meal) => {
-   return todayActivity?.recipes?.[meal.t] === 'done' ? sum + (meal.macros?.kcal || 0) : sum;
+   return todayActivity?.recipes?.[meal.id] === 'done' ? sum + (meal.macros?.kcal || 0) : sum;
  }, 0) || 0;
  const kcalTarget = cals?.total || 0;
  const kcalRemaining = Math.max(0, kcalTarget - consumedKcal);
