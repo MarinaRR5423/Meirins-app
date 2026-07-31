@@ -1156,7 +1156,7 @@ const styles = StyleSheet.create({
  weekStripDot: { position: 'absolute', bottom: 4, width: 4, height: 4, borderRadius: 2 },
 
  progMiniCard: { borderRadius: 24, overflow: 'hidden', padding: 8 },
- progMiniBlur: { flex: 1, padding: 8, backgroundColor: 'rgba(255,255,255,0.30)', borderRadius: 16, justifyContent: 'center' },
+ progMiniBlur: { flex: 1, padding: 8, backgroundColor: 'rgba(255,255,255,0.30)', borderRadius: 16, justifyContent: 'flex-start', alignItems: 'flex-start' },
  progMiniLabel: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A', lineHeight: 15.6 },
  progMiniName: { fontSize: 18, fontFamily: F.heading, color: '#0A0A0A', lineHeight: 23.4 },
  weekDetailAzote: { marginTop: 12, backgroundColor: 'white', borderRadius: 16, padding: 12 },
