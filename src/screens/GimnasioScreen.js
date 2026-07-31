@@ -968,7 +968,7 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
     {pairs.map((p, i) => (
      <View key={i} style={styles.metricsInnerCard}>
       <BText style={styles.metricsInnerLabel}>{p.label}</BText>
-      <BText style={styles.metricsInnerValue}>{p.value}</BText>
+      <BText style={[styles.metricsInnerValue, { fontSize: p.value.length > 5 ? 28 : p.value.length > 3 ? 36 : 48, lineHeight: p.value.length > 5 ? 30.8 : p.value.length > 3 ? 39.6 : 52.8 }]}>{p.value}</BText>
      </View>
     ))}
    </View>
