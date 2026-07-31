@@ -473,17 +473,22 @@ export default function GimnasioScreen({
     })}
    </View>
    <View style={styles.calDaysRow}>
-    {offsetDays.map((day, i) => {
-     const isExpanded = weekAction?.dateKey === day.dateKey;
-     return (
-      <TouchableOpacity key={i}
-       onPress={() => setWeekAction(isExpanded ? null : { dateKey: day.dateKey, step: 'main' })}
-       style={[styles.calDayCell, day.isToday && styles.calDayCellToday, isExpanded && styles.calDayCellSelected]}>
-       <BText style={[styles.calDayNum, day.isToday && styles.calDayNumToday]}>{day.dayNum}</BText>
-       {day.dotColor && <View style={[styles.calDayGlow, { backgroundColor: day.dotColor }]} />}
-      </TouchableOpacity>
-     );
-    })}
+    {(() => {
+     const PHASE_COLORS_WEEK = { menstrual:'#92E288', follicular:'#C79ADF', ovulation:'#FEDF68', luteal:'#FEA068' };
+     return offsetDays.map((day, i) => {
+      const isExpanded = weekAction?.dateKey === day.dateKey;
+      const phaseGlow = day.isToday && pi?.phase ? PHASE_COLORS_WEEK[pi.phase] : null;
+      return (
+       <TouchableOpacity key={i}
+        onPress={() => setWeekAction(isExpanded ? null : { dateKey: day.dateKey, step: 'main' })}
+        style={[styles.calDayCell, isExpanded && styles.calDayCellSelected]}>
+        {phaseGlow && <View style={[styles.calDayGlow, { backgroundColor: phaseGlow }]} />}
+        {day.dotColor && <View style={[styles.calDayDot, { backgroundColor: day.dotColor }]} />}
+        <BText style={styles.calDayNum}>{day.dayNum}</BText>
+       </TouchableOpacity>
+      );
+     });
+    })()}
    </View>
    </>
   );
@@ -778,17 +783,6 @@ export default function GimnasioScreen({
  </TouchableOpacity>
  </View>
 
- {/* Consejos — gray card header + TipsCard */}
- <View style={styles.consejosCard}>
-  <View style={styles.consejosHeader}>
-   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-    <BookOpen size={16} color="#0A0A0A" />
-    <BText style={styles.sectionLabel}>Consejos</BText>
-   </View>
-   <ChevronRight size={16} color="#737373" />
-  </View>
-  <BText style={styles.consejosTitle}>Tips y consejos</BText>
- </View>
  <TipsCard articles={gymArticles} lang={lang} variant="azote" />
  </>}
 
@@ -1130,8 +1124,8 @@ const styles = StyleSheet.create({
  tabTextActive: { color: '#0A0A0A', fontFamily: F.body },
 
  // weekly strip (mini calendar) — pestaña Hoy
- weekStripCard: { backgroundColor: '#F5F5F5', borderRadius: 32, padding: 16, marginBottom: 2 },
- weekNavAzote: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 },
+ weekStripCard: { backgroundColor: '#F5F5F5', borderRadius: 32, padding: 16, marginBottom: 2, gap: 24 },
+ weekNavAzote: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
  weekNavLabelAzote: { fontSize: 14, color: '#0A0A0A', fontFamily: F.body },
  weekStripRow: { flexDirection: 'row', gap: 4 },
  weekStripCell: { flex: 1, paddingVertical: 8, borderRadius: 4, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', gap: 2 },
@@ -1251,18 +1245,17 @@ const styles = StyleSheet.create({
 
  // Calendar — Figma Hoy tab
  calCard: { backgroundColor: '#F5F5F5', borderRadius: 32, padding: 16, marginBottom: 2, gap: 24 },
- calMonthRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
+ calMonthRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
  calMonthLabel: { fontSize: 16, fontFamily: F.body, color: '#0A0A0A', lineHeight: 20.8 },
- calHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
+ calHeaderRow: { flexDirection: 'row', justifyContent: 'space-between' },
  calHeaderCell: { flex: 1, padding: 4, alignItems: 'center' },
  calHeaderTxt: { fontSize: 10, fontFamily: F.body, color: '#737373', textTransform: 'uppercase', lineHeight: 13, textAlign: 'center' },
  calDaysRow: { flexDirection: 'row', gap: 4 },
- calDayCell: { flex: 1, height: 43, backgroundColor: 'white', borderRadius: 4, alignItems: 'center', justifyContent: 'center' },
- calDayCellToday: { borderWidth: 1, borderColor: '#0A0A0A' },
- calDayCellSelected: { borderWidth: 2, borderColor: '#0A0A0A' },
+ calDayCell: { flex: 1, height: 43, backgroundColor: 'white', borderRadius: 4, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+ calDayCellSelected: { borderWidth: 1, borderColor: '#0A0A0A' },
  calDayNum: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A', lineHeight: 15.6 },
- calDayNumToday: {},
  calDayGlow: { position: 'absolute', width: 44, height: 44, left: -1, top: 21, borderRadius: 22, opacity: 0.7 },
+ calDayDot: { position: 'absolute', bottom: 4, width: 4, height: 4, borderRadius: 2 },
 
  // Session card — Figma Hoy tab
  sessionTitleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
