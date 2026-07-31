@@ -141,7 +141,7 @@ const ES_EN = {
   'semillas de calabaza': 'pumpkin seeds', 'tahini': 'tahini',
   'mantequilla de cacahuete': 'peanut butter', 'coco rallado': 'coconut shredded',
   // Aceites y grasas
-  'aceite de oliva': 'olive oil', 'aceite de coco': 'coconut oil', 'aceite': 'vegetable oil',
+  'aceite de oliva': 'olive oil', 'aceite oliva': 'olive oil', 'aceite de coco': 'coconut oil', 'aceite coco': 'coconut oil', 'aceite': 'vegetable oil',
   // Endulzantes
   'miel': 'honey', 'sirope de arce': 'maple syrup', 'sirope arce': 'maple syrup',
   'azúcar': 'sugar white', 'azúcar moreno': 'sugar brown', 'stevia': 'stevia',
@@ -217,6 +217,7 @@ async function searchFoods(query, limit = 5) {
 // Para los casos donde el auto-match falla sistemáticamente
 const MANUAL_OVERRIDES = {
   // en_search_keyword → fdc_id correcto
+  'banana':     173944, // Bananas, raw
   'egg':        171287, // Egg, whole, raw, fresh
   'eggplant':   null,   // bloquear eggplant como match de egg
   'chicken':    171047, // Chicken, broilers or fryers, meat and skin, raw
@@ -233,7 +234,11 @@ const MANUAL_OVERRIDES = {
   'tofu':       172448, // Tofu, firm
   'turkey':     172876, // Turkey, breast, raw
   'cream':      null,   // dejar sin match (foundation_food no tiene kcal)
-  'coconut':    171412, // Oil, coconut (para aceite de coco)
+  'olive':      171413, // Oil, olive, salad or cooking
+  'oil':        171413, // Oil, olive (default para "aceite" genérico → olive)
+  'cocoa':      169593, // Cocoa, dry powder, unsweetened
+  'yogurt':     170894, // Yogurt, Greek, plain, nonfat
+  'coconut':    171412, // Oil, coconut
   'vegetable':  172370, // Oil, vegetable, soybean
   'rice':       168877, // Rice, white, long-grain, raw
   'corn':       168398, // Corn, sweet, yellow, frozen
@@ -265,6 +270,7 @@ const USDA_BLOCKLIST = [
   'Oscar Mayer',
   'Shake, fast',     // hake → shake
   'Frijoles',        // rojo → refried beans (keep only if explicitly searching beans)
+  'Pepper, banana',
   'Snacks, shrimp cracker',
   'Snacks, tortilla',
   'Fish, cisco, smoked', // smoked paprika → cisco
