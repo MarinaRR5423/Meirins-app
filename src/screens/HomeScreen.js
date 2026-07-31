@@ -294,7 +294,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  <ImageBackground
  source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
  style={styles.heroCard}
- imageStyle={[styles.heroCardImg, pi?.phase === 'follicular' && { top: -60, height: 260 }]}
+ imageStyle={[styles.heroCardImg, pi?.phase === 'follicular' && { top: 10 }]}
  >
  <BText style={styles.heroHeadline}>{heroHeadline}</BText>
  <View style={styles.heroTags}>
