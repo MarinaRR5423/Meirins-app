@@ -113,6 +113,30 @@ export function preferredTypesFromSportProfile(sp = {}) {
  return [...types];
 }
 
+// ── Matriz fase × nivel de actividad → tipos recomendados ────────────────────
+// workout_type values: 'yoga' | 'pilates' | 'mobility' | 'strength' | 'cardio' | 'hiit'
+const PHASE_ACTIVITY_MATRIX = {
+ sedentary: {
+ menstrual:  ['yoga', 'pilates'],
+ follicular: ['strength'],
+ ovulatory:  ['cardio', 'hiit'],
+ luteal:     ['mobility'],
+ },
+ occasional: {
+ menstrual:  ['cardio', 'mobility', 'yoga', 'pilates'],
+ follicular: ['strength', 'cardio'],
+ ovulatory:  ['strength', 'cardio', 'hiit'],
+ luteal:     ['cardio', 'mobility', 'pilates'],
+ },
+ regular: {
+ menstrual:  ['mobility', 'strength', 'cardio'],
+ follicular: ['strength', 'cardio', 'hiit'],
+ ovulatory:  ['hiit', 'strength', 'cardio'],
+ luteal:     ['cardio', 'strength', 'mobility', 'yoga'],
+ },
+ // athlete: pendiente de definir — usa regular como fallback
+};
+
 // ── 2. PUNTUACIÓN ─────────────────────────────────────────────────────────────
 
 function scoreWorkout(workout, profile, phase) {
@@ -127,7 +151,15 @@ function scoreWorkout(workout, profile, phase) {
  // ── Favoritos (+25) ──
  if (profile.favoriteWorkouts?.includes(workout.id)) score += 25;
 
- // Fase del ciclo (+20 — el más importante)
+ // ── Fase × nivel de actividad (+15 si el tipo encaja con la matriz) ──
+ if (phase && workout.workout_type) {
+ const level = profile.fitnessLevel || 'regular';
+ const matrixLevel = PHASE_ACTIVITY_MATRIX[level] || PHASE_ACTIVITY_MATRIX.regular;
+ const recommended = matrixLevel[phase] || [];
+ if (recommended.includes(workout.workout_type)) score += 15;
+ }
+
+ // ── Fase del ciclo (+20 — la receta está tageada para esta fase) ──
  if (phase && workout.phases?.includes(phase)) {
  score += 20;
  }
