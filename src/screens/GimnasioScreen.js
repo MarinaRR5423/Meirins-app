@@ -807,18 +807,6 @@ export default function GimnasioScreen({
  <SleepCard sleepLog={sleepLog} logSleep={logSleep} lang={lang} healthSleep={hd?.lastSleep} />
  <WeightCard lang={lang} weight={weight} height={height} goal={goal} profileExtended={profileExtended} saveProfileExtended={saveProfileExtended} logWeight={logWeight} />
  <WearablesCard hd={hd} hl={hl} lang={lang} />
- {/* Consejos */}
- <View style={styles.consejosCard}>
-  <View style={styles.consejosHeader}>
-   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-    <BookOpen size={16} color="#0A0A0A" />
-    <BText style={styles.sectionLabel}>Consejos</BText>
-   </View>
-   <ChevronRight size={16} color="#737373" />
-  </View>
-  <BText style={styles.consejosTitle}>Tips y consejos</BText>
- </View>
- <TipsCard articles={gymArticles} lang={lang} variant="azote" />
  </>
  )}
 
