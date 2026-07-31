@@ -311,7 +311,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  <TouchableOpacity style={styles.miniCard} onPress={() => navigation.navigate('Nutrición')} activeOpacity={0.85}>
   <View style={styles.miniHeader}>
    <View style={styles.miniHeaderLabel}>
-    <Flame size={16} color="#FE6004" />
+    <Salad size={16} color="#FE6004" />
     <BText style={styles.miniHeaderTxt}>{tr('Kcal.consumidas', 'Kcal.consumed', 'Kcal.consommées', 'Kcal.consumate')}</BText>
    </View>
    <ChevronRight size={16} color="#0A0A0A" />
@@ -327,7 +327,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
     </View>
     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
      <BText style={styles.kcalBarLabel}>0</BText>
-     <BText style={styles.kcalBarLabel}>{kcalTarget}</BText>
+     <BText style={styles.kcalBarLabel}>{consumedKcal}</BText>
     </View>
    </View>
   </View>
