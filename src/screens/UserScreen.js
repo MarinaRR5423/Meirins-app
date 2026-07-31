@@ -23,9 +23,10 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 // Each map has { es, en, fr } so we pick the right one at render time.
 
 const LIFE_L = {
- es: { adult:' Adulta', teen:' Adolescente', perimenopause:' Perimenopausia', menopause:' Menopausia', postpartum:' Postparto', pregnant:' Embarazada' },
- en: { adult:' Adult', teen:' Teenager', perimenopause:' Perimenopause', menopause:' Menopause', postpartum:' Postpartum', pregnant:' Pregnant' },
- fr: { adult:' Adulte', teen:' Adolescente', perimenopause:' Périménopause', menopause:' Ménopause', postpartum:' Post-partum', pregnant:' Enceinte' },
+ es: { reproductive:' Reproductiva', perimenopause:' Perimenopausia', menopause:' Menopausia', postmenopause:' Postmenopausia', pregnant:' Embarazo', postpartum:' Post embarazo' },
+ en: { reproductive:' Reproductive', perimenopause:' Perimenopause', menopause:' Menopause', postmenopause:' Postmenopause', pregnant:' Pregnancy', postpartum:' Postpartum' },
+ fr: { reproductive:' Reproductive', perimenopause:' Périménopause', menopause:' Ménopause', postmenopause:' Post-ménopause', pregnant:' Grossesse', postpartum:' Post-partum' },
+ it: { reproductive:' Riproduttiva', perimenopause:' Perimenopausa', menopause:' Menopausa', postmenopause:' Postmenopausa', pregnant:' Gravidanza', postpartum:' Post-parto' },
 };
 
 const GOAL_L = {

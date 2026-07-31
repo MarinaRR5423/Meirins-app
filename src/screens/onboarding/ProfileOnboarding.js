@@ -104,7 +104,7 @@ function toggle(arr, val) {
 
 // ── Pantallas ─────────────────────────────────────────────────────────────────
 
-const LIFE_STAGE_ICONS = { adult: '', teen: '', perimenopause: '', menopause: '', postpartum: '', pregnant: '' };
+const LIFE_STAGE_ICONS = { reproductive: '', perimenopause: '', menopause: '', postmenopause: '', pregnant: '', postpartum: '' };
 
 function Step1({ data, save, onBack, onNext, ob }) {
  return (
