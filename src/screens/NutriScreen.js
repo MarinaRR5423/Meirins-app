@@ -18,6 +18,7 @@ import { useDiets, normalizeDietId } from '../hooks/useDiets';
 import { getDayNutritionContext } from '../utils/programEngine';
 import { filterMealsByFasting } from '../utils/fastingMeals';
 import { useRecipes } from '../hooks/useRecipes';
+import { useFoodLog } from '../hooks/useFoodLog';
 import { getRecipesForMeal, appMealToDbMealType, recipeToMealCard, getDailyRecipe } from '../utils/recipeEngine';
 import { buildShoppingList, formatQuantity, countItems } from '../utils/shoppingList';
 import { trackScreen } from '../lib/analytics';
@@ -317,6 +318,8 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  // Hoy en formato YYYY-MM-DD para rotación diaria
  const todayStr = new Date().toISOString().split('T')[0];
 
+ const { consumed: foodConsumed, logRecipe, unlogRecipe } = useFoodLog(todayStr);
+
  // Construye las comidas del día desde Supabase puro
  const buildPersonalizedMeals = (slots, dateStr) => {
  return (slots || []).map(slot => {
@@ -534,21 +537,19 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  </BlurView>
  </ImageBackground>
 
- {/* ── TRACKER CALORÍAS (barra de progreso, solo hoy) ── */}
+ {/* ── TRACKER CALORÍAS (barra de progreso + macros, solo hoy) ── */}
  {isToday && cals && (() => {
- const consumedFromMeals = todayMenu.meals
- .filter(m => todayActivityRecipes[m.id] === 'done' && m.macros?.kcal)
- .reduce((s, m) => s + m.macros.kcal, 0);
- const consumedFromExtras = extras.reduce((s, e) => s + (e.kcal || 0), 0);
- const consumed = consumedFromMeals + consumedFromExtras;
- const remaining = Math.max(0, cals.total - consumed);
- const pct = Math.min(1, consumed / cals.total);
- const over = consumed > cals.total;
+ const consumedExtras = extras.reduce((s, e) => s + (e.kcal || 0), 0);
+ const consumedKcal = Math.round(foodConsumed.kcal + consumedExtras);
+ const remaining = Math.max(0, cals.total - consumedKcal);
+ const pct = Math.min(1, consumedKcal / cals.total);
+ const over = consumedKcal > cals.total;
  const barColor = over ? '#DC2626' : pct > 0.85 ? '#FE6004' : '#49CF38';
  const lbl = { es: ['Consumidas', 'Restantes', 'Superado en'],
  en: ['Consumed', 'Remaining', 'Over by'],
  fr: ['Consommées', 'Restantes', 'Dépassé de'],
  it: ['Consumate', 'Rimanenti', 'Superato di'] }[lang] || [];
+ const hasMacros = foodConsumed.protein_g > 0 || foodConsumed.carbs_g > 0 || foodConsumed.fat_g > 0;
  return (
  <View style={styles.calCard}>
  <View style={styles.calBarBg}>
@@ -556,17 +557,33 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  </View>
  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 }}>
  <View style={styles.calStat}>
- <BText style={[styles.calStatNum, { color: barColor }]}>{consumed}</BText>
+ <BText style={[styles.calStatNum, { color: barColor }]}>{consumedKcal}</BText>
  <BText style={styles.calStatLbl}>{lbl[0]}</BText>
  </View>
  <View style={styles.calDivider} />
  <View style={styles.calStat}>
  <BText style={[styles.calStatNum, { color: over ? '#DC2626' : '#0A0A0A' }]}>
- {over ? `+${consumed - cals.total}` : remaining}
+ {over ? `+${consumedKcal - cals.total}` : remaining}
  </BText>
  <BText style={styles.calStatLbl}>{over ? lbl[2] : lbl[1]}</BText>
  </View>
  </View>
+ {hasMacros && (
+ <View style={styles.macroRow}>
+ <View style={styles.macroPill}>
+ <BText style={styles.macroPillLbl}>P</BText>
+ <BText style={styles.macroPillVal}>{Math.round(foodConsumed.protein_g)}g</BText>
+ </View>
+ <View style={styles.macroPill}>
+ <BText style={styles.macroPillLbl}>HC</BText>
+ <BText style={styles.macroPillVal}>{Math.round(foodConsumed.carbs_g)}g</BText>
+ </View>
+ <View style={styles.macroPill}>
+ <BText style={styles.macroPillLbl}>G</BText>
+ <BText style={styles.macroPillVal}>{Math.round(foodConsumed.fat_g)}g</BText>
+ </View>
+ </View>
+ )}
  </View>
  );
  })()}
@@ -623,7 +640,11 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  isFavorite={profileExtended?.favoriteRecipes?.includes(meal._recipeId || meal.id)}
  onToggleFavorite={isToday && meal._personalized && toggleFavoriteRecipe ? () => toggleFavoriteRecipe(meal._recipeId || meal.id) : null}
  onSwap={isToday && meal._personalized && skipRecipe ? () => skipRecipe(meal.id, meal._recipeId || meal.id) : null}
- onLogStatus={isToday && logRecipeDone ? (status) => logRecipeDone(meal.id, status) : null}
+ onLogStatus={isToday && logRecipeDone ? (status) => {
+               logRecipeDone(meal.id, status);
+               if (status === 'done') logRecipe(meal);
+               else unlogRecipe(meal.id);
+             } : null}
  logStatus={isToday ? todayActivityRecipes[meal.id] : undefined}
  isNext={isToday && meal.id === nextMealId}
  />
@@ -1184,6 +1205,10 @@ const styles = StyleSheet.create({
  calStatNum: { fontSize: 24, fontFamily: F.headingX },
  calStatLbl: { fontSize: 11, color: '#94A3B8', marginTop: 2, fontFamily: F.body },
  calDivider: { width: 1, backgroundColor: '#F1F5F9', marginVertical: 4 },
+ macroRow: { flexDirection: 'row', gap: 6, marginTop: 12 },
+ macroPill: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4, backgroundColor: '#F1F5F9', borderRadius: 10, paddingVertical: 6 },
+ macroPillLbl: { fontSize: 10, fontFamily: F.bodyB, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: 0.5 },
+ macroPillVal: { fontSize: 13, fontFamily: F.headingX, color: '#1E293B' },
  // Extras
  extrasCard: { backgroundColor: 'white', borderRadius: 18, padding: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
  addExtraBtn: { backgroundColor: '#1A56DB', paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20 },
