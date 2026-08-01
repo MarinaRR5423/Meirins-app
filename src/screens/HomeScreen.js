@@ -274,20 +274,22 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
 
  return (
  <View style={styles.container}>
- <ScrollView style={styles.scroll} contentContainerStyle={{ padding: 16, paddingTop: 16, paddingBottom: 120 }}>
+ <ScrollView style={styles.scroll} contentContainerStyle={{ padding: 16, paddingTop: 58, paddingBottom: 120 }}>
 
  {/* ── TOP BAR ── */}
  <View style={styles.topRow}>
- <TouchableOpacity style={[styles.greetingChip, { flex: 1 }]} onPress={() => navigation.navigate('Perfil')} activeOpacity={0.85}>
-  {avatarUri
-   ? <Image source={{ uri: avatarUri }} style={styles.avatarCircle} />
-   : <View style={[styles.avatarCircle, { backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center' }]}>
-      <BText style={styles.avatarInitialTxt}>{avatarInitial}</BText>
-     </View>}
-  <View style={{ flex: 1 }}>
-   <BText style={styles.greetingHi}>{greetingTxt}</BText>
-   <BText style={styles.greetingName} numberOfLines={1}>{userName || 'Blumm'}</BText>
-  </View>
+ <TouchableOpacity style={[styles.greetingChipWrap, { flex: 1 }]} onPress={() => navigation.navigate('Perfil')} activeOpacity={0.85}>
+  <BlurView intensity={25} tint="light" style={styles.greetingChip}>
+   {avatarUri
+    ? <Image source={{ uri: avatarUri }} style={styles.avatarCircle} />
+    : <View style={[styles.avatarCircle, { backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center' }]}>
+       <BText style={styles.avatarInitialTxt}>{avatarInitial}</BText>
+      </View>}
+   <View style={{ flex: 1 }}>
+    <BText style={styles.greetingHi}>{greetingTxt}</BText>
+    <BText style={styles.greetingName} numberOfLines={1}>{userName || 'Blumm'}</BText>
+   </View>
+  </BlurView>
  </TouchableOpacity>
  {editMode && (
   <TouchableOpacity onPress={() => setEditMode(false)} style={styles.doneBadge}>
@@ -297,19 +299,19 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  </View>
 
  {/* ── HERO DE FASE ── */}
- <ImageBackground
- source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
- style={styles.heroCard}
- imageStyle={[styles.heroCardImg, pi?.phase === 'follicular' && { top: 20 }]}
- >
- <BText style={styles.heroHeadline}>{heroHeadline}</BText>
- <View style={styles.heroTags}>
- <View style={styles.heroTag}><BText style={styles.heroTagTxt}>{heroDayLabel}</BText></View>
- {!isHormonalContra && d?.intensity ? (
- <View style={styles.heroTag}><BText style={styles.heroTagTxt}>{d.intensity}</BText></View>
- ) : null}
+ <View style={styles.heroCard}>
+  <Image
+   source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
+   style={[styles.heroCardImg, pi?.phase === 'follicular' && { top: 20 }]}
+  />
+  <BText style={styles.heroHeadline}>{heroHeadline}</BText>
+  <View style={styles.heroTags}>
+   <View style={styles.heroTag}><BText style={styles.heroTagTxt}>{heroDayLabel}</BText></View>
+   {!isHormonalContra && d?.intensity ? (
+    <View style={styles.heroTag}><BText style={styles.heroTagTxt}>{d.intensity}</BText></View>
+   ) : null}
+  </View>
  </View>
- </ImageBackground>
 
  {/* ── KCAL + ENTRENO ── */}
  <View style={styles.row2col}>
@@ -553,10 +555,8 @@ const styles = StyleSheet.create({
  // Top bar
  topBar: { paddingHorizontal: 16, paddingTop: 58 },
  topRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 },
- greetingChip: {
-  flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1,
-  backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: 24, padding: 8,
- },
+ greetingChipWrap: { borderRadius: 24, overflow: 'hidden', flex: 1 },
+ greetingChip: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 8 },
  avatarCircle: { width: 40, height: 40, borderRadius: 16 },
  avatarInitialTxt: { color: 'white', fontFamily: F.headingX, fontSize: 16 },
  greetingHi: { fontSize: 14, color: '#0A0A0A', fontFamily: F.body, letterSpacing: -0.28, lineHeight: 20 },
@@ -566,8 +566,8 @@ const styles = StyleSheet.create({
  doneBadgeTxt: { color: 'white', fontSize: 13, fontFamily: F.bodyB },
 
  // Hero
- heroCard: { height: 200, borderRadius: 24, padding: 16, justifyContent: 'space-between', marginTop: 8, marginBottom: 2, overflow: 'hidden' },
- heroCardImg: { borderRadius: 24 },
+ heroCard: { height: 200, borderRadius: 24, padding: 16, justifyContent: 'space-between', marginTop: 2, marginBottom: 2, overflow: 'hidden', position: 'relative' },
+ heroCardImg: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', borderRadius: 24 },
  heroHeadline: { fontSize: 28, color: '#0A0A0A', lineHeight: 32.2, fontFamily: F.heading },
  heroTags: { flexDirection: 'row', flexWrap: 'wrap', gap: 2 },
  heroTag: { backgroundColor: '#F5F5F5', height: 24, paddingHorizontal: 8, borderRadius: 8, justifyContent: 'center' },
