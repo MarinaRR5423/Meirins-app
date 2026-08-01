@@ -18,7 +18,6 @@ import { useDiets, normalizeDietId } from '../hooks/useDiets';
 import { getDayNutritionContext } from '../utils/programEngine';
 import { filterMealsByFasting } from '../utils/fastingMeals';
 import { useRecipes } from '../hooks/useRecipes';
-import { useTodayMenu } from '../hooks/useTodayMenu';
 import { useFoodLog } from '../hooks/useFoodLog';
 import { getRecipesForMeal, appMealToDbMealType, recipeToMealCard, getDailyRecipe } from '../utils/recipeEngine';
 import { buildShoppingList, formatQuantity, countItems } from '../utils/shoppingList';
@@ -274,21 +273,84 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
 
  const tipsNutri = resolveTips(program?.tipsNutri ?? TIPS_NUTRI, lang);
 
- // ── Menú de hoy — compartido con HomeScreen via useTodayMenu ─────────────────
- const { todayMenu, activeSlots, allRecipes, userProfile, recipesLoading } = useTodayMenu({
- phase: pi?.phase, lang, profileExtended, goal, activityLevel, weight, height, age, trainDays,
- });
+ // Slots de comida — estructura fija, contenido 100% desde Supabase
+ const MEAL_SLOTS = [
+  { id: 'desayuno',     ico: '🌅', label: 'breakfast' },
+  { id: 'snack_manana', ico: '🍎', label: 'morning_snack' },
+  { id: 'almuerzo',    ico: '☀️', label: 'lunch' },
+  { id: 'snack_tarde', ico: '🌿', label: 'afternoon_snack' },
+  { id: 'cena',        ico: '🌙', label: 'dinner' },
+ ];
+
+ // Filtrar comidas según protocolo de ayuno
  const fastingProtocol = profileExtended?.fastingProtocol || null;
  const mealsActive = profileExtended?.mealsActive || null;
+ const activeSlots = filterMealsByFasting(MEAL_SLOTS, fastingProtocol, mealsActive);
+
+ // ── Recetas personalizadas desde Supabase ────────────────────────────────────
+ const { recipes: allRecipes, loading: recipesLoading } = useRecipes();
+
+ // Skipped de hoy (se resetea automáticamente cuando cambia el día)
+ const todayStrForSkip = new Date().toISOString().split('T')[0];
+ const skippedToday = profileExtended?.skippedToday || {};
+ const skippedRecipeIds = useMemo(() => {
+  if (skippedToday.date !== todayStrForSkip) return [];
+  return Object.keys(skippedToday)
+   .filter(k => k !== 'date')
+   .flatMap(k => skippedToday[k] || []);
+ }, [skippedToday, todayStrForSkip]);
+
+ const userProfile = useMemo(() => ({
+  diet: currentDietId,
+  goal,
+  allergies: profileExtended?.allergies || [],
+  foodDislikes: profileExtended?.foodDislikes || [],
+  conditions: profileExtended?.conditions || [],
+  lifeStage: profileExtended?.lifeStage || null,
+  cookingTime: profileExtended?.cookingTime || null,
+  weeklyBudget: profileExtended?.weeklyBudget || null,
+  favoriteRecipes: profileExtended?.favoriteRecipes || [],
+  skippedRecipeIds,
+  totalDailyKcal: cals?.total || null,
+ }), [currentDietId, goal, profileExtended, skippedRecipeIds, cals?.total]);
 
  // Activity log de hoy para mostrar check/cross
- const todayStrForSkip = new Date().toISOString().split('T')[0];
  const todayActivityRecipes = profileExtended?.activityLog?.[todayStrForSkip]?.recipes || {};
 
  // Hoy en formato YYYY-MM-DD para rotación diaria
  const todayStr = new Date().toISOString().split('T')[0];
 
  const { consumed: foodConsumed, logRecipe, unlogRecipe } = useFoodLog(todayStr);
+
+ const buildPersonalizedMeals = (slots, dateStr) => {
+  return (slots || []).map(slot => {
+   const dbMealType = appMealToDbMealType(slot.id);
+   const recipe = getDailyRecipe(allRecipes, userProfile, pi?.phase, dbMealType, dateStr);
+   if (!recipe) return { ...slot, title: null, items: [], _personalized: false };
+   const card = recipeToMealCard(recipe, lang);
+   if (!card) return { ...slot, title: null, items: [], _personalized: false };
+   return {
+    ...slot,
+    ico: card.ico,
+    title: card.title,
+    items: card.items,
+    recipe: card.recipe,
+    macros: card.macros,
+    _personalized: true,
+    _recipeId: recipe.id,
+   };
+  });
+ };
+
+ const todayMenu = useMemo(() => {
+  const meals = allRecipes?.length
+   ? buildPersonalizedMeals(activeSlots, todayStr)
+   : activeSlots.map(s => ({ ...s, title: null, items: [], _personalized: false }));
+  if (!meals.length) {
+   console.warn('[NutriScreen] empty_menu_detected', { phase: pi?.phase, fastingProtocol, lang });
+  }
+  return { meals };
+ }, [allRecipes, recipesLoading, userProfile, pi?.phase, lang, activeSlots]);
 
  const weekMenuDays = useMemo(() => {
  const names = lang === 'fr'

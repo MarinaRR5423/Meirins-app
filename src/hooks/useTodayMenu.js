@@ -5,7 +5,7 @@ import { appMealToDbMealType, recipeToMealCard, getDailyRecipe } from '../utils/
 import { filterMealsByFasting } from '../utils/fastingMeals';
 import { calcCalories } from '../utils/calories';
 
-const MEAL_SLOTS = [
+export const MEAL_SLOTS = [
   { id: 'desayuno',     ico: '🌅', label: 'breakfast' },
   { id: 'snack_manana', ico: '🍎', label: 'morning_snack' },
   { id: 'almuerzo',    ico: '☀️', label: 'lunch' },
