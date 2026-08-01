@@ -37,6 +37,7 @@ import FloatingTabBar from './src/components/FloatingTabBar';
 import { initAnalytics, wrapWithSentry, trackEvent, identifyUser, setPostHogClient, Events } from './src/lib/analytics';
 import { Audio } from 'expo-av';
 import { useTodayMenu } from './src/hooks/useTodayMenu';
+import { useHomeWidgets } from './src/hooks/useHomeWidgets';
 
 // Conector entre el contexto de PostHog y nuestro módulo analytics.js
 function PostHogBridge() {
@@ -131,7 +132,6 @@ function App() {
   const [setupUnits, setSetupUnits] = React.useState(getDeviceUnitSystem);
   const [isOffline, setIsOffline] = useState(false);
   const [cachedPhase, setCachedPhase] = useState(null);
-  const openHomeWidgetsRef = useRef(null);
 
   // Analytics init (no-op si no está configurado)
   useEffect(() => { initAnalytics(); }, []);
@@ -222,6 +222,7 @@ function App() {
     age: profile.age,
     trainDays: profile.trainDays,
   });
+  const { widgets, toggle: toggleWidget } = useHomeWidgets();
   const enabledTabs = profile.profileExtended?.enabledTabs;
   const handleToggleTab = (key, value) =>
     profile.saveProfileExtended({ enabledTabs: { ...(profile.profileExtended?.enabledTabs || {}), [key]: value } });
@@ -258,10 +259,10 @@ function App() {
           freezeOnBlur: true,
         }}
         tabBar={(props) => (
-          <FloatingTabBar {...props} enabledTabs={enabledTabs} onToggleTab={handleToggleTab} lang={lang} onOpenWidgets={() => openHomeWidgetsRef.current?.()} />
+          <FloatingTabBar {...props} enabledTabs={enabledTabs} onToggleTab={handleToggleTab} lang={lang} widgets={widgets} toggleWidget={toggleWidget} />
         )}>
         <Tab.Screen name="Inicio" options={{ tabBarLabel: tabs.home, tabBarIcon: ({ color, size }) => <Home color={color} size={size} /> }}>
-          {() => <HomeScreen lang={lang} pi={pi} healthData={healthData} logCycleDay={profile.logCycleDay} logRecipeDone={profile.logRecipeDone} todayMenu={todayMenu} openWidgetsRef={openHomeWidgetsRef} profile={{
+          {() => <HomeScreen lang={lang} pi={pi} healthData={healthData} logCycleDay={profile.logCycleDay} logRecipeDone={profile.logRecipeDone} todayMenu={todayMenu} widgets={widgets} toggleWidget={toggleWidget} profile={{
             age: profile.age, weight: profile.weight, height: profile.height,
             activityLevel: profile.activityLevel, goal: profile.goal,
             trainDays: profile.trainDays,

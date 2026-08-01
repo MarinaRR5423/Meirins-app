@@ -1,7 +1,8 @@
 ﻿import React, { useState } from 'react';
-import { View, TouchableOpacity, StyleSheet, Modal, Platform } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Modal, Platform, Switch } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { Home, Flower, Salad, SportShoe, Plus, Droplets } from 'lucide-react-native';
+import { Home, Flower, Salad, SportShoe, Plus, Droplets, LayoutGrid } from 'lucide-react-native';
+import { WIDGET_DEFS } from '../hooks/useHomeWidgets';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { F } from '../theme/fonts';
 import BText from './BText';
@@ -17,10 +18,10 @@ const TXT = {
  ciclo: { es: 'Ciclo', en: 'Cycle', fr: 'Cycle', it: 'Ciclo' },
  agua: { es: 'Agua', en: 'Water', fr: 'Eau', it: 'Acqua' },
  ejercicio:{ es: 'Ejercicio', en: 'Exercise', fr: 'Exercice', it: 'Esercizio' },
- widgets: { es: 'Personalizar inicio', en: 'Customize home', fr: 'Personnaliser', it: 'Personalizza' },
+ widgets: { es: 'Inicio', en: 'Home', fr: 'Accueil', it: 'Inizio' },
 };
 
-export default function FloatingTabBar({ state, descriptors, navigation, enabledTabs, onToggleTab, lang = 'es', onOpenWidgets }) {
+export default function FloatingTabBar({ state, descriptors, navigation, enabledTabs, onToggleTab, lang = 'es', widgets = {}, toggleWidget }) {
  const insets = useSafeAreaInsets();
  const [pickerOpen, setPickerOpen] = useState(false);
  const tr = (key) => (TXT[key]?.[lang] || TXT[key]?.es || key);
@@ -88,29 +89,47 @@ export default function FloatingTabBar({ state, descriptors, navigation, enabled
 
  <View style={styles.actionList}>
  {[
- { key: 'ciclo', Icon: Flower, bg: '#22C55E', screen: 'Ciclo' },
- { key: 'agua', Icon: Droplets, bg: '#FE6004', screen: null },
- { key: 'ejercicio', Icon: SportShoe, bg: '#429FE7', screen: 'Gimnasio' },
- ...(onOpenWidgets ? [{ key: 'widgets', Icon: Home, bg: '#A157C9', screen: null, onPress: onOpenWidgets }] : []),
- ].map((item, idx, arr) => (
- <TouchableOpacity
- key={item.key}
- style={[styles.actionRow, idx < arr.length - 1 && styles.actionRowBorder]}
- onPress={() => {
- setPickerOpen(false);
- if (item.onPress) { item.onPress(); return; }
- if (item.screen) navigation.navigate(item.screen);
- }}
- >
- <View style={[styles.actionIconCircle, { backgroundColor: item.bg }]}>
- <item.Icon size={22} color="white" strokeWidth={2} />
- </View>
- <BText style={styles.actionLabel}>{tr(item.key)}</BText>
- <View style={styles.actionPlusCircle}>
- <BText style={styles.actionPlusTxt}>+</BText>
- </View>
- </TouchableOpacity>
+  { key: 'ciclo',     Icon: Flower,    bg: '#22C55E', screen: 'Ciclo' },
+  { key: 'agua',      Icon: Droplets,  bg: '#429FE7', screen: null },
+  { key: 'ejercicio', Icon: SportShoe, bg: '#FE6004', screen: 'Gimnasio' },
+ ].map((item) => (
+  <TouchableOpacity
+   key={item.key}
+   style={[styles.actionRow, styles.actionRowBorder]}
+   onPress={() => {
+    setPickerOpen(false);
+    if (item.screen) navigation.navigate(item.screen);
+   }}
+  >
+   <View style={[styles.actionIconCircle, { backgroundColor: item.bg }]}>
+    <item.Icon size={22} color="white" strokeWidth={2} />
+   </View>
+   <BText style={styles.actionLabel}>{tr(item.key)}</BText>
+   <View style={styles.actionPlusCircle}>
+    <BText style={styles.actionPlusTxt}>+</BText>
+   </View>
+  </TouchableOpacity>
  ))}
+ </View>
+
+ {/* ── WIDGETS ── */}
+ <View style={styles.widgetSection}>
+  <View style={styles.widgetSectionHeader}>
+   <LayoutGrid size={13} color="#737373" strokeWidth={2} />
+   <BText style={styles.widgetSectionTitle}>{tr('widgets')}</BText>
+  </View>
+  {WIDGET_DEFS.map((wd, i) => (
+   <View key={wd.id} style={[styles.widgetRow, i < WIDGET_DEFS.length - 1 && styles.widgetRowBorder]}>
+    <BText style={styles.widgetEmoji}>{wd.emoji}</BText>
+    <BText style={styles.widgetLabel}>{wd.label[lang] || wd.label.es}</BText>
+    <Switch
+     value={widgets[wd.id] !== false}
+     onValueChange={() => toggleWidget?.(wd.id)}
+     trackColor={{ false: '#E5E5E5', true: '#171717' }}
+     thumbColor="white"
+    />
+   </View>
+  ))}
  </View>
  </View>
  </TouchableOpacity>
@@ -163,4 +182,11 @@ const styles = StyleSheet.create({
  actionLabel: { flex: 1, fontSize: 15, fontFamily: F.bodyB, color: '#0A0A0A' },
  actionPlusCircle: { width: 30, height: 30, borderRadius: 15, backgroundColor: '#F5F5F5', alignItems: 'center', justifyContent: 'center' },
  actionPlusTxt: { fontSize: 18, color: '#0A0A0A', lineHeight: 22, fontFamily: F.body },
+ widgetSection: { marginTop: 16, borderTopWidth: 1, borderTopColor: '#F5F5F5', paddingTop: 12 },
+ widgetSectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
+ widgetSectionTitle: { fontSize: 11, color: '#737373', fontFamily: F.bodyB, textTransform: 'uppercase', letterSpacing: 0.4 },
+ widgetRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 11, gap: 12 },
+ widgetRowBorder: { borderBottomWidth: 1, borderBottomColor: '#F5F5F5' },
+ widgetEmoji: { fontSize: 18, width: 26, fontFamily: F.body },
+ widgetLabel: { flex: 1, fontSize: 14, color: '#0A0A0A', fontFamily: F.body },
 });

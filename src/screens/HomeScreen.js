@@ -1,8 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, ScrollView, StyleSheet, TouchableOpacity, Modal, Switch, Animated, ImageBackground, Image } from 'react-native';
+import { View, ScrollView, StyleSheet, TouchableOpacity, Animated, ImageBackground, Image } from 'react-native';
 import { F } from '../theme/fonts';
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ChevronRight, Salad, SportShoe, Flame, CalendarDays, Info, Check } from 'lucide-react-native';
 import { BlurView } from 'expo-blur';
 import { FlowerIcon } from '../components/TabIcons';
@@ -56,42 +55,8 @@ const wwStyles = StyleSheet.create({
  xBadgeTxt: { fontSize: 10, color: 'white', fontFamily: F.bodyB, lineHeight: 12 },
 });
 const HORMONAL_CONTRA = ['pill', 'hormonal_iud', 'ring', 'patch', 'implant'];
-const WIDGETS_KEY = 'home_widgets_v1';
 
-const WIDGET_DEFS = [
- { id: 'streak', emoji: '', label: { es: 'Racha', en: 'Streak', fr: 'Série', it: 'Serie' } },
- { id: 'hydration', emoji: '', label: { es: 'Hidratación + Ciclo', en: 'Hydration + Cycle', fr: 'Hydratation + Cycle', it: 'Idratazione + Ciclo' } },
- { id: 'nutrition', emoji: '', label: { es: 'Nutrición de hoy', en: "Today's nutrition", fr: "Nutrition d'aujourd'hui", it: 'Nutrizione di oggi' } },
- { id: 'tip', emoji: '', label: { es: 'Consejo del día', en: 'Tip of the day', fr: 'Conseil du jour', it: 'Consiglio del giorno' } },
-];
-
-const DEFAULT_WIDGETS = Object.fromEntries(WIDGET_DEFS.map(w => [w.id, true]));
-
-function useHomeWidgets() {
- const [widgets, setWidgets] = useState(DEFAULT_WIDGETS);
- const [loaded, setLoaded] = useState(false);
-
- useEffect(() => {
- AsyncStorage.getItem(WIDGETS_KEY).then(v => {
- if (v) {
- try { setWidgets({ ...DEFAULT_WIDGETS, ...JSON.parse(v) }); } catch {}
- }
- setLoaded(true);
- });
- }, []);
-
- const toggle = useCallback((id) => {
- setWidgets(prev => {
- const next = { ...prev, [id]: !prev[id] };
- AsyncStorage.setItem(WIDGETS_KEY, JSON.stringify(next));
- return next;
- });
- }, []);
-
- return { widgets, toggle, loaded };
-}
-
-export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCycleDay, logRecipeDone, todayMenu, openWidgetsRef }) {
+export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCycleDay, logRecipeDone, todayMenu, widgets, toggleWidget }) {
  useEffect(() => { trackScreen('Home', { phase: pi?.phase }); }, []);
  const { phaseData } = usePhaseData(pi?.phase, lang);
  const baseD = phaseData;
@@ -160,9 +125,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  const avatarInitial = (userName[0] || 'B').toUpperCase();
  const avatarUri = profile?.profileExtended?.avatarUri || null;
 
- const { widgets, toggle } = useHomeWidgets();
- const [showCustomize, setShowCustomize] = useState(false);
- useEffect(() => { if (openWidgetsRef) openWidgetsRef.current = () => setShowCustomize(true); }, []);
+ const toggle = toggleWidget;
  const [editMode, setEditMode] = useState(false);
  const [trackingOpen, setTrackingOpen] = useState(false);
 
@@ -188,11 +151,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
 
  const tr = (es, en, fr, it) => ({ es, en, fr, it }[lang] || es);
 
- const customizeTxt = {
- title: { es: 'Personalizar inicio', en: 'Customize home', fr: 'Personnaliser', it: 'Personalizza' },
- done: { es: 'Hecho', en: 'Done', fr: 'Terminé', it: 'Fatto' },
- desc: { es: 'Elige qué mostrar en tu pantalla de inicio.', en: 'Choose what to show on your home screen.', fr: 'Choisis ce qui apparaît sur ton écran d\'accueil.', it: 'Scegli cosa mostrare nella schermata iniziale.' },
- };
+ const doneTxt = { es: 'Hecho', en: 'Done', fr: 'Terminé', it: 'Fatto' };
 
  // Empty state
  if (!pi) {
@@ -293,7 +252,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  </TouchableOpacity>
  {editMode && (
   <TouchableOpacity onPress={() => setEditMode(false)} style={styles.doneBadge}>
-   <BText style={styles.doneBadgeTxt}>{customizeTxt.done[lang] || 'Hecho'}</BText>
+   <BText style={styles.doneBadgeTxt}>{doneTxt[lang] || 'Hecho'}</BText>
   </TouchableOpacity>
  )}
  </View>
@@ -507,34 +466,6 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  currentPhase={pi?.phase || null}
  />
 
- {/* ── MODAL PERSONALIZAR ── */}
- <Modal visible={showCustomize} animationType="slide" transparent onRequestClose={() => setShowCustomize(false)}>
- <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={() => setShowCustomize(false)} />
- <View style={styles.modalSheet}>
- <View style={styles.modalHandle} />
- <View style={styles.modalHeader}>
- <BText style={styles.modalTitle}>{customizeTxt.title[lang] || customizeTxt.title.es}</BText>
- <TouchableOpacity onPress={() => setShowCustomize(false)} style={styles.modalDoneBtn}>
- <BText style={styles.modalDoneTxt}>{customizeTxt.done[lang] || customizeTxt.done.es}</BText>
- </TouchableOpacity>
- </View>
- <BText style={styles.modalDesc}>{customizeTxt.desc[lang] || customizeTxt.desc.es}</BText>
- <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
- {WIDGET_DEFS.map((wd, i) => (
- <View key={wd.id} style={[styles.widgetRow, i < WIDGET_DEFS.length - 1 && styles.widgetRowBorder]}>
- <BText style={styles.widgetEmoji}>{wd.emoji}</BText>
- <BText style={styles.widgetLabel}>{wd.label[lang] || wd.label.es}</BText>
- <Switch
- value={widgets[wd.id]}
- onValueChange={() => toggle(wd.id)}
- trackColor={{ false: '#E2E8F0', true: '#171717' }}
- thumbColor="white"
- />
- </View>
- ))}
- </ScrollView>
- </View>
- </Modal>
  </View>
  );
 }
@@ -626,17 +557,4 @@ const styles = StyleSheet.create({
  intensityTag: { backgroundColor: '#429FE7', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2, alignSelf: 'flex-start' },
  intensityTagTxt: { color: 'white', fontSize: 10, fontFamily: F.bodyB },
 
- // Modal personalizar
- modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.3)' },
- modalSheet: { backgroundColor: 'white', borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingBottom: 40, maxHeight: '75%' },
- modalHandle: { width: 36, height: 4, backgroundColor: '#E2E8F0', borderRadius: 2, alignSelf: 'center', marginTop: 12, marginBottom: 16 },
- modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
- modalTitle: { fontSize: 17, color: '#0A0A0A', fontFamily: F.heading },
- modalDoneBtn: { backgroundColor: '#171717', borderRadius: 20, paddingHorizontal: 16, paddingVertical: 6 },
- modalDoneTxt: { color: 'white', fontSize: 13, fontFamily: F.bodyB },
- modalDesc: { fontSize: 13, color: '#737373', marginBottom: 16, fontFamily: F.body },
- widgetRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, gap: 12 },
- widgetRowBorder: { borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
- widgetEmoji: { fontSize: 20, width: 28, fontFamily: F.body },
- widgetLabel: { flex: 1, fontSize: 15, color: '#0A0A0A', fontFamily: F.body },
 });
