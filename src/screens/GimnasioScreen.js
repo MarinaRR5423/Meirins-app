@@ -752,7 +752,12 @@ export default function GimnasioScreen({
   <ChevronRight size={16} color="#0A1823" />
  </View>
  {progState && (
-  <BText style={styles.planExercTitle}>{progState.program?.name?.[lang] || progState.program?.name?.es || progState.program?.id || ''}</BText>
+  <>
+   <BText style={styles.planExercTitle}>{progState.program?.name?.[lang] || progState.program?.name?.es || progState.program?.id || ''}</BText>
+   {progState.program?.desc?.[lang] || progState.program?.desc?.es ? (
+    <BText style={styles.planExercDesc}>{progState.program?.desc?.[lang] || progState.program?.desc?.es}</BText>
+   ) : null}
+  </>
  )}
  {progState?.program?.tags?.length > 0 && (
   <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4 }}>
@@ -1282,6 +1287,7 @@ realizadosFill:  { backgroundColor: '#429FE7', borderRadius: 3 },
  planExercHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
  planExercHeaderTxt: { fontSize: 12, fontFamily: F.body, color: '#0A1823' },
  planExercTitle: { fontSize: 20, fontFamily: F.heading, color: '#0A1823', lineHeight: 24 },
+ planExercDesc: { fontSize: 13, fontFamily: F.body, color: '#3A5166', lineHeight: 18 },
  planExercTag: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, backgroundColor: '#B3D9F5' },
  planExercTagTxt: { fontSize: 13, fontFamily: F.body, color: '#0A1823' },
  planExercDesc: { fontSize: 13, color: '#0A1823', lineHeight: 18, fontFamily: F.body },
