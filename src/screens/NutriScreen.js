@@ -380,9 +380,12 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  <SwipeableTabs tabs={['plan', 'lista', 'favoritos']} current={sub} onChange={setSub}>
  <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
- <NutriSetupCard lang={lang} profileExtended={profileExtended} goal={goal}
- activityLevel={activityLevel} dietary={dietary}
- saveAll={saveAll || (() => {})} saveProfileExtended={saveProfileExtended || (() => {})} />
+ <View style={{ height: 0, overflow: 'hidden' }}>
+  <NutriSetupCard lang={lang} profileExtended={profileExtended} goal={goal}
+  activityLevel={activityLevel} dietary={dietary}
+  saveAll={saveAll || (() => {})} saveProfileExtended={saveProfileExtended || (() => {})}
+  openModalRef={nutriOpenRef} />
+ </View>
 
  <View style={styles.tabRow}>
  {[
@@ -416,7 +419,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
   const dayLabels = WEEK_DAY_LABELS[lang] || WEEK_DAY_LABELS.es;
   const PHASE_COLORS_WEEK = { menstrual:'#92E288', follicular:'#C79ADF', ovulation:'#FEDF68', luteal:'#FEA068' };
   return (
-   <>
+   <View style={{ gap: 4 }}>
     <View style={styles.weekNavAzote}>
      <TouchableOpacity onPress={() => { setWeekOffset(o => o - 1); setSelectedDayIdx(null); }} style={{ padding: 4 }}>
       <ChevronLeft size={16} color="#0A0A0A" />
@@ -439,14 +442,14 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
       const phaseColor = day.isToday && pi?.phase ? PHASE_COLORS_WEEK[pi.phase] : null;
       return (
        <TouchableOpacity key={i} onPress={() => setSelectedDayIdx(i)}
-        style={[styles.weekCell, isSel && styles.weekCellActive]}>
+        style={[styles.weekCell, day.isToday && styles.weekCellToday, isSel && styles.weekCellActive]}>
         {phaseColor && <View style={[styles.weekCellGlow, { backgroundColor: phaseColor }]} />}
         <BText style={styles.weekCellNum}>{day.dayNum}</BText>
        </TouchableOpacity>
       );
      })}
     </View>
-   </>
+   </View>
   );
  })()}
  </View>
@@ -680,7 +683,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  ))}
  </View>
 
- <TouchableOpacity style={styles.planNutriEditBtn} onPress={() => navigation.navigate('Perfil')}>
+ <TouchableOpacity style={styles.planNutriEditBtn} onPress={() => nutriOpenRef.current?.()}>
  <BText style={styles.planNutriEditTxt}>{editLabel}</BText>
  </TouchableOpacity>
  </View>
@@ -1054,11 +1057,12 @@ const styles = StyleSheet.create({
  weekStripCard: { backgroundColor: '#F5F5F5', borderRadius: 32, padding: 16, marginBottom: 2, gap: 24 },
  weekNavAzote: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
  weekNavLabelAzote: { fontSize: 16, color: '#0A0A0A', fontFamily: F.body, lineHeight: 20.8 },
- weekDayLabelsRow: { flexDirection: 'row', marginBottom: 4 },
- weekDayLabelCell: { flex: 1, alignItems: 'center', padding: 4 },
+ weekDayLabelsRow: { flexDirection: 'row' },
+ weekDayLabelCell: { width: 43, alignItems: 'center', padding: 4 },
  weekDayLabel: { fontSize: 10, fontFamily: F.body, color: '#737373', textTransform: 'uppercase', lineHeight: 13, textAlign: 'center' },
- weekStripRow: { flexDirection: 'row', gap: 4 },
- weekCell: { flex: 1, height: 43, backgroundColor: 'white', borderRadius: 4, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+ weekStripRow: { flexDirection: 'row', gap: 4, flexWrap: 'wrap' },
+ weekCell: { width: 43, height: 43, backgroundColor: 'white', borderRadius: 4, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+ weekCellToday: { borderWidth: 1, borderColor: '#0A0A0A' },
  weekCellActive: { borderWidth: 1, borderColor: '#0A0A0A' },
  weekCellGlow: { position: 'absolute', width: 44, height: 44, left: -1, top: 21, borderRadius: 22, opacity: 0.7 },
  weekCellNum: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A', lineHeight: 15.6 },
