@@ -442,6 +442,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  const isToday = dateStr === todayStr;
  const isSelected = !marking && dateStr === selectedDate;
  const isMarked = marking && markStart && dateStr >= markStart && dateStr <= (markEnd || markStart);
+ const hasLog = !!(profileExtended?.cycleLog?.[dateStr]);
  return (
  <TouchableOpacity
  key={dayNum}
@@ -465,6 +466,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  isToday && styles.calDayNumToday,
  isSelected && styles.calDayNumSelected,
  ]}>{dayNum}</BText>
+ {hasLog && <View style={styles.calCycleLogDot} />}
  </TouchableOpacity>
  );
  })}
@@ -717,6 +719,7 @@ const styles = StyleSheet.create({
  calCellGlow2: { position:'absolute', top:16, left:-4, width:52, height:52, borderRadius:26, opacity:0.25 },
  calCellArch: { position:'absolute', top:21, left:-1, width:44, height:44, borderRadius:22, opacity:0.55 },
  calCellTodayRing: { position:'absolute', top:0, left:0, right:0, bottom:0, borderRadius:4, borderWidth:1, borderColor:'#0a0a0a' },
+ calCycleLogDot: { position:'absolute', bottom:4, width:4, height:4, borderRadius:2, backgroundColor:'#0a0a0a' },
 
  calDayNum: { fontSize:12, fontFamily: F.body, color:'#0a0a0a', zIndex:1 },
  calDayNumToday: { fontFamily: F.bodyB, color:'#0a0a0a' },
