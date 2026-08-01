@@ -349,7 +349,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
   {(() => {
    const wName = todaySession?.name ?? (lang === 'en' ? 'Rest' : lang === 'fr' ? 'Repos' : 'Descanso');
    const wFs = wName.length > 14 ? 24 : wName.length > 6 ? 32 : 48;
-   return <BText style={[styles.miniBigNum, { fontSize: wFs, color: '#429FE7', lineHeight: wFs * 1.1 }]} numberOfLines={2}>{wName}</BText>;
+   return <BText style={[styles.miniBigNum, { fontSize: wFs, color: '#429FE7', lineHeight: wFs * 1.1 }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5}>{wName}</BText>;
   })()}
   {todaySession?.dur ? <BText style={styles.miniSub}>{todaySession.dur}</BText> : null}
   {todaySession?.intensity ? (
