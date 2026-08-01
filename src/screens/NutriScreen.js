@@ -278,6 +278,8 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  const { todayMenu, activeSlots, allRecipes, userProfile, recipesLoading } = useTodayMenu({
  phase: pi?.phase, lang, profileExtended, goal, activityLevel, weight, height, age, trainDays,
  });
+ const fastingProtocol = profileExtended?.fastingProtocol || null;
+ const mealsActive = profileExtended?.mealsActive || null;
 
  // Activity log de hoy para mostrar check/cross
  const todayStrForSkip = new Date().toISOString().split('T')[0];
