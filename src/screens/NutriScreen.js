@@ -100,11 +100,13 @@ function getNextMealId(slots) {
 }
 
 function MealCard({ meal, expanded, onToggle, onRecipe, seeRecipeLabel, mealLabelFn,
- isFavorite, onToggleFavorite, onSwap, onLogStatus, logStatus, isNext }) {
+ isFavorite, onToggleFavorite, onSwap, onLogStatus, logStatus, isNext, lang }) {
  const displayTitle = meal.title || meal.items?.[0] || '';
  const m = meal.macros;
  const fg = isNext ? '#260E01' : '#0A0A0A';
  const fgMuted = isNext ? 'rgba(38,14,1,0.6)' : '#737373';
+ // Abreviatura de hidratos de carbono según idioma
+ const carbsLbl = (lang === 'en' || lang === 'it') ? 'C' : 'HC';
  return (
  <View style={[mc.card, isNext ? mc.cardNext : mc.cardNeutral]}>
  <TouchableOpacity style={mc.header} onPress={onToggle} activeOpacity={0.85}>
@@ -117,7 +119,7 @@ function MealCard({ meal, expanded, onToggle, onRecipe, seeRecipeLabel, mealLabe
 
  {m?.kcal != null && (
  <View style={mc.tagsRow}>
- {[`${m.kcal} kcal`, `P: ${m.protein}g`, `H: ${m.carbs}g`, `G: ${m.fat}g`].map(t => (
+ {[`${m.kcal} kcal`, `P: ${m.protein}g`, `${carbsLbl}: ${m.carbs}g`, `G: ${m.fat}g`].map(t => (
  <View key={t} style={[mc.tag, isNext ? mc.tagNext : mc.tagNeutral]}>
  <BText style={[mc.tagTxt, { color: fg }]}>{t}</BText>
  </View>
@@ -391,7 +393,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  {[
  { id: 'plan', l: n.myPlan },
  { id: 'lista', l: n.list },
- { id: 'favoritos', l: 'Favs.' },
+ { id: 'favoritos', l: { es: 'Favs.', en: 'Favs.', fr: 'Favoris', it: 'Preferiti' }[lang] || 'Favs.' },
  ].map(t => (
  <TouchableOpacity key={t.id} onPress={() => setSub(t.id)}
  style={[styles.tab, sub === t.id && styles.tabActive]}>
@@ -513,7 +515,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  <BText style={styles.macroPillVal}>{Math.round(foodConsumed.protein_g)}g</BText>
  </View>
  <View style={styles.macroPill}>
- <BText style={styles.macroPillLbl}>HC</BText>
+ <BText style={styles.macroPillLbl}>{(lang === 'en' || lang === 'it') ? 'C' : 'HC'}</BText>
  <BText style={styles.macroPillVal}>{Math.round(foodConsumed.carbs_g)}g</BText>
  </View>
  <View style={styles.macroPill}>
@@ -530,7 +532,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  {(cals || nutritionCtx) && (
  <View style={styles.orangeHeroCard}>
  <BText style={styles.orangeHeroLabel}>
- {lang === 'en' ? 'Today\'s focus' : lang === 'fr' ? "Focus du jour" : 'Foco de hoy'}
+ {{ es: 'Foco de hoy', en: "Today's focus", fr: 'Focus du jour', it: 'Focus di oggi' }[lang] || 'Foco de hoy'}
  </BText>
  {nutritionCtx && (
  <>
@@ -562,7 +564,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  {/* Comidas del día seleccionado */}
  <View style={styles.mealsWrapper}>
  <BText style={styles.mealsWrapperTitle}>
- {lang === 'en' ? 'Today\'s meals' : lang === 'fr' ? 'Tes repas du jour' : 'Tus comidas de hoy'}
+ {{ es: 'Tus comidas de hoy', en: "Today's meals", fr: 'Tes repas du jour', it: 'I tuoi pasti di oggi' }[lang] || 'Tus comidas de hoy'}
  </BText>
  {(() => {
  const nextMealId = isToday ? getNextMealId(activeSlots) : null;
@@ -585,6 +587,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
              } : null}
  logStatus={isToday ? todayActivityRecipes[meal.id] : undefined}
  isNext={isToday && meal.id === nextMealId}
+ lang={lang}
  />
  ));
  })()}
@@ -623,13 +626,13 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  {/* ── TU PLAN NUTRICIONAL — Figma ── */}
  {(() => {
  const dtl = getDayTypeLabels(lang);
- const planTitle = lang === 'en' ? 'Your nutrition plan' : lang === 'fr' ? 'Ton plan nutritionnel' : 'Tu plan nutricional';
- const editLabel = lang === 'en' ? 'Edit plan' : lang === 'fr' ? 'Modifier le plan' : 'Editar plan';
+ const planTitle = { es: 'Tu plan nutricional', en: 'Your nutrition plan', fr: 'Ton plan nutritionnel', it: 'Il tuo piano nutrizionale' }[lang] || 'Tu plan nutricional';
+ const editLabel = { es: 'Editar plan', en: 'Edit plan', fr: 'Modifier le plan', it: 'Modifica piano' }[lang] || 'Editar plan';
  const PHASE_PILLS = [
- { label: lang === 'en' ? 'MENSTRUAL' : 'MENSTRUAL', bg: '#86EFAC', color: '#14532D' },
- { label: lang === 'en' ? 'FOLLICULAR' : 'FOLICULAR', bg: '#C4B5FD', color: '#4C1D95' },
- { label: lang === 'en' ? 'OVULATION' : 'OVULACIÓN', bg: '#FDE68A', color: '#78350F' },
- { label: lang === 'en' ? 'LUTEAL' : 'LÚTEA', bg: '#FDC7A0', color: '#7C2D12' },
+ { label: { es: 'MENSTRUAL', en: 'MENSTRUAL', fr: 'MENSTRUELLE', it: 'MESTRUALE' }[lang] || 'MENSTRUAL', bg: '#86EFAC', color: '#14532D' },
+ { label: { es: 'FOLICULAR', en: 'FOLLICULAR', fr: 'FOLLICULAIRE', it: 'FOLLICOLARE' }[lang] || 'FOLICULAR', bg: '#C4B5FD', color: '#4C1D95' },
+ { label: { es: 'OVULACIÓN', en: 'OVULATION', fr: 'OVULATOIRE', it: 'OVULAZIONE' }[lang] || 'OVULACIÓN', bg: '#FDE68A', color: '#78350F' },
+ { label: { es: 'LÚTEA', en: 'LUTEAL', fr: 'LUTÉALE', it: 'LUTEINICA' }[lang] || 'LÚTEA', bg: '#FDC7A0', color: '#7C2D12' },
  ];
  return (
  <View style={styles.planNutriCard}>
@@ -644,9 +647,9 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  {dietData.macros && (
  <View style={styles.planNutriMacros}>
  {[
- { k: lang === 'en' ? 'PROTEIN' : 'PROTEÍNAS', v: dietData.macros.protein_pct },
- { k: lang === 'en' ? 'CARBS' : 'CARBOS', v: dietData.macros.carbs_pct },
- { k: lang === 'en' ? 'FAT' : 'GRASAS', v: dietData.macros.fat_pct },
+ { k: { es: 'PROTEÍNAS', en: 'PROTEIN', fr: 'PROTÉINES', it: 'PROTEINE' }[lang] || 'PROTEÍNAS', v: dietData.macros.protein_pct },
+ { k: { es: 'CARBOS', en: 'CARBS', fr: 'GLUCIDES', it: 'CARBOIDRATI' }[lang] || 'CARBOS', v: dietData.macros.carbs_pct },
+ { k: { es: 'GRASAS', en: 'FAT', fr: 'LIPIDES', it: 'GRASSI' }[lang] || 'GRASAS', v: dietData.macros.fat_pct },
  ].map(m => (
  <View key={m.k} style={styles.planNutriMacroPill}>
  <BText style={styles.planNutriMacroPillTxt}>{m.k} {m.v}%</BText>
@@ -657,7 +660,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  </>
  ) : (
  <BText style={styles.planNutriTitle}>
- {lang === 'en' ? 'Configure your plan' : lang === 'fr' ? 'Configure ton plan' : 'Configura tu plan'}
+ {{ es: 'Configura tu plan', en: 'Configure your plan', fr: 'Configure ton plan', it: 'Configura il tuo piano' }[lang] || 'Configura tu plan'}
  </BText>
  )}
 
@@ -702,11 +705,11 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  </TouchableOpacity>
  <BText style={styles.listNavLabel}>
  {weekOffset === 0
- ? (lang === 'en' ? 'This week' : lang === 'fr' ? 'Cette semaine' : 'Esta semana')
+ ? ({ es: 'Esta semana', en: 'This week', fr: 'Cette semaine', it: 'Questa settimana' }[lang] || 'Esta semana')
  : weekOffset === -1
- ? (lang === 'en' ? 'Last week' : lang === 'fr' ? 'Semaine passée' : 'Semana pasada')
+ ? ({ es: 'Semana pasada', en: 'Last week', fr: 'Semaine passée', it: 'Settimana scorsa' }[lang] || 'Semana pasada')
  : weekOffset === 1
- ? (lang === 'en' ? 'Next week' : lang === 'fr' ? 'Semaine prochaine' : 'Semana siguiente')
+ ? ({ es: 'Semana siguiente', en: 'Next week', fr: 'Semaine prochaine', it: 'Settimana prossima' }[lang] || 'Semana siguiente')
  : `${weekOffset > 0 ? '+' : ''}${weekOffset}w`}
  </BText>
  <TouchableOpacity onPress={() => setWeekOffset(w => w + 1)} style={styles.listNavBtn}>
@@ -719,7 +722,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  {/* Header */}
  <View style={styles.listMainHeader}>
  <BText style={styles.listMainHeaderTxt}>
- {lang === 'en' ? 'Week list' : lang === 'fr' ? 'Liste de la semaine' : 'Lista de la semana'}
+ {{ es: 'Lista de la semana', en: 'Weekly list', fr: 'Liste de la semaine', it: 'Lista della settimana' }[lang] || 'Lista de la semana'}
  </BText>
  </View>
 
@@ -765,7 +768,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  }).join('\n');
  return `${cat}\n${rows}`;
  }).join('\n\n');
- const shareLabel = lang === 'en' ? 'Shopping list' : 'Lista de la compra';
+ const shareLabel = { es: 'Lista de la compra', en: 'Shopping list', fr: 'Liste de courses', it: 'Lista della spesa' }[lang] || 'Lista de la compra';
  Share.share({ message: `${shareLabel}\n\n${lines}` });
  }}
  style={styles.listShareLink}>
