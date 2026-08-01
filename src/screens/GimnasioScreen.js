@@ -719,26 +719,42 @@ export default function GimnasioScreen({
  <BText style={styles.restTitle}>{g.restDay}</BText>
  <BText style={styles.restSub}>{g.restDesc}</BText>
  </View>
- <View style={styles.card}>
- <BText style={styles.sectionTitle}>{g.restRecord}</BText>
- {todayLog?.extraSport ? (
- <View style={[styles.extraRow, { backgroundColor: BLUE.light }]}>
- <BText style={[styles.extraText, { color: '#1E40AF' }]}>{todayLog.extraSport}{todayLog.extraMinutes ? ` · ${todayLog.extraMinutes} min` : ''}</BText>
- <TouchableOpacity onPress={() => setWorkoutLog(prev => { const u = { ...prev }; delete u[todayKey]; return u; })}>
- <BText style={styles.extraRemove}>×</BText>
- </TouchableOpacity>
- </View>
- ) : addingSport ? (
- <ExtraSportPicker lang={lang} g={g}
- onPick={(label, minutes) => {
- saveLog({ status: 'extra', extraSport: label, extraMinutes: minutes || null });
- setAddingSport(false);
- }} onClose={() => setAddingSport(false)} />
- ) : (
- <TouchableOpacity style={styles.dashedBtn} onPress={() => setAddingSport(true)}>
- <BText style={styles.dashedBtnText}>{g.addSpontaneous}</BText>
- </TouchableOpacity>
- )}
+ <View style={styles.extraSportCard}>
+  <View style={styles.extraSportHeader}>
+   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+    <BookOpen size={16} color="#0A1823" />
+    <BText style={styles.extraSportHeaderTxt}>{lang === 'en' ? 'Log' : lang === 'fr' ? 'Journal' : lang === 'it' ? 'Registro' : 'Registro'}</BText>
+   </View>
+   <ChevronRight size={16} color="#0A1823" />
+  </View>
+  {addingSport ? (
+   <ExtraSportPicker lang={lang} g={g}
+    onPick={(label, minutes) => {
+     saveLog({ status: 'extra', extraSport: label, extraMinutes: minutes || null });
+     setAddingSport(false);
+    }} onClose={() => setAddingSport(false)} />
+  ) : (
+   <View style={{ gap: 16 }}>
+    <View style={{ gap: 4 }}>
+     <BText style={styles.extraSportTitle}>{g.addExtra}</BText>
+     {todayLog?.extraSport ? (
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+       <BText style={styles.extraSportSub}>{todayLog.extraSport}{todayLog.extraMinutes ? ` · ${todayLog.extraMinutes} min` : ''}</BText>
+       <TouchableOpacity onPress={() => setWorkoutLog(prev => { const u = { ...prev }; delete u[todayKey]; return u; })}>
+        <BText style={{ color: '#0A1823', fontFamily: F.body, fontSize: 18 }}>×</BText>
+       </TouchableOpacity>
+      </View>
+     ) : (
+      <BText style={styles.extraSportSub}>{lang === 'en' ? 'Log any extra activity you did today outside your plan.' : lang === 'fr' ? 'Note toute activité extra que tu as faite aujourd\'hui hors de ton plan.' : lang === 'it' ? 'Registra qualsiasi attività extra che hai fatto oggi fuori dal piano.' : 'Registra cualquier actividad extra que hayas hecho hoy fuera de tu plan.'}</BText>
+     )}
+    </View>
+    {!todayLog?.extraSport && (
+     <TouchableOpacity style={styles.extraSportBtn} onPress={() => setAddingSport(true)}>
+      <BText style={styles.extraSportBtnTxt}>{lang === 'en' ? 'Add activity' : lang === 'fr' ? 'Ajouter activité' : lang === 'it' ? 'Aggiungi attività' : 'Añadir actividad'}</BText>
+     </TouchableOpacity>
+    )}
+   </View>
+  )}
  </View>
  </>}
 
@@ -1230,6 +1246,13 @@ const styles = StyleSheet.create({
  addBtnText: { color: 'white', fontFamily: F.bodyB, fontSize: 13 },
  dashedBtn: { padding: 10, borderRadius: 12, borderWidth: 1, borderColor: '#E5E5E5', alignItems: 'center', backgroundColor: 'white' },
  dashedBtnText: { fontSize: 13, color: '#525252', fontFamily: F.body },
+ extraSportCard: { backgroundColor: '#429FE7', borderRadius: 24, padding: 16, gap: 24 },
+ extraSportHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+ extraSportHeaderTxt: { fontSize: 12, fontFamily: F.body, color: '#0A1823', lineHeight: 15.6 },
+ extraSportTitle: { fontSize: 32, fontFamily: F.heading, color: '#0A1823', lineHeight: 35.2 },
+ extraSportSub: { fontSize: 14, fontFamily: F.body, color: '#0A1823', lineHeight: 19.6 },
+ extraSportBtn: { height: 48, backgroundColor: '#0A0A0A', borderRadius: 12, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 16 },
+ extraSportBtnTxt: { fontSize: 18, fontFamily: F.body, color: '#FAFAFA', lineHeight: 24 },
  restTitle: { fontSize: 16, fontFamily: F.bodyB, color: '#0A0A0A', marginBottom: 8 },
  restSub: { fontSize: 13, color: '#525252', lineHeight: 20, textAlign: 'center', fontFamily: F.body },
 
