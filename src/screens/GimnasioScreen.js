@@ -432,8 +432,11 @@ export default function GimnasioScreen({
  <SwipeableTabs tabs={['hoy', 'salud']} current={sub} onChange={setSub}>
  <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
- <GymSetupCard lang={lang} trainDays={trainDays} setTrainDays={setTrainDays}
- profileExtended={profileExtended} saveProfileExtended={saveProfileExtended || (() => {})} />
+ <View style={{ height: 0, overflow: 'hidden' }}>
+  <GymSetupCard lang={lang} trainDays={trainDays} setTrainDays={setTrainDays}
+   profileExtended={profileExtended} saveProfileExtended={saveProfileExtended || (() => {})}
+   openModalRef={gymOpenRef} />
+ </View>
 
  {/* ── Tab bar ── */}
  <View style={styles.tabRow}>
@@ -776,7 +779,7 @@ export default function GimnasioScreen({
  );
  })}
  </View>
- <TouchableOpacity style={styles.planExercEditBtn}>
+ <TouchableOpacity style={styles.planExercEditBtn} onPress={() => gymOpenRef.current?.()}>
  <BText style={styles.planExercEditTxt}>
  {lang === 'en' ? 'Edit plan' : lang === 'fr' ? 'Modifier le plan' : 'Editar plan'}
  </BText>
@@ -1126,10 +1129,10 @@ const styles = StyleSheet.create({
  // weekly strip (mini calendar) — pestaña Hoy
  weekStripCard: { backgroundColor: '#F5F5F5', borderRadius: 32, padding: 16, marginBottom: 2, gap: 24 },
  weekNavAzote: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
- weekNavLabelAzote: { fontSize: 14, color: '#0A0A0A', fontFamily: F.body },
- weekStripRow: { flexDirection: 'row', gap: 4 },
+ weekNavLabelAzote: { fontSize: 16, color: '#0A0A0A', fontFamily: F.body,lineHeight: 20.8 },
+ weekStripRow: { flexDirection: 'row', gap: 4, flexWrap: 'wrap'  },
  weekStripCell: { flex: 1, paddingVertical: 8, borderRadius: 4, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center', gap: 2 },
- weekStripLabel: { fontSize: 9, color: '#737373', fontFamily: F.body, textTransform: 'uppercase' },
+ weekStripLabel: { fontSize: 10, color: '#737373', fontFamily: F.body, textTransform: 'uppercase' },
  weekStripLabelToday: { color: 'rgba(255,255,255,0.7)' },
  weekStripCellToday: { backgroundColor: '#171717' },
  weekStripCellExpanded: { borderWidth: 2, borderColor: '#171717' },
