@@ -17,9 +17,10 @@ const TXT = {
  ciclo: { es: 'Ciclo', en: 'Cycle', fr: 'Cycle', it: 'Ciclo' },
  agua: { es: 'Agua', en: 'Water', fr: 'Eau', it: 'Acqua' },
  ejercicio:{ es: 'Ejercicio', en: 'Exercise', fr: 'Exercice', it: 'Esercizio' },
+ widgets: { es: 'Personalizar inicio', en: 'Customize home', fr: 'Personnaliser', it: 'Personalizza' },
 };
 
-export default function FloatingTabBar({ state, descriptors, navigation, enabledTabs, onToggleTab, lang = 'es' }) {
+export default function FloatingTabBar({ state, descriptors, navigation, enabledTabs, onToggleTab, lang = 'es', onOpenWidgets }) {
  const insets = useSafeAreaInsets();
  const [pickerOpen, setPickerOpen] = useState(false);
  const tr = (key) => (TXT[key]?.[lang] || TXT[key]?.es || key);
@@ -89,13 +90,15 @@ export default function FloatingTabBar({ state, descriptors, navigation, enabled
  {[
  { key: 'ciclo', Icon: Flower, bg: '#22C55E', screen: 'Ciclo' },
  { key: 'agua', Icon: Droplets, bg: '#FE6004', screen: null },
- { key: 'ejercicio', Icon: SportShoe,bg: '#429FE7', screen: 'Gimnasio' },
+ { key: 'ejercicio', Icon: SportShoe, bg: '#429FE7', screen: 'Gimnasio' },
+ ...(onOpenWidgets ? [{ key: 'widgets', Icon: Home, bg: '#A157C9', screen: null, onPress: onOpenWidgets }] : []),
  ].map((item, idx, arr) => (
  <TouchableOpacity
  key={item.key}
  style={[styles.actionRow, idx < arr.length - 1 && styles.actionRowBorder]}
  onPress={() => {
  setPickerOpen(false);
+ if (item.onPress) { item.onPress(); return; }
  if (item.screen) navigation.navigate(item.screen);
  }}
  >

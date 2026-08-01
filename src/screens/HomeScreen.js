@@ -91,7 +91,7 @@ function useHomeWidgets() {
  return { widgets, toggle, loaded };
 }
 
-export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCycleDay, logRecipeDone, todayMenu }) {
+export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCycleDay, logRecipeDone, todayMenu, openWidgetsRef }) {
  useEffect(() => { trackScreen('Home', { phase: pi?.phase }); }, []);
  const { phaseData } = usePhaseData(pi?.phase, lang);
  const baseD = phaseData;
@@ -162,6 +162,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
 
  const { widgets, toggle } = useHomeWidgets();
  const [showCustomize, setShowCustomize] = useState(false);
+ useEffect(() => { if (openWidgetsRef) openWidgetsRef.current = () => setShowCustomize(true); }, []);
  const [editMode, setEditMode] = useState(false);
  const [trackingOpen, setTrackingOpen] = useState(false);
 

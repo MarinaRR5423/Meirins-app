@@ -131,6 +131,7 @@ function App() {
   const [setupUnits, setSetupUnits] = React.useState(getDeviceUnitSystem);
   const [isOffline, setIsOffline] = useState(false);
   const [cachedPhase, setCachedPhase] = useState(null);
+  const openHomeWidgetsRef = useRef(null);
 
   // Analytics init (no-op si no está configurado)
   useEffect(() => { initAnalytics(); }, []);
@@ -257,10 +258,10 @@ function App() {
           freezeOnBlur: true,
         }}
         tabBar={(props) => (
-          <FloatingTabBar {...props} enabledTabs={enabledTabs} onToggleTab={handleToggleTab} lang={lang} />
+          <FloatingTabBar {...props} enabledTabs={enabledTabs} onToggleTab={handleToggleTab} lang={lang} onOpenWidgets={() => openHomeWidgetsRef.current?.()} />
         )}>
         <Tab.Screen name="Inicio" options={{ tabBarLabel: tabs.home, tabBarIcon: ({ color, size }) => <Home color={color} size={size} /> }}>
-          {() => <HomeScreen lang={lang} pi={pi} healthData={healthData} logCycleDay={profile.logCycleDay} logRecipeDone={profile.logRecipeDone} todayMenu={todayMenu} profile={{
+          {() => <HomeScreen lang={lang} pi={pi} healthData={healthData} logCycleDay={profile.logCycleDay} logRecipeDone={profile.logRecipeDone} todayMenu={todayMenu} openWidgetsRef={openHomeWidgetsRef} profile={{
             age: profile.age, weight: profile.weight, height: profile.height,
             activityLevel: profile.activityLevel, goal: profile.goal,
             trainDays: profile.trainDays,
