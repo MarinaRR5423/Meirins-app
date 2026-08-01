@@ -36,6 +36,7 @@ import ErrorBoundary from './src/components/ErrorBoundary';
 import FloatingTabBar from './src/components/FloatingTabBar';
 import { initAnalytics, wrapWithSentry, trackEvent, identifyUser, setPostHogClient, Events } from './src/lib/analytics';
 import { Audio } from 'expo-av';
+import { useTodayMenu } from './src/hooks/useTodayMenu';
 
 // Conector entre el contexto de PostHog y nuestro módulo analytics.js
 function PostHogBridge() {
@@ -209,6 +210,17 @@ function App() {
   const tabs = (T[lang] || T.es).tabs;
   const { periodEnd, sleepLog } = profile;
   const pi = lastPeriod ? getPhaseInfo(lastPeriod, cycleLength, periodEnd) : null;
+  const { todayMenu } = useTodayMenu({
+    phase: pi?.phase,
+    lang,
+    profileExtended: profile.profileExtended,
+    goal: profile.goal,
+    activityLevel: profile.activityLevel,
+    weight: profile.weight,
+    height: profile.height,
+    age: profile.age,
+    trainDays: profile.trainDays,
+  });
   const enabledTabs = profile.profileExtended?.enabledTabs;
   const handleToggleTab = (key, value) =>
     profile.saveProfileExtended({ enabledTabs: { ...(profile.profileExtended?.enabledTabs || {}), [key]: value } });
@@ -248,7 +260,7 @@ function App() {
           <FloatingTabBar {...props} enabledTabs={enabledTabs} onToggleTab={handleToggleTab} lang={lang} />
         )}>
         <Tab.Screen name="Inicio" options={{ tabBarLabel: tabs.home, tabBarIcon: ({ color, size }) => <Home color={color} size={size} /> }}>
-          {() => <HomeScreen lang={lang} pi={pi} healthData={healthData} logCycleDay={profile.logCycleDay} logRecipeDone={profile.logRecipeDone} profile={{
+          {() => <HomeScreen lang={lang} pi={pi} healthData={healthData} logCycleDay={profile.logCycleDay} logRecipeDone={profile.logRecipeDone} todayMenu={todayMenu} profile={{
             age: profile.age, weight: profile.weight, height: profile.height,
             activityLevel: profile.activityLevel, goal: profile.goal,
             trainDays: profile.trainDays,

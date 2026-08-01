@@ -91,7 +91,7 @@ function useHomeWidgets() {
  return { widgets, toggle, loaded };
 }
 
-export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCycleDay, logRecipeDone }) {
+export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCycleDay, logRecipeDone, todayMenu }) {
  useEffect(() => { trackScreen('Home', { phase: pi?.phase }); }, []);
  const { phaseData } = usePhaseData(pi?.phase, lang);
  const baseD = phaseData;
@@ -103,6 +103,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
 
  const { workouts: dbWorkouts } = useWorkouts();
  const ext = profile?.profileExtended || {};
+
  const jsDay = new Date().getDay();
 
  const todayKeyH = new Date().toISOString().split('T')[0];
@@ -248,9 +249,10 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  const todayCycleKey = new Date().toISOString().split('T')[0];
  const hasCycleLogToday = !!ext.cycleLog?.[todayCycleKey];
 
- // Estado de "comido" de la siguiente comida sugerida — avanza a la primera no comida
+ // Estado de "comido" de la siguiente comida sugerida — usa el mismo menú que NutriScreen
  const todayActivity = ext.activityLog?.[todayKeyH];
- const nextMeal = d?.meals?.find(meal => todayActivity?.recipes?.[meal.id] !== 'done') ?? d?.meals?.[0];
+ const menuMeals = todayMenu?.meals || [];
+ const nextMeal = menuMeals.find(meal => meal.title && todayActivity?.recipes?.[meal.id] !== 'done') ?? menuMeals.find(m => m.title) ?? null;
  const nextMealType = nextMeal?.id;
  const nextMealDone = !!(nextMealType && todayActivity?.recipes?.[nextMealType] === 'done');
 
@@ -346,7 +348,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
   </View>
   {(() => {
    const wName = todaySession?.name ?? (lang === 'en' ? 'Rest' : lang === 'fr' ? 'Repos' : 'Descanso');
-   const wFs = wName.length > 14 ? 24 : wName.length > 9 ? 32 : 48;
+   const wFs = wName.length > 14 ? 24 : wName.length > 6 ? 32 : 48;
    return <BText style={[styles.miniBigNum, { fontSize: wFs, color: '#429FE7', lineHeight: wFs * 1.1 }]} numberOfLines={2}>{wName}</BText>;
   })()}
   {todaySession?.dur ? <BText style={styles.miniSub}>{todaySession.dur}</BText> : null}
@@ -617,7 +619,7 @@ const styles = StyleSheet.create({
  // Kcal labels
  kcalBarLabel: { fontSize: 12, color: '#FE6004', fontFamily: F.body, textTransform: 'uppercase', lineHeight: 15.6 },
  kcalTrack: { height: 6, borderRadius: 3, backgroundColor: '#E5E5E5', flexDirection: 'row', overflow: 'hidden' },
- kcalFill: { backgroundColor: '#FE6004', borderRadius: 3 },
+ kcalFill: { backgroundColor: '#FE6004', borderRadius: 3, height: 6 },
 
  // Entreno intensity tag
  intensityTag: { backgroundColor: '#429FE7', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2, alignSelf: 'flex-start' },
