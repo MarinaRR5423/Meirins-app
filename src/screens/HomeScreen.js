@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
  doneBadgeTxt: { color: 'white', fontSize: 13, fontFamily: F.bodyB },
 
  // Hero
- heroCard: { height: 240, borderRadius: 24, padding: 16, justifyContent: 'space-between', marginTop: 8, marginBottom: 2, overflow: 'hidden' },
+ heroCard: { height: 200, borderRadius: 24, padding: 16, justifyContent: 'space-between', marginTop: 8, marginBottom: 2, overflow: 'hidden' },
  heroCardImg: { borderRadius: 24 },
  heroHeadline: { fontSize: 28, color: '#0A0A0A', lineHeight: 32.2, fontFamily: F.heading },
  heroTags: { flexDirection: 'row', flexWrap: 'wrap', gap: 2 },
