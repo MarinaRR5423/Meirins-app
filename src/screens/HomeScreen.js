@@ -315,8 +315,8 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
    const wFs = wName.length > 14 ? 24 : wName.length > 6 ? 32 : 48;
    return <BText style={[styles.miniBigNum, { fontSize: wFs, color: '#429FE7', lineHeight: wFs * 1.1 }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5}>{wName}</BText>;
   })() : (
-   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <BText style={[styles.miniBigNum, { fontSize: 32, color: '#429FE7', lineHeight: 35.2, textAlign: 'center' }]}>
+   <View style={{ ...StyleSheet.absoluteFillObject, justifyContent: 'center', alignItems: 'center' }}>
+    <BText style={[styles.miniBigNum, { fontSize: 32, color: '#429FE7', lineHeight: 38, textAlign: 'center' }]}>
      {lang === 'en' ? 'Rest' : lang === 'fr' ? 'Repos' : lang === 'it' ? 'Riposo' : 'Descanso'}
     </BText>
    </View>

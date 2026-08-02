@@ -548,7 +548,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  const remaining = Math.max(0, cals.total - consumedKcal);
  const pct = Math.min(1, consumedKcal / cals.total);
  const over = consumedKcal > cals.total;
- const barColor = over ? '#DC2626' : pct > 0.85 ? '#FE6004' : '#49CF38';
+ const barColor = over ? '#DC2626' : '#FE6004';
  const lbl = { es: ['Consumidas', 'Restantes', 'Superado en'],
  en: ['Consumed', 'Remaining', 'Over by'],
  fr: ['Consommées', 'Restantes', 'Dépassé de'],
@@ -736,6 +736,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  ))}
  </View>
 
+ {profileExtended?.batchCooking ? (
  <View style={styles.planNutriDays}>
  {['A', 'B', 'free'].map(key => (
  <View key={key} style={styles.planNutriDayRow}>
@@ -749,6 +750,9 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  </View>
  ))}
  </View>
+ ) : dietData?.description ? (
+ <BText style={styles.planNutriDesc}>{dietData.description[lang] || dietData.description.es || dietData.description}</BText>
+ ) : null}
 
  <TouchableOpacity style={styles.planNutriEditBtn} onPress={() => nutriOpenRef.current?.()}>
  <BText style={styles.planNutriEditTxt}>{editLabel}</BText>
@@ -1175,6 +1179,7 @@ const styles = StyleSheet.create({
  planNutriAvatarTxt: { fontSize: 24, fontFamily: F.headingX, color: '#260E01' },
  planNutriDayLabel: { fontSize: 18, fontFamily: F.headingX, color: '#260E01' },
  planNutriDayTag: { fontSize: 14, color: '#9E3C02', marginTop: 1, fontFamily: F.body },
+ planNutriDesc: { fontSize: 14, fontFamily: F.body, color: '#260E01', lineHeight: 20, opacity: 0.85 },
  planNutriEditBtn: { backgroundColor: 'white', borderRadius: 12, height: 48, alignItems: 'center', justifyContent: 'center' },
  planNutriEditTxt: { fontSize: 18, fontFamily: F.body, color: '#0A0A0A' },
  dayTypeRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10, borderRadius: 12, marginBottom: 6 },

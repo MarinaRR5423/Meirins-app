@@ -7,7 +7,7 @@ import { TouchableOpacity as GHTouchable } from 'react-native-gesture-handler';
 import T, { getDayLabels } from '../i18n/translations';
 import { GymSetupCard, SPORTS_LIST } from '../components/TabSetupCard';
 import ProgramsCard from '../components/ProgramsCard';
-import { getActiveProgramState, getProgramDays, programSessionToCard } from '../data/trainingPrograms';
+import { getActiveProgramState, getProgramDays, programSessionToCard, getSession, sessionMinutes, LEVEL_LABEL } from '../data/trainingPrograms';
 import { DAY_SHORT, DAY_LABELS, jsToIdx } from '../data/phases';
 import {
  getSessionType,
@@ -785,20 +785,40 @@ export default function GimnasioScreen({
   </View>
  )}
  <View style={styles.planExercDays}>
- {g.programRows.map((row, i) => {
- const letter = i === 0 ? 'A' : i === 1 ? 'B' : 'C';
- return (
- <View key={i} style={styles.planExercRow}>
- <View style={styles.planExercAvatar}>
- <BText style={styles.planExercAvatarTxt}>{letter}</BText>
- </View>
- <View style={{ flex: 1 }}>
- <BText style={styles.planExercLabel}>{row.label}</BText>
- <BText style={styles.planExercDetail}>{row.detail}</BText>
- </View>
- </View>
- );
- })}
+ {(() => {
+   const letters = ['A', 'B', 'C'];
+   const restLabel = { es: 'Descanso', en: 'Rest', fr: 'Repos', it: 'Riposo' }[lang] || 'Descanso';
+   const restDetail = { es: 'Recuperación activa', en: 'Active recovery', fr: 'Récupération active', it: 'Recupero attivo' }[lang] || 'Recuperación activa';
+   if (progState) {
+     // Rows dinámicos: una fila por sesión/semana del programa + fila descanso
+     const prog = progState.program;
+     const firstWeek = prog.weeks[0];
+     const sessions = firstWeek.list || Array(prog.spw).fill(firstWeek.all);
+     const dynRows = sessions.slice(0, 3).map((spec, i) => ({
+       label: `${prog.emoji} ${lang === 'en' ? 'Session' : lang === 'fr' ? 'Séance' : lang === 'it' ? 'Sessione' : 'Sesión'} ${i + 1}`,
+       detail: `${sessionMinutes(spec)}'`,
+     }));
+     if (dynRows.length < 3) dynRows.push({ label: restLabel, detail: restDetail });
+     return dynRows.map((row, i) => (
+       <View key={i} style={styles.planExercRow}>
+         <View style={styles.planExercAvatar}><BText style={styles.planExercAvatarTxt}>{letters[i] || '+'}</BText></View>
+         <View style={{ flex: 1 }}>
+           <BText style={styles.planExercLabel}>{row.label}</BText>
+           <BText style={styles.planExercDetail}>{row.detail}</BText>
+         </View>
+       </View>
+     ));
+   }
+   return g.programRows.map((row, i) => (
+     <View key={i} style={styles.planExercRow}>
+       <View style={styles.planExercAvatar}><BText style={styles.planExercAvatarTxt}>{letters[i]}</BText></View>
+       <View style={{ flex: 1 }}>
+         <BText style={styles.planExercLabel}>{row.label}</BText>
+         <BText style={styles.planExercDetail}>{row.detail}</BText>
+       </View>
+     </View>
+   ));
+ })()}
  </View>
  <TouchableOpacity style={styles.planExercEditBtn} onPress={() => gymOpenRef.current?.()}>
  <BText style={styles.planExercEditTxt}>
