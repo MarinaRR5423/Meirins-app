@@ -18,6 +18,7 @@ import { trackScreen } from '../lib/analytics';
 import WaterCard from '../components/WaterCard';
 import CycleTrackingModal from '../components/CycleTrackingModal';
 import BText from '../components/BText';
+import { useFoodLog } from '../hooks/useFoodLog';
 
 const BLUE = { primary: '#429FE7', light: '#EFF6FF', mid: 'rgba(26,86,219,0.10)' };
 
@@ -72,6 +73,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  const jsDay = new Date().getDay();
 
  const todayKeyH = new Date().toISOString().split('T')[0];
+ const { logRecipe: logFoodRecipe } = useFoodLog(todayKeyH);
  const skippedBlkH = ext.skippedTodayWorkout || {};
  const skippedIdsH = skippedBlkH.date === todayKeyH ? (skippedBlkH.ids || []) : [];
 
@@ -290,7 +292,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
    </View>
    <View style={{ paddingBottom: 4, gap: 4 }}>
     <View style={styles.kcalTrack}>
-     <View style={[styles.kcalFill, { width: `${Math.min(100, kcalPct)}%` }]} />
+     <View style={[styles.kcalFill, { width: `${Math.min(100, kcalPct * 100)}%` }]} />
     </View>
     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
      <BText style={styles.kcalBarLabel}>0</BText>
@@ -358,7 +360,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
   {logRecipeDone && nextMealType ? (
   <TouchableOpacity
   style={[styles.mealBtn, nextMealDone && styles.mealBtnDone]}
-  onPress={() => !nextMealDone && logRecipeDone(nextMealType, 'done')}
+  onPress={() => { if (!nextMealDone) { logRecipeDone(nextMealType, 'done'); logFoodRecipe(nextMeal); } }}
   activeOpacity={0.85}
   disabled={nextMealDone}
   >
