@@ -747,12 +747,12 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
    const batchDays = profileExtended?.batchCookingDays || [];
    const allDays = [0, 1, 2, 3, 4, 5, 6];
    const otherDays = allDays.filter(d => !batchDays.includes(d));
-   const cookLabel  = { es: 'Días de cocina', en: 'Cooking days', fr: 'Jours de cuisine', it: 'Giorni di cucina' }[lang] || 'Días de cocina';
-   const eatLabel   = { es: 'Días de consumo', en: 'Eating days', fr: 'Jours de repas', it: 'Giorni di consumo' }[lang] || 'Días de consumo';
+   const menuALabel = { es: 'Menú A', en: 'Menu A', fr: 'Menu A', it: 'Menu A' }[lang] || 'Menú A';
+   const menuBLabel = { es: 'Menú B', en: 'Menu B', fr: 'Menu B', it: 'Menu B' }[lang] || 'Menú B';
    const meals = todayMenu?.meals || [];
    const rows = [
-     { key: 'A', letter: 'A', label: cookLabel,  days: batchDays },
-     { key: 'B', letter: 'B', label: eatLabel,   days: otherDays },
+     { key: 'A', letter: 'A', label: menuALabel, days: batchDays },
+     { key: 'B', letter: 'B', label: menuBLabel, days: otherDays },
    ].filter(r => r.days.length > 0);
    return (
      <View style={styles.planNutriDays}>
