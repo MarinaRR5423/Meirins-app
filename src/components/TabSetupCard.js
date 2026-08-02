@@ -435,6 +435,7 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
   const [localCooking, setCooking]      = useState(profileExtended?.cookingTime     || '');
   const [localBudget, setBudget]        = useState(profileExtended?.weeklyBudget    || '');
   const [localBatch, setBatch]          = useState(!!profileExtended?.batchCooking);
+  const [localBatchDays, setBatchDays]  = useState(profileExtended?.batchCookingDays || []);
   const [localSupps, setSupps]          = useState(profileExtended?.supplements     || []);
   const [localSuppsOther, setSuppsOther]= useState(profileExtended?.supplementsOther|| '');
   const [saving, setSaving]             = useState(false);
@@ -456,6 +457,7 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
       cookingTime: localCooking,
       weeklyBudget: localBudget,
       batchCooking: localBatch,
+      batchCookingDays: localBatch ? localBatchDays : [],
       supplements: localSupps,
       supplementsOther: localSupps.includes('other') ? localSuppsOther.trim() : '',
     });
@@ -486,6 +488,7 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
     setCooking(cur.cookingTime || '');
     setBudget(cur.weeklyBudget || '');
     setBatch(!!cur.batchCooking);
+    setBatchDays(cur.batchCookingDays || []);
     setSupps(cur.supplements || []);
     setSuppsOther(cur.supplementsOther || '');
     setOpen(true);
@@ -695,6 +698,42 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
           <OptionCard variant="azote" label={lang === 'en' ? 'Yes' : lang === 'fr' ? 'Oui' : 'Sí'} selected={localBatch} onPress={() => setBatch(true)} />
           <OptionCard variant="azote" label={lang === 'en' ? 'No' : lang === 'fr' ? 'Non' : 'No'} selected={!localBatch} onPress={() => setBatch(false)} />
         </View>
+
+        {localBatch && (() => {
+          const dayNames = {
+            es: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+            en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            fr: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+            it: ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'],
+          }[lang] || ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+          const toggleBatchDay = (d) =>
+            setBatchDays(localBatchDays.includes(d)
+              ? localBatchDays.filter(x => x !== d)
+              : [...localBatchDays, d]);
+          return (
+            <View style={{ marginTop: 12, gap: 8 }}>
+              <Text style={[s.secSub, { color: '#737373' }]}>
+                {lang === 'en' ? 'Which days do you cook in batch?'
+                 : lang === 'fr' ? 'Quels jours fais-tu du batch cooking ?'
+                 : lang === 'it' ? 'In quali giorni fai batch cooking?'
+                 : '¿Qué días cocinas por lotes?'}
+              </Text>
+              <View style={{ flexDirection: 'row', gap: 6, flexWrap: 'wrap' }}>
+                {dayNames.map((name, i) => {
+                  const sel = localBatchDays.includes(i);
+                  return (
+                    <TouchableOpacity
+                      key={i}
+                      onPress={() => toggleBatchDay(i)}
+                      style={[s.batchDayBtn, sel && s.batchDayBtnActive]}>
+                      <Text style={[s.batchDayTxt, sel && s.batchDayTxtActive]}>{name}</Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+          );
+        })()}
 
         {/* ── COMPLEMENTOS ALIMENTARIOS ── */}
         <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
@@ -1257,6 +1296,10 @@ const s = StyleSheet.create({
   chipAzoteLabelActive: { color: 'white', fontFamily: F.body },
   saveBtnAzote:    { marginTop: 28, height: 48, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center' },
   saveBtnAzoteTxt: { color: '#FAFAFA', fontFamily: F.body, fontSize: 18 },
+  batchDayBtn:       { width: 44, height: 44, borderRadius: 12, backgroundColor: '#F5F5F5', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'transparent' },
+  batchDayBtnActive: { backgroundColor: '#171717', borderColor: '#171717' },
+  batchDayTxt:       { fontSize: 13, fontFamily: F.bodyB, color: '#737373' },
+  batchDayTxtActive: { color: 'white' },
   programRow:       { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#FAFAFA', borderRadius: 16, padding: 14, borderWidth: 1, borderColor: 'transparent' },
   programRowActive: { backgroundColor: '#FFF5F0', borderColor: '#FE6004' },
   programName:      { fontSize: 14, fontFamily: F.bodyB, color: '#171717', lineHeight: 18.2 },
