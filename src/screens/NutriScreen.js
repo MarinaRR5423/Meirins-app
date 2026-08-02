@@ -561,7 +561,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  </View>
  <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 }}>
  <View style={styles.calStat}>
- <BText style={[styles.calStatNum, { color: barColor }]}>{consumedKcal}</BText>
+ <BText style={[styles.calStatNum, { color: '#FE6004' }]}>{consumedKcal}</BText>
  <BText style={styles.calStatLbl}>{lbl[0]}</BText>
  </View>
  <View style={styles.calDivider} />
