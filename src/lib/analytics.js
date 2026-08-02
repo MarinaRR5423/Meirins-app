@@ -105,4 +105,7 @@ export const Events = {
 
  ACCOUNT_DELETED: 'account_deleted',
  USER_SIGNED_OUT: 'user_signed_out',
+
+ PROGRAM_SELECTOR_OPENED: 'program_selector_opened',
+ PROGRAM_SELECTED: 'program_selected',
 };

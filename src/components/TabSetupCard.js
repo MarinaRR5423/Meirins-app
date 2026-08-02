@@ -16,6 +16,7 @@ import TrainerCard from './TrainerCard';
 import { useDiets, DIET_CATEGORIES, normalizeDietId } from '../hooks/useDiets';
 import { PROGRAMS, totalSessions, LEVEL_LABEL, isRecommended } from '../data/trainingPrograms';
 import { ALL_MEALS, MEAL_LABELS, getActiveMeals } from '../utils/fastingMeals';
+import { trackEvent, Events } from '../lib/analytics';
 
 // ── Catálogos compartidos para CicloSetupCard y CicloHealthCard ────────────────
 const LIFE_STAGES_NEW = [
@@ -877,6 +878,15 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
       newSportDetail: wantNewSport === 'yes' ? newSportDetail.trim() : '',
     };
     const chosenProg = selectedProgram ? PROGRAMS.find(pr => pr.id === selectedProgram) : null;
+    if (chosenProg) {
+      trackEvent(Events.PROGRAM_SELECTED, {
+        program_id: chosenProg.id,
+        level: chosenProg.level,
+        weeks: chosenProg.weeks?.length || 0,
+        was_recommended: isRecommended(chosenProg, localFitness, profileExtended?.lifeStage),
+        is_change: !!(profileExtended?.activeProgram?.id && profileExtended.activeProgram.id !== chosenProg.id),
+      });
+    }
     await saveProfileExtended({
       fitnessLevel: localFitness, gymAccess: localGym, sportProfile, gymSetupDone: true,
       goals: { ...(profileExtended?.goals || {}), sport: sportGoal },
@@ -912,6 +922,7 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
     setWantNewSport(curSp.wantNewSport || '');
     setNewSportDetail(curSp.newSportDetail || '');
     setSelectedProgram(cur.activeProgram?.id || '');
+    trackEvent(Events.PROGRAM_SELECTOR_OPENED);
     setOpen(true);
   };
 
