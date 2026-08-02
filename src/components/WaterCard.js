@@ -44,7 +44,7 @@ export default function WaterCard({ lang }) {
  <View style={{ flex: 1, justifyContent: 'space-between' }}>
  <View>
  <BText style={s.mlValue}>{ml}ml</BText>
- <BText style={s.mlSubLabel}>{done ? w.done : `${remaining} ${w.ml} restantes`}</BText>
+ <BText style={s.mlSubLabel}>{done ? w.done : `${remaining} ${w.ml} ${w.remaining || 'restantes'}`}</BText>
 
  <View style={s.barBg}>
  <View style={[s.barFill, { width: `${pct * 100}%` }]} />
@@ -61,7 +61,7 @@ export default function WaterCard({ lang }) {
  disabled={done}
  activeOpacity={0.8}
  >
- <BText style={s.addBtnTxt}>{done ? '' : (w.addGlass || 'Añadir vaso')}</BText>
+ <BText style={s.addBtnTxt}>{done ? '' : w.addGlass}</BText>
  </TouchableOpacity>
  </View>
  </View>

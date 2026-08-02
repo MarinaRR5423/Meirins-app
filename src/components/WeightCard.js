@@ -60,7 +60,7 @@ export default function WeightCard({ lang = 'es', weight, height, goal, profileE
  const tgt = profileExtended?.targetWeight ? +profileExtended.targetWeight : null;
  const currW = weightLog.length > 0 ? weightLog[0].weight : weight;
 
- const tr = (es, en) => ({ es, en }[lang] || es);
+ const tr = (es, en, fr, it) => ({ es, en, fr: fr||en, it: it||en }[lang] || es);
 
  // 7-day dot chart data
  const last7 = Array.from({ length: 7 }, (_, i) => {
@@ -80,7 +80,7 @@ export default function WeightCard({ lang = 'es', weight, height, goal, profileE
    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
      <Scale size={16} color="#A157C9" />
-     <BText style={s.sectionLabel}>{tr('Objetivo', 'Goal')}</BText>
+     <BText style={s.sectionLabel}>{tr('Objetivo', 'Goal', 'Objectif', 'Obiettivo')}</BText>
     </View>
     <ChevronRight size={16} color="#737373" />
    </View>
@@ -104,7 +104,7 @@ export default function WeightCard({ lang = 'es', weight, height, goal, profileE
 
    {/* Current weight big */}
    <View>
-    <BText style={s.weightLabel}>{tr('Peso', 'Weight')}</BText>
+    <BText style={s.weightLabel}>{tr('Peso', 'Weight', 'Poids', 'Peso')}</BText>
     <BText style={s.weightValue}>{currW ? `${currW} kg` : '— kg'}</BText>
    </View>
 
@@ -120,7 +120,7 @@ export default function WeightCard({ lang = 'es', weight, height, goal, profileE
     )}
     {!!tgt && (
      <View style={s.dataRow}>
-      <BText style={s.dataRowLabel}>{tr('Peso objetivo', 'Target')}</BText>
+      <BText style={s.dataRowLabel}>{tr('Peso objetivo', 'Target', 'Objectif poids', 'Peso obiettivo')}</BText>
       <View style={s.chipPurple}>
        <BText style={s.chipPurpleTxt}>{tgt} kg</BText>
       </View>
@@ -128,7 +128,7 @@ export default function WeightCard({ lang = 'es', weight, height, goal, profileE
     )}
     {localObjetivos.length > 0 && (
      <View style={s.dataRow}>
-      <BText style={s.dataRowLabel}>{tr('Buscas', 'Goals')}</BText>
+      <BText style={s.dataRowLabel}>{tr('Buscas', 'Goals', 'Objectifs', 'Obiettivi')}</BText>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4, flex: 1, justifyContent: 'flex-end' }}>
        {localObjetivos.map(id => {
         const opt = OBJETIVO_OPTS.find(o => o.id === id);
@@ -146,7 +146,7 @@ export default function WeightCard({ lang = 'es', weight, height, goal, profileE
 
    {/* Objetivos seleccionables */}
    <View style={{ gap: 6 }}>
-    <BText style={s.objetivosTitle}>{tr('¿Qué buscas?', 'What are you looking for?')}</BText>
+    <BText style={s.objetivosTitle}>{tr('¿Qué buscas?', 'What are you looking for?', 'Que recherches-tu ?', 'Cosa cerchi?')}</BText>
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
      {OBJETIVO_OPTS.map(opt => {
       const sel = localObjetivos.includes(opt.id);
@@ -164,7 +164,7 @@ export default function WeightCard({ lang = 'es', weight, height, goal, profileE
 
    {/* Stepper peso hoy */}
    <View style={s.stepperRow}>
-    <BText style={s.stepperLabel}>{tr('Peso hoy', "Today's weight")}</BText>
+    <BText style={s.stepperLabel}>{tr('Peso hoy', "Today's weight", "Poids aujourd'hui", 'Peso oggi')}</BText>
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
      <TouchableOpacity style={s.stepperBtn} onPress={() => changeW(-0.1)}>
       <BText style={s.stepperBtnTxt}>−</BText>
@@ -182,7 +182,7 @@ export default function WeightCard({ lang = 'es', weight, height, goal, profileE
    {!tgt && !editTarget && (
     <TouchableOpacity onPress={() => setEditTarget(true)}>
      <BText style={s.setTargetLink}>
-      {tr('Establecer peso objetivo', 'Set target weight')}
+      {tr('Establecer peso objetivo', 'Set target weight', 'Définir mon poids cible', 'Imposta peso obiettivo')}
      </BText>
     </TouchableOpacity>
    )}
@@ -207,7 +207,7 @@ export default function WeightCard({ lang = 'es', weight, height, goal, profileE
    {tgt && (
     <TouchableOpacity onPress={() => saveProfileExtended?.({ targetWeight: null })}>
      <BText style={[s.setTargetLink, { color: '#737373' }]}>
-      × {tr('Eliminar objetivo', 'Remove target')}
+      × {tr('Eliminar objetivo', 'Remove target', 'Supprimer l\'objectif', 'Rimuovi obiettivo')}
      </BText>
     </TouchableOpacity>
    )}
@@ -215,7 +215,7 @@ export default function WeightCard({ lang = 'es', weight, height, goal, profileE
    {/* Registrar */}
    <TouchableOpacity style={[s.saveBtn, wLogged && s.saveBtnDone]} onPress={handleLogWeight}>
     <BText style={[s.saveBtnTxt, wLogged && { color: '#49CF38' }]}>
-     {wLogged ? tr('Registrado', 'Logged') : tr('Registrar', 'Log weight')}
+     {wLogged ? tr('Registrado', 'Logged', 'Enregistré', 'Registrato') : tr('Registrar', 'Log weight', 'Enregistrer', 'Registra')}
     </BText>
    </TouchableOpacity>
   </View>

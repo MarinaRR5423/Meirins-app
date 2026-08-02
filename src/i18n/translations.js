@@ -139,6 +139,8 @@ const T = {
  goal: 'objetivo diario',
  reset: 'Reiniciar',
  done: '¡Meta alcanzada!',
+ addGlass: 'Añadir vaso',
+ remaining: 'restantes',
  },
  },
 
@@ -618,6 +620,8 @@ const T = {
  goal: 'daily goal',
  reset: 'Reset',
  done: 'Goal reached!',
+ addGlass: 'Add a glass',
+ remaining: 'remaining',
  },
  },
 
@@ -1168,6 +1172,8 @@ const T = {
  goal: 'objectif quotidien',
  reset: 'Réinitialiser',
  done: 'Objectif atteint !',
+ addGlass: 'Ajouter un verre',
+ remaining: 'restants',
  },
  },
 
@@ -1718,6 +1724,8 @@ const T = {
  goal: 'obiettivo giornaliero',
  reset: 'Azzera',
  done: 'Obiettivo raggiunto!',
+ addGlass: 'Aggiungi un bicchiere',
+ remaining: 'rimanenti',
  },
  },
 
