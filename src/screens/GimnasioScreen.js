@@ -1306,7 +1306,7 @@ realizadosFill:  { backgroundColor: '#429FE7', borderRadius: 3 },
  sessionActionBtn: { flex: 1, height: 52, backgroundColor: '#F5F5F5', borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
 
  // Tu plan de ejercicios — Figma blue card #8EC5F1
- planExercCard: { backgroundColor: '#8EC5F1', borderRadius: 24, padding: 16, marginBottom: 2, gap: 40 },
+ planExercCard: { backgroundColor: '#8EC5F1', borderRadius: 24, padding: 16, marginBottom: 2, gap: 12 },
  planExercHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
  planExercHeaderTxt: { fontSize: 12, fontFamily: F.body, color: '#0A1823' },
  planExercTitle: { fontSize: 20, fontFamily: F.heading, color: '#0A1823', lineHeight: 24 },
