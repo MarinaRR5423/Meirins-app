@@ -201,6 +201,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  const nutriOpenRef = useRef(null);
  const [sub, setSub] = useState('plan');
  const [weekOffset, setWeekOffset] = useState(0);
+ const [expandedBatchRow, setExpandedBatchRow] = useState(null); // 'A' | 'B' | null
  const [checkedItems, setCheckedItems] = useState({});
 
  // Cargar checks guardados al cambiar de semana
@@ -736,21 +737,67 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  ))}
  </View>
 
- {profileExtended?.batchCooking ? (
- <View style={styles.planNutriDays}>
- {['A', 'B', 'free'].map(key => (
- <View key={key} style={styles.planNutriDayRow}>
- <View style={styles.planNutriAvatar}>
- <BText style={styles.planNutriAvatarTxt}>{key === 'free' ? 'C' : key}</BText>
- </View>
- <View style={{ flex: 1 }}>
- <BText style={styles.planNutriDayLabel}>{dtl[key].label}</BText>
- <BText style={styles.planNutriDayTag}>{dtl[key].tag}</BText>
- </View>
- </View>
- ))}
- </View>
- ) : dietData?.description ? (
+ {profileExtended?.batchCooking ? (() => {
+   const DAY_NAMES = {
+     es: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+     en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+     fr: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+     it: ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'],
+   }[lang] || ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+   const batchDays = profileExtended?.batchCookingDays || [];
+   const allDays = [0, 1, 2, 3, 4, 5, 6];
+   const otherDays = allDays.filter(d => !batchDays.includes(d));
+   const cookLabel  = { es: 'Días de cocina', en: 'Cooking days', fr: 'Jours de cuisine', it: 'Giorni di cucina' }[lang] || 'Días de cocina';
+   const eatLabel   = { es: 'Días de consumo', en: 'Eating days', fr: 'Jours de repas', it: 'Giorni di consumo' }[lang] || 'Días de consumo';
+   const meals = todayMenu?.meals || [];
+   const rows = [
+     { key: 'A', letter: 'A', label: cookLabel,  days: batchDays },
+     { key: 'B', letter: 'B', label: eatLabel,   days: otherDays },
+   ].filter(r => r.days.length > 0);
+   return (
+     <View style={styles.planNutriDays}>
+       {rows.map(row => {
+         const isExpanded = expandedBatchRow === row.key;
+         const dayStr = row.days.map(d => DAY_NAMES[d]).join(' · ');
+         return (
+           <View key={row.key}>
+             <TouchableOpacity
+               style={styles.planNutriDayRow}
+               onPress={() => setExpandedBatchRow(isExpanded ? null : row.key)}
+               activeOpacity={0.75}>
+               <View style={styles.planNutriAvatar}>
+                 <BText style={styles.planNutriAvatarTxt}>{row.letter}</BText>
+               </View>
+               <View style={{ flex: 1 }}>
+                 <BText style={styles.planNutriDayLabel}>{row.label}</BText>
+                 <BText style={styles.planNutriDayTag}>{dayStr}</BText>
+               </View>
+               <ChevronRight
+                 size={16}
+                 color="#9E3C02"
+                 style={{ transform: [{ rotate: isExpanded ? '90deg' : '0deg' }] }}
+               />
+             </TouchableOpacity>
+             {isExpanded && meals.length > 0 && (
+               <View style={styles.batchMenuDropdown}>
+                 {meals.map((meal, i) => meal.title ? (
+                   <View key={i} style={styles.batchMenuRow}>
+                     <BText style={styles.batchMenuMealType}>
+                       {getMealLabel(lang, meal.label || meal.id)}
+                     </BText>
+                     <BText style={styles.batchMenuMealName} numberOfLines={1}>
+                       {meal.title}
+                     </BText>
+                   </View>
+                 ) : null)}
+               </View>
+             )}
+           </View>
+         );
+       })}
+     </View>
+   );
+ })() : dietData?.description ? (
  <BText style={styles.planNutriDesc}>{dietData.description[lang] || dietData.description.es || dietData.description}</BText>
  ) : null}
 
@@ -1180,6 +1227,10 @@ const styles = StyleSheet.create({
  planNutriDayLabel: { fontSize: 18, fontFamily: F.headingX, color: '#260E01' },
  planNutriDayTag: { fontSize: 14, color: '#9E3C02', marginTop: 1, fontFamily: F.body },
  planNutriDesc: { fontSize: 14, fontFamily: F.body, color: '#260E01', lineHeight: 20, opacity: 0.85 },
+ batchMenuDropdown: { backgroundColor: 'rgba(0,0,0,0.08)', borderRadius: 12, padding: 10, gap: 8, marginTop: 2, marginBottom: 4 },
+ batchMenuRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+ batchMenuMealType: { fontSize: 11, fontFamily: F.bodyB, color: '#9E3C02', textTransform: 'uppercase', width: 64 },
+ batchMenuMealName: { fontSize: 13, fontFamily: F.body, color: '#260E01', flex: 1 },
  planNutriEditBtn: { backgroundColor: 'white', borderRadius: 12, height: 48, alignItems: 'center', justifyContent: 'center' },
  planNutriEditTxt: { fontSize: 18, fontFamily: F.body, color: '#0A0A0A' },
  dayTypeRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10, borderRadius: 12, marginBottom: 6 },
