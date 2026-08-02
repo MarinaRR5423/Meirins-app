@@ -1,5 +1,5 @@
 ﻿import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { View, ScrollView, StyleSheet, TouchableOpacity, Animated, ImageBackground, Image } from 'react-native';
+import { View, ScrollView, StyleSheet, TouchableOpacity, Animated, ImageBackground } from 'react-native';
 import { F } from '../theme/fonts';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRight, Salad, SportShoe, Flame, CalendarDays, Info, Check } from 'lucide-react-native';
@@ -258,11 +258,11 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  </View>
 
  {/* ── HERO DE FASE ── */}
- <View style={styles.heroCard}>
-  <Image
-   source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
-   style={[styles.heroCardImg, pi?.phase === 'follicular' && { top: 20 }]}
-  />
+ <ImageBackground
+  source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
+  style={styles.heroCard}
+  imageStyle={[styles.heroCardImg, ['follicular', 'ovulation'].includes(pi?.phase) && { top: 20 }]}
+ >
   <BText style={styles.heroHeadline}>{heroHeadline}</BText>
   <View style={styles.heroTags}>
    <View style={styles.heroTag}><BText style={styles.heroTagTxt}>{heroDayLabel}</BText></View>
@@ -270,7 +270,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
     <View style={styles.heroTag}><BText style={styles.heroTagTxt}>{d.intensity}</BText></View>
    ) : null}
   </View>
- </View>
+ </ImageBackground>
 
  {/* ── KCAL + ENTRENO ── */}
  <View style={styles.row2col}>
@@ -497,8 +497,8 @@ const styles = StyleSheet.create({
  doneBadgeTxt: { color: 'white', fontSize: 13, fontFamily: F.bodyB },
 
  // Hero
- heroCard: { height: 200, borderRadius: 24, padding: 16, justifyContent: 'space-between', marginTop: 2, marginBottom: 2, overflow: 'hidden', position: 'relative' },
- heroCardImg: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%', borderRadius: 24 },
+ heroCard: { height: 200, borderRadius: 24, padding: 16, justifyContent: 'space-between', marginTop: 2, marginBottom: 2, overflow: 'hidden' },
+ heroCardImg: { borderRadius: 24 },
  heroHeadline: { fontSize: 28, color: '#0A0A0A', lineHeight: 32.2, fontFamily: F.heading },
  heroTags: { flexDirection: 'row', flexWrap: 'wrap', gap: 2 },
  heroTag: { backgroundColor: '#F5F5F5', height: 24, paddingHorizontal: 8, borderRadius: 8, justifyContent: 'center' },
