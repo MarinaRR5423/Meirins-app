@@ -310,11 +310,17 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
    </View>
    <ChevronRight size={14} color="#0A0A0A" />
   </View>
-  {(() => {
-   const wName = todaySession?.name ?? (lang === 'en' ? 'Rest' : lang === 'fr' ? 'Repos' : 'Descanso');
+  {todaySession ? (() => {
+   const wName = todaySession.name;
    const wFs = wName.length > 14 ? 24 : wName.length > 6 ? 32 : 48;
    return <BText style={[styles.miniBigNum, { fontSize: wFs, color: '#429FE7', lineHeight: wFs * 1.1 }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.5}>{wName}</BText>;
-  })()}
+  })() : (
+   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <BText style={[styles.miniBigNum, { fontSize: 32, color: '#429FE7', lineHeight: 35.2, textAlign: 'center' }]}>
+     {lang === 'en' ? 'Rest' : lang === 'fr' ? 'Repos' : lang === 'it' ? 'Riposo' : 'Descanso'}
+    </BText>
+   </View>
+  )}
   {todaySession?.dur ? <BText style={styles.miniSub}>{todaySession.dur}</BText> : null}
   {todaySession?.intensity ? (
    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
