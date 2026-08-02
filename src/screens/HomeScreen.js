@@ -23,10 +23,10 @@ import { useFoodLog } from '../hooks/useFoodLog';
 const BLUE = { primary: '#429FE7', light: '#EFF6FF', mid: 'rgba(26,86,219,0.10)' };
 
 const PHASE_IMAGES = {
- menstrual: require('../../assets/phases/menstrual.png'),
- follicular: require('../../assets/phases/follicular.png'),
- ovulation: require('../../assets/phases/ovulation.png'),
- luteal: require('../../assets/phases/luteal.png'),
+ menstrual:  require('../../assets/HeroHomescreen/Menstrual.png'),
+ follicular: require('../../assets/HeroHomescreen/Folicular.png'),
+ ovulation:  require('../../assets/HeroHomescreen/Ovulacion.png'),
+ luteal:     require('../../assets/HeroHomescreen/Lutea.png'),
 };
 
 const HERO_COPY = {
@@ -263,7 +263,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  <ImageBackground
   source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
   style={styles.heroCard}
-  imageStyle={[styles.heroCardImg, ['follicular', 'ovulation'].includes(pi?.phase) && { top: 20 }]}
+  imageStyle={styles.heroCardImg}
  >
   <BText style={styles.heroHeadline}>{heroHeadline}</BText>
   <View style={styles.heroTags}>
@@ -515,11 +515,11 @@ const styles = StyleSheet.create({
  doneBadgeTxt: { color: 'white', fontSize: 13, fontFamily: F.bodyB },
 
  // Hero
- heroCard: { height: 200, borderRadius: 24, padding: 16, justifyContent: 'space-between', marginTop: 2, marginBottom: 2, overflow: 'hidden' },
+ heroCard: { height: 240, borderRadius: 24, padding: 16, justifyContent: 'space-between', marginTop: 0, marginBottom: 2, overflow: 'hidden' },
  heroCardImg: { borderRadius: 24 },
  heroHeadline: { fontSize: 28, color: '#0A0A0A', lineHeight: 32.2, fontFamily: F.heading },
  heroTags: { flexDirection: 'row', flexWrap: 'wrap', gap: 2 },
- heroTag: { backgroundColor: '#F5F5F5', height: 24, paddingHorizontal: 8, borderRadius: 8, justifyContent: 'center' },
+ heroTag: { backgroundColor: 'rgba(255,255,255,0.85)', height: 24, paddingHorizontal: 8, borderRadius: 8, justifyContent: 'center' },
  heroTagTxt: { fontSize: 10, fontFamily: F.body, color: '#0A0A0A', textTransform: 'uppercase', letterSpacing: 0.3 },
 
  // 2-col mini cards
