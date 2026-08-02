@@ -231,10 +231,15 @@ function hashString(str) {
  * @param {string} mealType tipo de comida (para que cada comida tenga su rotación)
  * @param {number} topN cuántos candidatos top considerar (default 5)
  */
-function pickWithDailySeed(candidates, dateStr, mealType, topN = 5) {
+/**
+ * @param {string|null} dayType 'A' | 'B' | null — batch cooking day type.
+ *   Incluido en el seed para que día A y día B siempre devuelvan recetas distintas.
+ */
+function pickWithDailySeed(candidates, dateStr, mealType, topN = 5, dayType = null) {
  if (!candidates?.length) return null;
  const pool = candidates.slice(0, Math.min(topN, candidates.length));
- const seed = hashString(`${dateStr}_${mealType}`);
+ const seedStr = dayType ? `${dateStr}_${dayType}_${mealType}` : `${dateStr}_${mealType}`;
+ const seed = hashString(seedStr);
  return pool[seed % pool.length];
 }
 
@@ -246,23 +251,26 @@ function pickWithDailySeed(candidates, dateStr, mealType, topN = 5) {
  * @param {string} phase fase actual
  * @param {string[]} mealTypes ['breakfast', 'lunch', ...]
  * @param {string} dateStr 'YYYY-MM-DD' del día — define la rotación
+ * @param {string|null} dayType 'A' | 'B' | null — batch cooking day type
  * @returns {Object} { breakfast: recipe, lunch: recipe, ... }
  */
-export function buildDayMenu(recipes, profile, phase, mealTypes, dateStr) {
+export function buildDayMenu(recipes, profile, phase, mealTypes, dateStr, dayType = null) {
  const menu = {};
  mealTypes.forEach(mt => {
  const candidates = getRecipesForMeal(recipes, profile, phase, mt);
- menu[mt] = pickWithDailySeed(candidates, dateStr || new Date().toISOString().split('T')[0], mt);
+ menu[mt] = pickWithDailySeed(candidates, dateStr || new Date().toISOString().split('T')[0], mt, 5, dayType);
  });
  return menu;
 }
 
 /**
  * Devuelve la receta del día para un meal type específico (con rotación).
+ *
+ * @param {string|null} dayType 'A' | 'B' | null — batch cooking day type
  */
-export function getDailyRecipe(recipes, profile, phase, mealType, dateStr) {
+export function getDailyRecipe(recipes, profile, phase, mealType, dateStr, dayType = null) {
  const candidates = getRecipesForMeal(recipes, profile, phase, mealType);
- return pickWithDailySeed(candidates, dateStr || new Date().toISOString().split('T')[0], mealType);
+ return pickWithDailySeed(candidates, dateStr || new Date().toISOString().split('T')[0], mealType, 5, dayType);
 }
 
 /**

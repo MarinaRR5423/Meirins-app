@@ -323,10 +323,10 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
 
  const { consumed: foodConsumed, logRecipe, unlogRecipe } = useFoodLog(todayStr);
 
- const buildPersonalizedMeals = (slots, dateStr) => {
+ const buildPersonalizedMeals = (slots, dateStr, dayType = null) => {
   return (slots || []).map(slot => {
    const dbMealType = appMealToDbMealType(slot.id);
-   const recipe = getDailyRecipe(allRecipes, userProfile, pi?.phase, dbMealType, dateStr);
+   const recipe = getDailyRecipe(allRecipes, userProfile, pi?.phase, dbMealType, dateStr, dayType);
    if (!recipe) return { ...slot, title: null, items: [], _personalized: false };
    const card = recipeToMealCard(recipe, lang);
    if (!card) return { ...slot, title: null, items: [], _personalized: false };
@@ -343,15 +343,24 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
   });
  };
 
+ // Batch cooking: día A o B según batchCookingDays (Mon-indexed 0=Lun)
+ const todayDayType = useMemo(() => {
+  if (!profileExtended?.batchCooking) return null;
+  const batchDays = profileExtended?.batchCookingDays || [];
+  const jsDay = new Date().getDay();
+  const monIdx = jsDay === 0 ? 6 : jsDay - 1;
+  return batchDays.includes(monIdx) ? 'A' : 'B';
+ }, [profileExtended?.batchCooking, profileExtended?.batchCookingDays]);
+
  const todayMenu = useMemo(() => {
   const meals = allRecipes?.length
-   ? buildPersonalizedMeals(activeSlots, todayStr)
+   ? buildPersonalizedMeals(activeSlots, todayStr, todayDayType)
    : activeSlots.map(s => ({ ...s, title: null, items: [], _personalized: false }));
   if (!meals.length) {
    console.warn('[NutriScreen] empty_menu_detected', { phase: pi?.phase, fastingProtocol, lang });
   }
-  return { meals };
- }, [allRecipes, recipesLoading, userProfile, pi?.phase, lang, activeSlots]);
+  return { meals, dayType: todayDayType };
+ }, [allRecipes, recipesLoading, userProfile, pi?.phase, lang, activeSlots, todayDayType]);
 
  const weekMenuDays = useMemo(() => {
  const names = lang === 'fr'
@@ -749,10 +758,12 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
    const otherDays = allDays.filter(d => !batchDays.includes(d));
    const menuALabel = { es: 'Menú A', en: 'Menu A', fr: 'Menu A', it: 'Menu A' }[lang] || 'Menú A';
    const menuBLabel = { es: 'Menú B', en: 'Menu B', fr: 'Menu B', it: 'Menu B' }[lang] || 'Menú B';
-   const meals = todayMenu?.meals || [];
+   const todayLabel = { es: 'Hoy', en: 'Today', fr: "Auj.", it: 'Oggi' }[lang] || 'Hoy';
+   const mealsA = allRecipes?.length ? buildPersonalizedMeals(activeSlots, todayStr, 'A') : [];
+   const mealsB = allRecipes?.length ? buildPersonalizedMeals(activeSlots, todayStr, 'B') : [];
    const rows = [
-     { key: 'A', letter: 'A', label: menuALabel, days: batchDays },
-     { key: 'B', letter: 'B', label: menuBLabel, days: otherDays },
+     { key: 'A', letter: 'A', label: menuALabel, days: batchDays, meals: mealsA },
+     { key: 'B', letter: 'B', label: menuBLabel, days: otherDays, meals: mealsB },
    ].filter(r => r.days.length > 0);
    return (
      <View style={styles.planNutriDays}>
@@ -769,7 +780,14 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
                  <BText style={styles.planNutriAvatarTxt}>{row.letter}</BText>
                </View>
                <View style={{ flex: 1 }}>
-                 <BText style={styles.planNutriDayLabel}>{row.label}</BText>
+                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                   <BText style={styles.planNutriDayLabel}>{row.label}</BText>
+                   {todayDayType === row.key && (
+                     <View style={{ backgroundColor: '#9E3C02', borderRadius: 8, paddingHorizontal: 6, paddingVertical: 1 }}>
+                       <BText style={{ fontSize: 10, color: '#fff', fontFamily: F.bodyB }}>{todayLabel}</BText>
+                     </View>
+                   )}
+                 </View>
                  <BText style={styles.planNutriDayTag}>{dayStr}</BText>
                </View>
                <ChevronRight
@@ -778,9 +796,9 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
                  style={{ transform: [{ rotate: isExpanded ? '90deg' : '0deg' }] }}
                />
              </TouchableOpacity>
-             {isExpanded && meals.length > 0 && (
+             {isExpanded && row.meals.length > 0 && (
                <View style={styles.batchMenuDropdown}>
-                 {meals.map((meal, i) => meal.title ? (
+                 {row.meals.map((meal, i) => meal.title ? (
                    <View key={i} style={styles.batchMenuRow}>
                      <BText style={styles.batchMenuMealType}>
                        {getMealLabel(lang, meal.label || meal.id)}

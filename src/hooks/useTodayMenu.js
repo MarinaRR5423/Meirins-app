@@ -33,6 +33,15 @@ export function useTodayMenu({ phase, lang = 'es', profileExtended, goal, activi
     [fastingProtocol, mealsActive],
   );
 
+  // Batch cooking: determina si hoy es día A o B según batchCookingDays (Mon-indexed 0=Lun)
+  const dayType = useMemo(() => {
+    if (!profileExtended?.batchCooking) return null;
+    const batchDays = profileExtended?.batchCookingDays || [];
+    const jsDay = new Date().getDay(); // 0=Dom, 1=Lun…
+    const monIdx = jsDay === 0 ? 6 : jsDay - 1; // convierte a 0=Lun, 6=Dom
+    return batchDays.includes(monIdx) ? 'A' : 'B';
+  }, [profileExtended?.batchCooking, profileExtended?.batchCookingDays]);
+
   const skippedToday = profileExtended?.skippedToday || {};
   const skippedRecipeIds = useMemo(() => {
     if (skippedToday.date !== TODAY) return [];
@@ -59,7 +68,7 @@ export function useTodayMenu({ phase, lang = 'es', profileExtended, goal, activi
     const meals = allRecipes?.length
       ? activeSlots.map(slot => {
           const dbMealType = appMealToDbMealType(slot.id);
-          const recipe = getDailyRecipe(allRecipes, userProfile, phase, dbMealType, TODAY);
+          const recipe = getDailyRecipe(allRecipes, userProfile, phase, dbMealType, TODAY, dayType);
           if (!recipe) return { ...slot, title: null, items: [], _personalized: false };
           const card = recipeToMealCard(recipe, lang);
           if (!card) return { ...slot, title: null, items: [], _personalized: false };
@@ -76,8 +85,8 @@ export function useTodayMenu({ phase, lang = 'es', profileExtended, goal, activi
         })
       : activeSlots.map(s => ({ ...s, title: null, items: [], _personalized: false }));
 
-    return { meals };
-  }, [allRecipes, recipesLoading, userProfile, phase, lang, activeSlots]);
+    return { meals, dayType };
+  }, [allRecipes, recipesLoading, userProfile, phase, lang, activeSlots, dayType]);
 
   return { todayMenu, activeSlots, allRecipes, userProfile, recipesLoading };
 }
