@@ -439,21 +439,31 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
 
  {/* ── CONSEJO DE LA FASE ── */}
  <WidgetWrap {...ww} id="tip">
- <ImageBackground
- source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
- style={styles.tipCard}
- imageStyle={[styles.heroCardImg, { opacity: 0.55 }]}
- >
- <View style={styles.tipOverlay} />
- <View style={styles.miniHeader}>
- <View style={styles.miniHeaderLabel}>
- <Info size={14} color="white" />
- <BText style={[styles.miniHeaderTxt, { color: 'white' }]}>{h.phaseTip}</BText>
- </View>
- <ChevronRight size={14} color="white" />
- </View>
- <BText style={styles.tipTitle}>{d?.tip}</BText>
- </ImageBackground>
+ {(() => {
+  const tipFull = d?.tip || '';
+  const dotIdx = tipFull.indexOf('.');
+  const tipHead = dotIdx !== -1 ? tipFull.slice(0, dotIdx + 1) : tipFull;
+  const tipSub  = dotIdx !== -1 ? tipFull.slice(dotIdx + 1).trim() : '';
+  return (
+   <ImageBackground
+    source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
+    style={styles.tipCard}
+    imageStyle={styles.heroCardImg}
+   >
+    <View style={styles.miniHeader}>
+     <View style={styles.miniHeaderLabel}>
+      <Info size={14} color="white" />
+      <BText style={styles.tipHeaderTxt}>{h.phaseTip}</BText>
+     </View>
+     <ChevronRight size={14} color="white" />
+    </View>
+    <View style={styles.tipBody}>
+     <BText style={styles.tipTitle}>{tipHead}</BText>
+     {!!tipSub && <BText style={styles.tipSubtitle}>{tipSub}</BText>}
+    </View>
+   </ImageBackground>
+  );
+ })()}
  </WidgetWrap>
  </ScrollView>
 
@@ -545,8 +555,10 @@ const styles = StyleSheet.create({
 
  // Tip
  tipCard: { borderRadius: 24, padding: 16, marginTop: 2, marginBottom: 2, overflow: 'hidden', gap: 48 },
- tipOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(10,10,10,0.35)', borderRadius: 24 },
- tipTitle: { fontSize: 32, color: 'white', lineHeight: 35, fontFamily: F.headingX },
+ tipHeaderTxt: { fontSize: 12, color: 'white', fontFamily: F.body, lineHeight: 15.6 },
+ tipBody: { gap: 16 },
+ tipTitle: { fontSize: 32, color: 'white', lineHeight: 35.2, fontFamily: F.headingX },
+ tipSubtitle: { fontSize: 14, color: 'white', fontFamily: F.body, lineHeight: 19.6 },
 
  // Kcal labels
  kcalBarLabel: { fontSize: 12, color: '#FE6004', fontFamily: F.body, textTransform: 'uppercase', lineHeight: 15.6 },
