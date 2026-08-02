@@ -14,6 +14,7 @@ import { F } from '../theme/fonts';
 import RangeCalendar from './RangeCalendar';
 import TrainerCard from './TrainerCard';
 import { useDiets, DIET_CATEGORIES, normalizeDietId } from '../hooks/useDiets';
+import { PROGRAMS, totalSessions, LEVEL_LABEL, isRecommended } from '../data/trainingPrograms';
 import { ALL_MEALS, MEAL_LABELS, getActiveMeals } from '../utils/fastingMeals';
 
 // ── Catálogos compartidos para CicloSetupCard y CicloHealthCard ────────────────
@@ -816,6 +817,7 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
   const toggleGym = (v) =>
     setLocalGym(localGym.includes(v) ? localGym.filter(x => x !== v) : [...localGym, v]);
   const [saving, setSaving]             = useState(false);
+  const [selectedProgram, setSelectedProgram] = useState(profileExtended?.activeProgram?.id || '');
 
   // Objetivo deportivo: viene del onboarding (paso 3) pero es editable aquí,
   // p. ej. si la usuaria cambia de competición u objetivo
@@ -874,9 +876,11 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
       wantNewSport,
       newSportDetail: wantNewSport === 'yes' ? newSportDetail.trim() : '',
     };
+    const chosenProg = selectedProgram ? PROGRAMS.find(pr => pr.id === selectedProgram) : null;
     await saveProfileExtended({
       fitnessLevel: localFitness, gymAccess: localGym, sportProfile, gymSetupDone: true,
       goals: { ...(profileExtended?.goals || {}), sport: sportGoal },
+      activeProgram: chosenProg ? { id: chosenProg.id, startedAt: profileExtended?.activeProgram?.id === chosenProg.id ? (profileExtended?.activeProgram?.startedAt || new Date().toISOString()) : new Date().toISOString() } : null,
     });
     setSaving(false);
     setOpen(false);
@@ -907,6 +911,7 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
     setCurrentSportOther(curSp.currentSportOther || curSp.currentSport || '');
     setWantNewSport(curSp.wantNewSport || '');
     setNewSportDetail(curSp.newSportDetail || '');
+    setSelectedProgram(cur.activeProgram?.id || '');
     setOpen(true);
   };
 
@@ -1085,6 +1090,35 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
           )}
         </>}
 
+        {/* ── Programa de entrenamiento ── */}
+        <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
+          {L('Programa de entrenamiento', 'Training program', 'Programme d\'entraînement', 'Programma di allenamento')}
+        </Text>
+        <Text style={[s.secSub, { color: '#737373', marginTop: -6 }]}>
+          {L('Elige un plan estructurado por semanas', 'Choose a structured weekly plan', 'Choisis un plan structuré par semaines', 'Scegli un piano strutturato a settimane')}
+        </Text>
+        <View style={{ gap: 8, marginTop: 8 }}>
+          {PROGRAMS.map(pr => {
+            const active = selectedProgram === pr.id;
+            const lvl = LEVEL_LABEL[pr.level]?.[lang] || pr.level;
+            const weeks = pr.weeks?.length || 0;
+            const rec = isRecommended(pr, profileExtended?.fitnessLevel || localFitness, profileExtended?.lifeStage);
+            return (
+              <TouchableOpacity key={pr.id} onPress={() => setSelectedProgram(active ? '' : pr.id)}
+                style={[s.programRow, active && s.programRowActive]}>
+                <View style={{ flex: 1 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <Text style={s.programName}>{pr.emoji} {pr.name[lang] || pr.name.es}</Text>
+                    {rec && <View style={s.programRecBadge}><Text style={s.programRecTxt}>{L('Recomendado', 'Recommended', 'Recommandé', 'Consigliato')}</Text></View>}
+                  </View>
+                  <Text style={s.programMeta}>{lvl} · {weeks} {L('semanas', 'weeks', 'semaines', 'settimane')}</Text>
+                </View>
+                {active && <Check size={16} color="#FE6004" strokeWidth={2.5} />}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
         <TrainerCard lang={lang} />
 
         <TouchableOpacity style={[s.saveBtnAzote, saving && { opacity: 0.45 }]} onPress={save} disabled={saving}>
@@ -1212,6 +1246,12 @@ const s = StyleSheet.create({
   chipAzoteLabelActive: { color: 'white', fontFamily: F.body },
   saveBtnAzote:    { marginTop: 28, height: 48, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center' },
   saveBtnAzoteTxt: { color: '#FAFAFA', fontFamily: F.body, fontSize: 18 },
+  programRow:       { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#FAFAFA', borderRadius: 16, padding: 14, borderWidth: 1, borderColor: 'transparent' },
+  programRowActive: { backgroundColor: '#FFF5F0', borderColor: '#FE6004' },
+  programName:      { fontSize: 14, fontFamily: F.bodyB, color: '#171717', lineHeight: 18.2 },
+  programMeta:      { fontSize: 12, fontFamily: F.body, color: '#737373', marginTop: 2 },
+  programRecBadge:  { backgroundColor: '#FE6004', borderRadius: 99, paddingHorizontal: 8, paddingVertical: 2 },
+  programRecTxt:    { fontSize: 10, fontFamily: F.bodyB, color: 'white' },
 
   // Section
   secLabel: { fontSize: 11, fontFamily: F.bodyB, color: 'rgba(255,255,255,0.5)', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginTop: 4 },
