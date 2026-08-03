@@ -1,7 +1,7 @@
 ﻿import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { View, ScrollView, TouchableOpacity, StyleSheet, Share, Modal, TextInput, ImageBackground, Image, SafeAreaView } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { F } from '../theme/fonts';
 import { Check, X, ChevronRight, ChevronLeft, RefreshCcw, Heart } from 'lucide-react-native';
 import SwipeableTabs from '../components/SwipeableTabs';
@@ -223,7 +223,8 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  const [openD, setOpenD] = useState(null);
  const [openPlan, setOpenPlan] = useState(0);
  const [selectedDayIdx, setSelectedDayIdx] = useState(null);
- const [recipe, setRecipe] = useState(null);
+ const route = useRoute();
+ const [recipe, setRecipe] = useState(route.params?.openRecipe || null);
  const [altMeal, setAltMeal] = useState({});
  // Extras de calorías
  const todayExtrasKey = `extra_foods_${new Date().toISOString().split('T')[0]}`;

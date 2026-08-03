@@ -348,10 +348,26 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  </TouchableOpacity>
  </View>
  <View style={{ gap: 16 }}>
-  <View>
+  <TouchableOpacity
+   activeOpacity={0.75}
+   disabled={!nextMeal?.recipe}
+   onPress={() => {
+    if (!nextMeal?.recipe) return;
+    navigation.navigate('Nutrición', {
+     openRecipe: {
+      ...nextMeal.recipe,
+      mealLabel: getMealLabel(lang, nextMeal.t),
+      title: nextMeal.title,
+      emoji: nextMeal.ico,
+      macros: nextMeal.macros,
+      _recipeId: nextMeal._recipeId,
+     },
+    });
+   }}
+  >
    <BText style={styles.mealSlot}>{getMealLabel(lang, nextMeal?.t)}</BText>
    <BText style={styles.mealTitle}>{nextMeal?.title}</BText>
-  </View>
+  </TouchableOpacity>
   <View style={{ gap: 2 }}>
    {nextMeal?.items?.slice(0, 3).map((it, i) => (
    <View key={i} style={styles.mealItemRow}>
