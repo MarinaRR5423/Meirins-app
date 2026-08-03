@@ -260,19 +260,21 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  </View>
 
  {/* ── HERO DE FASE ── */}
- <ImageBackground
-  source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
-  style={styles.heroCard}
-  imageStyle={styles.heroCardImg}
- >
-  <BText style={styles.heroHeadline}>{heroHeadline}</BText>
-  <View style={styles.heroTags}>
-   <View style={styles.heroTag}><BText style={styles.heroTagTxt}>{heroDayLabel}</BText></View>
-   {!isHormonalContra && d?.intensity ? (
-    <View style={styles.heroTag}><BText style={styles.heroTagTxt}>{d.intensity}</BText></View>
-   ) : null}
-  </View>
- </ImageBackground>
+ <TouchableOpacity onPress={() => navigation.navigate('Ciclo')} activeOpacity={0.92}>
+  <ImageBackground
+   source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
+   style={styles.heroCard}
+   imageStyle={styles.heroCardImg}
+  >
+   <BText style={styles.heroHeadline}>{heroHeadline}</BText>
+   <View style={styles.heroTags}>
+    <View style={styles.heroTag}><BText style={styles.heroTagTxt}>{heroDayLabel}</BText></View>
+    {!isHormonalContra && d?.intensity ? (
+     <View style={styles.heroTag}><BText style={styles.heroTagTxt}>{d.intensity}</BText></View>
+    ) : null}
+   </View>
+  </ImageBackground>
+ </TouchableOpacity>
 
  {/* ── KCAL + ENTRENO ── */}
  <View style={styles.row2col}>
