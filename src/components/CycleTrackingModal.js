@@ -1,12 +1,13 @@
 import React, { useState, useMemo } from 'react';
-import { Modal, SafeAreaView, View, TouchableOpacity, ScrollView, TextInput, StyleSheet } from 'react-native';
+import { Modal, SafeAreaView, View, TouchableOpacity, ScrollView, TextInput, StyleSheet, Switch } from 'react-native';
 import { CYCLE_CATEGORIES } from '../data/cycleTracking';
 import { F } from '../theme/fonts';
 import { getInsight } from '../data/symptomInsights';
-import { X } from 'lucide-react-native';
+import { X, SlidersHorizontal } from 'lucide-react-native';
 import BText from './BText';
 
-const SHOWN_IDS = ['flow', 'spotting', 'feelings', 'pain', 'rhinitis', 'pms', 'energy'];
+// Categorías ocultas por defecto (nicho o médico)
+const HIDDEN_BY_DEFAULT = ['rhinitis', 'temperature', 'cervical'];
 
 const PHASE_GLOW = {
  menstrual: '#92E288',
@@ -28,11 +29,19 @@ function formatDateLong(dateStr, lang) {
  return d.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycleLog = {}, onSave, currentPhase = null }) {
+export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycleLog = {}, onSave, currentPhase = null, trackingPrefs = {}, onSavePrefs }) {
  const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().split('T')[0]);
  const [dayData, setDayData] = useState(cycleLog[selectedDate] || {});
  const [note, setNote] = useState(cycleLog[selectedDate]?.note || '');
  const [activeInsight, setActiveInsight] = useState(null);
+ const [customizing, setCustomizing] = useState(false);
+ const [localPrefs, setLocalPrefs] = useState(() => {
+  const prefs = {};
+  CYCLE_CATEGORIES.forEach(c => {
+   prefs[c.id] = c.id in trackingPrefs ? trackingPrefs[c.id] : !HIDDEN_BY_DEFAULT.includes(c.id);
+  });
+  return prefs;
+ });
 
  React.useEffect(() => {
   setDayData(cycleLog[selectedDate] || {});
@@ -53,8 +62,12 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
   });
  }, []);
 
- const shownCategories = CYCLE_CATEGORIES.filter(c => SHOWN_IDS.includes(c.id))
-  .sort((a, b) => SHOWN_IDS.indexOf(a.id) - SHOWN_IDS.indexOf(b.id));
+ const shownCategories = CYCLE_CATEGORIES.filter(c => localPrefs[c.id] !== false);
+
+ const savePrefs = () => {
+  onSavePrefs?.(localPrefs);
+  setCustomizing(false);
+ };
 
  const toggleOption = async (catId, optId, multi) => {
   let isSelecting = false;
@@ -90,6 +103,10 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
   note: { es: 'Nota diaria', en: 'Daily note', fr: 'Note du jour', it: 'Nota giornaliera' },
   notePh: { es: 'Enter a text....', en: 'Enter a text....', fr: 'Saisir un texte....', it: 'Inserisci testo....' },
   save: { es: 'Guardar', en: 'Save', fr: 'Enregistrer', it: 'Salva' },
+  customize: { es: 'Personalizar', en: 'Customize', fr: 'Personnaliser', it: 'Personalizza' },
+  customizeTitle: { es: 'Personaliza tu seguimiento', en: 'Customize tracking', fr: 'Personnalise ton suivi', it: 'Personalizza il tracciamento' },
+  customizeDesc: { es: 'Activa o desactiva las categorías que quieres ver en tu registro diario.', en: 'Turn on or off the categories you want to see in your daily log.', fr: 'Active ou désactive les catégories que tu veux voir dans ton journal.', it: 'Attiva o disattiva le categorie che vuoi vedere nel tuo diario.' },
+  done: { es: 'Listo', en: 'Done', fr: 'Terminé', it: 'Fatto' },
  };
 
  const weekLabels = WEEK_LABELS[lang] || WEEK_LABELS.es;
@@ -143,37 +160,69 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
       </View>
      </View>
 
-     {/* Symptom sections */}
-     <View style={s.sections}>
-      {shownCategories.map(cat => {
-       const value = dayData[cat.id];
-       return (
-        <View key={cat.id} style={s.category}>
-         <BText style={s.catTitle}>{cat.label[lang] || cat.label.es}</BText>
-         <View style={s.options}>
-          {cat.options.map(opt => {
-           const isSel = cat.multi ? value?.includes?.(opt.id) : value === opt.id;
-           return (
-            <TouchableOpacity
-             key={opt.id}
-             onPress={() => toggleOption(cat.id, opt.id, cat.multi)}
-             style={[s.option, isSel && s.optionActive]}
-             activeOpacity={0.75}
-            >
-             <BText style={[s.optLbl, isSel && s.optLblActive]}>
-              {opt.label[lang] || opt.label.es}
-             </BText>
-            </TouchableOpacity>
-           );
-          })}
+     {/* Personalizar button */}
+     <TouchableOpacity style={s.customizeBtn} onPress={() => setCustomizing(v => !v)} activeOpacity={0.75}>
+      <SlidersHorizontal size={14} color="#0A0A0A" />
+      <BText style={s.customizeTxt}>{txt.customize[lang] || txt.customize.es}</BText>
+     </TouchableOpacity>
+
+     {/* Personalization panel */}
+     {customizing && (
+      <View style={s.customPanel}>
+       <BText style={s.customTitle}>{txt.customizeTitle[lang] || txt.customizeTitle.es}</BText>
+       <BText style={s.customDesc}>{txt.customizeDesc[lang] || txt.customizeDesc.es}</BText>
+       <View style={s.customList}>
+        {CYCLE_CATEGORIES.map(cat => (
+         <View key={cat.id} style={s.customRow}>
+          <BText style={s.customRowLabel}>{cat.label[lang] || cat.label.es}</BText>
+          <Switch
+           value={localPrefs[cat.id] !== false}
+           onValueChange={v => setLocalPrefs(p => ({ ...p, [cat.id]: v }))}
+           trackColor={{ false: '#E5E5E5', true: '#180D1E' }}
+           thumbColor="white"
+          />
          </View>
-        </View>
-       );
-      })}
-     </View>
+        ))}
+       </View>
+       <TouchableOpacity style={s.doneBtn} onPress={savePrefs} activeOpacity={0.85}>
+        <BText style={s.saveTxt}>{txt.done[lang] || txt.done.es}</BText>
+       </TouchableOpacity>
+      </View>
+     )}
+
+     {/* Symptom sections */}
+     {!customizing && (
+      <View style={s.sections}>
+       {shownCategories.map(cat => {
+        const value = dayData[cat.id];
+        return (
+         <View key={cat.id} style={s.category}>
+          <BText style={s.catTitle}>{cat.label[lang] || cat.label.es}</BText>
+          <View style={s.options}>
+           {cat.options.map(opt => {
+            const isSel = cat.multi ? value?.includes?.(opt.id) : value === opt.id;
+            return (
+             <TouchableOpacity
+              key={opt.id}
+              onPress={() => toggleOption(cat.id, opt.id, cat.multi)}
+              style={[s.option, isSel && s.optionActive]}
+              activeOpacity={0.75}
+             >
+              <BText style={[s.optLbl, isSel && s.optLblActive]}>
+               {opt.label[lang] || opt.label.es}
+              </BText>
+             </TouchableOpacity>
+            );
+           })}
+          </View>
+         </View>
+        );
+       })}
+      </View>
+     )}
 
      {/* Nota diaria */}
-     <View style={s.noteSection}>
+     {!customizing && <View style={s.noteSection}>
       <BText style={s.noteTitle}>{txt.note[lang] || txt.note.es}</BText>
       <TextInput
        style={s.noteInput}
@@ -185,14 +234,14 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
        placeholderTextColor="#737373"
        textAlignVertical="top"
       />
-     </View>
+     </View>}
 
      {/* Save */}
-     <View style={s.saveWrap}>
+     {!customizing && <View style={s.saveWrap}>
       <TouchableOpacity style={s.saveBtn} onPress={handleSave} activeOpacity={0.85}>
        <BText style={s.saveTxt}>{txt.save[lang] || txt.save.es}</BText>
       </TouchableOpacity>
-     </View>
+     </View>}
 
      <View style={{ height: 40 }} />
     </ScrollView>
@@ -248,4 +297,15 @@ const s = StyleSheet.create({
  saveWrap: { paddingTop: 8, paddingBottom: 8 },
  saveBtn: { backgroundColor: '#171717', height: 48, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
  saveTxt: { color: 'white', fontFamily: F.body, fontSize: 18, lineHeight: 24 },
+
+ // Personalizar
+ customizeBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'flex-end', paddingVertical: 6, paddingHorizontal: 12, backgroundColor: '#F5F5F5', borderRadius: 20 },
+ customizeTxt: { fontSize: 13, fontFamily: F.body, color: '#0A0A0A' },
+ customPanel: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, gap: 16 },
+ customTitle: { fontSize: 16, fontFamily: F.bodyB, color: '#0A0A0A' },
+ customDesc: { fontSize: 13, fontFamily: F.body, color: '#737373', lineHeight: 18 },
+ customList: { gap: 0 },
+ customRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#E5E5E5' },
+ customRowLabel: { fontSize: 15, fontFamily: F.body, color: '#0A0A0A' },
+ doneBtn: { backgroundColor: '#171717', height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginTop: 4 },
 });

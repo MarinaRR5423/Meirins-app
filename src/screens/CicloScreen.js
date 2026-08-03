@@ -628,6 +628,8 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  cycleLog={profileExtended?.cycleLog || {}}
  onSave={(date, data) => logCycleDay?.(date, data)}
  currentPhase={pi?.phase || null}
+ trackingPrefs={profileExtended?.cycleTrackingPrefs || {}}
+ onSavePrefs={(prefs) => saveProfileExtended({ cycleTrackingPrefs: prefs })}
  />
 
  {/* La fecha y duración del ciclo se editan ahora marcando la regla
