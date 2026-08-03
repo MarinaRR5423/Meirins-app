@@ -1034,10 +1034,10 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
   const fiberPct = m?.fiber != null ? Math.round((m.fiber / 30) * 100) : null;
   const isFav = recipe._recipeId && profileExtended?.favoriteRecipes?.includes(recipe._recipeId);
   const macroRows = [
-   { label: lang === 'en' ? 'Protein' : 'Proteína', amt: `${m?.protein ?? 0}g`, pct: `${proteinPct}%` },
-   { label: lang === 'en' ? 'Carbs' : 'Carbohidratos', amt: `${m?.carbs ?? 0}g`, pct: `${carbsPct}%` },
-   { label: lang === 'en' ? 'Fats' : 'Grasas', amt: `${m?.fat ?? 0}g`, pct: `${fatPct}%` },
-   ...(m?.fiber != null ? [{ label: lang === 'en' ? 'Fibre' : 'Fibra', amt: `${m.fiber}g`, pct: `${fiberPct}%` }] : []),
+   { label: lang === 'en' ? 'Protein' : lang === 'fr' ? 'Protéines' : lang === 'it' ? 'Proteine' : 'Proteína', amt: `${m?.protein ?? 0}g`, pct: `${proteinPct}%`, pctNum: proteinPct },
+   { label: lang === 'en' ? 'Carbs' : lang === 'fr' ? 'Glucides' : lang === 'it' ? 'Carboidrati' : 'Carbohidratos', amt: `${m?.carbs ?? 0}g`, pct: `${carbsPct}%`, pctNum: carbsPct },
+   { label: lang === 'en' ? 'Fats' : lang === 'fr' ? 'Lipides' : lang === 'it' ? 'Grassi' : 'Grasas', amt: `${m?.fat ?? 0}g`, pct: `${fatPct}%`, pctNum: fatPct },
+   ...(m?.fiber != null ? [{ label: lang === 'en' ? 'Fibre' : lang === 'fr' ? 'Fibres' : lang === 'it' ? 'Fibre' : 'Fibra', amt: `${m.fiber}g`, pct: `${fiberPct}%`, pctNum: fiberPct }] : []),
   ];
   return (
    <Modal key="recipe-modal" visible animationType="slide" transparent presentationStyle="overFullScreen" onRequestClose={() => setRecipe(null)}>
@@ -1072,6 +1072,9 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
           {macroRows.map(row => (
            <View key={row.label} style={{ gap: 8 }}>
             <BText style={styles.recipeOrangeMacroLabel}>{row.label}</BText>
+            <View style={styles.recipeOrangeMacroBar}>
+             <View style={[styles.recipeOrangeMacroFill, { width: `${Math.min(100, row.pctNum)}%` }]} />
+            </View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
              <BText style={styles.recipeOrangeMacroAmt}>{row.amt}</BText>
              <BText style={styles.recipeOrangeMacroPct}>{row.pct}</BText>
@@ -1323,6 +1326,8 @@ const styles = StyleSheet.create({
  recipeOrangeCard: { backgroundColor: '#FE6004', borderRadius: 24, padding: 16, gap: 24, alignItems: 'flex-start' },
  recipeOrangeKcal: { fontSize: 18, fontFamily: F.heading, color: '#260E01', lineHeight: 23.4, alignSelf: 'stretch' },
  recipeOrangeMacroLabel: { fontSize: 14, fontFamily: F.body, color: '#260E01', lineHeight: 19.6, alignSelf: 'stretch' },
+ recipeOrangeMacroBar: { alignSelf: 'stretch', height: 4, borderRadius: 2, backgroundColor: 'rgba(38,14,1,0.2)', overflow: 'hidden' },
+ recipeOrangeMacroFill: { height: 4, borderRadius: 2, backgroundColor: '#260E01' },
  recipeOrangeMacroAmt: { fontSize: 12, fontFamily: F.body, color: '#260E01', textTransform: 'uppercase', lineHeight: 15.6 },
  recipeOrangeMacroPct: { fontSize: 12, fontFamily: F.body, color: '#260E01', textTransform: 'uppercase', lineHeight: 15.6 },
  recipeSectionTitle: { fontSize: 16, fontFamily: F.bodyB, color: '#171717', lineHeight: 20.8 },
