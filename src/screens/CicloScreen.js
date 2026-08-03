@@ -13,6 +13,7 @@ import CycleTrackingModal from '../components/CycleTrackingModal';
 import { trackScreen } from '../lib/analytics';
 import BText from '../components/BText';
 import ErrorBoundary from '../components/ErrorBoundary';
+import PhaseGlow from '../../assets/Calendar icons/PhaseGlow';
 
 
 const CICLO_ARTICLE_IDS = ['sleep-cycle', 'cycle-training'];
@@ -452,11 +453,9 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  style={[styles.calCell, marking && !isMarked && { opacity: 0.3 }]}
  >
  {phase && !isMarked && (
- <>
- <View style={[styles.calCellGlow1, { backgroundColor: isFuture ? PHASE_COLORS_FUTURE[phase] : PHASE_COLORS[phase] }]} />
- <View style={[styles.calCellGlow2, { backgroundColor: isFuture ? PHASE_COLORS_FUTURE[phase] : PHASE_COLORS[phase] }]} />
- <View style={[styles.calCellArch, { backgroundColor: isFuture ? PHASE_COLORS_FUTURE[phase] : PHASE_COLORS[phase] }]} />
- </>
+  <View style={[StyleSheet.absoluteFillObject, { opacity: isFuture ? 0.45 : 1 }]}>
+   <PhaseGlow phase={phase} />
+  </View>
  )}
  {isMarked && <View style={[styles.calCellArch, { backgroundColor: '#EF4444' }]} />}
  {isToday && <View style={styles.calCellTodayRing} />}
