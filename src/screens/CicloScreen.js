@@ -24,10 +24,10 @@ const SCREEN_W = Dimensions.get('window').width;
 
 
 const PHASE_IMAGES = {
- menstrual: require('../../assets/phases/menstrual.png'),
- follicular: require('../../assets/phases/follicular.png'),
- ovulation: require('../../assets/phases/ovulation.png'),
- luteal: require('../../assets/phases/luteal.png'),
+ menstrual:  require('../../assets/HeroHomescreen/Menstrual.png'),
+ follicular: require('../../assets/HeroHomescreen/Folicular.png'),
+ ovulation:  require('../../assets/HeroHomescreen/Ovulacion.png'),
+ luteal:     require('../../assets/HeroHomescreen/Lutea.png'),
 };
 
 const QUALITY_MOONS = ['','','','',''];
