@@ -234,16 +234,24 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  if (!markStart) { setMarkStart(dateStr); return; }
 
  if (markEnd) {
- // Rango completo → ajustar inicio o fin
  const daysFromEnd = Math.round((new Date(dateStr + 'T12:00:00') - new Date(markEnd + 'T12:00:00')) / 86400000);
  if (daysFromEnd > 15) {
- // Toque muy lejano: es otra regla distinta → empezar selección nueva
- setMarkStart(dateStr); setMarkEnd(null);
+  // Toque muy lejano: nueva regla distinta
+  setMarkStart(dateStr); setMarkEnd(null);
  } else if (dateStr < markStart) {
- setMarkStart(dateStr); // ampliar por el inicio
+  setMarkStart(dateStr); // antes del inicio → ampliar inicio
+ } else if (dateStr > markEnd) {
+  setMarkEnd(dateStr); // después del fin → ampliar fin
  } else {
- setMarkEnd(dateStr); // mover el fin (reduce o amplía)
- if (dateStr < markStart) setMarkStart(dateStr);
+  // Dentro del rango: la mitad decide si mover inicio o fin
+  const startMs = new Date(markStart + 'T12:00:00').getTime();
+  const endMs   = new Date(markEnd   + 'T12:00:00').getTime();
+  const tapMs   = new Date(dateStr   + 'T12:00:00').getTime();
+  if (tapMs <= (startMs + endMs) / 2) {
+   setMarkStart(dateStr); // primera mitad → mover inicio
+  } else {
+   setMarkEnd(dateStr);   // segunda mitad → mover fin
+  }
  }
  return;
  }
