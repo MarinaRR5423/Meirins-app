@@ -1,8 +1,8 @@
-param([switch]$submit)
+param([switch]$submit, [ValidateSet('ios','android')][string]$platform = 'ios')
 
 $ErrorActionPreference = "Stop"
-$BUNDLE_OUT = "$env:TEMP\blumm-check.bundle.js"
-$ASSETS_OUT = "$env:TEMP\blumm-check-assets"
+$BUNDLE_OUT = "$env:TEMP\blumm-check-$platform.bundle.js"
+$ASSETS_OUT = "$env:TEMP\blumm-check-assets-$platform"
 
 function Write-Step { param($n, $total, $msg) Write-Host "" ; Write-Host "[$n/$total] $msg" -ForegroundColor Cyan }
 function Write-Ok   { param($msg) Write-Host "  OK  $msg" -ForegroundColor Green }
@@ -27,18 +27,18 @@ Write-Ok "Sin errores de sintaxis"
 
 # PASO 2: Metro bundle local
 Write-Step 2 $totalSteps "Metro bundle local (mismo bundler que EAS)"
-Write-Host "  Bundling iOS... (1-2 min)" -ForegroundColor Gray
+Write-Host "  Bundling $platform... (1-2 min)" -ForegroundColor Gray
 
 if (Test-Path $BUNDLE_OUT) { Remove-Item $BUNDLE_OUT -Force }
 if (Test-Path $ASSETS_OUT) { Remove-Item $ASSETS_OUT -Recurse -Force }
 New-Item -ItemType Directory -Force $ASSETS_OUT | Out-Null
 
-$EXPORT_DIR = "$env:TEMP\blumm-export-check"
-$STDERR_LOG = "$env:TEMP\blumm-metro-err.txt"
+$EXPORT_DIR = "$env:TEMP\blumm-export-check-$platform"
+$STDERR_LOG = "$env:TEMP\blumm-metro-err-$platform.txt"
 
 if (Test-Path $EXPORT_DIR) { Remove-Item $EXPORT_DIR -Recurse -Force }
 
-cmd /c "npx expo export --platform ios --output-dir `"$EXPORT_DIR`" 2>`"$STDERR_LOG`""
+cmd /c "npx expo export --platform $platform --output-dir `"$EXPORT_DIR`" 2>`"$STDERR_LOG`""
 $metroExit = $LASTEXITCODE
 
 if ($metroExit -ne 0) {
@@ -59,25 +59,26 @@ if (Test-Path $EXPORT_DIR) { Remove-Item $EXPORT_DIR -Recurse -Force }
 Write-Ok "Bundle OK"
 
 # PASO 3: EAS Build
-Write-Step 3 $totalSteps "EAS Build (iOS production)"
+Write-Step 3 $totalSteps "EAS Build ($platform production)"
 Write-Host "  Todo OK localmente. Lanzando EAS..." -ForegroundColor Green
 Write-Host ""
 
-eas build --platform ios --profile production --non-interactive
+eas build --platform $platform --profile production --non-interactive
 if ($LASTEXITCODE -ne 0) {
     Write-Fail "EAS build fallo"
     exit 1
 }
 
-# PASO 4 (opcional): Submit a TestFlight
+# PASO 4 (opcional): Submit a TestFlight / Play Console
 if ($submit) {
-    Write-Step 4 $totalSteps "Submit a TestFlight"
-    eas submit --platform ios --latest --non-interactive
+    $destino = if ($platform -eq 'ios') { 'TestFlight' } else { 'Play Console (internal track)' }
+    Write-Step 4 $totalSteps "Submit a $destino"
+    eas submit --platform $platform --latest --non-interactive
     if ($LASTEXITCODE -ne 0) {
         Write-Fail "Submit fallo"
         exit 1
     }
-    Write-Ok "Subido a TestFlight"
+    Write-Ok "Subido a $destino"
 }
 
 Write-Host ""

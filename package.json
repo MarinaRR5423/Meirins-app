@@ -9,7 +9,9 @@
     "web": "expo start --web",
     "check": "node scripts/precheck.mjs",
     "build": "powershell -ExecutionPolicy Bypass -File scripts/build.ps1",
-    "build:submit": "powershell -ExecutionPolicy Bypass -File scripts/build.ps1 -submit"
+    "build:submit": "powershell -ExecutionPolicy Bypass -File scripts/build.ps1 -submit",
+    "build:android": "powershell -ExecutionPolicy Bypass -File scripts/build.ps1 -platform android",
+    "build:android:submit": "powershell -ExecutionPolicy Bypass -File scripts/build.ps1 -platform android -submit"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.115.0",
