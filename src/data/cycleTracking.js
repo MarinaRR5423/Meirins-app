@@ -31,6 +31,7 @@ export const CYCLE_CATEGORIES = [
   // ── PERIODO ─────────────────────────────────────────────────────────────────
   {
     id: 'flow',
+    icon: 'Droplets',
     color: '#EF4444',
     multi: false,
     label: { es: 'Flujo', en: 'Flow', fr: 'Flux', it: 'Flusso' },
@@ -42,6 +43,7 @@ export const CYCLE_CATEGORIES = [
   },
   {
     id: 'spotting',
+    icon: 'Dot',
     color: '#EF4444',
     multi: false,
     label: { es: 'Manchado', en: 'Spotting', fr: 'Spotting', it: 'Spotting' },
@@ -55,6 +57,7 @@ export const CYCLE_CATEGORIES = [
   // ── SENSACIONES ─────────────────────────────────────────────────────────────
   {
     id: 'feelings',
+    icon: 'Smile',
     color: '#F59E0B',
     multi: true,
     label: { es: 'Sentimientos', en: 'Feelings', fr: 'Sentiments', it: 'Sentimenti' },
@@ -71,6 +74,7 @@ export const CYCLE_CATEGORIES = [
   // ── DOLOR ───────────────────────────────────────────────────────────────────
   {
     id: 'pain',
+    icon: 'Zap',
     color: '#3B82F6',
     multi: true,
     label: { es: 'Dolor', en: 'Pain', fr: 'Douleur', it: 'Dolore' },
@@ -87,6 +91,7 @@ export const CYCLE_CATEGORIES = [
   // ── SPM ─────────────────────────────────────────────────────────────────────
   {
     id: 'pms',
+    icon: 'Cloud',
     color: '#F97316',
     multi: true,
     label: { es: 'SPM', en: 'PMS', fr: 'SPM', it: 'PMS' },
@@ -101,6 +106,7 @@ export const CYCLE_CATEGORIES = [
   // ── SUEÑO ───────────────────────────────────────────────────────────────────
   {
     id: 'sleep_quality',
+    icon: 'Moon',
     color: '#6366F1',
     multi: false,
     label: { es: 'Sueño', en: 'Sleep', fr: 'Sommeil', it: 'Sonno' },
@@ -115,6 +121,7 @@ export const CYCLE_CATEGORIES = [
   // ── ENERGÍA ─────────────────────────────────────────────────────────────────
   {
     id: 'energy',
+    icon: 'Zap',
     color: '#F97316',
     multi: false,
     label: { es: 'Energía', en: 'Energy', fr: 'Énergie', it: 'Energia' },
@@ -129,6 +136,7 @@ export const CYCLE_CATEGORIES = [
   // ── MENTE ───────────────────────────────────────────────────────────────────
   {
     id: 'mind',
+    icon: 'Brain',
     color: '#8B5CF6',
     multi: true,
     label: { es: 'Mente', en: 'Mind', fr: 'Mental', it: 'Mente' },
@@ -143,6 +151,7 @@ export const CYCLE_CATEGORIES = [
   // ── APETITO ─────────────────────────────────────────────────────────────────
   {
     id: 'appetite',
+    icon: 'Utensils',
     color: '#10B981',
     multi: false,
     label: { es: 'Apetito', en: 'Appetite', fr: 'Appétit', it: 'Appetito' },
@@ -157,6 +166,7 @@ export const CYCLE_CATEGORIES = [
   // ── DIGESTIÓN ───────────────────────────────────────────────────────────────
   {
     id: 'digestion',
+    icon: 'Activity',
     color: '#10B981',
     multi: true,
     label: { es: 'Digestión', en: 'Digestion', fr: 'Digestion', it: 'Digestione' },
@@ -171,6 +181,7 @@ export const CYCLE_CATEGORIES = [
   // ── PIEL ────────────────────────────────────────────────────────────────────
   {
     id: 'skin',
+    icon: 'Sparkles',
     color: '#F59E0B',
     multi: true,
     label: { es: 'Piel', en: 'Skin', fr: 'Peau', it: 'Pelle' },
@@ -185,6 +196,7 @@ export const CYCLE_CATEGORIES = [
   // ── LIBIDO ──────────────────────────────────────────────────────────────────
   {
     id: 'libido',
+    icon: 'Heart',
     color: '#EC4899',
     multi: false,
     label: { es: 'Libido', en: 'Libido', fr: 'Libido', it: 'Libido' },
@@ -199,6 +211,7 @@ export const CYCLE_CATEGORIES = [
   // ── FLUJO VAGINAL ───────────────────────────────────────────────────────────
   {
     id: 'cervical',
+    icon: 'Droplet',
     color: '#A157C9',
     multi: false,
     label: { es: 'Flujo vaginal', en: 'Cervical mucus', fr: 'Glaire cervicale', it: 'Muco cervicale' },
@@ -213,6 +226,7 @@ export const CYCLE_CATEGORIES = [
   // ── TEMPERATURA BASAL ───────────────────────────────────────────────────────
   {
     id: 'temperature',
+    icon: 'Thermometer',
     color: '#A157C9',
     multi: false,
     label: { es: 'Temperatura basal', en: 'Basal temp.', fr: 'Temp. basale', it: 'Temp. basale' },
@@ -226,6 +240,7 @@ export const CYCLE_CATEGORIES = [
   // ── VIDA SOCIAL ─────────────────────────────────────────────────────────────
   {
     id: 'social',
+    icon: 'MessageCircle',
     color: '#F97316',
     multi: true,
     label: { es: 'Vida social', en: 'Social', fr: 'Vie sociale', it: 'Vita sociale' },
@@ -239,6 +254,7 @@ export const CYCLE_CATEGORIES = [
   // ── VIDA SEXUAL ─────────────────────────────────────────────────────────────
   {
     id: 'sex',
+    icon: 'Shield',
     color: '#10B981',
     multi: true,
     label: { es: 'Vida sexual', en: 'Sex life', fr: 'Vie sexuelle', it: 'Vita sessuale' },
@@ -253,6 +269,7 @@ export const CYCLE_CATEGORIES = [
   // ── HIGIENE ─────────────────────────────────────────────────────────────────
   {
     id: 'hygiene',
+    icon: 'Wind',
     color: '#EF4444',
     multi: true,
     label: { es: 'Higiene íntima', en: 'Intimate hygiene', fr: 'Hygiène intime', it: 'Igiene intima' },
@@ -268,6 +285,7 @@ export const CYCLE_CATEGORIES = [
   // ── RINITIS ─────────────────────────────────────────────────────────────────
   {
     id: 'rhinitis',
+    icon: 'Wind',
     color: '#6B7280',
     multi: false,
     label: { es: 'Rinitis', en: 'Rhinitis', fr: 'Rhinite', it: 'Rinite' },

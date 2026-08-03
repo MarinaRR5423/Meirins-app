@@ -3,7 +3,24 @@ import { Modal, SafeAreaView, View, TouchableOpacity, ScrollView, TextInput, Sty
 import { CYCLE_CATEGORIES } from '../data/cycleTracking';
 import { F } from '../theme/fonts';
 import { getInsight } from '../data/symptomInsights';
-import { X, SlidersHorizontal } from 'lucide-react-native';
+import {
+ X, SlidersHorizontal,
+ Droplets, Droplet, Dot, Smile, Zap, Cloud, Moon, Brain,
+ Utensils, Activity, Sparkles, Heart, Thermometer, MessageCircle,
+ Shield, Wind,
+} from 'lucide-react-native';
+
+const LUCIDE_MAP = {
+ Droplets, Droplet, Dot, Smile, Zap, Cloud, Moon, Brain,
+ Utensils, Activity, Sparkles, Heart, Thermometer, MessageCircle,
+ Shield, Wind,
+};
+
+function CatIcon({ name, color, size = 16 }) {
+ const Icon = LUCIDE_MAP[name];
+ if (!Icon) return null;
+ return <Icon size={size} color={color} />;
+}
 import BText from './BText';
 
 // Categorías ocultas por defecto (nicho o médico)
@@ -174,7 +191,12 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
        <View style={s.customList}>
         {CYCLE_CATEGORIES.map(cat => (
          <View key={cat.id} style={s.customRow}>
-          <BText style={s.customRowLabel}>{cat.label[lang] || cat.label.es}</BText>
+          <View style={s.customRowLeft}>
+           <View style={[s.catIconWrap, { backgroundColor: cat.color + '22' }]}>
+            <CatIcon name={cat.icon} color={cat.color} size={14} />
+           </View>
+           <BText style={s.customRowLabel}>{cat.label[lang] || cat.label.es}</BText>
+          </View>
           <Switch
            value={localPrefs[cat.id] !== false}
            onValueChange={v => setLocalPrefs(p => ({ ...p, [cat.id]: v }))}
@@ -197,7 +219,12 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
         const value = dayData[cat.id];
         return (
          <View key={cat.id} style={s.category}>
-          <BText style={s.catTitle}>{cat.label[lang] || cat.label.es}</BText>
+          <View style={s.catHeader}>
+           <View style={[s.catIconWrap, { backgroundColor: cat.color + '22' }]}>
+            <CatIcon name={cat.icon} color={cat.color} size={14} />
+           </View>
+           <BText style={s.catTitle}>{cat.label[lang] || cat.label.es}</BText>
+          </View>
           <View style={s.options}>
            {cat.options.map(opt => {
             const isSel = cat.multi ? value?.includes?.(opt.id) : value === opt.id;
@@ -277,6 +304,8 @@ const s = StyleSheet.create({
  // Sections
  sections: { gap: 2 },
  category: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, gap: 24 },
+ catHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+ catIconWrap: { width: 28, height: 28, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
  catTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A' },
  options: { flexDirection: 'row', flexWrap: 'wrap', gap: 2 },
  option: { height: 40, paddingHorizontal: 8, borderRadius: 16, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
@@ -306,6 +335,7 @@ const s = StyleSheet.create({
  customDesc: { fontSize: 13, fontFamily: F.body, color: '#737373', lineHeight: 18 },
  customList: { gap: 0 },
  customRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#E5E5E5' },
+ customRowLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
  customRowLabel: { fontSize: 15, fontFamily: F.body, color: '#0A0A0A' },
  doneBtn: { backgroundColor: '#171717', height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginTop: 4 },
 });
