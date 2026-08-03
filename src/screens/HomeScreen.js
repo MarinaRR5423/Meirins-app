@@ -453,25 +453,28 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
   const tipFull = d?.tip || '';
   const dotIdx = tipFull.indexOf('.');
   const tipHead = dotIdx !== -1 ? tipFull.slice(0, dotIdx + 1) : tipFull;
-  const tipSub  = dotIdx !== -1 ? tipFull.slice(dotIdx + 1).trim() : '';
   return (
-   <ImageBackground
-    source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
-    style={styles.tipCard}
-    imageStyle={styles.heroCardImg}
+   <TouchableOpacity
+    activeOpacity={0.92}
+    onPress={() => navigation.navigate('Ciclo', { openPhase: pi?.phase })}
    >
-    <View style={styles.miniHeader}>
-     <View style={styles.miniHeaderLabel}>
-      <Info size={14} color="white" />
-      <BText style={styles.tipHeaderTxt}>{h.phaseTip}</BText>
+    <ImageBackground
+     source={PHASE_IMAGES[pi?.phase] || PHASE_IMAGES.menstrual}
+     style={styles.tipCard}
+     imageStyle={styles.heroCardImg}
+    >
+     <View style={styles.miniHeader}>
+      <View style={styles.miniHeaderLabel}>
+       <Info size={14} color="white" />
+       <BText style={styles.tipHeaderTxt}>{h.phaseTip}</BText>
+      </View>
+      <ChevronRight size={14} color="white" />
      </View>
-     <ChevronRight size={14} color="white" />
-    </View>
-    <View style={styles.tipBody}>
-     <BText style={styles.tipTitle}>{tipHead}</BText>
-     {!!tipSub && <BText style={styles.tipSubtitle}>{tipSub}</BText>}
-    </View>
-   </ImageBackground>
+     <View style={styles.tipBody}>
+      <BText style={styles.tipTitle}>{tipHead}</BText>
+     </View>
+    </ImageBackground>
+   </TouchableOpacity>
   );
  })()}
  </WidgetWrap>

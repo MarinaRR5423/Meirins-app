@@ -1,5 +1,5 @@
 ﻿import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { View, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Image, ImageBackground, Modal, SafeAreaView } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { F } from '../theme/fonts';
@@ -162,8 +162,9 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  const cicloOpenRef = useRef(null);
  const [trackingOpen, setTrackingOpen] = useState(false);
  const [expandedPhase, setExpanded] = useState(pi?.phase || null);
+ const route = useRoute();
  const [selectedDate, setSelectedDate] = useState(null);
- const [selectedPhaseKey, setSelectedPhaseKey] = useState(null);
+ const [selectedPhaseKey, setSelectedPhaseKey] = useState(route.params?.openPhase || null);
  const cy = (T[lang] || T.es).cycle;
 
  const today = new Date();
