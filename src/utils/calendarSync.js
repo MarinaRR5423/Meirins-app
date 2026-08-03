@@ -80,7 +80,7 @@ function buildICSEvent({ workout, dateStr, hour }) {
  `UID:${uid}`,
  `DTSTART:${startDT}`,
  `DTEND:${endDT}`,
- `SUMMARY:${escapeICS(workout.ico + '' + workout.name)}`,
+ `SUMMARY:${escapeICS(workout.name)}`,
  exercises ? `DESCRIPTION:${escapeICS(exercises)}` : '',
  'BEGIN:VALARM',
  'TRIGGER:-PT15M',
@@ -215,7 +215,7 @@ export async function syncWeekToCalendar({ phase, trainDays = [], hour = 7, cale
  }).join('\n') || '';
 
  const eventData = {
- title: `${workout.ico} ${workout.name}`,
+ title: workout.name,
  startDate, endDate,
  notes: exercises,
  calendarId,
