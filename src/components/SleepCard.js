@@ -5,13 +5,8 @@ import T from '../i18n/translations';
 import { F } from '../theme/fonts';
 import BText from './BText';
 
-const QUALITY_OPTS = [
- { es: 'Muy mal', en: 'Very bad' },
- { es: 'Mal', en: 'Bad' },
- { es: 'Regular', en: 'Regular' },
- { es: 'Bien', en: 'Good' },
- { es: 'Muy bien', en: 'Very good' },
-];
+// Fallback si translations no tiene qualityLabels
+const QUALITY_FALLBACK = ['Muy mal', 'Mal', 'Regular', 'Bien', 'Muy bien'];
 
 export default function SleepCard({ sleepLog = [], logSleep, lang = 'es', healthSleep = null }) {
  const sl = (T[lang] || T.es).sleep;
@@ -36,7 +31,8 @@ export default function SleepCard({ sleepLog = [], logSleep, lang = 'es', health
   setSaved(true);
  };
 
- const qualityLabel = QUALITY_OPTS[quality - 1]?.[lang] ?? QUALITY_OPTS[quality - 1]?.es ?? 'Regular';
+ const qualityLabels = sl.qualityLabels?.length === 5 ? sl.qualityLabels : QUALITY_FALLBACK;
+ const qualityLabel = qualityLabels[quality - 1] ?? 'Regular';
 
  return (
   <View style={s.card}>
@@ -79,9 +75,9 @@ export default function SleepCard({ sleepLog = [], logSleep, lang = 'es', health
 
    {qualityOpen && (
     <View style={s.qualityDropdown}>
-     {QUALITY_OPTS.map((opt, i) => (
+     {qualityLabels.map((label, i) => (
       <TouchableOpacity key={i} style={[s.qualityOpt, quality === i + 1 && s.qualityOptActive]} onPress={() => { setQuality(i + 1); setQualityOpen(false); }}>
-       <BText style={[s.qualityOptTxt, quality === i + 1 && s.qualityOptTxtActive]}>{opt[lang] ?? opt.es}</BText>
+       <BText style={[s.qualityOptTxt, quality === i + 1 && s.qualityOptTxtActive]}>{label}</BText>
       </TouchableOpacity>
      ))}
     </View>

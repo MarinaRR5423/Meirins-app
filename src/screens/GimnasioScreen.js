@@ -65,8 +65,15 @@ function ExtraSportPicker({ lang, g, onPick, onClose }) {
  const [other, setOther] = useState(false);
  const [txt, setTxt] = useState('');
  const [sport, setSport] = useState(null);
- const [durationH, setDurationH] = useState(0.5);
+ const [durationMin, setDurationMin] = useState(30);
  const [intensity, setIntensity] = useState('media');
+
+ const fmtDuration = (min) => {
+  if (min < 60) return `${min} min`;
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return m === 0 ? `${h}h` : `${h}h ${m}min`;
+ };
  const tr = (es, en, fr, it) => ({ es, en, fr, it }[lang] || es);
 
  const INTENSITIES = [
@@ -77,7 +84,7 @@ function ExtraSportPicker({ lang, g, onPick, onClose }) {
 
  const handleAdd = () => {
  if (!sport) return;
- onPick(sport, Math.round(durationH * 60), intensity);
+ onPick(sport, durationMin, intensity);
  };
 
  const handleClose = () => {
@@ -137,13 +144,13 @@ function ExtraSportPicker({ lang, g, onPick, onClose }) {
  <View style={{ gap: 12 }}>
  <BText style={sp.sectionLabel}>{tr('Tiempo', 'Time', 'Temps', 'Tempo')}</BText>
  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
- <TouchableOpacity onPress={() => setDurationH(h => Math.max(0.5, h - 0.5))} style={sp.stepBtn}>
+ <TouchableOpacity onPress={() => setDurationMin(m => Math.max(5, m - 5))} style={sp.stepBtn}>
  <BText style={sp.stepBtnTxt}>−</BText>
  </TouchableOpacity>
  <View style={sp.stepValue}>
- <BText style={sp.stepValueTxt}>{durationH} h</BText>
+ <BText style={sp.stepValueTxt}>{fmtDuration(durationMin)}</BText>
  </View>
- <TouchableOpacity onPress={() => setDurationH(h => Math.min(8, h + 0.5))} style={sp.stepBtn}>
+ <TouchableOpacity onPress={() => setDurationMin(m => Math.min(480, m + 5))} style={sp.stepBtn}>
  <BText style={sp.stepBtnTxt}>+</BText>
  </TouchableOpacity>
  </View>
