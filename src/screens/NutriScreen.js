@@ -203,6 +203,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  const [sub, setSub] = useState('plan');
  const [weekOffset, setWeekOffset] = useState(0);
  const [expandedBatchRow, setExpandedBatchRow] = useState(null); // 'A' | 'B' | null
+ const [planNutriExpanded, setPlanNutriExpanded] = useState(false);
  const [checkedItems, setCheckedItems] = useState({});
 
  // Cargar checks guardados al cambiar de semana
@@ -722,10 +723,18 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  ];
  return (
  <View style={styles.planNutriCard}>
- <View style={styles.planNutriHeader}>
- <BText style={styles.planNutriHeaderTxt}>{planTitle}</BText>
- <ChevronRight size={16} color="#260E01" />
- </View>
+ <TouchableOpacity
+  style={styles.planNutriHeader}
+  onPress={() => setPlanNutriExpanded(v => !v)}
+  activeOpacity={0.75}
+ >
+  <BText style={styles.planNutriHeaderTxt}>{planTitle}</BText>
+  <ChevronRight
+   size={16}
+   color="#260E01"
+   style={{ transform: [{ rotate: planNutriExpanded ? '90deg' : '0deg' }] }}
+  />
+ </TouchableOpacity>
 
  {dietData ? (
  <>
@@ -830,6 +839,42 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  })() : dietData?.description ? (
  <BText style={styles.planNutriDesc}>{dietData.description[lang] || dietData.description.es || dietData.description}</BText>
  ) : null}
+
+ {planNutriExpanded && weekMenuDays.length > 0 && (() => {
+  const DAY_NAMES_WEEK = {
+   es: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+   en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+   fr: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+   it: ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'],
+  }[lang] || ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+  const todayStr2 = new Date().toISOString().split('T')[0];
+  return (
+   <View style={styles.planNutriWeekMenu}>
+    {weekMenuDays.map((day, i) => {
+     const isToday = day.dateStr === todayStr2;
+     const meals = (day.menu?.meals || []).filter(m => m.title);
+     return (
+      <View key={i} style={[styles.planNutriWeekDay, isToday && styles.planNutriWeekDayToday]}>
+       <BText style={[styles.planNutriWeekDayLabel, isToday && styles.planNutriWeekDayLabelToday]}>
+        {isToday
+         ? ({ es: 'Hoy', en: 'Today', fr: "Auj.", it: 'Oggi' }[lang] || 'Hoy')
+         : DAY_NAMES_WEEK[i]}
+       </BText>
+       <View style={{ flex: 1, gap: 2 }}>
+        {meals.length > 0 ? meals.map((meal, j) => (
+         <BText key={j} style={styles.planNutriWeekMeal} numberOfLines={1}>
+          {getMealLabel(lang, meal.label || meal.id)} · {meal.title}
+         </BText>
+        )) : (
+         <BText style={styles.planNutriWeekMeal}>—</BText>
+        )}
+       </View>
+      </View>
+     );
+    })}
+   </View>
+  );
+ })()}
 
  <TouchableOpacity style={styles.planNutriEditBtn} onPress={() => nutriOpenRef.current?.()}>
  <BText style={styles.planNutriEditTxt}>{editLabel}</BText>
@@ -1266,6 +1311,12 @@ const styles = StyleSheet.create({
  batchMenuMealName: { fontSize: 13, fontFamily: F.body, color: '#260E01', flex: 1 },
  planNutriEditBtn: { backgroundColor: 'white', borderRadius: 12, height: 48, alignItems: 'center', justifyContent: 'center' },
  planNutriEditTxt: { fontSize: 18, fontFamily: F.body, color: '#0A0A0A' },
+ planNutriWeekMenu: { gap: 2, marginBottom: 16 },
+ planNutriWeekDay: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: 'rgba(255,255,255,0.25)', borderRadius: 12, padding: 10 },
+ planNutriWeekDayToday: { backgroundColor: 'rgba(255,255,255,0.55)' },
+ planNutriWeekDayLabel: { fontSize: 11, fontFamily: F.bodyB, color: '#9E3C02', textTransform: 'uppercase', letterSpacing: 0.3, width: 32, paddingTop: 1 },
+ planNutriWeekDayLabelToday: { color: '#260E01' },
+ planNutriWeekMeal: { fontSize: 12, fontFamily: F.body, color: '#260E01', lineHeight: 17 },
  dayTypeRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 10, borderRadius: 12, marginBottom: 6 },
  dayTypeLabel: { fontSize: 13, fontFamily: F.bodyB },
  dayTypeTag: { fontSize: 12, fontFamily: F.body },
