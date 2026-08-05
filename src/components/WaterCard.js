@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { F } from '../theme/fonts';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GlassWater, ChevronRight } from 'lucide-react-native';
 import T from '../i18n/translations';
 import BText from './BText';
+import { useWater } from '../hooks/useWater';
 
 const WATER_GOAL = 8;
 const ML_PER_GLASS = 250;
@@ -12,18 +12,7 @@ const ML_PER_GLASS = 250;
 export default function WaterCard({ lang }) {
  const n = (T[lang] || T.es).nutri;
  const w = n.water;
- const todayStr = new Date().toISOString().split('T')[0];
- const storageKey = `water_count_${todayStr}`;
- const [count, setCount] = useState(0);
-
- useEffect(() => {
- AsyncStorage.getItem(storageKey).then(v => { if (v) setCount(parseInt(v, 10)); });
- }, [storageKey]);
-
- const updateCount = (newCount) => {
- setCount(newCount);
- AsyncStorage.setItem(storageKey, String(newCount));
- };
+ const { count, updateCount } = useWater();
 
  const ml = count * ML_PER_GLASS;
  const goalMl = WATER_GOAL * ML_PER_GLASS;
