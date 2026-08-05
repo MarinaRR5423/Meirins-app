@@ -33,7 +33,13 @@ const HERO_COPY = {
  menstrual: { es: 'estás entrando en la fase menstrual', en: 'you\'re entering your menstrual phase', fr: 'tu entres dans ta phase menstruelle', it: 'stai entrando nella fase mestruale' },
  follicular: { es: 'estás en plena fase folicular', en: 'you\'re in full follicular phase', fr: 'tu es en pleine phase folliculaire', it: 'sei in piena fase follicolare' },
  ovulation: { es: 'estás en la fase de ovulación', en: 'you\'re in your ovulation phase', fr: 'tu es dans ta phase d\'ovulation', it: 'sei nella fase di ovulazione' },
- luteal: { es: 'estás acabando tu fase lútea', en: 'you\'re finishing your luteal phase', fr: 'tu termines ta phase lutéale', it: 'stai finendo la tua fase luteale' },
+};
+
+// Mensaje lútea dinámico según posición dentro de la fase (daysLeft)
+const LUTEAL_COPY = {
+ start: { es: 'estás empezando tu fase lútea', en: 'you\'re starting your luteal phase', fr: 'tu commences ta phase lutéale', it: 'stai iniziando la tua fase luteale' },
+ mid:   { es: 'estás en plena fase lútea', en: 'you\'re in full luteal phase', fr: 'tu es en pleine phase lutéale', it: 'sei in piena fase luteale' },
+ end:   { es: 'estás acabando tu fase lútea', en: 'you\'re finishing your luteal phase', fr: 'tu termines ta phase lutéale', it: 'stai finendo la tua fase luteale' },
 };
 
 function WidgetWrap({ id, widgets, editMode, onLongPress, onRemove, wiggleRotate, children }) {
@@ -229,9 +235,12 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  const kcalPct = kcalTarget ? Math.min(1, consumedKcal / kcalTarget) : 0;
 
  const heroDayLabel = `${tr('día', 'day', 'jour', 'giorno')} ${pi?.day}/${pi?.cycleLen}`;
+ // Mensaje lútea dinámico: daysLeft >= 9 → empezando | 4–8 → en plena | < 4 → acabando
+ const lutealKey = (pi?.daysLeft ?? 0) >= 9 ? 'start' : (pi?.daysLeft ?? 0) >= 4 ? 'mid' : 'end';
+ const phaseCopyObj = pi?.phase === 'luteal' ? LUTEAL_COPY[lutealKey] : HERO_COPY[pi?.phase];
  const heroHeadline = isHormonalContra
  ? `${tr('Día', 'Day', 'Jour', 'Giorno')} ${pi?.day}, ${tr('ciclo con anticoncepción hormonal', 'cycle on hormonal contraception', 'cycle sous contraception hormonale', 'ciclo con contraccezione ormonale')}`
- : `${tr('Día', 'Day', 'Jour', 'Giorno')} ${pi?.day}, ${(HERO_COPY[pi?.phase] && (HERO_COPY[pi.phase][lang] || HERO_COPY[pi.phase].es)) || ''}`;
+ : `${tr('Día', 'Day', 'Jour', 'Giorno')} ${pi?.day}, ${(phaseCopyObj && (phaseCopyObj[lang] || phaseCopyObj.es)) || ''}`;
 
  return (
  <View style={styles.container}>
