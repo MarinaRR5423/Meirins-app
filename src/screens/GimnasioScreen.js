@@ -1277,7 +1277,7 @@ const styles = StyleSheet.create({
  addBtnText: { color: 'white', fontFamily: F.bodyB, fontSize: 13 },
  dashedBtn: { padding: 10, borderRadius: 12, borderWidth: 1, borderColor: '#E5E5E5', alignItems: 'center', backgroundColor: 'white' },
  dashedBtnText: { fontSize: 13, color: '#525252', fontFamily: F.body },
- extraSportCard: { backgroundColor: '#429FE7', borderRadius: 24, padding: 16, gap: 24 },
+ extraSportCard: { backgroundColor: '#429FE7', borderRadius: 24, padding: 16, gap: 24, marginBottom: 2 },
  extraSportHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
  extraSportHeaderTxt: { fontSize: 12, fontFamily: F.body, color: '#0A1823', lineHeight: 15.6 },
  extraSportTitle: { fontSize: 32, fontFamily: F.heading, color: '#0A1823', lineHeight: 35.2 },
