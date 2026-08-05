@@ -461,7 +461,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  style={[styles.calCell, marking && !isMarked && { opacity: 0.3 }]}
  >
  {phase && !isMarked && (
-  <View style={[StyleSheet.absoluteFillObject, { opacity: isFuture ? 0.45 : 1 }]}>
+  <View style={[StyleSheet.absoluteFillObject, { opacity: isFuture ? 0.45 : 1, justifyContent: 'flex-end', alignItems: 'center' }]}>
    <PhaseGlow phase={phase} />
   </View>
  )}
