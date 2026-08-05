@@ -1259,7 +1259,7 @@ const styles = StyleSheet.create({
  planNutriAvatarTxt: { fontSize: 24, fontFamily: F.headingX, color: '#260E01' },
  planNutriDayLabel: { fontSize: 18, fontFamily: F.headingX, color: '#260E01' },
  planNutriDayTag: { fontSize: 14, color: '#9E3C02', marginTop: 1, fontFamily: F.body },
- planNutriDesc: { fontSize: 14, fontFamily: F.body, color: '#260E01', lineHeight: 20, opacity: 0.85 },
+ planNutriDesc: { fontSize: 14, fontFamily: F.body, color: '#260E01', lineHeight: 20, opacity: 0.85, marginBottom: 16 },
  batchMenuDropdown: { backgroundColor: 'rgba(0,0,0,0.08)', borderRadius: 12, padding: 10, gap: 8, marginTop: 2, marginBottom: 4 },
  batchMenuRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
  batchMenuMealType: { fontSize: 11, fontFamily: F.bodyB, color: '#9E3C02', textTransform: 'uppercase', width: 64 },
