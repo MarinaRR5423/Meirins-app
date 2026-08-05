@@ -26,6 +26,7 @@ import TipsCard from '../components/TipsCard';
 import SwipeableTabs from '../components/SwipeableTabs';
 import { trackScreen, trackEvent, Events } from '../lib/analytics';
 import BText from '../components/BText';
+import PhaseGlow from '../../assets/Calendar icons/PhaseGlow';
 
 const GYM_ARTICLE_IDS = ['cycle-training', 'pcos-hormones'];
 const gymArticles = ARTICLES.filter(a => GYM_ARTICLE_IDS.includes(a.id));
@@ -487,12 +488,15 @@ export default function GimnasioScreen({
      const PHASE_COLORS_WEEK = { menstrual:'#92E288', follicular:'#C79ADF', ovulation:'#FEDF68', luteal:'#FEA068' };
      return offsetDays.map((day, i) => {
       const isExpanded = weekAction?.dateKey === day.dateKey;
-      const phaseGlow = day.isToday && pi?.phase ? PHASE_COLORS_WEEK[pi.phase] : null;
       return (
        <TouchableOpacity key={i}
         onPress={() => setWeekAction(isExpanded ? null : { dateKey: day.dateKey, step: 'main' })}
         style={[styles.calDayCell, isExpanded && styles.calDayCellSelected]}>
-        {phaseGlow && <View style={[styles.calDayGlow, { backgroundColor: phaseGlow }]} />}
+        {day.isToday && (
+         <View style={[StyleSheet.absoluteFillObject, { justifyContent: 'flex-end', alignItems: 'center' }]}>
+          <PhaseGlow phase="ovulation" />
+         </View>
+        )}
         {day.dotColor && <View style={[styles.calDayDot, { backgroundColor: day.dotColor }]} />}
         <BText style={styles.calDayNum}>{day.dayNum}</BText>
        </TouchableOpacity>

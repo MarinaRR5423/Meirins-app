@@ -527,9 +527,9 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
       return (
        <TouchableOpacity key={i} onPress={() => setSelectedDayIdx(i)}
         style={[styles.weekCell, day.isToday && styles.weekCellToday, isSel && styles.weekCellActive]}>
-        {day.phase && (
+        {day.isToday && (
          <View style={[StyleSheet.absoluteFillObject, { justifyContent: 'flex-end', alignItems: 'center' }]}>
-          <PhaseGlow phase={day.phase} />
+          <PhaseGlow phase="ovulation" />
          </View>
         )}
         <BText style={styles.weekCellNum}>{day.dayNum}</BText>
