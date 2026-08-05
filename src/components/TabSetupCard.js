@@ -116,11 +116,13 @@ function DayPicker({ trainDays, onToggle, dayLetters, variant = 'default' }) {
       d.setDate(monday.getDate() + i);
       weekDateByDay[d.getDay()] = d.getDate();
     }
+    // Lun→Dom: JS day indices starting Monday
+    const MON_FIRST = [1, 2, 3, 4, 5, 6, 0];
     return (
       <View style={{ gap: 4, marginBottom: 8 }}>
         {/* Day labels row */}
         <View style={s.daysLabelRowAzote}>
-          {[0, 1, 2, 3, 4, 5, 6].map(d => (
+          {MON_FIRST.map(d => (
             <View key={d} style={s.dayLabelCellAzote}>
               <Text style={s.dayLabelTxtAzote}>{dayLetters[d]}</Text>
             </View>
@@ -128,7 +130,7 @@ function DayPicker({ trainDays, onToggle, dayLetters, variant = 'default' }) {
         </View>
         {/* Day cells */}
         <View style={s.daysRowAzote}>
-          {[0, 1, 2, 3, 4, 5, 6].map(d => {
+          {MON_FIRST.map(d => {
             const on = trainDays.includes(d);
             return (
               <TouchableOpacity key={d} onPress={() => onToggle(d)}
