@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/react-native';
 
 const POSTHOG_KEY = process.env.EXPO_PUBLIC_POSTHOG_KEY || '';
 const POSTHOG_HOST = process.env.EXPO_PUBLIC_POSTHOG_HOST || '';
-const SENTRY_DSN = 'https://8ffb945498a4fc911e9a48dc50facbf8@o4511531396431872.ingest.de.sentry.io/4511531401936976';
+const SENTRY_DSN = 'https://8aa4e6f9d4853c87825e35c1e97ae2f2@o4511859999834112.ingest.de.sentry.io/4511860152598608';
 
 const ANALYTICS_ENABLED = !!POSTHOG_KEY || !!SENTRY_DSN;
 
