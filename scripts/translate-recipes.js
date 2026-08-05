@@ -23,7 +23,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const SUPA_URL   = 'https://lpcvkzmfemxziuhdmzpx.supabase.co';
 const SUPA_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxwY3Zrem1mZW14eml1aGRtenB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NTcxNTcsImV4cCI6MjA5MjEzMzE1N30.1khyrwY8455LKptbHLIRtSe9AjT8bOitV7vSskVSN1g';
-const DEEPL_KEY  = '0297752d-c4ae-48c2-bf4d-9853144f49a0:fx';
+
+// La key de DeepL nunca debe estar en el código — pásala como variable de
+// entorno: DEEPL_API_KEY=xxx node scripts/translate-recipes.js
+const DEEPL_KEY = process.env.DEEPL_API_KEY;
+if (!DEEPL_KEY) {
+  console.error('❌ Falta la variable de entorno DEEPL_API_KEY');
+  process.exit(1);
+}
 // Free-tier endpoint (keys ending in :fx use api-free.deepl.com)
 const DEEPL_URL  = 'https://api-free.deepl.com/v2/translate';
 
