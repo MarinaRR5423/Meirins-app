@@ -588,9 +588,14 @@ export default function PerfilScreen({ pi, profile, signOut }) {
    const { error } = await sb.rpc('delete_user_account');
    if (error) throw error;
   } catch (e) {
+   // Fallback si la RPC falla: borra manualmente lo mismo que ella (food_logs
+   // primero, luego profiles) para no dejar historial huérfano.
    const { supabase: sb } = require('../lib/supabase');
    const user = (await sb.auth.getUser())?.data?.user;
-   if (user) await sb.from('profiles').delete().eq('id', user.id);
+   if (user) {
+    await sb.from('food_logs').delete().eq('user_id', user.id);
+    await sb.from('profiles').delete().eq('id', user.id);
+   }
   }
   await signOut();
  };

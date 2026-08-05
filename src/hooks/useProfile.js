@@ -187,7 +187,8 @@ export const useProfile = () => {
  const filtered = existing.filter(e => e.date !== entry.date);
  const updated = [entry, ...filtered].slice(0, 60);
  await saveProfileExtended({ sleepLog: updated });
- trackEvent(Events.SLEEP_LOGGED, { hours: entry.hours, quality: entry.quality });
+ // Sin horas/calidad reales — es un dato de salud, no debe salir a analytics
+ trackEvent(Events.SLEEP_LOGGED);
  };
 
  // ─── Favoritos ───────────────────────────────────────────────────────────────
@@ -241,7 +242,8 @@ export const useProfile = () => {
  const logCycleDay = async (dateStr, data) => {
  const cycleLog = profileExtended?.cycleLog || {};
  await saveProfileExtended({ cycleLog: { ...cycleLog, [dateStr]: data } });
- trackEvent(Events.CYCLE_DATE_SET, { date: dateStr });
+ // Sin la fecha real — es un dato de salud reproductiva, no debe salir a analytics
+ trackEvent(Events.CYCLE_DATE_SET);
  };
 
  const logWorkoutDone = async (status) => {
@@ -259,7 +261,8 @@ export const useProfile = () => {
  .sort((a, b) => b.date.localeCompare(a.date))
  .slice(0, 104);
  await saveProfileExtended({ weightLog: updated });
- trackEvent(Events.WEIGHT_LOGGED, { weight: entry.weight, date: entry.date });
+ // Sin el peso ni la fecha reales — es un dato de salud, no debe salir a analytics
+ trackEvent(Events.WEIGHT_LOGGED);
  };
 
  const signOut = async () => {

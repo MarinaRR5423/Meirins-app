@@ -35,12 +35,17 @@ export function setPostHogClient(client) {
  _posthog = client;
 }
 
-/** Identifica al usuario (después del login) */
-export function identifyUser(userId, traits = {}) {
+/**
+ * Identifica al usuario (después del login).
+ * Nunca pasar traits identificables (email, peso, fechas de ciclo, etc.):
+ * Blumm maneja datos de salud sensibles y no deben quedar asociados a la
+ * identidad real de la usuaria en PostHog/Sentry sin consentimiento explícito.
+ */
+export function identifyUser(userId) {
  if (!ANALYTICS_ENABLED) return;
  try {
- Sentry.setUser({ id: userId, ...traits });
- _posthog?.identify(userId, traits);
+ Sentry.setUser({ id: userId });
+ _posthog?.identify(userId);
  } catch { /* ignore */ }
 }
 

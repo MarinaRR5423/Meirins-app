@@ -154,10 +154,10 @@ function App() {
     if (pi?.phase) AsyncStorage.setItem('@blumm/lastPhase', pi.phase).catch(() => {});
   }, [pi?.phase]);
 
-  // Identifica al usuario tras login
+  // Identifica al usuario tras login (sin traits identificables — ver analytics.js)
   useEffect(() => {
     if (profile?.user?.id) {
-      identifyUser(profile.user.id, { email: profile.user.email });
+      identifyUser(profile.user.id);
     }
   }, [profile?.user?.id]);
 
