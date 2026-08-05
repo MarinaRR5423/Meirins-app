@@ -25,6 +25,7 @@ import { trackScreen } from '../lib/analytics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import WaterCard from '../components/WaterCard';
 import BText from '../components/BText';
+import PhaseGlow from '../../assets/Calendar icons/PhaseGlow';
 // nutritionRules ya no se usa para override de display — las reglas actúan en recipeEngine
 
 const PHASE_IMAGES = {
@@ -388,6 +389,12 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  : filteredSlots.map(s => ({ ...s, title: null, items: [], _personalized: false }));
  const menu = { meals };
  const dayType = DAY_TYPES[getDayType(dow)];
+ // Fase del ciclo para este día
+ const diffFromToday = Math.round((date - today) / 86400000);
+ const cycleLen = pi?.cycleLen ?? 28;
+ const menstrualEnd = pi?.menstrualEnd ?? 5;
+ const cd = (((pi?.day ?? 1) - 1 + diffFromToday) % cycleLen + cycleLen) % cycleLen + 1;
+ const phase = pi ? (cd <= menstrualEnd ? 'menstrual' : cd <= 13 ? 'follicular' : cd <= 16 ? 'ovulation' : 'luteal') : null;
  return {
  label: isToday ? cm.today : names[dow],
  dayNum: date.getDate(),
@@ -395,6 +402,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  dateStr,
  isToday,
  dayType,
+ phase,
  };
  });
  }, [fastingProtocol, mealsActive, allRecipes, userProfile, pi?.phase, lang, weekOffset]);
@@ -516,11 +524,14 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
     <View style={styles.weekStripRow}>
      {weekMenuDays.map((day, i) => {
       const isSel = activeIdx === i;
-      const phaseColor = day.isToday && pi?.phase ? PHASE_COLORS_WEEK[pi.phase] : null;
       return (
        <TouchableOpacity key={i} onPress={() => setSelectedDayIdx(i)}
         style={[styles.weekCell, day.isToday && styles.weekCellToday, isSel && styles.weekCellActive]}>
-        {phaseColor && <View style={[styles.weekCellGlow, { backgroundColor: phaseColor }]} />}
+        {day.phase && (
+         <View style={[StyleSheet.absoluteFillObject, { justifyContent: 'flex-end', alignItems: 'center' }]}>
+          <PhaseGlow phase={day.phase} />
+         </View>
+        )}
         <BText style={styles.weekCellNum}>{day.dayNum}</BText>
        </TouchableOpacity>
       );
