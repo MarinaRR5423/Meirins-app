@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, ScrollView, Platform, ImageBackground, Dimensions } from 'react-native';
 import { BlurView } from 'expo-blur';
 import * as Linking from 'expo-linking';
+import * as Localization from 'expo-localization';
 import { TERMS_URL, PRIVACY_URL } from '../lib/legalLinks';
 import { supabase } from '../lib/supabase';
 import T from '../i18n/translations';
@@ -10,8 +11,18 @@ import BText from './BText';
 
 const { width: SW, height: SH } = Dimensions.get('window');
 
-export default function AuthScreen({ lang = 'es' }) {
- const t = (T[lang] || T.es).auth;
+// Detecta el idioma del dispositivo y lo mapea a los idiomas soportados
+function detectLang() {
+ const locale = Localization.getLocales?.()?.[0]?.languageCode || 'es';
+ if (locale.startsWith('fr')) return 'fr';
+ if (locale.startsWith('it')) return 'it';
+ if (locale.startsWith('en')) return 'en';
+ return 'es';
+}
+
+export default function AuthScreen({ lang }) {
+ const detectedLang = lang || detectLang();
+ const t = (T[detectedLang] || T.es).auth;
 
  // welcome → email-register → login
  const [mode, setMode] = useState('welcome');
@@ -90,13 +101,13 @@ export default function AuthScreen({ lang = 'es' }) {
 
  {/* Floating pills */}
  <View style={[styles.pill, styles.pillGreen, { top: SH * 0.14, left: SW * 0.06 }]}>
- <BText style={[styles.pillText, { color: '#0B1F08' }]}>CICLO</BText>
+ <BText style={[styles.pillText, { color: '#0B1F08' }]}>{t.pillCycle}</BText>
  </View>
  <View style={[styles.pill, styles.pillOrange, { top: SH * 0.22, right: SW * 0.12 }]}>
- <BText style={[styles.pillText, { color: '#260E01' }]}>NUTRICIÓN</BText>
+ <BText style={[styles.pillText, { color: '#260E01' }]}>{t.pillNutri}</BText>
  </View>
  <View style={[styles.pill, styles.pillBlue, { top: SH * 0.08, right: SW * 0.06 }]}>
- <BText style={[styles.pillText, { color: '#0A1823' }]}>ENTRENAMIENTO</BText>
+ <BText style={[styles.pillText, { color: '#0A1823' }]}>{t.pillTrain}</BText>
  </View>
 
  {/* Logo */}
@@ -108,14 +119,12 @@ export default function AuthScreen({ lang = 'es' }) {
  <View style={styles.glassContainer}>
  <BlurView intensity={40} tint="light" style={StyleSheet.absoluteFill} />
  <View style={styles.glassInner}>
- <BText style={styles.headline}>Sincroniza tu cuerpo y entrenamiento</BText>
- <BText style={styles.body}>
- Descubre el poder de entrenar y nutrirte en sintonía con las diferentes fases de tu ciclo menstrual.
- </BText>
+ <BText style={styles.headline}>{t.welcomeHeadline}</BText>
+ <BText style={styles.body}>{t.welcomeBody}</BText>
 
  {/* Email button */}
  <TouchableOpacity style={styles.blackBtn} onPress={() => setMode('register')}>
- <BText style={styles.blackBtnText}>Correo electrónico</BText>
+ <BText style={styles.blackBtnText}>{t.welcomeEmail}</BText>
  </TouchableOpacity>
 
  {/* Apple + Google row */}
@@ -131,8 +140,8 @@ export default function AuthScreen({ lang = 'es' }) {
  {/* Already have account */}
  <TouchableOpacity onPress={() => setMode('login')} style={{ marginTop: 20 }}>
  <BText style={styles.loginLink}>
- Si ya tienes cuenta,{''}
- <BText style={styles.loginLinkBold}>Inicia sesión</BText>
+ {t.welcomeAlready}{' '}
+ <BText style={styles.loginLinkBold}>{t.welcomeLogin}</BText>
  </BText>
  </TouchableOpacity>
 
@@ -162,13 +171,13 @@ export default function AuthScreen({ lang = 'es' }) {
 
   {/* Floating pills */}
   <View style={[styles.pill, styles.pillGreen, { top: SH * 0.14, left: SW * 0.06 }]}>
-   <BText style={[styles.pillText, { color: '#0B1F08' }]}>CICLO</BText>
+   <BText style={[styles.pillText, { color: '#0B1F08' }]}>{t.pillCycle}</BText>
   </View>
   <View style={[styles.pill, styles.pillOrange, { top: SH * 0.22, right: SW * 0.12 }]}>
-   <BText style={[styles.pillText, { color: '#260E01' }]}>NUTRICIÓN</BText>
+   <BText style={[styles.pillText, { color: '#260E01' }]}>{t.pillNutri}</BText>
   </View>
   <View style={[styles.pill, styles.pillBlue, { top: SH * 0.08, right: SW * 0.06 }]}>
-   <BText style={[styles.pillText, { color: '#0A1823' }]}>ENTRENAMIENTO</BText>
+   <BText style={[styles.pillText, { color: '#0A1823' }]}>{t.pillTrain}</BText>
   </View>
 
   {/* White panel from bottom */}
@@ -180,7 +189,7 @@ export default function AuthScreen({ lang = 'es' }) {
    <View style={styles.formPanel}>
     {/* Back button */}
     <TouchableOpacity style={styles.backBtn} onPress={() => { setMode('welcome'); setError(''); }}>
-     <BText style={styles.backBtnText}>← Volver</BText>
+     <BText style={styles.backBtnText}>{t.backBtn}</BText>
     </TouchableOpacity>
 
     {/* Title + toggle */}

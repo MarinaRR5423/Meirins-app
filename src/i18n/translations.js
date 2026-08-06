@@ -39,6 +39,15 @@ const T = {
  resetEmailSent: 'Hemos enviado un enlace para restablecer tu contraseña a',
  backToLogin: 'Volver al login →',
  enterEmailFirst: 'Introduce tu email para recuperar la contraseña',
+ welcomeHeadline: 'Sincroniza tu cuerpo y entrenamiento',
+ welcomeBody: 'Descubre el poder de entrenar y nutrirte en sintonía con las diferentes fases de tu ciclo menstrual.',
+ welcomeEmail: 'Correo electrónico',
+ welcomeAlready: 'Si ya tienes cuenta,',
+ welcomeLogin: 'Inicia sesión',
+ pillCycle: 'CICLO',
+ pillNutri: 'NUTRICIÓN',
+ pillTrain: 'ENTRENAMIENTO',
+ backBtn: '← Volver',
  },
 
  home: {
@@ -520,6 +529,15 @@ const T = {
  resetEmailSent: 'We sent a password reset link to',
  backToLogin: 'Back to login →',
  enterEmailFirst: 'Enter your email to reset your password',
+ welcomeHeadline: 'Sync your body and training',
+ welcomeBody: 'Discover the power of training and eating in tune with the different phases of your menstrual cycle.',
+ welcomeEmail: 'Email address',
+ welcomeAlready: 'Already have an account?',
+ welcomeLogin: 'Sign in',
+ pillCycle: 'CYCLE',
+ pillNutri: 'NUTRITION',
+ pillTrain: 'TRAINING',
+ backBtn: '← Back',
  },
 
  home: {
@@ -1072,6 +1090,15 @@ const T = {
  resetEmailSent: 'Nous avons envoyé un lien de réinitialisation à',
  backToLogin: 'Retour à la connexion →',
  enterEmailFirst: 'Saisis ton email pour réinitialiser ton mot de passe',
+ welcomeHeadline: 'Synchronise ton corps et ton entraînement',
+ welcomeBody: 'Découvre le pouvoir de t\'entraîner et de te nourrir en harmonie avec les différentes phases de ton cycle menstruel.',
+ welcomeEmail: 'Adresse email',
+ welcomeAlready: 'Tu as déjà un compte ?',
+ welcomeLogin: 'Se connecter',
+ pillCycle: 'CYCLE',
+ pillNutri: 'NUTRITION',
+ pillTrain: 'ENTRAÎNEMENT',
+ backBtn: '← Retour',
  },
 
  home: {
@@ -1624,6 +1651,15 @@ const T = {
  resetEmailSent: 'Abbiamo inviato un link per reimpostare la password a',
  backToLogin: 'Torna al login →',
  enterEmailFirst: 'Inserisci la tua email per recuperare la password',
+ welcomeHeadline: 'Sincronizza il tuo corpo e l\'allenamento',
+ welcomeBody: 'Scopri il potere di allenarti e nutrirti in sintonia con le diverse fasi del tuo ciclo mestruale.',
+ welcomeEmail: 'Indirizzo email',
+ welcomeAlready: 'Hai già un account?',
+ welcomeLogin: 'Accedi',
+ pillCycle: 'CICLO',
+ pillNutri: 'NUTRIZIONE',
+ pillTrain: 'ALLENAMENTO',
+ backBtn: '← Indietro',
  },
 
  home: {
