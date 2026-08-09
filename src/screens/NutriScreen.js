@@ -1027,6 +1027,38 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  </TouchableOpacity>
  </View>
 
+ {/* ── Alerta rango de la lista ── */}
+ {(() => {
+  const today = new Date();
+  const dow = today.getDay(); // 0=Dom, 1=Lun…
+  const isCurrentWeek = weekOffset === 0;
+  const DAY_NAMES_ALERT = {
+   es: ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'],
+   en: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+   fr: ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'],
+   it: ['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'],
+  }[lang] || ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const DAY_END = { es: 'domingo', en: 'Sunday', fr: 'dimanche', it: 'domenica' }[lang] || 'domingo';
+  const DAY_START = { es: 'lunes', en: 'Monday', fr: 'lundi', it: 'lunedì' }[lang] || 'lunes';
+
+  let msg;
+  if (!isCurrentWeek) {
+   msg = { es: `La lista es semanal, de ${DAY_START} a ${DAY_END}.`, en: `The list covers the full week, ${DAY_START} to ${DAY_END}.`, fr: `La liste couvre toute la semaine, du ${DAY_START} au ${DAY_END}.`, it: `La lista copre tutta la settimana, da ${DAY_START} a ${DAY_END}.` }[lang];
+  } else if (dow === 1) {
+   msg = { es: `La lista cubre toda la semana, de ${DAY_START} a ${DAY_END}.`, en: `The list covers the full week, ${DAY_START} to ${DAY_END}.`, fr: `La liste couvre toute la semaine, du ${DAY_START} au ${DAY_END}.`, it: `La lista copre tutta la settimana, da ${DAY_START} a ${DAY_END}.` }[lang];
+  } else {
+   const todayName = DAY_NAMES_ALERT[dow];
+   msg = { es: `La lista cubre desde hoy, ${todayName}, hasta el ${DAY_END}.`, en: `The list covers from today, ${todayName}, to ${DAY_END}.`, fr: `La liste couvre d'aujourd'hui, ${todayName}, jusqu'au ${DAY_END}.`, it: `La lista copre da oggi, ${todayName}, fino a ${DAY_END}.` }[lang];
+  }
+
+  return (
+   <View style={styles.listAlertBox}>
+    <BText style={styles.listAlertIcon}>!</BText>
+    <BText style={styles.listAlertTxt}>{msg}</BText>
+   </View>
+  );
+ })()}
+
  {/* Categorías de ingredientes */}
  {Object.entries(finalShopData).map(([cat, items]) => (
  <View key={cat} style={styles.listCatCard}>
@@ -1292,6 +1324,9 @@ const styles = StyleSheet.create({
  listCounterVal: { fontSize: 16, fontFamily: F.body, color: '#171717', textAlign: 'center' },
  listShareLink: { alignItems: 'center', justifyContent: 'center', height: 32 },
  listShareLinkTxt: { fontSize: 14, fontFamily: F.body, color: '#171717', textDecorationLine: 'underline' },
+ listAlertBox: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: '#FFDFCD', borderRadius: 8, padding: 8, gap: 8, marginTop: 8 },
+ listAlertIcon: { width: 24, height: 24, borderRadius: 12, backgroundColor: '#FE6004', color: '#FFFFFF', fontSize: 14, fontFamily: F.body, textAlign: 'center', lineHeight: 24, overflow: 'hidden', flexShrink: 0 },
+ listAlertTxt: { flex: 1, fontSize: 14, fontFamily: F.body, color: '#0A0A0A', lineHeight: 19.6 },
  listCatCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, gap: 24, marginBottom: 2 },
  listCatTitle: { fontSize: 18, fontFamily: F.headingX, color: '#0A0A0A' },
  checkboxChecked: { backgroundColor: '#262626', borderColor: '#262626', alignItems: 'center', justifyContent: 'center' },
