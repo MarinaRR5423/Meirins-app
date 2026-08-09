@@ -45,7 +45,7 @@ export default function AuthScreen({ lang }) {
  const handleResetPassword = async () => {
  if (!email) return setError(t.enterEmailFirst);
  setLoading(true); setError('');
- const redirectTo = Linking.createURL('auth');
+ const redirectTo = Linking.createURL('auth') + `?lang=${detectedLang}`;
  const { error: err } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
  setLoading(false);
  if (err) setError(err.message);
@@ -56,7 +56,7 @@ export default function AuthScreen({ lang }) {
  if (!email || !password) return setError(t.fillFields);
  if (password.length < 6) return setError(t.passwordMin);
  setLoading(true); setError('');
- const redirectTo = Linking.createURL('auth');
+ const redirectTo = Linking.createURL('auth') + `?lang=${detectedLang}`;
  const { error: err } = await supabase.auth.signUp({
  email, password,
  options: { emailRedirectTo: redirectTo },

@@ -424,8 +424,11 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  // ── Lista de la compra dinámica generada desde recetas reales ────────────────
  const shoppingListFromRecipes = useMemo(() => {
  if (!allRecipes?.length) return null;
- // Junta TODAS las comidas de los 7 días de la semana
- const allMeals = weekMenuDays.flatMap(d => d.menu?.meals || []);
+ // Solo días desde hoy en adelante — evita incluir ingredientes de días ya pasados
+ const todayStr = new Date().toISOString().split('T')[0];
+ const allMeals = weekMenuDays
+   .filter(d => d.dateStr >= todayStr)
+   .flatMap(d => d.menu?.meals || []);
  const servings = adults + (children * 0.5);
  return buildShoppingList(allMeals, servings);
  }, [weekMenuDays, allRecipes, adults, children]);

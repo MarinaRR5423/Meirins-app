@@ -282,6 +282,21 @@ export const CYCLE_CATEGORIES = [
     ],
   },
 
+  // ── SOFOCOS ─────────────────────────────────────────────────────────────────
+  {
+    id: 'hot_flashes',
+    icon: 'Flame',
+    color: '#F97316',
+    multi: false,
+    label: { es: 'Sofocos', en: 'Hot flashes', fr: 'Bouffées de chaleur', it: 'Vampate di calore' },
+    options: [
+      { id: 'none',     icon: '😌', label: { es: 'Sin sofocos',   en: 'None',     fr: 'Aucune',       it: 'Nessuna' } },
+      { id: 'mild',     icon: '🌡️', label: { es: 'Leves',         en: 'Mild',     fr: 'Légères',      it: 'Lievi' } },
+      { id: 'moderate', icon: '🔥', label: { es: 'Moderados',     en: 'Moderate', fr: 'Modérées',     it: 'Moderate' } },
+      { id: 'intense',  icon: '🥵', label: { es: 'Intensos',      en: 'Intense',  fr: 'Intenses',     it: 'Intense' } },
+    ],
+  },
+
   // ── RINITIS ─────────────────────────────────────────────────────────────────
   {
     id: 'rhinitis',

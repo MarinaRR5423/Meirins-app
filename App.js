@@ -207,7 +207,7 @@ function App() {
     return () => clearInterval(interval);
   }, []);
   const { authState, profileLoaded, setupDone, lastPeriod, cycleLength } = profile;
-  const lang = profile.profileExtended?.language || 'es';
+  const lang = profile.profileExtended?.language || setupLang;
   const tabs = (T[lang] || T.es).tabs;
   const { periodEnd, sleepLog } = profile;
   const pi = lastPeriod ? getPhaseInfo(lastPeriod, cycleLength, periodEnd) : null;

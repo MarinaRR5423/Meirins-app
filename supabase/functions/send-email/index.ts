@@ -342,20 +342,53 @@ function buildConfirmationUrl(
 
 // ── Handler principal ────────────────────────────────────────────────────────
 
+// ── Standard Webhooks verification ──────────────────────────────────────────
+// Supabase firma el body con HMAC-SHA256 usando el secret (v1,whsec_<base64>)
+// Cabeceras: webhook-id · webhook-timestamp · webhook-signature
+
+async function verifyWebhookSignature(req: Request, body: string): Promise<boolean> {
+  const secret = Deno.env.get('HOOK_SECRET') ?? '';
+  if (!secret) return true; // sin secret configurado, no verificar (dev)
+
+  const msgId = req.headers.get('webhook-id') ?? '';
+  const msgTimestamp = req.headers.get('webhook-timestamp') ?? '';
+  const msgSignature = req.headers.get('webhook-signature') ?? '';
+  if (!msgId || !msgTimestamp || !msgSignature) return false;
+
+  // Extraer bytes del secret (formato v1,whsec_<base64>)
+  const b64 = secret.replace(/^v1,whsec_/, '');
+  const keyBytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+
+  // Contenido firmado: "{id}.{timestamp}.{body}"
+  const signedContent = `${msgId}.${msgTimestamp}.${body}`;
+  const encoder = new TextEncoder();
+
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw', keyBytes, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'],
+  );
+  const sig = await crypto.subtle.sign('HMAC', cryptoKey, encoder.encode(signedContent));
+  const computedB64 = btoa(String.fromCharCode(...new Uint8Array(sig)));
+  const computedSig = `v1,${computedB64}`;
+
+  // webhook-signature puede contener múltiples firmas separadas por espacio
+  return msgSignature.split(' ').some((s) => s === computedSig);
+}
+
 Deno.serve(async (req: Request) => {
   // Solo POST
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405 });
   }
 
-  // Verificar el shared secret del hook
-  const hookSecret = Deno.env.get('SUPABASE_HOOK_SECRET') ?? '';
-  const authHeader = req.headers.get('Authorization') ?? '';
-  if (hookSecret && authHeader !== `Bearer ${hookSecret}`) {
+  const body = await req.text();
+
+  // Verificar firma Standard Webhooks
+  const valid = await verifyWebhookSignature(req, body);
+  if (!valid) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const payload: HookPayload = await req.json();
+  const payload: HookPayload = JSON.parse(body);
   const { user, email_data } = payload;
   const { email_action_type, token, token_hash, token_hash_new, redirect_to, site_url } = email_data;
 
@@ -364,19 +397,41 @@ Deno.serve(async (req: Request) => {
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
   let lang: Lang = 'es'; // fallback
+
+  // Timeout de 3s para no superar el límite de 5s del hook
+  const langFromUrl = (): Lang => {
+    try {
+      const url = new URL(redirect_to);
+      const urlLang = url.searchParams.get('lang') ?? '';
+      if (['es', 'en', 'fr', 'it'].includes(urlLang)) return urlLang as Lang;
+    } catch { /* noop */ }
+    return 'es';
+  };
+
   try {
     const admin = createClient(supabaseUrl, serviceRoleKey);
-    const { data } = await admin
+
+    const timeoutPromise = new Promise<null>((resolve) =>
+      setTimeout(() => resolve(null), 3000)
+    );
+    const queryPromise = admin
       .from('profiles')
       .select('profile_extended')
       .eq('id', user.id)
-      .maybeSingle();
+      .maybeSingle()
+      .then((r) => r.data);
+
+    const data = await Promise.race([queryPromise, timeoutPromise]);
     const candidate = data?.profile_extended?.language;
+
     if (candidate && ['es', 'en', 'fr', 'it'].includes(candidate)) {
       lang = candidate as Lang;
+    } else {
+      // Usuaria nueva (signup) o sin idioma — leer ?lang= del redirectTo
+      lang = langFromUrl();
     }
   } catch {
-    // Silencioso — usamos el fallback 'es'
+    lang = langFromUrl();
   }
 
   // ── Construir email ──────────────────────────────────────────────────────
