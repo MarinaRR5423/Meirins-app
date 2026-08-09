@@ -298,7 +298,8 @@ export default function GimnasioScreen({
 
  // ── Programa activo: sus sesiones SON el plan en los primeros N días de
  // entreno (N = sesiones/semana del programa); el motor rellena el resto ──
- const progState = getActiveProgramState(profileExtended);
+ const currentPhase = pi?.phase || 'follicular';
+ const progState = getActiveProgramState(profileExtended, currentPhase);
  const progDays = progState ? getProgramDays(progState.program, trainDays) : [];
  const todayIsProgramDay = !!progState && (progDays.includes(todayDow) || (trainDays?.length ?? 0) === 0);
 
@@ -312,14 +313,23 @@ export default function GimnasioScreen({
  const advanceProgram = async () => {
  if (!progState) return;
  const { program, active, total, done } = progState;
- if (done + 1 >= total) {
+ const next = done + 1;
+ // Para programas phaseRotation: actualizar también el pp (phase progress)
+ const nextActive = program.phaseRotation
+  ? (() => {
+   const pp = { menstrual: 0, follicular: 0, ovulatory: 0, luteal: 0, ...(active.pp || {}) };
+   pp[currentPhase] = (pp[currentPhase] || 0) + 1;
+   return { ...active, done: next, pp };
+  })()
+  : { ...active, done: next };
+ if (next >= total) {
  const completed = profileExtended?.completedPrograms || [];
  await saveProfileExtended?.({
  activeProgram: null,
  completedPrograms: [...completed.filter(id => id !== program.id), program.id],
  });
  } else {
- await saveProfileExtended?.({ activeProgram: { ...active, done: done + 1 } });
+ await saveProfileExtended?.({ activeProgram: nextActive });
  }
  };
 
@@ -341,8 +351,10 @@ export default function GimnasioScreen({
  const dateKey = date.toISOString().split('T')[0];
  let session = personalPlan[dow] ?? null;
  if (progState && progDays.includes(dow)) {
- const card = programSessionToCard(progState, lang, progState.done + progOffset);
- if (card) { session = card; progOffset += 1; }
+ // Para phaseRotation: siempre la misma sesión actual (la fase manda, no el offset)
+ const n = progState.isPhaseProgram ? null : progState.done + progOffset;
+ const card = programSessionToCard(progState, lang, n);
+ if (card) { session = card; if (!progState.isPhaseProgram) progOffset += 1; }
  }
  const sType = session ? 'workout' : 'rest';
  return {
@@ -803,12 +815,19 @@ export default function GimnasioScreen({
    if (progState) {
      // Rows dinámicos: una fila por sesión/semana del programa + fila descanso
      const prog = progState.program;
-     const firstWeek = prog.weeks[0];
-     const sessions = firstWeek.list || Array(prog.spw).fill(firstWeek.all);
-     const dynRows = sessions.slice(0, 3).map((spec, i) => ({
-       label: `${prog.emoji} ${lang === 'en' ? 'Session' : lang === 'fr' ? 'Séance' : lang === 'it' ? 'Sessione' : 'Sesión'} ${i + 1}`,
-       detail: `${sessionMinutes(spec)}'`,
-     }));
+     let dynRows = [];
+     if (prog.phaseRotation) {
+       // Programa por fase: mostrar la sesión actual de la fase
+       const ps = progState.session;
+       if (ps) dynRows.push({ label: `${lang === 'en' ? 'Session' : lang === 'fr' ? 'Séance' : lang === 'it' ? 'Sessione' : 'Sesión'} (${ps.phase || ''})`, detail: `${sessionMinutes(ps.spec)}'` });
+     } else {
+       const firstWeek = prog.weeks[0];
+       const sessions = firstWeek.list || Array(prog.spw).fill(firstWeek.all);
+       dynRows = sessions.slice(0, 3).map((spec, i) => ({
+         label: `${prog.emoji} ${lang === 'en' ? 'Session' : lang === 'fr' ? 'Séance' : lang === 'it' ? 'Sessione' : 'Sesión'} ${i + 1}`,
+         detail: `${sessionMinutes(spec)}'`,
+       }));
+     }
      if (dynRows.length < 3) dynRows.push({ label: restLabel, detail: restDetail });
      return dynRows.map((row, i) => (
        <View key={i} style={styles.planExercRow}>

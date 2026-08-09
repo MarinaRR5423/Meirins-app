@@ -31,14 +31,15 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
  const program = active ? PROGRAMS.find(p => p.id === active.id) : null;
  const total = program ? totalSessions(program) : 0;
  const done = active?.done || 0;
+ // Para programas phaseRotation, getSession devuelve null (usar getActiveProgramState con fase)
  const session = program && done < total ? getSession(program, done) : null;
  const completedIds = profileExtended?.completedPrograms || [];
 
  const startProgram = async (p) => {
  setSaving(true);
- await saveProfileExtended?.({
- activeProgram: { id: p.id, started: new Date().toISOString().split('T')[0], done: 0 },
- });
+ const ap = { id: p.id, started: new Date().toISOString().split('T')[0], done: 0 };
+ if (p.phaseRotation) ap.pp = { menstrual: 0, follicular: 0, ovulatory: 0, luteal: 0 };
+ await saveProfileExtended?.({ activeProgram: ap });
  setSaving(false);
  setDetail(null);
  setOpen(false);
@@ -88,7 +89,7 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
  <BText style={st.title}>{L(program.name)}</BText>
 
  <View style={st.tagsRow}>
- <View style={st.tag}><BText style={st.tagTxt}>{program.weeks.length} {tr('semanas', 'weeks', 'semaines', 'settimane')}</BText></View>
+ <View style={st.tag}><BText style={st.tagTxt}>{program.phaseRotation ? total : program.weeks.length} {tr('semanas', 'weeks', 'semaines', 'settimane')}</BText></View>
  <View style={st.tag}><BText style={st.tagTxt}>{done}/{total} {tr('sesiones', 'sessions', 'sÃ©ances', 'sessioni')}</BText></View>
  {session && <View style={st.tag}><BText style={st.tagTxt}>{sessionMinutes(session.spec)}'</BText></View>}
  </View>
@@ -172,13 +173,22 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
  <>
  <BText style={st.detailTitle}>{detail.emoji} {L(detail.name)}</BText>
  <View style={st.metaRow}>
- <BText style={st.metaChip}>{detail.weeks.length} {tr('semanas', 'weeks', 'semaines', 'settimane')}</BText>
+ <BText style={st.metaChip}>{detail.phaseRotation ? totalSessions(detail) : detail.weeks.length} {tr('semanas', 'weeks', 'semaines', 'settimane')}</BText>
  <BText style={st.metaChip}>{detail.spw}Ã—/{tr('sem', 'wk', 'sem', 'sett')}</BText>
  <BText style={st.metaChip}>{L(LEVEL_LABEL[detail.level])}</BText>
  </View>
  <BText style={st.detailDesc}>{L(detail.desc)}</BText>
 
- {detail.weeks.map((w, i) => {
+ {detail.phaseRotation
+ ? Object.entries(detail.phases).map(([ph, phDef]) => (
+  <View key={ph} style={st.weekRow}>
+  <BText style={st.weekNum}>{tr(ph, ph, ph, ph)}</BText>
+  <BText style={st.weekTxt} numberOfLines={2}>
+   {phDef.sessions.length} {tr('sesiones', 'sessions', 'séances', 'sessioni')}
+  </BText>
+  </View>
+ ))
+ : detail.weeks.map((w, i) => {
  const spec = w.all || w.list[w.list.length - 1];
  return (
  <View key={i} style={st.weekRow}>
@@ -231,7 +241,7 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
  {isDone && !isActive && <View style={[st.doneBadge, { flexDirection: 'row', alignItems: 'center', gap: 3 }]}><Check size={11} color="#16A34A" /><BText style={st.doneBadgeTxt}>{tr('Completado', 'Done', 'TerminÃ©', 'Completato')}</BText></View>}
  </View>
  <BText style={st.progMeta}>
- {p.weeks.length} {tr('semanas', 'weeks', 'semaines', 'settimane')} Â· {p.spw}Ã—/{tr('sem', 'wk', 'sem', 'sett')} Â· {L(LEVEL_LABEL[p.level])}
+ {p.phaseRotation ? totalSessions(p) : p.weeks.length} {tr('semanas', 'weeks', 'semaines', 'settimane')} Â· {p.spw}Ã—/{tr('sem', 'wk', 'sem', 'sett')} Â· {L(LEVEL_LABEL[p.level])}
  </BText>
  </View>
  <ChevronRight size={20} color="#737373" />

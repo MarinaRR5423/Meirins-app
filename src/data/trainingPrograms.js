@@ -33,6 +33,16 @@ export const LBL = {
  mob_hips: { es: 'Movilidad de cadera', en: 'Hip mobility', fr: 'Mobilité des hanches', it: 'Mobilità delle anche' },
  mob_spine: { es: 'Movilidad de columna', en: 'Spine mobility', fr: 'Mobilité du dos', it: 'Mobilità della colonna' },
  squat_hold:{ es: 'Sentadilla profunda mantenida', en: 'Deep squat hold', fr: 'Squat profond maintenu', it: 'Squat profondo mantenuto' },
+ // ── Movilidad / relajación (programa fisio) ─────────────────────────────────
+ child_pose: { es: 'Postura del niño', en: "Child's pose", fr: "Posture de l'enfant", it: 'Postura del bambino' },
+ happy_baby: { es: 'Happy baby', en: 'Happy baby', fr: 'Happy baby', it: 'Happy baby' },
+ supine_twist:{ es: 'Torsión supina', en: 'Supine twist', fr: 'Torsion allongée', it: 'Torsione supina' },
+ sphinx:      { es: 'Esfinge', en: 'Sphinx', fr: 'Sphinx', it: 'Sfinge' },
+ hip_circles: { es: 'Círculos de cadera', en: 'Hip circles', fr: 'Cercles de bassin', it: 'Cerchi fianchi' },
+ spine_rotation:{ es: 'Rotación de columna', en: 'Spine rotation', fr: 'Rotation du dos', it: 'Rotazione colonna' },
+ ankle_circles:{ es: 'Movilidad de tobillo', en: 'Ankle mobility', fr: 'Mobilité des chevilles', it: 'Mobilità caviglia' },
+ arm_circles: { es: 'Círculos de brazos', en: 'Arm circles', fr: 'Cercles de bras', it: 'Cerchi braccia' },
+ shoulder_circles:{ es: 'Círculos de hombros', en: 'Shoulder circles', fr: "Cercles d'épaules", it: 'Cerchi spalle' },
 };
 
 // ── Catálogo de ejercicios ────────────────────────────────────────────────────
@@ -60,6 +70,18 @@ export const EX = {
  mtn_climber:{ es: 'Escalador', en: 'Mountain climber', fr: 'Mountain climber', it: 'Mountain climber' },
  jumping_jack:{ es: 'Jumping jacks', en: 'Jumping jacks', fr: 'Jumping jacks', it: 'Jumping jacks' },
  high_knees: { es: 'Rodillas altas', en: 'High knees', fr: 'Montées de genoux', it: 'Ginocchia alte' },
+ // ── Ejercicios programa fisio sedentaria ──────────────────────────────────────
+ wall_pushup:  { es: 'Flexión en pared', en: 'Wall push-up', fr: 'Pompe contre le mur', it: 'Piegamento al muro' },
+ knee_plank:   { es: 'Plancha sobre rodillas', en: 'Knee plank', fr: 'Planche sur genoux', it: 'Plank sulle ginocchia' },
+ lunge_thoracic:{ es: 'Fente + rotación torácica', en: 'Lunge + thoracic rotation', fr: 'Fente + rotation thoracique', it: 'Affondo + rotazione toracica' },
+ quad_hip_open:{ es: 'Apertura de cadera en cuadrupedia', en: 'Hip opening in quadruped', fr: 'Ouverture hanche en quadrupédie', it: 'Apertura anca in quadrupedia' },
+ single_bridge:{ es: 'Puente de glúteos a 1 pierna', en: 'Single-leg glute bridge', fr: 'Pont fessier 1 jambe', it: 'Ponte glutei 1 gamba' },
+ reverse_lunge:{ es: 'Zancada hacia atrás', en: 'Reverse lunge', fr: 'Fente arrière', it: 'Affondo indietro' },
+ jump_squat:   { es: 'Sentadilla con salto', en: 'Jump squat', fr: 'Squat sauté', it: 'Squat con salto' },
+ lateral_band: { es: 'Marcha lateral con banda', en: 'Lateral band walk', fr: 'Marche latérale avec élastique', it: 'Marcia laterale con elastico' },
+ incline_pushup:{ es: 'Flexión inclinada', en: 'Incline push-up', fr: 'Pompe inclinée', it: 'Piegamento inclinato' },
+ dips:         { es: 'Fondos de tríceps', en: 'Triceps dips', fr: 'Dips triceps', it: 'Dips tricipiti' },
+ hip_abduction:{ es: 'Abducción de cadera', en: 'Hip abduction', fr: 'Abduction des hanches', it: 'Abduzione anca' },
 };
 
 // ── Helpers de construcción ───────────────────────────────────────────────────
@@ -246,6 +268,190 @@ export const PROGRAMS = [
  { all: { mix: [S('wu', 5), ...hiitBlock(10, 40, 20), S('stretch', 5)] } },
  ],
  },
+
+ // ── Programa fisio: mujer sedentaria (1 séance/semaine, ~14 séances = 3 meses) ─
+ {
+ id: 'physio_sedentaire', emoji: 'Sprout', cat: 'strength', level: 'beginner', spw: 1,
+ phaseRotation: true, // sesión determinada por fase del ciclo
+ name: {
+  es: 'Fisio: sedentaria (3 meses)',
+  en: 'Physio: sedentary (3 months)',
+  fr: 'Kiné : sédentaire (3 mois)',
+  it: 'Fisio: sedentaria (3 mesi)',
+ },
+ desc: {
+  es: 'Programa de fisioterapeuta para mujeres sedentarias: 1 sesión/semana adaptada a tu fase del ciclo. ~14 sesiones para completar el programa en 3 meses.',
+  en: 'Physiotherapist programme for sedentary women: 1 session/week adapted to your cycle phase. ~14 sessions to complete in 3 months.',
+  fr: 'Programme de kinésithérapeute pour femmes sédentaires : 1 séance/semaine adaptée à ta phase du cycle. ~14 séances pour compléter le programme en 3 mois.',
+  it: 'Programma del fisioterapista per donne sedentarie: 1 sessione/settimana adattata alla tua fase del ciclo. ~14 sessioni per completare il programma in 3 mesi.',
+ },
+ phases: {
+  // ─ Menstrual: 4 séances (détente, marche, haut, bas) ────────────────────────
+  menstrual: {
+   note: {
+    es: 'Fase menstrual: movimiento muy suave. Escucha tu cuerpo.',
+    en: 'Menstrual phase: very gentle movement. Listen to your body.',
+    fr: 'Phase menstruelle : mouvement très doux. Écoute ton corps.',
+    it: 'Fase mestruale: movimento molto dolce. Ascolta il tuo corpo.',
+   },
+   sessions: [
+    {
+     label: { es: 'Relajación suave', en: 'Gentle relaxation', fr: 'Relaxation douce', it: 'Rilassamento dolce' },
+     spec: { mix: [
+      S('breath', 3),
+      E('cat_cow', 1, 10),
+      S('child_pose', 2),
+      S('happy_baby', 2),
+      S('supine_twist', 2),
+      S('sphinx', 2),
+      S('breath', 5),
+     ] },
+    },
+    {
+     label: { es: 'Marcha activa', en: 'Brisk walk', fr: 'Marche active', it: 'Camminata attiva' },
+     spec: { seg: [S('walk', 5), S('walk_fast', 20), S('walk', 5)] },
+    },
+    {
+     label: { es: 'Parte alta', en: 'Upper body', fr: 'Haut du corps', it: 'Parte superiore' },
+     spec: { mix: [
+      S('breath', 2),
+      S('shoulder_circles', 2),
+      E('cat_cow', 1, 10),
+      E('lunge_thoracic', 1, 10),
+      R(3, [E('wall_pushup', 1, 12), E('row', 1, 10), E('bird_dog', 1, 8), E('knee_plank', 1, null, 20)]),
+      S('child_pose', 2),
+     ] },
+    },
+    {
+     label: { es: 'Parte baja', en: 'Lower body', fr: 'Bas du corps', it: 'Parte inferiore' },
+     spec: { mix: [
+      S('walk', 2),
+      S('hip_circles', 2),
+      S('spine_rotation', 2),
+      R(2, [E('bridge', 1, 12), E('squat', 1, 10), E('quad_hip_open', 1, 20)]),
+      S('breath', 3),
+     ] },
+    },
+   ],
+  },
+
+  // ─ Follicular: 3 séances (haut, bas, cardio ludique) ────────────────────────
+  follicular: {
+   note: {
+    es: 'Fase folicular: energía creciente. Botellitas de 0,5 L como peso.',
+    en: 'Follicular phase: growing energy. Water bottles (0.5 L) as weights.',
+    fr: 'Phase folliculaire : énergie croissante. Bouteilles d\'eau (0,5 L) comme poids.',
+    it: 'Fase follicolare: energia in aumento. Bottiglie da 0,5 L come pesi.',
+   },
+   sessions: [
+    {
+     label: { es: 'Parte alta', en: 'Upper body', fr: 'Haut du corps', it: 'Parte superiore' },
+     spec: { mix: [
+      S('walk', 2),
+      S('arm_circles', 2),
+      R(3, [E('press', 1, 20), E('knee_plank', 1, null, 25), E('row', 1, 10), E('pushup', 1, 10)]),
+      E('cat_cow', 1, 20),
+     ] },
+    },
+    {
+     label: { es: 'Parte baja', en: 'Lower body', fr: 'Bas du corps', it: 'Parte inferiore' },
+     spec: { mix: [
+      E('high_knees', 1, null, 60),
+      S('mob_hips', 2),
+      R(3, [E('single_bridge', 1, 10), E('reverse_lunge', 1, 10), E('squat', 1, 10), E('bird_dog', 1, 10), E('step_up', 1, 10)]),
+      S('child_pose', 2),
+     ] },
+    },
+    {
+     label: { es: 'Cardio libre', en: 'Free cardio', fr: 'Cardio ludique', it: 'Cardio libero' },
+     spec: { seg: [S('walk', 5), S('walk_fast', 25), S('walk', 5)] },
+    },
+   ],
+  },
+
+  // ─ Ovulatory: 3 séances (bas, haut, cardio intervalos) ─────────────────────
+  ovulatory: {
+   note: {
+    es: 'Fase ovulatoria: pico de energía. Añade 2-5 kg si te sientes con fuerza.',
+    en: 'Ovulatory phase: energy peak. Add 2-5 kg if you feel strong.',
+    fr: 'Phase ovulatoire : pic d\'énergie. Ajouter 2-5 kg si tu te sens bien.',
+    it: 'Fase ovulatoria: picco di energia. Aggiungi 2-5 kg se ti senti forte.',
+   },
+   sessions: [
+    {
+     label: { es: 'Parte baja', en: 'Lower body', fr: 'Bas du corps', it: 'Parte inferiore' },
+     spec: { mix: [
+      E('high_knees', 1, null, 120),
+      E('jumping_jack', 1, null, 120),
+      E('lunge_thoracic', 1, 20),
+      R(3, [E('reverse_lunge', 1, 10), E('jump_squat', 1, 15), E('lateral_band', 1, 20), E('single_bridge', 1, 20), E('calf_raise', 1, 20)]),
+      E('cat_cow', 1, 15),
+     ] },
+    },
+    {
+     label: { es: 'Parte alta', en: 'Upper body', fr: 'Haut du corps', it: 'Parte superiore' },
+     spec: { mix: [
+      E('bird_dog', 1, 20),
+      E('jumping_jack', 1, null, 120),
+      E('cat_cow', 1, 20),
+      R(3, [E('pushup', 1, 15), E('row', 1, 15), E('dips', 1, 15), E('side_plank', 1, null, 30)]),
+      S('supine_twist', 2),
+     ] },
+    },
+    {
+     label: { es: 'Cardio intervalos', en: 'Interval cardio', fr: 'Cardio intervalles', it: 'Cardio a intervalli' },
+     spec: { seg: [S('walk', 5), R(7, [S('run_fast', 1), S('walk', 1)]), S('walk', 5)] },
+    },
+   ],
+  },
+
+  // ─ Luteal: 4 séances (haut, bas, cardio fácil, si síntomas) ─────────────────
+  luteal: {
+   note: {
+    es: 'Fase lútea: reduce la intensidad. Si hay síntomas, opta por la sesión de movilidad.',
+    en: 'Luteal phase: reduce intensity. If symptoms appear, choose the mobility session.',
+    fr: 'Phase lutéale : réduis l\'intensité. Si symptômes, opte pour la séance mobilité.',
+    it: 'Fase luteale: riduci l\'intensità. Se ci sono sintomi, scegli la sessione di mobilità.',
+   },
+   sessions: [
+    {
+     label: { es: 'Parte alta', en: 'Upper body', fr: 'Haut du corps', it: 'Parte superiore' },
+     spec: { mix: [
+      S('walk', 2),
+      E('cat_cow', 1, 20),
+      R(3, [E('incline_pushup', 1, 10), E('knee_plank', 1, null, 25), E('row', 1, 10), E('plank', 1, null, 20), E('pushup', 1, 10)]),
+      S('breath', 3),
+     ] },
+    },
+    {
+     label: { es: 'Parte baja', en: 'Lower body', fr: 'Bas du corps', it: 'Parte inferiore' },
+     spec: { mix: [
+      E('high_knees', 1, null, 60),
+      S('mob_hips', 2),
+      R(3, [E('bridge', 1, 10), E('hip_abduction', 1, 10), E('squat', 1, 10), E('balance', 1, null, 30), E('calf_raise', 1, 10)]),
+      S('child_pose', 2),
+     ] },
+    },
+    {
+     label: { es: 'Cardio suave', en: 'Easy cardio', fr: 'Cardio facile', it: 'Cardio leggero' },
+     spec: { seg: [S('walk_fast', 30)] },
+    },
+    {
+     label: { es: 'Movilidad (si hay síntomas)', en: 'Mobility (if symptoms)', fr: 'Mobilité (si symptômes)', it: 'Mobilità (se sintomi)' },
+     spec: { mix: [
+      S('ankle_circles', 2),
+      E('cat_cow', 1, 10),
+      E('lunge_thoracic', 1, 10),
+      S('supine_twist', 2),
+      S('mob_hips', 2),
+      S('child_pose', 2),
+      S('breath', 3),
+     ] },
+    },
+   ],
+  },
+ },
+ },
 ];
 
 // Bloque HIIT: n rondas de trabajo/descanso en segundos (como segmento repetido)
@@ -257,11 +463,15 @@ function hiitBlock(rounds, workSec, restSec) {
 
 /** Sesiones totales de un programa */
 export function totalSessions(p) {
+ if (p.phaseRotation) {
+  return Object.values(p.phases).reduce((s, ph) => s + ph.sessions.length, 0);
+ }
  return p.weeks.reduce((sum, w) => sum + (w.list ? w.list.length : p.spw), 0);
 }
 
 /** Devuelve { week (1-based), idx (1-based), spec } de la sesión nº n (0-based) */
 export function getSession(p, n) {
+ if (p.phaseRotation) return null; // programas de rotación por fase usan getPhaseSession
  let i = n;
  for (let w = 0; w < p.weeks.length; w++) {
  const sessions = p.weeks[w].list || Array(p.spw).fill(p.weeks[w].all);
@@ -269,6 +479,26 @@ export function getSession(p, n) {
  i -= sessions.length;
  }
  return null;
+}
+
+/** Para programas phaseRotation: devuelve la sesión correspondiente a la fase actual.
+ * pp = phase progress map { menstrual: 0, follicular: 1, ... } guardado en activeProgram.pp */
+export function getPhaseSession(p, phase = 'follicular', pp = {}) {
+ if (!p.phaseRotation) return null;
+ const phaseDef = p.phases[phase];
+ if (!phaseDef?.sessions?.length) return null;
+ const done = pp[phase] || 0;
+ const idx = done % phaseDef.sessions.length;
+ const session = phaseDef.sessions[idx];
+ return {
+  phase,
+  idx: idx + 1,
+  totalInPhase: phaseDef.sessions.length,
+  phasesDone: done,
+  spec: session.spec,
+  label: session.label,
+  note: phaseDef.note,
+ };
 }
 
 /** Formatea un item (segmento, repetición o ejercicio) a texto legible */
@@ -313,7 +543,7 @@ export const LEVEL_LABEL = {
 };
 
 /** Estado del programa activo de la usuaria (null si no hay o está terminado) */
-export function getActiveProgramState(profileExtended) {
+export function getActiveProgramState(profileExtended, phase = 'follicular') {
  const active = profileExtended?.activeProgram;
  if (!active) return null;
  const program = PROGRAMS.find(p => p.id === active.id);
@@ -321,6 +551,10 @@ export function getActiveProgramState(profileExtended) {
  const total = totalSessions(program);
  const done = active.done || 0;
  if (done >= total) return null;
+ if (program.phaseRotation) {
+  const ps = getPhaseSession(program, phase, active.pp || {});
+  return { program, active, total, done, session: ps, isPhaseProgram: true };
+ }
  return { program, active, total, done, session: getSession(program, done) };
 }
 
@@ -333,11 +567,27 @@ export function getProgramDays(program, trainDays = []) {
 
 /** Sesión nº n del programa en formato tarjeta "Sesión de hoy" */
 export function programSessionToCard(state, lang = 'es', n = null) {
- const { program, total } = state;
+ const { program, total, isPhaseProgram } = state;
+ const L = (o) => o?.[lang] || o?.es || '';
+ if (isPhaseProgram) {
+  const ps = state.session;
+  if (!ps) return null;
+  return {
+   id: `program_${program.id}_${ps.phase}`,
+   isProgram: true,
+   name: `${L(program.name)} · ${L(ps.label)}`,
+   ico: program.emoji,
+   dur: `${sessionMinutes(ps.spec)}'`,
+   duration: sessionMinutes(ps.spec),
+   exercises: formatSession(ps.spec, lang).map(line => ({ name: line, reps: '' })),
+   tips: ps.note ? [L(ps.note)] : [],
+   on: true,
+  };
+ }
  const idx = n == null ? state.done : n;
  if (idx >= total) return null;
  const sess = getSession(program, idx);
- const L = (o) => o?.[lang] || o?.es || '';
+ if (!sess) return null;
  const wkLabel = { es: 'Sem', en: 'Wk', fr: 'Sem', it: 'Sett' }[lang] || 'Sem';
  return {
  id: `program_${program.id}_${idx}`,
@@ -365,5 +615,6 @@ export function isRecommended(p, profileExtended = {}) {
  if (p.id === 'hiit_progressive' && sportGoal === 'tone') return true;
  if (p.id === 'cycle_strength' && sportGoal === 'muscle') return true;
  if (p.id === 'swim_beginner' && sports.includes('swimming')) return true;
+ if (p.id === 'physio_sedentaire' && profileExtended?.fitnessLevel === 'sedentary') return true;
  return false;
 }
