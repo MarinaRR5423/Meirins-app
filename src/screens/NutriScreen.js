@@ -888,24 +888,80 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
 
  {/* ── LISTA DE LA COMPRA ── */}
  {sub === 'lista' && <>
- {/* Nav semana */}
- <View style={styles.listNavRow}>
- <TouchableOpacity onPress={() => setWeekOffset(w => w - 1)} style={styles.listNavBtn}>
- <ChevronLeft size={16} color="#0A0A0A" />
- </TouchableOpacity>
- <BText style={styles.listNavLabel}>
- {weekOffset === 0
- ? ({ es: 'Esta semana', en: 'This week', fr: 'Cette semaine', it: 'Questa settimana' }[lang] || 'Esta semana')
- : weekOffset === -1
- ? ({ es: 'Semana pasada', en: 'Last week', fr: 'Semaine passée', it: 'Settimana scorsa' }[lang] || 'Semana pasada')
- : weekOffset === 1
- ? ({ es: 'Semana siguiente', en: 'Next week', fr: 'Semaine prochaine', it: 'Settimana prossima' }[lang] || 'Semana siguiente')
- : `${weekOffset > 0 ? '+' : ''}${weekOffset}w`}
- </BText>
- <TouchableOpacity onPress={() => setWeekOffset(w => w + 1)} style={styles.listNavBtn}>
- <ChevronRight size={16} color="#0A0A0A" />
- </TouchableOpacity>
- </View>
+ {/* ── Nav semana — estilo Figma ── */}
+ {(() => {
+  const today = new Date();
+  const todayKey = today.toISOString().split('T')[0];
+  const todayDow = today.getDay();
+  const daysToMonday = todayDow === 0 ? -6 : 1 - todayDow;
+  const monday = new Date(today);
+  monday.setDate(today.getDate() + daysToMonday + weekOffset * 7);
+  const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
+
+  // Label central: "9 January 2026" o rango si cruza mes
+  const monthNames = {
+   es: ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'],
+   en: ['January','February','March','April','May','June','July','August','September','October','November','December'],
+   fr: ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'],
+   it: ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'],
+  }[lang] || ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+  const sameMonth = monday.getMonth() === sunday.getMonth();
+  const weekLabel = sameMonth
+   ? `${monday.getDate()}–${sunday.getDate()} ${monthNames[monday.getMonth()]} ${monday.getFullYear()}`
+   : `${monday.getDate()} ${monthNames[monday.getMonth()]} – ${sunday.getDate()} ${monthNames[sunday.getMonth()]} ${sunday.getFullYear()}`;
+
+  const DAY_LABELS_LIST = {
+   es: ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'],
+   en: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+   fr: ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'],
+   it: ['Lun','Mar','Mer','Gio','Ven','Sab','Dom'],
+  }[lang] || ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+
+  const days = Array.from({ length: 7 }, (_, i) => {
+   const d = new Date(monday); d.setDate(monday.getDate() + i);
+   return { num: d.getDate(), key: d.toISOString().split('T')[0] };
+  });
+
+  return (
+   <View style={styles.listWeekCard}>
+    {/* Header con flechas y label */}
+    <View style={styles.listWeekNav}>
+     <TouchableOpacity onPress={() => setWeekOffset(w => w - 1)} style={styles.listNavBtn}>
+      <ChevronLeft size={16} color="#0A0A0A" />
+     </TouchableOpacity>
+     <BText style={styles.listWeekNavLabel}>{weekLabel}</BText>
+     <TouchableOpacity onPress={() => setWeekOffset(w => w + 1)} style={styles.listNavBtn}>
+      <ChevronRight size={16} color="#0A0A0A" />
+     </TouchableOpacity>
+    </View>
+    {/* Labels días */}
+    <View style={styles.listWeekLabelsRow}>
+     {DAY_LABELS_LIST.map((lbl, i) => (
+      <View key={i} style={styles.listWeekLabelCell}>
+       <BText style={styles.listWeekLabelTxt}>{lbl}</BText>
+      </View>
+     ))}
+    </View>
+    {/* Celdas días */}
+    <View style={styles.listWeekCellsRow}>
+     {days.map((day, i) => {
+      const isToday = day.key === todayKey;
+      return (
+       <View key={i} style={[styles.listWeekCell, isToday && styles.listWeekCellToday]}>
+        {isToday && (
+         <View style={[StyleSheet.absoluteFillObject, { justifyContent: 'flex-end', alignItems: 'center' }]}>
+          <PhaseGlow phase="ovulation" />
+         </View>
+        )}
+        <BText style={styles.listWeekCellNum}>{day.num}</BText>
+       </View>
+      );
+     })}
+    </View>
+   </View>
+  );
+ })()}
 
  {/* Tarjeta principal: personas + compartir */}
  <View style={styles.listMainCard}>
@@ -1205,9 +1261,18 @@ const styles = StyleSheet.create({
  orangeHeroWarn: { backgroundColor: '#FFDFCD', borderRadius: 8, padding: 8 },
  orangeHeroTip: { fontSize: 14, color: '#0A0A0A', lineHeight: 20, fontFamily: F.body },
 
- // Lista de la compra
- listNavRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 2 },
+ // Lista de la compra — week strip Figma
+ listWeekCard: { backgroundColor: '#F5F5F5', borderRadius: 32, padding: 16, marginBottom: 2, gap: 4 },
+ listWeekNav: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 0 },
  listNavBtn: { padding: 6 },
+ listWeekNavLabel: { fontSize: 16, fontFamily: F.body, color: '#0A0A0A', textAlign: 'center', flex: 1 },
+ listWeekLabelsRow: { flexDirection: 'row', alignSelf: 'stretch' },
+ listWeekLabelCell: { flex: 1, padding: 4, alignItems: 'center' },
+ listWeekLabelTxt: { fontSize: 10, fontFamily: F.body, color: '#737373', textTransform: 'uppercase', lineHeight: 13, textAlign: 'center' },
+ listWeekCellsRow: { flexDirection: 'row', gap: 4 },
+ listWeekCell: { flex: 1, height: 43, backgroundColor: 'white', borderRadius: 4, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' },
+ listWeekCellToday: { borderWidth: 1, borderColor: '#0A0A0A' },
+ listWeekCellNum: { fontSize: 12, fontFamily: F.body, color: '#0A0A0A', lineHeight: 15.6, zIndex: 1 },
  listNavLabel: { fontSize: 16, fontFamily: F.body, color: '#0A0A0A', textAlign: 'center' },
  listMainCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, gap: 24, marginBottom: 2 },
  listMainHeader: { flexDirection: 'row', alignItems: 'center', gap: 4 },
