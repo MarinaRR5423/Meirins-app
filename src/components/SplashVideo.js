@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
 import { F } from '../theme/fonts';
 import BText from './BText';
 
@@ -43,6 +44,7 @@ export default function SplashVideo({ phase }) {
 function VideoSplash({ phase, mod }) {
  const { VideoView, useVideoPlayer } = mod;
  const [error, setError] = useState(false);
+ const [ready, setReady] = useState(false);
  const source = resolveSource(phase);
 
  const player = useVideoPlayer(source, p => {
@@ -50,6 +52,13 @@ function VideoSplash({ phase, mod }) {
    p.muted = true;
    try { p.play(); } catch { setError(true); }
  });
+
+ // Oculta el splash nativo en cuanto el vídeo está visible
+ useEffect(() => {
+   if (ready || error) {
+     SplashScreen.hideAsync().catch(() => {});
+   }
+ }, [ready, error]);
 
  if (error) return <SplashFallback />;
 
@@ -61,6 +70,7 @@ function VideoSplash({ phase, mod }) {
        contentFit="cover"
        nativeControls={false}
        onError={() => setError(true)}
+       onFirstFrameRender={() => setReady(true)}
      />
      <View style={s.overlay} />
      <Logo />
@@ -70,6 +80,9 @@ function VideoSplash({ phase, mod }) {
 
 // ─── Static fallback ──────────────────────────────────────────────────────────
 function SplashFallback() {
+ useEffect(() => {
+   SplashScreen.hideAsync().catch(() => {});
+ }, []);
  return (
    <View style={[s.container, { backgroundColor: '#0A0A0A' }]}>
      <View style={s.overlay} />

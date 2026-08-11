@@ -1,162 +1,152 @@
-#!/usr/bin/env node
 /**
  * translate-recipes.js
+ * Traduce los campos faltantes (description FR/IT, ingredients FR, steps FR)
+ * usando DeepL Free API y actualiza Supabase directamente.
  *
- * Fetches all recipes from Supabase and translates `ingredients` and `steps`
- * from Spanish to French (fr) and Italian (it) using DeepL API (free tier).
- *
- * Usage:
- *   node scripts/translate-recipes.js
- *
- * Output:
- *   scripts/recipes_translations.sql   ← paste in Supabase SQL editor
- *   scripts/translate-progress.json    ← auto-saved; resumable on interruption
+ * Uso:
+ *   SUPABASE_SERVICE_ROLE_KEY=xxx node scripts/translate-recipes.js
  */
 
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const SUPABASE_URL = 'https://lpcvkzmfemxziuhdmzpx.supabase.co';
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const DEEPL_KEY    = 'd651b864-b407-4b94-805a-157693d05411:fx';
+const DEEPL_URL    = 'https://api-free.deepl.com/v2/translate';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-// ── Config ───────────────────────────────────────────────────────────────────
-
-const SUPA_URL   = 'https://lpcvkzmfemxziuhdmzpx.supabase.co';
-const SUPA_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxwY3Zrem1mZW14eml1aGRtenB4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NTcxNTcsImV4cCI6MjA5MjEzMzE1N30.1khyrwY8455LKptbHLIRtSe9AjT8bOitV7vSskVSN1g';
-
-// La key de DeepL nunca debe estar en el código — pásala como variable de
-// entorno: DEEPL_API_KEY=xxx node scripts/translate-recipes.js
-const DEEPL_KEY = process.env.DEEPL_API_KEY;
-if (!DEEPL_KEY) {
-  console.error('❌ Falta la variable de entorno DEEPL_API_KEY');
+if (!SUPABASE_KEY) {
+  console.error('❌  Falta SUPABASE_SERVICE_ROLE_KEY. Ejecútalo así:');
+  console.error('   SUPABASE_SERVICE_ROLE_KEY=tu_key node scripts/translate-recipes.js');
   process.exit(1);
 }
-// Free-tier endpoint (keys ending in :fx use api-free.deepl.com)
-const DEEPL_URL  = 'https://api-free.deepl.com/v2/translate';
 
-const PROGRESS_FILE = path.join(__dirname, 'translate-progress.json');
-const OUTPUT_SQL    = path.join(__dirname, 'recipes_translations.sql');
+// ── DeepL ─────────────────────────────────────────────────────────────────────
+async function translateTexts(texts, targetLang) {
+  if (!texts || texts.length === 0) return [];
+  const params = new URLSearchParams();
+  params.append('auth_key', DEEPL_KEY);
+  params.append('source_lang', 'ES');
+  params.append('target_lang', targetLang === 'fr' ? 'FR' : 'IT');
+  params.append('tag_handling', 'text');
+  for (const t of texts) params.append('text', t || '');
 
-const DELAY_MS = 200; // DeepL free is generous; 200ms is plenty
-
-// ── DeepL translation ─────────────────────────────────────────────────────────
-
-const sleep = ms => new Promise(r => setTimeout(r, ms));
-
-/**
- * Translates an array of strings in ONE DeepL request (texts[] param).
- * DeepL preserves order and returns one translation per input text.
- */
-async function translateArray(arr, targetLang) {
-  if (!arr || arr.length === 0) return arr;
-
-  const body = new URLSearchParams();
-  body.append('source_lang', 'ES');
-  body.append('target_lang', targetLang);
-  arr.forEach(item => body.append('text', String(item)));
-
-  const res = await fetch(DEEPL_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': `DeepL-Auth-Key ${DEEPL_KEY}`,
-    },
-    body: body.toString(),
-  });
-
+  const res = await fetch(DEEPL_URL, { method: 'POST', body: params });
   if (!res.ok) {
-    const msg = await res.text().catch(() => res.status);
-    throw new Error(`DeepL HTTP ${res.status}: ${msg}`);
+    const err = await res.text();
+    throw new Error(`DeepL error ${res.status}: ${err}`);
   }
-
-  const json = await res.json();
-  return json.translations.map(t => t.text);
+  const data = await res.json();
+  return data.translations.map(t => t.text);
 }
 
-// ── Supabase fetch ────────────────────────────────────────────────────────────
+async function translateOne(text, targetLang) {
+  const [result] = await translateTexts([text], targetLang);
+  return result;
+}
 
-async function fetchRecipes() {
-  const url = `${SUPA_URL}/rest/v1/recipes?select=id,ingredients,steps&order=display_order`;
-  const res = await fetch(url, {
-    headers: { apikey: SUPA_KEY, Authorization: `Bearer ${SUPA_KEY}` },
+// ── Supabase helpers ──────────────────────────────────────────────────────────
+async function supabaseFetch(path, options = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=minimal',
+      ...(options.headers || {}),
+    },
   });
-  if (!res.ok) throw new Error(`Supabase error ${res.status}: ${await res.text()}`);
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Supabase ${res.status}: ${err}`);
+  }
+  if (res.status === 204) return null;
   return res.json();
 }
 
-// ── SQL generation ────────────────────────────────────────────────────────────
-
-function escapeSql(value) {
-  return JSON.stringify(value).replace(/'/g, "''");
-}
-
-function buildUpdateStatement(id, ingredientsFr, ingredientsIt, stepsFr, stepsIt) {
-  return (
-    `UPDATE recipes SET\n` +
-    `  ingredients = jsonb_set(jsonb_set(ingredients, '{fr}', '${escapeSql(ingredientsFr)}'::jsonb), '{it}', '${escapeSql(ingredientsIt)}'::jsonb),\n` +
-    `  steps       = jsonb_set(jsonb_set(steps,       '{fr}', '${escapeSql(stepsFr)}'::jsonb),       '{it}', '${escapeSql(stepsIt)}'::jsonb)\n` +
-    `WHERE id = '${id}';\n`
+async function getAllRecipes() {
+  return supabaseFetch(
+    'recipes?select=id,description,ingredients,steps&limit=500',
+    { headers: { 'Prefer': 'count=none' } }
   );
 }
 
-// ── Progress ──────────────────────────────────────────────────────────────────
-
-function loadProgress() {
-  if (fs.existsSync(PROGRESS_FILE)) return JSON.parse(fs.readFileSync(PROGRESS_FILE, 'utf8'));
-  return { done: [] };
+async function updateRecipe(id, patch) {
+  await supabaseFetch(`recipes?id=eq.${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(patch),
+  });
 }
 
-function saveProgress(p) {
-  fs.writeFileSync(PROGRESS_FILE, JSON.stringify(p, null, 2));
+// ── Lógica principal ──────────────────────────────────────────────────────────
+function needsTranslation(recipe) {
+  const missingDescFr = !recipe.description?.fr;
+  const missingDescIt = !recipe.description?.it;
+  const missingIngFr  = !recipe.ingredients?.fr || JSON.stringify(recipe.ingredients.fr) === '[]';
+  const missingStepsFr= !recipe.steps?.fr       || JSON.stringify(recipe.steps.fr)       === '[]';
+  return missingDescFr || missingDescIt || missingIngFr || missingStepsFr;
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────────
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 async function main() {
-  console.log('Fetching recipes from Supabase…');
-  const allRecipes = await fetchRecipes();
-  console.log(`Found ${allRecipes.length} recipes.\n`);
+  console.log('📥  Cargando recetas desde Supabase…');
+  const recipes = await getAllRecipes();
+  const toProcess = recipes.filter(needsTranslation);
+  console.log(`✅  ${recipes.length} recetas totales. ${toProcess.length} necesitan traducción.\n`);
 
-  const progress = loadProgress();
-  const doneSet  = new Set(progress.done);
-  const pending  = allRecipes.filter(r => !doneSet.has(r.id));
-  console.log(`Already translated: ${doneSet.size}  |  Pending: ${pending.length}\n`);
+  let done = 0;
+  let charCount = 0;
 
-  const sqlFd = fs.openSync(OUTPUT_SQL, doneSet.size === 0 ? 'w' : 'a');
-  if (doneSet.size === 0) {
-    fs.writeSync(sqlFd, `-- recipes_translations.sql\n-- ${new Date().toISOString()}\n\nBEGIN;\n\n`);
-  }
-
-  for (let i = 0; i < pending.length; i++) {
-    const recipe = pending[i];
-    const pct    = (((doneSet.size + i + 1) / allRecipes.length) * 100).toFixed(1);
-    process.stdout.write(`\r[${doneSet.size + i + 1}/${allRecipes.length}] ${pct}%  ${recipe.id.padEnd(45)}`);
-
-    const esIngredients = recipe.ingredients?.es ?? [];
-    const esSteps       = recipe.steps?.es ?? [];
+  for (const recipe of toProcess) {
+    const patch = {
+      description: { ...recipe.description },
+      ingredients: { ...recipe.ingredients },
+      steps: { ...recipe.steps },
+    };
+    const srcDesc  = recipe.description?.es || '';
+    const srcIngs  = recipe.ingredients?.es  || [];
+    const srcSteps = recipe.steps?.es        || [];
 
     try {
-      const ingredientsFr = await translateArray(esIngredients, 'FR');
-      await sleep(DELAY_MS);
-      const ingredientsIt = await translateArray(esIngredients, 'IT');
-      await sleep(DELAY_MS);
-      const stepsFr = await translateArray(esSteps, 'FR');
-      await sleep(DELAY_MS);
-      const stepsIt = await translateArray(esSteps, 'IT');
-      await sleep(DELAY_MS);
+      // ── Description FR ───────────────────────────────────────────
+      if (!recipe.description?.fr && srcDesc) {
+        patch.description.fr = await translateOne(srcDesc, 'fr');
+        charCount += srcDesc.length;
+      }
 
-      fs.writeSync(sqlFd, buildUpdateStatement(recipe.id, ingredientsFr, ingredientsIt, stepsFr, stepsIt) + '\n');
-      progress.done.push(recipe.id);
-      saveProgress(progress);
+      // ── Description IT ───────────────────────────────────────────
+      if (!recipe.description?.it && srcDesc) {
+        patch.description.it = await translateOne(srcDesc, 'it');
+        charCount += srcDesc.length;
+      }
+
+      // ── Ingredients FR ───────────────────────────────────────────
+      const missingIngFr = !recipe.ingredients?.fr || JSON.stringify(recipe.ingredients.fr) === '[]';
+      if (missingIngFr && srcIngs.length > 0) {
+        patch.ingredients.fr = await translateTexts(srcIngs, 'fr');
+        charCount += srcIngs.join(' ').length;
+      }
+
+      // ── Steps FR ─────────────────────────────────────────────────
+      const missingStepsFr = !recipe.steps?.fr || JSON.stringify(recipe.steps.fr) === '[]';
+      if (missingStepsFr && srcSteps.length > 0) {
+        patch.steps.fr = await translateTexts(srcSteps, 'fr');
+        charCount += srcSteps.join(' ').length;
+      }
+
+      await updateRecipe(recipe.id, patch);
+      done++;
+      process.stdout.write(`\r  ${done}/${toProcess.length} — ~${Math.round(charCount / 1000)}K chars usados`);
+
+      // Pausa pequeña para no saturar DeepL Free
+      await sleep(200);
+
     } catch (err) {
-      process.stdout.write(`\n  ✗ ${recipe.id}: ${err.message}\n`);
+      console.error(`\n❌  Error en receta ${recipe.id}: ${err.message}`);
+      // Continúa con la siguiente
     }
   }
 
-  if (pending.length > 0) fs.writeSync(sqlFd, '\nCOMMIT;\n');
-  fs.closeSync(sqlFd);
-
-  console.log(`\n\nDone! → ${OUTPUT_SQL}`);
+  console.log(`\n\n🎉  Listo. ${done}/${toProcess.length} recetas actualizadas. ~${Math.round(charCount / 1000)}K caracteres consumidos.`);
 }
 
 main().catch(err => { console.error(err); process.exit(1); });

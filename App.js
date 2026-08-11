@@ -1,4 +1,6 @@
 ﻿import React, { useEffect, useState, useRef } from 'react';
+import * as SplashScreen from 'expo-splash-screen';
+SplashScreen.preventAutoHideAsync().catch(() => {});
 import { NavigationContainer } from '@react-navigation/native';
 import { createNavigationContainerRef } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
