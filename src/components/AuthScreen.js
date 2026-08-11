@@ -3,11 +3,16 @@ import { View, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Sc
 import { BlurView } from 'expo-blur';
 import * as Linking from 'expo-linking';
 import * as Localization from 'expo-localization';
+import * as AppleAuthentication from 'expo-apple-authentication';
+import * as WebBrowser from 'expo-web-browser';
+import { makeRedirectUri } from 'expo-auth-session';
 import { TERMS_URL, PRIVACY_URL } from '../lib/legalLinks';
 import { supabase } from '../lib/supabase';
 import T from '../i18n/translations';
 import { F } from '../theme/fonts';
 import BText from './BText';
+
+WebBrowser.maybeCompleteAuthSession();
 
 const { width: SW, height: SH } = Dimensions.get('window');
 
@@ -50,6 +55,50 @@ export default function AuthScreen({ lang }) {
  setLoading(false);
  if (err) setError(err.message);
  else setResetSent(true);
+ };
+
+ const handleAppleSignIn = async () => {
+ try {
+   const credential = await AppleAuthentication.signInAsync({
+     requestedScopes: [
+       AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+       AppleAuthentication.AppleAuthenticationScope.EMAIL,
+     ],
+   });
+   const { error } = await supabase.auth.signInWithIdToken({
+     provider: 'apple',
+     token: credential.identityToken,
+   });
+   if (error) setError(error.message);
+ } catch (e) {
+   if (e.code !== 'ERR_REQUEST_CANCELED') setError(e.message);
+ }
+ };
+
+ const handleGoogleSignIn = async () => {
+ try {
+   const redirectUrl = makeRedirectUri({ scheme: 'meirins', path: 'auth/callback' });
+   const { data, error } = await supabase.auth.signInWithOAuth({
+     provider: 'google',
+     options: {
+       redirectTo: redirectUrl,
+       skipBrowserRedirect: true,
+     },
+   });
+   if (error) { setError(error.message); return; }
+   const result = await WebBrowser.openAuthSessionAsync(data.url, redirectUrl);
+   if (result.type === 'success') {
+     const url = result.url;
+     const params = new URLSearchParams(url.split('#')[1] || url.split('?')[1]);
+     const accessToken = params.get('access_token');
+     const refreshToken = params.get('refresh_token');
+     if (accessToken) {
+       await supabase.auth.setSession({ access_token: accessToken, refresh_token: refreshToken });
+     }
+   }
+ } catch (e) {
+   setError(e.message);
+ }
  };
 
  const handleRegister = async () => {
@@ -129,10 +178,10 @@ export default function AuthScreen({ lang }) {
 
  {/* Apple + Google row */}
  <View style={styles.oauthRow}>
- <TouchableOpacity style={[styles.blackBtn, styles.oauthBtn]}>
+ <TouchableOpacity style={[styles.blackBtn, styles.oauthBtn]} onPress={handleAppleSignIn}>
  <BText style={styles.blackBtnText}>􀣺 Apple</BText>
  </TouchableOpacity>
- <TouchableOpacity style={[styles.blackBtn, styles.oauthBtn]}>
+ <TouchableOpacity style={[styles.blackBtn, styles.oauthBtn]} onPress={handleGoogleSignIn}>
  <BText style={styles.blackBtnText}>G Google</BText>
  </TouchableOpacity>
  </View>

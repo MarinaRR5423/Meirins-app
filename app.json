@@ -26,8 +26,10 @@
       },
       "entitlements": {
         "com.apple.developer.healthkit": true,
-        "com.apple.developer.healthkit.background-delivery": true
-      }
+        "com.apple.developer.healthkit.background-delivery": true,
+        "com.apple.developer.applesignin": ["Default"]
+      },
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {
@@ -37,7 +39,8 @@
       "edgeToEdgeEnabled": true,
       "package": "com.marina13.meirins",
       "versionCode": 3,
-      "intentFilters": []
+      "intentFilters": [],
+      "googleServicesFile": "./google-services.json"
     },
     "plugins": [
       "@sentry/react-native",
@@ -63,7 +66,9 @@
       "react-native-health",
       "expo-font",
       "expo-video",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-web-browser",
+      "expo-apple-authentication"
     ],
     "web": {
       "favicon": "./assets/favicon.png"
