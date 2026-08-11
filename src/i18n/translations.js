@@ -304,7 +304,7 @@ const T = {
  menstrual: { name: 'Menstrual', tagline: 'Restauración & Descanso', desc: 'Tu cuerpo se renueva. Nutrítete con calma y respeta el descanso.', intensity: 'Muy baja', tip: 'El descanso activo tiene tanto valor como el entreno intenso. Tu cuerpo trabaja internamente.' },
  follicular: { name: 'Folicular', tagline: 'Energía & Crecimiento', desc: 'Los estrógenos suben. Tu fuerza, resistencia y motivación están en pleno auge.', intensity: 'Alta', tip: '¡Aprovecha esta ventana! Tu fuerza es superior. Intenta superar tus marcas personales.' },
  ovulation: { name: 'Ovulación', tagline: 'Pico de Potencia', desc: 'Tu mejor momento. Fuerza, energía y carisma al máximo absoluto.', intensity: 'Máxima', tip: '¡Bate tus récords! Tu cuerpo está en su pico absoluto. El momento ideal para nuevos retos.' },
- luteal: { name: 'Lútea', tagline: 'Calma & Equilibrio', desc: 'La progesterona toma el mando. Nutre tu cuerpo para navegar el SPM con energía.', intensity: 'Moderada', tip: 'Ve reduciendo la intensidad progresivamente. Prioriza la recuperación.' },
+ luteal: { name: 'Lútea', tagline: 'Calma & Equilibrio', desc: 'La progesterona toma el mando. Nutre tu cuerpo para navegar el SPM con energía.', intensity: 'Moderada', tip: 'Escucha tu nivel de energía. Adapta la intensidad a tus sensaciones.' },
  },
  mealLabels: { Desayuno: 'Desayuno', Almuerzo: 'Almuerzo', Cena: 'Cena', Snacks: 'Snacks', 'Snack de la mañana': 'Snack mañana', 'Snack de la tarde': 'Snack tarde', 'Comida placer': 'Comida placer', 'Snacks ligeros': 'Snacks ligeros', 'Actividad suave': 'Actividad suave' },
  dayLetters: ['D','L','M','X','J','V','S'],
@@ -848,7 +848,7 @@ const T = {
  ],
  },
  luteal: {
- name: 'Luteal', tagline: 'Calm & Balance', desc: 'Progesterone takes over. Nourish your body to navigate PMS with energy.', intensity: 'Moderate', tip: 'Progressively reduce intensity. Prioritise recovery.',
+ name: 'Luteal', tagline: 'Calm & Balance', desc: 'Progesterone takes over. Nourish your body to navigate PMS with energy.', intensity: 'Moderate', tip: 'Listen to your energy level. Adapt the intensity to how you feel.',
  focus: ['Complex carbs', 'Tryptophan', 'Magnesium', 'Anti-cravings'], kcal: 'Maintenance · +100–150 kcal',
  meals: [
  { t: 'Desayuno', ico: '', title: 'Filling breakfast', items: ['2 wholegrain toasts · poached egg', 'Avocado + cherry tomatoes', 'Sunflower seeds'], recipe: { ingredients: ['2 slices wholegrain bread','2 eggs','½ avocado','80g cherry tomatoes','15g sunflower seeds','White vinegar, salt, pepper'], steps: ['Toast the bread. Prepare water with vinegar and bring almost to the boil.','Break egg into a cup and slide gently into water. Cook 3–4 min.','Mash avocado with salt onto the toasts.','Place egg on top, add tomatoes and seeds.'] } },
@@ -1409,7 +1409,7 @@ const T = {
  ],
  },
  luteal: {
- name: 'Lutéale', tagline: 'Calme & Équilibre', desc: 'La progestérone prend le dessus. Nourris ton corps pour traverser le SPM avec énergie.', intensity: 'Modérée', tip: 'Réduis progressivement l\'intensité. Priorise la récupération.',
+ name: 'Lutéale', tagline: 'Calme & Équilibre', desc: 'La progestérone prend le dessus. Nourris ton corps pour traverser le SPM avec énergie.', intensity: 'Modérée', tip: 'Adapte progressivement l\'intensité à tes sensations.',
  focus: ['Glucides complexes', 'Tryptophane', 'Magnésium', 'Anti-envies'], kcal: 'Maintien · +100–150 kcal',
  meals: [
  { t: 'Desayuno', ico: '', title: 'Petit-déjeuner rassasiant', items: ['2 toasts complets · œuf poché', 'Avocat + tomates cerises', 'Graines de tournesol'], recipe: { ingredients: ['2 tranches pain complet','2 œufs','½ avocat','80g tomates cerises','15g graines de tournesol','Vinaigre blanc, sel, poivre'], steps: ['Grille le pain. Prépare de l\'eau avec du vinaigre et porte presque à ébullition.','Casse l\'œuf dans un bol et glisse-le doucement dans l\'eau. Cuis 3–4 min.','Écrase l\'avocat avec du sel sur les toasts.','Pose l\'œuf dessus, ajoute les tomates et les graines.'] } },
@@ -1970,7 +1970,7 @@ const T = {
  ],
  },
  luteal: {
- name: 'Luteale', tagline: 'Calma & Equilibrio', desc: 'Il progesterone prende il sopravvento. Nutri il corpo per affrontare la SPM con energia.', intensity: 'Moderata', tip: 'Riduci gradualmente l\'intensità. Dai priorità al recupero.',
+ name: 'Luteale', tagline: 'Calma & Equilibrio', desc: 'Il progesterone prende il sopravvento. Nutri il corpo per affrontare la SPM con energia.', intensity: 'Moderata', tip: 'Ascolta il tuo livello di energia. Adatta l\'intensità a come ti senti.',
  focus: ['Carboidrati complessi', 'Triptofano', 'Magnesio', 'Anti-voglie'], kcal: 'Mantenimento · +100–150 kcal',
  meals: [
  { t: 'Desayuno', ico: '', title: 'Colazione saziante', items: ['2 toast integrali · uovo in camicia', 'Avocado + pomodorini', 'Semi di girasole'], recipe: { ingredients: ['2 fette pane integrale','2 uova','½ avocado','80g pomodorini','15g semi di girasole','Aceto bianco, sale, pepe'], steps: ['Tosta il pane. Prepara l\'acqua con l\'aceto e porta quasi a ebollizione.','Rompi l\'uovo in una ciotolina e fallo scivolare delicatamente nell\'acqua. Cuoci 3–4 min.','Schiaccia l\'avocado con sale sui toast.','Adagia l\'uovo sopra, aggiungi i pomodorini e i semi.'] } },

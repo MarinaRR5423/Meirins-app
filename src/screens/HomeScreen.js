@@ -476,8 +476,11 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  <WidgetWrap {...ww} id="tip">
  {(() => {
   const tipFull = d?.tip || '';
-  const dotIdx = tipFull.indexOf('.');
+  const dotIdx = tipFull.search(/[.!?]/);
   const tipHead = dotIdx !== -1 ? tipFull.slice(0, dotIdx + 1) : tipFull;
+  const tipRest = dotIdx !== -1 ? tipFull.slice(dotIdx + 1).trim() : '';
+  const tipFontSize = tipHead.length > 50 ? 22 : tipHead.length > 30 ? 26 : 32;
+  const tipLineHeight = tipFontSize * 1.15;
   return (
    <TouchableOpacity
     activeOpacity={0.92}
@@ -496,7 +499,8 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
       <ChevronRight size={14} color="white" />
      </View>
      <View style={styles.tipBody}>
-      <BText style={styles.tipTitle}>{tipHead}</BText>
+      <BText style={[styles.tipTitle, { fontSize: tipFontSize, lineHeight: tipLineHeight }]}>{tipHead}</BText>
+      {!!tipRest && <BText style={styles.tipSub}>{tipRest}</BText>}
      </View>
     </ImageBackground>
    </TouchableOpacity>
@@ -596,6 +600,7 @@ const styles = StyleSheet.create({
  tipHeaderTxt: { fontSize: 12, color: 'white', fontFamily: F.body, lineHeight: 15.6 },
  tipBody: { gap: 16 },
  tipTitle: { fontSize: 32, color: 'white', lineHeight: 35.2, fontFamily: F.headingX },
+ tipSub: { fontSize: 14, color: 'rgba(255,255,255,0.85)', fontFamily: F.body, lineHeight: 20 },
  tipSubtitle: { fontSize: 14, color: 'white', fontFamily: F.body, lineHeight: 19.6 },
 
  // Kcal labels
