@@ -11,7 +11,7 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#F5C400"
+      "backgroundColor": "#0A0A0A"
     },
     "ios": {
       "supportsTablet": true,
@@ -39,8 +39,7 @@
       "edgeToEdgeEnabled": true,
       "package": "com.marina13.meirins",
       "versionCode": 3,
-      "intentFilters": [],
-      "googleServicesFile": "./google-services.json"
+      "intentFilters": []
     },
     "plugins": [
       "@sentry/react-native",

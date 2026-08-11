@@ -41,7 +41,7 @@ export default function Loading({ variant = 'inline', label, color }) {
 }
 
 const s = StyleSheet.create({
- fullscreen: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F5C400' },
+ fullscreen: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0A0A0A' },
  fsEmoji: { fontSize: 48, marginBottom: 16, fontFamily: F.body },
  fsBrand: { color: '#1A1A1A', fontSize: 18, fontFamily: F.bodyB, letterSpacing: 1.5, marginBottom: 18 },
  fsLabel: { color: 'rgba(0,0,0,0.5)', fontSize: 13, marginTop: 12, fontFamily: F.body },
