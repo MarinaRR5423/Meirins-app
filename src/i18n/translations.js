@@ -1496,7 +1496,7 @@ const T = {
  step2Title: 'Ta santé', step2Sub: 'Cela adapte les intensités, les recettes et les conseils à ton vrai corps.',
  conditionsLabel: "AS-TU L'UNE DE CES CONDITIONS ?",
  conditions: [
- { v: 'endometriosis', l: 'Endométriose' }, { v: 'pcos', l: 'SOPK' },
+ { v: 'endometriosis', l: 'Endométriose' }, { v: 'pcos', l: 'SMOP' },
  { v: 'hypothyroid', l: 'Hypothyroïdie' }, { v: 'hyperthyroid', l: 'Hyperthyroïdie' },
  { v: 'adenomyosis', l: 'Adénomyose' }, { v: 'pmdd', l: 'TDPM' }, { v: 'amenorrhea', l: 'Aménorrhée' },
  ],

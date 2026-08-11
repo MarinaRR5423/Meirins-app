@@ -129,12 +129,12 @@ export const ARTICLES = [
  title: {
  es: 'SOP: equilibrio hormonal a través del estilo de vida',
  en: 'PCOS: hormonal balance through lifestyle',
- fr: 'SOPK : équilibre hormonal par le style de vie',
+ fr: 'SMOP : équilibre hormonal par le style de vie',
  },
  summary: {
  es: 'El síndrome de ovario poliquístico responde muy bien a cambios en la alimentación y el ejercicio.',
  en: 'Polycystic ovary syndrome responds very well to changes in diet and exercise.',
- fr: 'Le syndrome des ovaires polykystiques répond très bien aux changements alimentaires et à l\'exercice.',
+ fr: 'Le SMOP répond très bien aux changements alimentaires et à l\'exercice.',
  },
  body: {
  es: [
@@ -150,10 +150,10 @@ export const ARTICLES = [
  'Supplements with evidence in PCOS: inositol (myo-inositol + D-chiro), vitamin D, omega-3 and magnesium. Always speak to your doctor before starting any supplementation. The goal is not to "cure" PCOS but to reduce symptoms and improve quality of life.',
  ],
  fr: [
- "Le SOPK est le trouble hormonal le plus courant chez les femmes en âge de procréer, touchant 10 à 15 %. Il se caractérise par des androgènes élevés, une résistance à l'insuline dans de nombreux cas, et des cycles irréguliers. La bonne nouvelle : le mode de vie est l'un des principaux piliers du traitement.",
- "La résistance à l'insuline, présente chez 70 % des femmes atteintes de SOPK, rend la glycémie plus difficile à contrôler. Un régime à faible index glycémique — réduisant les farines raffinées, les sucres et l'alcool — peut améliorer significativement la sensibilité à l'insuline en quelques semaines.",
- "L'entraînement en force (haltères, pilates, bandes élastiques) est particulièrement bénéfique dans le SOPK car il améliore la sensibilité à l'insuline et aide à réguler les androgènes. Le HIIT est également efficace, mais chez les femmes avec des symptômes sévères, il peut élever le cortisol et aggraver les symptômes si excessif.",
- "Compléments avec des preuves dans le SOPK : inositol (myo-inositol + D-chiro), vitamine D, oméga-3 et magnésium. Consulte toujours ton médecin avant de commencer tout supplément. L'objectif n'est pas de \"guérir\" le SOPK mais de réduire les symptômes et d'améliorer la qualité de vie.",
+ "Le SMOP est le trouble hormonal le plus courant chez les femmes en âge de procréer, touchant 10 à 15 %. Il se caractérise par des androgènes élevés, une résistance à l'insuline dans de nombreux cas, et des cycles irréguliers. La bonne nouvelle : le mode de vie est l'un des principaux piliers du traitement.",
+ "La résistance à l'insuline, présente chez 70 % des femmes atteintes de SMOP, rend la glycémie plus difficile à contrôler. Un régime à faible index glycémique — réduisant les farines raffinées, les sucres et l'alcool — peut améliorer significativement la sensibilité à l'insuline en quelques semaines.",
+ "L'entraînement en force (haltères, pilates, bandes élastiques) est particulièrement bénéfique dans le SMOP car il améliore la sensibilité à l'insuline et aide à réguler les androgènes. Le HIIT est également efficace, mais chez les femmes avec des symptômes sévères, il peut élever le cortisol et aggraver les symptômes si excessif.",
+ "Compléments avec des preuves dans le SMOP : inositol (myo-inositol + D-chiro), vitamine D, oméga-3 et magnésium. Consulte toujours ton médecin avant de commencer tout supplément. L'objectif n'est pas de \"guérir\" le SMOP mais de réduire les symptômes et d'améliorer la qualité de vie.",
  ],
  },
  },

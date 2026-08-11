@@ -116,8 +116,8 @@ const DIET_PHASE_NOTES = {
 // ── Condiciones nutricionales ─────────────────────────────────────────────────
 const CONDITION_NUTRITION = {
  pcos: {
- menstrual: { es: 'SOP: evita picos de insulina — elige carbohidratos de bajo IG y come cada 3-4h.', en: 'PCOS: avoid insulin spikes — choose low-GI carbs and eat every 3-4h.', fr: 'SOPK: évite les pics d\'insuline — choisis des glucides à faible IG.', it: 'PCOS: evita picchi di insulina — scegli carboidrati a basso IG.' },
- luteal: { es: 'SOP + fase lútea: el inositol y el magnesio pueden reducir los antojos y la resistencia insulínica.', en: 'PCOS + luteal: inositol and magnesium may reduce cravings and insulin resistance.', fr: 'SOPK + lutéale: inositol et magnésium peuvent réduire les envies.', it: 'PCOS + lutea: inositolo e magnesio possono ridurre i desideri.' },
+ menstrual: { es: 'SOP: evita picos de insulina — elige carbohidratos de bajo IG y come cada 3-4h.', en: 'PCOS: avoid insulin spikes — choose low-GI carbs and eat every 3-4h.', fr: 'SMOP: évite les pics d\'insuline — choisis des glucides à faible IG.', it: 'PCOS: evita picchi di insulina — scegli carboidrati a basso IG.' },
+ luteal: { es: 'SOP + fase lútea: el inositol y el magnesio pueden reducir los antojos y la resistencia insulínica.', en: 'PCOS + luteal: inositol and magnesium may reduce cravings and insulin resistance.', fr: 'SMOP + lutéale: inositol et magnésium peuvent réduire les envies.', it: 'PCOS + lutea: inositolo e magnesio possono ridurre i desideri.' },
  },
  endometriosis: {
  menstrual: { es: 'Endometriosis: prioriza alimentos antiinflamatorios. Evita gluten y lácteos si te generan síntomas.', en: 'Endometriosis: prioritise anti-inflammatory foods. Avoid gluten and dairy if they cause symptoms.', fr: 'Endométriose: priorise les aliments anti-inflammatoires.', it: 'Endometriosi: privilegia gli alimenti antinfiammatori.' },

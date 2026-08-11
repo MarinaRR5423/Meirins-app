@@ -372,7 +372,7 @@ export const SYMPTOM_INSIGHTS = {
  why: {
  es: 'El acné cíclico es una señal de desequilibrio hormonal. Si es intenso, puede indicar SOP u otras condiciones.',
  en: 'Cyclic acne is a sign of hormonal imbalance. If intense, it may indicate PCOS or other conditions.',
- fr: 'L\'acné cyclique est un signe de déséquilibre hormonal. S\'il est intense, il peut indiquer un SOPK ou d\'autres conditions.',
+ fr: 'L\'acné cyclique est un signe de déséquilibre hormonal. S\'il est intense, il peut indiquer un SMOP ou d\'autres conditions.',
  it: 'L\'acne ciclica è un segnale di squilibrio ormonale. Se intenso, può indicare PCOS o altre condizioni.',
  },
  helps: {

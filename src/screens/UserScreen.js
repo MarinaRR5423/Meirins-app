@@ -88,7 +88,7 @@ const SPORT_L = {
 const COND_L = {
  es: { pcos:' SOP/PCOS', endometriosis:' Endometriosis', hypothyroidism:' Hipotiroidismo', hyperthyroidism:' Hipertiroidismo', type1_diabetes:' Diabetes tipo 1', type2_diabetes:' Diabetes tipo 2', hypertension:' Hipertensión', anemia:' Anemia', none:' Ninguna' },
  en: { pcos:' PCOS', endometriosis:' Endometriosis', hypothyroidism:' Hypothyroidism', hyperthyroidism:' Hyperthyroidism', type1_diabetes:' Type 1 diabetes', type2_diabetes:' Type 2 diabetes', hypertension:' Hypertension', anemia:' Anaemia', none:' None' },
- fr: { pcos:' SOPK/PCOS', endometriosis:' Endométriose', hypothyroidism:' Hypothyroïdie', hyperthyroidism:' Hyperthyroïdie', type1_diabetes:' Diabète type 1', type2_diabetes:' Diabète type 2', hypertension:' Hypertension', anemia:' Anémie', none:' Aucune' },
+ fr: { pcos:' SMOP', endometriosis:' Endométriose', hypothyroidism:' Hypothyroïdie', hyperthyroidism:' Hyperthyroïdie', type1_diabetes:' Diabète type 1', type2_diabetes:' Diabète type 2', hypertension:' Hypertension', anemia:' Anémie', none:' Aucune' },
 };
 const MED_L = {
  es: { hormonal_contraceptive:' Anticonceptivo hormonal', levothyroxine:' Levotiroxina', metformin:' Metformina', antidepressants:' Antidepresivos', iron:' Hierro', ssri:' ISRS', none:' Ninguna' },
