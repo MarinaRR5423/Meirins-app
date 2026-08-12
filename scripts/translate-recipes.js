@@ -12,34 +12,34 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const DEEPL_KEY    = 'd651b864-b407-4b94-805a-157693d05411:fx';
 const DEEPL_URL    = 'https://api-free.deepl.com/v2/translate';
 
+// Pausa entre recetas (ms) — 2 s para no saturar el plan Free
+const DELAY_MS = 2000;
+
 if (!SUPABASE_KEY) {
-  console.error('❌  Falta SUPABASE_SERVICE_ROLE_KEY. Ejecútalo así:');
-  console.error('   SUPABASE_SERVICE_ROLE_KEY=tu_key node scripts/translate-recipes.js');
+  console.error('❌  Falta SUPABASE_SERVICE_ROLE_KEY.');
   process.exit(1);
 }
 
 // ── DeepL ─────────────────────────────────────────────────────────────────────
-async function translateTexts(texts, targetLang) {
+// Traduce un array de textos en una sola llamada HTTP
+async function translateBatch(texts, targetLang) {
   if (!texts || texts.length === 0) return [];
   const params = new URLSearchParams();
-  params.append('auth_key', DEEPL_KEY);
   params.append('source_lang', 'ES');
   params.append('target_lang', targetLang === 'fr' ? 'FR' : 'IT');
-  params.append('tag_handling', 'text');
   for (const t of texts) params.append('text', t || '');
 
-  const res = await fetch(DEEPL_URL, { method: 'POST', body: params });
+  const res = await fetch(DEEPL_URL, {
+    method: 'POST',
+    headers: { 'Authorization': `DeepL-Auth-Key ${DEEPL_KEY}` },
+    body: params,
+  });
   if (!res.ok) {
     const err = await res.text();
     throw new Error(`DeepL error ${res.status}: ${err}`);
   }
   const data = await res.json();
   return data.translations.map(t => t.text);
-}
-
-async function translateOne(text, targetLang) {
-  const [result] = await translateTexts([text], targetLang);
-  return result;
 }
 
 // ── Supabase helpers ──────────────────────────────────────────────────────────
@@ -103,46 +103,63 @@ async function main() {
       steps: { ...recipe.steps },
     };
     const srcDesc  = recipe.description?.es || '';
-    const srcIngs  = recipe.ingredients?.es  || [];
-    const srcSteps = recipe.steps?.es        || [];
+    const srcIngs  = recipe.ingredients?.es || [];
+    const srcSteps = recipe.steps?.es       || [];
+
+    const missingDescFr  = !recipe.description?.fr;
+    const missingDescIt  = !recipe.description?.it;
+    const missingIngFr   = !recipe.ingredients?.fr || JSON.stringify(recipe.ingredients.fr) === '[]';
+    const missingStepsFr = !recipe.steps?.fr || JSON.stringify(recipe.steps.fr) === '[]';
 
     try {
-      // ── Description FR ───────────────────────────────────────────
-      if (!recipe.description?.fr && srcDesc) {
-        patch.description.fr = await translateOne(srcDesc, 'fr');
+      // ── FR: batch desc + ingredients + steps en una sola llamada ──────────
+      if (missingDescFr || missingIngFr || missingStepsFr) {
+        const frTexts = [];
+        const frMap = { descIdx: -1, ingsStart: -1, stepsStart: -1 };
+
+        if (missingDescFr && srcDesc) {
+          frMap.descIdx = frTexts.length;
+          frTexts.push(srcDesc);
+        }
+        if (missingIngFr && srcIngs.length > 0) {
+          frMap.ingsStart = frTexts.length;
+          frMap.ingsCount = srcIngs.length;
+          frTexts.push(...srcIngs);
+        }
+        if (missingStepsFr && srcSteps.length > 0) {
+          frMap.stepsStart = frTexts.length;
+          frMap.stepsCount = srcSteps.length;
+          frTexts.push(...srcSteps);
+        }
+
+        if (frTexts.length > 0) {
+          const frResults = await translateBatch(frTexts, 'fr');
+          charCount += frTexts.join(' ').length;
+
+          if (frMap.descIdx >= 0) patch.description.fr = frResults[frMap.descIdx];
+          if (frMap.ingsStart >= 0) patch.ingredients.fr = frResults.slice(frMap.ingsStart, frMap.ingsStart + frMap.ingsCount);
+          if (frMap.stepsStart >= 0) patch.steps.fr = frResults.slice(frMap.stepsStart, frMap.stepsStart + frMap.stepsCount);
+        }
+      }
+
+      // ── IT: solo description ───────────────────────────────────────────────
+      if (missingDescIt && srcDesc) {
+        const [itDesc] = await translateBatch([srcDesc], 'it');
+        patch.description.it = itDesc;
         charCount += srcDesc.length;
-      }
-
-      // ── Description IT ───────────────────────────────────────────
-      if (!recipe.description?.it && srcDesc) {
-        patch.description.it = await translateOne(srcDesc, 'it');
-        charCount += srcDesc.length;
-      }
-
-      // ── Ingredients FR ───────────────────────────────────────────
-      const missingIngFr = !recipe.ingredients?.fr || JSON.stringify(recipe.ingredients.fr) === '[]';
-      if (missingIngFr && srcIngs.length > 0) {
-        patch.ingredients.fr = await translateTexts(srcIngs, 'fr');
-        charCount += srcIngs.join(' ').length;
-      }
-
-      // ── Steps FR ─────────────────────────────────────────────────
-      const missingStepsFr = !recipe.steps?.fr || JSON.stringify(recipe.steps.fr) === '[]';
-      if (missingStepsFr && srcSteps.length > 0) {
-        patch.steps.fr = await translateTexts(srcSteps, 'fr');
-        charCount += srcSteps.join(' ').length;
       }
 
       await updateRecipe(recipe.id, patch);
       done++;
       process.stdout.write(`\r  ${done}/${toProcess.length} — ~${Math.round(charCount / 1000)}K chars usados`);
 
-      // Pausa pequeña para no saturar DeepL Free
-      await sleep(200);
+      // Pausa para no saturar DeepL Free
+      await sleep(DELAY_MS);
 
     } catch (err) {
       console.error(`\n❌  Error en receta ${recipe.id}: ${err.message}`);
-      // Continúa con la siguiente
+      // Pausa extra tras error
+      await sleep(DELAY_MS * 3);
     }
   }
 
