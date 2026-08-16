@@ -133,7 +133,7 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
    <SafeAreaView style={s.container}>
     {/* Header */}
     <View style={s.header}>
-     <BText style={s.title}>Registro</BText>
+     <BText style={s.title}>{{ es: 'Registro', en: 'Log', fr: 'Journal', it: 'Registro' }[lang] || 'Registro'}</BText>
      <TouchableOpacity onPress={onClose} style={s.closeBtn}>
       <X size={16} color="#0A0A0A" />
      </TouchableOpacity>
