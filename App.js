@@ -264,7 +264,7 @@ function App() {
           <FloatingTabBar {...props} enabledTabs={enabledTabs} onToggleTab={handleToggleTab} lang={lang} widgets={widgets} toggleWidget={toggleWidget} />
         )}>
         <Tab.Screen name="Inicio" options={{ tabBarLabel: tabs.home, tabBarIcon: ({ color, size }) => <Home color={color} size={size} /> }}>
-          {() => <HomeScreen lang={lang} pi={pi} healthData={healthData} logCycleDay={profile.logCycleDay} logRecipeDone={profile.logRecipeDone} todayMenu={todayMenu} widgets={widgets} toggleWidget={toggleWidget} profile={{
+          {() => <HomeScreen lang={lang} pi={pi} healthData={healthData} logCycleDay={profile.logCycleDay} logRecipeDone={profile.logRecipeDone} todayMenu={todayMenu} widgets={widgets} toggleWidget={toggleWidget} cycleDailyLogs={profile.cycleDailyLogs} profile={{
             age: profile.age, weight: profile.weight, height: profile.height,
             activityLevel: profile.activityLevel, goal: profile.goal,
             trainDays: profile.trainDays,
@@ -272,7 +272,7 @@ function App() {
           }} />}
         </Tab.Screen>
         <Tab.Screen name="Ciclo" options={{ tabBarLabel: tabs.cycle, tabBarIcon: ({ color, size }) => <Flower color={color} size={size} /> }}>
-          {() => <CicloScreen lang={lang} pi={pi} lastPeriod={lastPeriod} setLastPeriod={profile.setLastPeriod} setCycleLength={profile.setCycleLength} periodEnd={periodEnd} setPeriodEnd={profile.setPeriodEnd} sleepLog={sleepLog} logSleep={profile.logSleep} profileExtended={profile.profileExtended} saveProfileExtended={profile.saveProfileExtended} logCycleDay={profile.logCycleDay} />}
+          {() => <CicloScreen lang={lang} pi={pi} lastPeriod={lastPeriod} setLastPeriod={profile.setLastPeriod} setCycleLength={profile.setCycleLength} periodEnd={periodEnd} setPeriodEnd={profile.setPeriodEnd} sleepLog={sleepLog} logSleep={profile.logSleep} profileExtended={profile.profileExtended} saveProfileExtended={profile.saveProfileExtended} logCycleDay={profile.logCycleDay} cyclePeriods={profile.cyclePeriods} cycleDailyLogs={profile.cycleDailyLogs} savePeriod={profile.savePeriod} deletePeriod={profile.deletePeriod} />}
         </Tab.Screen>
         <Tab.Screen name="Nutrición" options={{ tabBarLabel: tabs.nutri, tabBarIcon: ({ color, size, focused }) => <Salad color={focused ? "#F97316" : color} size={size} />, unmountOnBlur: true }}>
           {() => <NutriScreen lang={lang} pi={pi}

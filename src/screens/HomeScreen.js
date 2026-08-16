@@ -63,7 +63,7 @@ const wwStyles = StyleSheet.create({
 });
 const HORMONAL_CONTRA = ['pill', 'hormonal_iud', 'ring', 'patch', 'implant'];
 
-export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCycleDay, logRecipeDone, todayMenu, widgets, toggleWidget }) {
+export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCycleDay, logRecipeDone, todayMenu, widgets, toggleWidget, cycleDailyLogs = {} }) {
  useEffect(() => { trackScreen('Home', { phase: pi?.phase }); }, []);
  const { phaseData } = usePhaseData(pi?.phase, lang);
  const baseD = phaseData;
@@ -215,7 +215,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  const adhStreak = calcAdherence(ext.activityLog || {}, 30);
 
  const todayCycleKey = new Date().toISOString().split('T')[0];
- const hasCycleLogToday = !!ext.cycleLog?.[todayCycleKey];
+ const hasCycleLogToday = !!(cycleDailyLogs[todayCycleKey]);
 
  // Estado de "comido" de la siguiente comida sugerida — usa el mismo menú que NutriScreen
  const todayActivity = ext.activityLog?.[todayKeyH];
@@ -513,7 +513,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  visible={trackingOpen}
  onClose={() => setTrackingOpen(false)}
  lang={lang}
- cycleLog={ext.cycleLog || {}}
+ cycleLog={cycleDailyLogs}
  onSave={(date, data) => logCycleDay?.(date, data)}
  currentPhase={pi?.phase || null}
  />

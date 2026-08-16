@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { syncNotifications, requestNotificationPermission } from '../utils/notifications';
 import { trackEvent, resetAnalytics, Events } from '../lib/analytics';
+import { useCycleData } from './useCycleData';
 
 export const useProfile = () => {
  const [authState, setAuthState] = useState('loading');
  const [user, setUser] = useState(null);
  const [profileLoaded, setProfileLoaded] = useState(false);
+
+ // ─── Datos de ciclo desde tablas propias ────────────────────────────────────
+ const cycleData = useCycleData(user?.id);
  const [setupDone, setSetupDone] = useState(false);
  const [lastPeriod, setLP] = useState('');
  const [cycleLength, setCL] = useState(28);
@@ -238,10 +242,9 @@ export const useProfile = () => {
  trackEvent(Events.RECIPE_MARKED_DONE, { mealType, status });
  };
 
- // ─── Cycle tracking diario ──────────────────────────────────────────────────
+ // ─── Cycle tracking diario — escribe en cycle_daily_logs (tabla propia) ─────
  const logCycleDay = async (dateStr, data) => {
- const cycleLog = profileExtended?.cycleLog || {};
- await saveProfileExtended({ cycleLog: { ...cycleLog, [dateStr]: data } });
+ await cycleData.logCycleDay(dateStr, data);
  // Sin la fecha real — es un dato de salud reproductiva, no debe salir a analytics
  trackEvent(Events.CYCLE_DATE_SET);
  };
@@ -286,5 +289,12 @@ export const useProfile = () => {
  skipRecipe, skipWorkout,
  logRecipeDone, logWorkoutDone, logCycleDay,
  handleSetupDone, saveAll, saveProfileExtended, signOut,
+ // ── Ciclo (tablas propias) ────────────────────────────────────────────────
+ cyclePeriods:   cycleData.periods,
+ cycleDailyLogs: cycleData.dailyLogs,
+ cycleLoading:   cycleData.loading,
+ savePeriod:     cycleData.savePeriod,
+ importPeriods:  cycleData.importPeriods,
+ deletePeriod:   cycleData.deletePeriod,
  };
 };

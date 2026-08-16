@@ -158,7 +158,7 @@ function SleepCard({ sleepLog, logSleep, lang }) {
 }
 
 // ─── Main component ────────────────────────────────────────────────────────────
-export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLength, periodEnd, setPeriodEnd, sleepLog = [], logSleep, lang = 'es', profileExtended, saveProfileExtended, logCycleDay }) {
+export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLength, periodEnd, setPeriodEnd, sleepLog = [], logSleep, lang = 'es', profileExtended, saveProfileExtended, logCycleDay, cyclePeriods = [], cycleDailyLogs = {}, savePeriod, deletePeriod }) {
  useEffect(() => { trackScreen('Ciclo', { phase: pi?.phase }); }, []);
  const cicloOpenRef = useRef(null);
  const [trackingOpen, setTrackingOpen] = useState(false);
@@ -192,16 +192,20 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  const daysInMonth = new Date(year, month + 1, 0).getDate();
  const startOffset = (firstDay + 6) % 7;
 
- // Historial de reglas reales (profile_extended.periodHistory) + el período vigente
+ // Historial de reglas desde cycle_periods (tabla propia)
+ // Normalizamos a { start, end } para compatibilidad con el código existente
  const periods = useMemo(() => {
- const hist = Array.isArray(profileExtended?.periodHistory)
- ? profileExtended.periodHistory.filter(p => p?.start) : [];
- const all = [...hist];
- if (lastPeriod && !all.some(p => p.start === lastPeriod)) {
- all.push({ start: lastPeriod, end: periodEnd || null });
+ const fromTable = cyclePeriods.map(p => ({
+   start: p.start_date,
+   end:   p.end_date || null,
+   source: p.source,
+ }));
+ // Garantía de fallback: si la tabla está vacía y hay lastPeriod, lo incluimos
+ if (!fromTable.length && lastPeriod) {
+   fromTable.push({ start: lastPeriod, end: periodEnd || null, source: 'manual' });
  }
- return all.sort((a, b) => a.start.localeCompare(b.start));
- }, [profileExtended?.periodHistory, lastPeriod, periodEnd]);
+ return fromTable.sort((a, b) => a.start.localeCompare(b.start));
+ }, [cyclePeriods, lastPeriod, periodEnd]);
 
  const inRealPeriod = (dateStr) => {
  const norm = dateStr.split('T')[0];
@@ -267,25 +271,18 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  const savePeriodMark = async () => {
  if (!markStart) return;
  const entry = { start: markStart, end: markEnd || markStart };
- const hist = Array.isArray(profileExtended?.periodHistory)
- ? profileExtended.periodHistory.filter(p => p?.start) : [];
- const overlaps = (p) => !((p.end || p.start) < entry.start || p.start > entry.end);
- const merged = hist.filter(p => !overlaps(p)); // reemplaza períodos solapados
 
+ // Guardar en cycle_periods (tabla propia) — upsert por start_date
+ await savePeriod?.(entry, 'manual');
+
+ // Si es el período más reciente, actualizar también last_period en profiles
+ // para que el motor de fases (pi) lo recoja correctamente
  const isNewest = !lastPeriod || entry.start >= lastPeriod;
  if (isNewest) {
- // El período vigente pasa al historial; el nuevo se convierte en el actual
- const current = lastPeriod ? { start: lastPeriod, end: periodEnd || lastPeriod } : null;
- if (current && !overlaps(current) && !merged.some(p => p.start === current.start)) merged.push(current);
- merged.push(entry);
- merged.sort((a, b) => a.start.localeCompare(b.start));
- await saveProfileExtended({ periodHistory: merged.slice(-24), periodEnd: entry.end });
+ await setPeriodEnd(entry.end);
  await setLastPeriod(entry.start);
- } else {
- merged.push(entry);
- merged.sort((a, b) => a.start.localeCompare(b.start));
- await saveProfileExtended({ periodHistory: merged.slice(-24) });
  }
+
  setMarking(false); setMarkStart(null); setMarkEnd(null);
  };
 
@@ -452,7 +449,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  const isToday = dateStr === todayStr;
  const isSelected = !marking && dateStr === selectedDate;
  const isMarked = marking && markStart && dateStr >= markStart && dateStr <= (markEnd || markStart);
- const hasLog = !!(profileExtended?.cycleLog?.[dateStr]);
+ const hasLog = !!(cycleDailyLogs?.[dateStr]);
  return (
  <TouchableOpacity
  key={dayNum}
@@ -633,7 +630,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  visible={trackingOpen}
  onClose={() => setTrackingOpen(false)}
  lang={lang}
- cycleLog={profileExtended?.cycleLog || {}}
+ cycleLog={cycleDailyLogs}
  onSave={(date, data) => logCycleDay?.(date, data)}
  currentPhase={pi?.phase || null}
  trackingPrefs={profileExtended?.cycleTrackingPrefs || {}}
