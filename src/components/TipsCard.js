@@ -123,7 +123,7 @@ function ArticleModal({ article, cat, lang, tips, onClose }) {
  <View style={m.overlay}>
  <SafeAreaView style={m.sheet}>
  <View style={m.header}>
- <BText style={m.headerTitle}>Información</BText>
+ <BText style={m.headerTitle}>{{ es: 'Información', en: 'Information', fr: 'Information', it: 'Informazione' }[lang] || 'Información'}</BText>
  <TouchableOpacity style={m.closeBtn} onPress={onClose}>
  <BText style={m.closeTxt}>✕</BText>
  </TouchableOpacity>

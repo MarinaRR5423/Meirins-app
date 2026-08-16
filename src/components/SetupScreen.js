@@ -215,7 +215,7 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange, unitSys
        if (isLast) { setStep(1); }
        else { setIntroSlide(i => i + 1); }
       }}>
-       <BText style={styles.btnText}>Siguiente</BText>
+       <BText style={styles.btnText}>{su.next || 'Siguiente →'}</BText>
       </TouchableOpacity>
      </View>
     </View>

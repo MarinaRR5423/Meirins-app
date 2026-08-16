@@ -44,7 +44,7 @@ export default function SleepCard({ sleepLog = [], logSleep, lang = 'es', health
 
    {/* Duration display */}
    <View>
-    <BText style={s.durLabel}>Duración</BText>
+    <BText style={s.durLabel}>{sl.duration || 'Duración'}</BText>
     <BText style={s.durValue}>{hours} h</BText>
    </View>
 

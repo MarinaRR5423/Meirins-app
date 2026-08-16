@@ -645,7 +645,7 @@ export default function GimnasioScreen({
    {/* Realizados progress */}
    {totalEx > 0 && (
     <View style={{ gap: 8 }}>
-     <BText style={styles.realizadosLbl}>Realizados</BText>
+     <BText style={styles.realizadosLbl}>{g.completedLabel || 'Realizados'}</BText>
      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
       <BText style={styles.realizadosCount}>{completedCount}</BText>
       <BText style={styles.realizadosCount}>{totalEx}</BText>
@@ -708,7 +708,7 @@ export default function GimnasioScreen({
  <View style={styles.addExtraTitleRow}>
   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
    <Plus size={16} color="#0A1823" />
-   <BText style={styles.addExtraLabel}>Registro</BText>
+   <BText style={styles.addExtraLabel}>{g.logLabel || 'Registro'}</BText>
   </View>
   <ChevronRight size={16} color="#0A1823" />
  </View>
@@ -1084,7 +1084,7 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
    {/* Duration + data rows */}
    <View style={{ gap: 16 }}>
     <View>
-     <BText style={{ fontSize: 14, fontFamily: F.body, color: '#0A0A0A', lineHeight: 19.6 }}>Duración</BText>
+     <BText style={{ fontSize: 14, fontFamily: F.body, color: '#0A0A0A', lineHeight: 19.6 }}>{t({ es: 'Duración', en: 'Duration', fr: 'Durée', it: 'Durata' })}</BText>
      <BText style={{ fontSize: 48, fontFamily: F.heading, color: '#FECA04', lineHeight: 52.8 }}>{latest.duration} h</BText>
     </View>
     <View style={{ gap: 2 }}>

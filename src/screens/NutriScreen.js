@@ -610,7 +610,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  <BText style={styles.macroPillVal}>{Math.round(foodConsumed.carbs_g)}g</BText>
  </View>
  <View style={styles.macroPill}>
- <BText style={styles.macroPillLbl}>G</BText>
+ <BText style={styles.macroPillLbl}>{lang === 'en' ? 'F' : 'G'}</BText>
  <BText style={styles.macroPillVal}>{Math.round(foodConsumed.fat_g)}g</BText>
  </View>
  </View>
