@@ -235,10 +235,10 @@ function hashString(str) {
  * @param {string|null} dayType 'A' | 'B' | null — batch cooking day type.
  *   Incluido en el seed para que día A y día B siempre devuelvan recetas distintas.
  */
-function pickWithDailySeed(candidates, dateStr, mealType, topN = 5, dayType = null) {
+function pickWithDailySeed(candidates, dateStr, mealType, topN = 10, dayType = null, swapCount = 0) {
  if (!candidates?.length) return null;
  const pool = candidates.slice(0, Math.min(topN, candidates.length));
- const seedStr = dayType ? `${dateStr}_${dayType}_${mealType}` : `${dateStr}_${mealType}`;
+ const seedStr = dayType ? `${dateStr}_${dayType}_${mealType}_${swapCount}` : `${dateStr}_${mealType}_${swapCount}`;
  const seed = hashString(seedStr);
  return pool[seed % pool.length];
 }
@@ -268,9 +268,9 @@ export function buildDayMenu(recipes, profile, phase, mealTypes, dateStr, dayTyp
  *
  * @param {string|null} dayType 'A' | 'B' | null — batch cooking day type
  */
-export function getDailyRecipe(recipes, profile, phase, mealType, dateStr, dayType = null) {
+export function getDailyRecipe(recipes, profile, phase, mealType, dateStr, dayType = null, swapCount = 0) {
  const candidates = getRecipesForMeal(recipes, profile, phase, mealType);
- return pickWithDailySeed(candidates, dateStr || new Date().toISOString().split('T')[0], mealType, 5, dayType);
+ return pickWithDailySeed(candidates, dateStr || new Date().toISOString().split('T')[0], mealType, 10, dayType, swapCount);
 }
 
 /**

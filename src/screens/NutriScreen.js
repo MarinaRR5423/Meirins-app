@@ -329,7 +329,8 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  const buildPersonalizedMeals = (slots, dateStr, dayType = null) => {
   return (slots || []).map(slot => {
    const dbMealType = appMealToDbMealType(slot.id);
-   const recipe = getDailyRecipe(allRecipes, userProfile, pi?.phase, dbMealType, dateStr, dayType);
+   const swapCount = (skippedToday.date === dateStr ? (skippedToday[slot.id] || []).length : 0);
+   const recipe = getDailyRecipe(allRecipes, userProfile, pi?.phase, dbMealType, dateStr, dayType, swapCount);
    if (!recipe) return { ...slot, title: null, items: [], _personalized: false };
    const card = recipeToMealCard(recipe, lang);
    if (!card) return { ...slot, title: null, items: [], _personalized: false };

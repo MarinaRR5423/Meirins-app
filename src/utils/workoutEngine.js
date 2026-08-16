@@ -283,7 +283,8 @@ export function workoutToCardFormat(workout, lang = 'es') {
  */
 export function buildPersonalizedWeekPlan(workouts, profile, phase, trainDays = [], lang = 'es') {
  const filtered = getWorkoutsForProfile(workouts, profile, phase);
- const weekSeed = getISOWeek();
+ const swapCount = profile.skippedWorkoutIds?.length || 0;
+ const weekSeed = `${getISOWeek()}_${swapCount}`;
  const distributed = distributeWorkoutsToDays(filtered, trainDays, weekSeed);
 
  const plan = {};
