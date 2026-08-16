@@ -1,6 +1,6 @@
 ﻿import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { View, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Image, ImageBackground, Modal, SafeAreaView } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Image, ImageBackground, Modal, SafeAreaView, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { F } from '../theme/fonts';
 import { ChevronRight, ChevronLeft } from 'lucide-react-native';
@@ -10,6 +10,7 @@ import { ARTICLES } from '../data/articles';
 import TipsCard from '../components/TipsCard';
 import { CicloSetupCard, CicloHealthCard } from '../components/TabSetupCard';
 import CycleTrackingModal from '../components/CycleTrackingModal';
+import CycleImportModal from '../components/CycleImportModal';
 import { trackScreen } from '../lib/analytics';
 import BText from '../components/BText';
 import ErrorBoundary from '../components/ErrorBoundary';
@@ -158,10 +159,11 @@ function SleepCard({ sleepLog, logSleep, lang }) {
 }
 
 // ─── Main component ────────────────────────────────────────────────────────────
-export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLength, periodEnd, setPeriodEnd, sleepLog = [], logSleep, lang = 'es', profileExtended, saveProfileExtended, logCycleDay, cyclePeriods = [], cycleDailyLogs = {}, savePeriod, deletePeriod }) {
+export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLength, periodEnd, setPeriodEnd, sleepLog = [], logSleep, lang = 'es', profileExtended, saveProfileExtended, logCycleDay, cyclePeriods = [], cycleDailyLogs = {}, savePeriod, deletePeriod, importPeriods }) {
  useEffect(() => { trackScreen('Ciclo', { phase: pi?.phase }); }, []);
  const cicloOpenRef = useRef(null);
  const [trackingOpen, setTrackingOpen] = useState(false);
+ const [importOpen, setImportOpen] = useState(false);
  const [expandedPhase, setExpanded] = useState(pi?.phase || null);
  const route = useRoute();
  const [selectedDate, setSelectedDate] = useState(null);
@@ -637,8 +639,28 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  onSavePrefs={(prefs) => saveProfileExtended({ cycleTrackingPrefs: prefs })}
  />
 
+ <CycleImportModal
+ visible={importOpen}
+ onClose={() => setImportOpen(false)}
+ lang={lang}
+ importPeriods={importPeriods}
+ />
+
  {/* La fecha y duración del ciclo se editan ahora marcando la regla
  directamente en la vista calendario ( Marcar regla). */}
+
+ {/* ── Importar desde Apple Salud (iOS only) ── */}
+ {Platform.OS === 'ios' && (
+ <TouchableOpacity
+  style={styles.importBtn}
+  onPress={() => setImportOpen(true)}
+  activeOpacity={0.85}
+ >
+  <BText style={styles.importBtnTxt}>
+   {tr('Importar historial de Apple Salud', 'Import Apple Health history', 'Importer depuis Santé Apple', 'Importa da Salute Apple')}
+  </BText>
+ </TouchableOpacity>
+ )}
 
  {/* ── CONSEJOS ── */}
  <TipsCard articles={cicloArticles} lang={lang} variant="azote" />
@@ -686,6 +708,8 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
 
 const styles = StyleSheet.create({
  container: { flex:1, backgroundColor:'#FFFFFF' },
+ importBtn: { borderWidth:1, borderColor:'#429FE7', borderRadius:100, paddingVertical:12, paddingHorizontal:24, alignItems:'center' },
+ importBtnTxt: { color:'#429FE7', fontSize:15, fontFamily: F.body, lineHeight:20 },
  content: { padding:16, paddingTop:60, paddingBottom:100, gap:2 },
  card: { backgroundColor:'white', borderRadius:18, padding:16, shadowColor:'#000', shadowOffset:{ width:0, height:2 }, shadowOpacity:0.06, shadowRadius:8, elevation:2 },
 

@@ -272,7 +272,7 @@ function App() {
           }} />}
         </Tab.Screen>
         <Tab.Screen name="Ciclo" options={{ tabBarLabel: tabs.cycle, tabBarIcon: ({ color, size }) => <Flower color={color} size={size} /> }}>
-          {() => <CicloScreen lang={lang} pi={pi} lastPeriod={lastPeriod} setLastPeriod={profile.setLastPeriod} setCycleLength={profile.setCycleLength} periodEnd={periodEnd} setPeriodEnd={profile.setPeriodEnd} sleepLog={sleepLog} logSleep={profile.logSleep} profileExtended={profile.profileExtended} saveProfileExtended={profile.saveProfileExtended} logCycleDay={profile.logCycleDay} cyclePeriods={profile.cyclePeriods} cycleDailyLogs={profile.cycleDailyLogs} savePeriod={profile.savePeriod} deletePeriod={profile.deletePeriod} />}
+          {() => <CicloScreen lang={lang} pi={pi} lastPeriod={lastPeriod} setLastPeriod={profile.setLastPeriod} setCycleLength={profile.setCycleLength} periodEnd={periodEnd} setPeriodEnd={profile.setPeriodEnd} sleepLog={sleepLog} logSleep={profile.logSleep} profileExtended={profile.profileExtended} saveProfileExtended={profile.saveProfileExtended} logCycleDay={profile.logCycleDay} cyclePeriods={profile.cyclePeriods} cycleDailyLogs={profile.cycleDailyLogs} savePeriod={profile.savePeriod} deletePeriod={profile.deletePeriod} importPeriods={profile.importPeriods} />}
         </Tab.Screen>
         <Tab.Screen name="Nutrición" options={{ tabBarLabel: tabs.nutri, tabBarIcon: ({ color, size, focused }) => <Salad color={focused ? "#F97316" : color} size={size} />, unmountOnBlur: true }}>
           {() => <NutriScreen lang={lang} pi={pi}
