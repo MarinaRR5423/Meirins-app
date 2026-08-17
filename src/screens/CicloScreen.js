@@ -158,6 +158,125 @@ function SleepCard({ sleepLog, logSleep, lang }) {
  );
 }
 
+// ─── Carrusel de bienestar (menopausia / postmenopausia) ──────────────────────
+const WELLNESS_TABS = [
+ {
+  key: 'sleep',
+  icon: '',
+  label: { es: 'Sueño', en: 'Sleep', fr: 'Sommeil', it: 'Sonno' },
+  color: '#0891B2',
+  bg: '#ECFEFF',
+  tips: {
+   es: ['Mantén horarios regulares de sueño', 'Evita pantallas 1h antes de dormir', 'La melatonina puede ayudar en la transición', 'Temperatura fresca en el dormitorio (17-19°C)', 'Los sofocos nocturnos: ropa de algodón y capas'],
+   en: ['Keep regular sleep schedules', 'Avoid screens 1h before bed', 'Melatonin may help during the transition', 'Cool bedroom temperature (17-19°C)', 'Night sweats: cotton clothing and layers'],
+   fr: ['Maintiens des horaires de sommeil réguliers', 'Évite les écrans 1h avant de dormir', 'La mélatonine peut aider lors de la transition', 'Température fraîche dans la chambre (17-19°C)', 'Sueurs nocturnes : vêtements en coton et superposition'],
+   it: ['Mantieni orari di sonno regolari', 'Evita gli schermi 1h prima di dormire', 'La melatonina può aiutare nella transizione', 'Temperatura fresca in camera (17-19°C)', 'Sudorazioni notturne: cotone e strati'],
+  },
+ },
+ {
+  key: 'sport',
+  icon: '',
+  label: { es: 'Deporte', en: 'Sport', fr: 'Sport', it: 'Sport' },
+  color: '#2563EB',
+  bg: '#EFF6FF',
+  tips: {
+   es: ['El entrenamiento de fuerza protege la densidad ósea', 'Caminar 30 min/día reduce el riesgo cardiovascular', 'El yoga y el pilates mejoran el equilibrio hormonal', 'HIIT moderado 2×/semana para el metabolismo', 'Escucha tu cuerpo: recuperación más importante que antes'],
+   en: ['Strength training protects bone density', 'Walking 30 min/day reduces cardiovascular risk', 'Yoga and pilates improve hormonal balance', 'Moderate HIIT 2×/week for metabolism', 'Listen to your body: recovery is more important than ever'],
+   fr: ['La musculation protège la densité osseuse', 'Marcher 30 min/jour réduit le risque cardiovasculaire', 'Le yoga et le pilates améliorent l\'équilibre hormonal', 'HIIT modéré 2×/semaine pour le métabolisme', 'Écoute ton corps : la récupération est plus importante que jamais'],
+   it: ['L\'allenamento di forza protegge la densità ossea', 'Camminare 30 min/giorno riduce il rischio cardiovascolare', 'Yoga e pilates migliorano l\'equilibrio ormonale', 'HIIT moderato 2×/settimana per il metabolismo', 'Ascolta il tuo corpo: il recupero è più importante che mai'],
+  },
+ },
+ {
+  key: 'nutrition',
+  icon: '',
+  label: { es: 'Nutrición', en: 'Nutrition', fr: 'Nutrition', it: 'Nutrizione' },
+  color: '#059669',
+  bg: '#ECFDF5',
+  tips: {
+   es: ['Aumenta el calcio y vitamina D para los huesos', 'Fitoestrógenos de la soja pueden reducir sofocos', 'Reduce azúcares simples y alcohol', 'Prioriza proteína en cada comida (1,2-1,6g/kg)', 'Omega-3 para salud cardiovascular y cognitiva'],
+   en: ['Increase calcium and vitamin D for bones', 'Phytoestrogens from soy may reduce hot flushes', 'Reduce simple sugars and alcohol', 'Prioritise protein at every meal (1.2-1.6g/kg)', 'Omega-3 for cardiovascular and cognitive health'],
+   fr: ['Augmente le calcium et la vitamine D pour les os', 'Les phytoestrogènes du soja peuvent réduire les bouffées de chaleur', 'Réduis les sucres simples et l\'alcool', 'Priorise les protéines à chaque repas (1,2-1,6g/kg)', 'Oméga-3 pour la santé cardiovasculaire et cognitive'],
+   it: ['Aumenta calcio e vitamina D per le ossa', 'I fitoestrogeni della soia possono ridurre le vampate', 'Riduci zuccheri semplici e alcol', 'Dai priorità alle proteine ad ogni pasto (1,2-1,6g/kg)', 'Omega-3 per la salute cardiovascolare e cognitiva'],
+  },
+ },
+];
+
+function MenopauseWellnessCarousel({ lang }) {
+ const [activeTab, setActiveTab] = useState(0);
+ const tab = WELLNESS_TABS[activeTab];
+ const tips = tab.tips[lang] || tab.tips.en;
+ const chatbotPlaceholder = {
+  es: 'Chatbot de recomendaciones personalizadas\n(próximamente)',
+  en: 'Personalised recommendations chatbot\n(coming soon)',
+  fr: 'Chatbot de recommandations personnalisées\n(bientôt disponible)',
+  it: 'Chatbot di raccomandazioni personalizzate\n(prossimamente)',
+ }[lang] || 'Coming soon';
+
+ return (
+  <View style={mwStyles.container}>
+   {/* Título */}
+   <BText style={mwStyles.title}>
+    {{ es: 'Tu bienestar', en: 'Your wellbeing', fr: 'Ton bien-être', it: 'Il tuo benessere' }[lang] || 'Your wellbeing'}
+   </BText>
+   <BText style={mwStyles.sub}>
+    {{ es: 'Recomendaciones adaptadas a tu etapa', en: 'Recommendations adapted to your stage', fr: 'Recommandations adaptées à ta phase', it: 'Consigli adattati alla tua fase' }[lang] || 'Recommendations adapted to your stage'}
+   </BText>
+
+   {/* Tabs */}
+   <View style={mwStyles.tabRow}>
+    {WELLNESS_TABS.map((t, i) => {
+     const active = i === activeTab;
+     return (
+      <TouchableOpacity key={t.key} onPress={() => setActiveTab(i)}
+       style={[mwStyles.tabBtn, active && { backgroundColor: t.color, borderColor: t.color }]}>
+       <BText style={[mwStyles.tabIcon]}>{t.icon}</BText>
+       <BText style={[mwStyles.tabLabel, active && { color: 'white' }]}>
+        {t.label[lang] || t.label.en}
+       </BText>
+      </TouchableOpacity>
+     );
+    })}
+   </View>
+
+   {/* Contenido del tab activo */}
+   <View style={[mwStyles.card, { borderColor: tab.color + '33' }]}>
+    {/* Tips */}
+    <View style={{ gap: 8 }}>
+     {tips.map((tip, i) => (
+      <View key={i} style={mwStyles.tipRow}>
+       <View style={[mwStyles.tipDot, { backgroundColor: tab.color }]} />
+       <BText style={mwStyles.tipTxt}>{tip}</BText>
+      </View>
+     ))}
+    </View>
+
+    {/* Chatbot placeholder */}
+    <View style={[mwStyles.chatbotBox, { backgroundColor: tab.bg, borderColor: tab.color + '44' }]}>
+     <BText style={[mwStyles.chatbotIcon]}>{tab.icon}</BText>
+     <BText style={[mwStyles.chatbotTxt, { color: tab.color }]}>{chatbotPlaceholder}</BText>
+    </View>
+   </View>
+  </View>
+ );
+}
+
+const mwStyles = StyleSheet.create({
+ container: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, gap: 16 },
+ title: { fontSize: 20, fontFamily: F.headingX, color: '#0A0A0A', letterSpacing: -0.2 },
+ sub: { fontSize: 14, fontFamily: F.body, color: '#525252', marginTop: -8 },
+ tabRow: { flexDirection: 'row', gap: 6 },
+ tabBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4, paddingVertical: 8, paddingHorizontal: 6, borderRadius: 12, borderWidth: 1.5, borderColor: '#E5E5E5', backgroundColor: 'white' },
+ tabIcon: { fontSize: 14, fontFamily: F.body },
+ tabLabel: { fontSize: 12, fontFamily: F.bodyB, color: '#525252' },
+ card: { backgroundColor: 'white', borderRadius: 16, padding: 14, gap: 16, borderWidth: 1 },
+ tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10 },
+ tipDot: { width: 6, height: 6, borderRadius: 3, marginTop: 7, flexShrink: 0 },
+ tipTxt: { flex: 1, fontSize: 14, fontFamily: F.body, color: '#0A0A0A', lineHeight: 20 },
+ chatbotBox: { borderRadius: 12, borderWidth: 1, padding: 14, alignItems: 'center', gap: 6 },
+ chatbotIcon: { fontSize: 28, fontFamily: F.body },
+ chatbotTxt: { fontSize: 13, fontFamily: F.bodyB, textAlign: 'center', lineHeight: 18 },
+});
+
 // ─── Main component ────────────────────────────────────────────────────────────
 export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLength, periodEnd, setPeriodEnd, sleepLog = [], logSleep, lang = 'es', profileExtended, saveProfileExtended, logCycleDay, cyclePeriods = [], cycleDailyLogs = {}, savePeriod, deletePeriod, importPeriods }) {
  useEffect(() => { trackScreen('Ciclo', { phase: pi?.phase }); }, []);
@@ -180,6 +299,10 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  const contra = profileExtended?.contraception;
  const HORMONAL_CONTRA = ['pill', 'hormonal_iud', 'ring', 'patch', 'implant'];
  const isHormonalContra = HORMONAL_CONTRA.includes(contra);
+
+ // Menopausia / postmenopausia: sustituye carrusel de fases por carrusel de bienestar
+ const lifeStage = profileExtended?.lifeStage || '';
+ const isMenopause = lifeStage === 'menopause' || lifeStage === 'postmenopause';
 
  // Calendar — navegación por meses (0 = mes actual, negativo = pasado, positivo = pronóstico)
  const [calOffset, setCalOffset] = useState(0);
@@ -594,8 +717,10 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  </TouchableOpacity>
  </View>
 
- {/* ── Información de las fases — carrusel horizontal ── */}
- {!isHormonalContra && (
+ {/* ── Carrusel de fases (ciclo normal) o bienestar (menopausia/postmenopausia) ── */}
+ {isMenopause ? (
+  <MenopauseWellnessCarousel lang={lang} />
+ ) : !isHormonalContra && (
  <View style={{ backgroundColor:'#F5F5F5', borderRadius:24, padding:16, gap:40 }}>
  <View>
  <BText style={styles.phaseInfoTitle}>{tr('Información de las fases', 'Phase information', 'Infos sur les phases', 'Informazioni sulle fasi')}</BText>
@@ -624,7 +749,8 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  })}
  </ScrollView>
  </View>
- )}
+ )
+ }
 
  {/* ── SLEEP TRACKER ── */}
  {/* SleepCard movido a Gimnasio > Salud */}
@@ -860,4 +986,5 @@ const es = StyleSheet.create({
  btn: { alignSelf: 'stretch', height: 48, backgroundColor: '#171717', borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
  btnTxt: { fontSize: 18, fontFamily: F.body, color: '#FAFAFA', lineHeight: 24 },
 });
+
 
