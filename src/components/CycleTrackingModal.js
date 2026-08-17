@@ -52,6 +52,7 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
  const [note, setNote] = useState(cycleLog[selectedDate]?.note || '');
  const [activeInsight, setActiveInsight] = useState(null);
  const [customizing, setCustomizing] = useState(false);
+ const [foodNote, setFoodNote] = useState(cycleLog[selectedDate]?.food_note || '');
  const [localPrefs, setLocalPrefs] = useState(() => {
   const prefs = {};
   CYCLE_CATEGORIES.forEach(c => {
@@ -63,6 +64,7 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
  React.useEffect(() => {
   setDayData(cycleLog[selectedDate] || {});
   setNote(cycleLog[selectedDate]?.note || '');
+  setFoodNote(cycleLog[selectedDate]?.food_note || '');
  }, [selectedDate, cycleLog]);
 
  const todayStr = new Date().toISOString().split('T')[0];
@@ -112,6 +114,12 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
  const handleSave = async () => {
   const fullData = { ...dayData };
   if (note?.trim()) fullData.note = note.trim();
+  if (foodNote?.trim()) fullData.food_note = foodNote.trim();
+  // Si la usuaria marcó "No", limpiar triggers y nota de comida
+  if (fullData.food_reaction === 'no') {
+   delete fullData.food_triggers;
+   delete fullData.food_note;
+  }
   await onSave?.(selectedDate, fullData);
   onClose?.();
  };
@@ -216,6 +224,9 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
      {!customizing && (
       <View style={s.sections}>
        {shownCategories.map(cat => {
+        // Renderizado condicional: ocultar si depende de otra categoría no seleccionada
+        if (cat.dependsOn && dayData[cat.dependsOn.field] !== cat.dependsOn.value) return null;
+
         const value = dayData[cat.id];
         return (
          <View key={cat.id} style={s.category}>
@@ -242,6 +253,17 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
             );
            })}
           </View>
+          {/* Campo libre "¿Algún alimento en particular?" — solo tras food_triggers */}
+          {cat.id === 'food_triggers' && (
+           <TextInput
+            style={s.foodNoteInput}
+            value={foodNote}
+            onChangeText={setFoodNote}
+            placeholder={{ es: '¿Algún alimento en particular?', en: 'Any specific food?', fr: 'Un aliment en particulier ?', it: 'Qualche alimento in particolare?' }[lang] || '¿Algún alimento en particular?'}
+            placeholderTextColor="#737373"
+            maxLength={200}
+           />
+          )}
          </View>
         );
        })}
@@ -314,6 +336,13 @@ const s = StyleSheet.create({
  optLblActive: { color: 'white' },
 
  // Note
+ foodNoteInput: {
+  marginTop: 10, backgroundColor: '#F5F5F5', borderRadius: 12,
+  paddingHorizontal: 12, paddingVertical: 10,
+  fontSize: 14, color: '#0A0A0A', fontFamily: F.body,
+  borderWidth: 0.5, borderColor: '#E5E7EB',
+ },
+
  noteSection: { gap: 8 },
  noteTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#0A0A0A' },
  noteInput: {

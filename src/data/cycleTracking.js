@@ -178,6 +178,38 @@ export const CYCLE_CATEGORIES = [
     ],
   },
 
+  // ── REACCIÓN A LA COMIDA ─────────────────────────────────────────────────────
+  {
+    id: 'food_reaction',
+    icon: 'Utensils',
+    color: '#F97316',
+    multi: false,
+    label: { es: '¿Te sentó mal algo?', en: 'Did food disagree with you?', fr: 'Un aliment t\'a mal réussi ?', it: 'Qualcosa ti ha fatto male?' },
+    options: [
+      { id: 'no',  label: { es: 'No', en: 'No', fr: 'Non', it: 'No' } },
+      { id: 'yes', label: { es: 'Sí', en: 'Yes', fr: 'Oui', it: 'Sì' } },
+    ],
+  },
+  {
+    id: 'food_triggers',
+    icon: 'Utensils',
+    color: '#F97316',
+    multi: true,
+    dependsOn: { field: 'food_reaction', value: 'yes' },
+    label: { es: '¿Qué comiste?', en: 'What did you eat?', fr: 'Qu\'as-tu mangé ?', it: 'Cosa hai mangiato?' },
+    options: [
+      { id: 'gluten',   label: { es: 'Gluten',    en: 'Gluten',     fr: 'Gluten',          it: 'Glutine' } },
+      { id: 'dairy',    label: { es: 'Lácteos',   en: 'Dairy',      fr: 'Laitages',        it: 'Latticini' } },
+      { id: 'sugar',    label: { es: 'Azúcar',    en: 'Sugar',      fr: 'Sucre',           it: 'Zucchero' } },
+      { id: 'alcohol',  label: { es: 'Alcohol',   en: 'Alcohol',    fr: 'Alcool',          it: 'Alcol' } },
+      { id: 'spicy',    label: { es: 'Picante',   en: 'Spicy',      fr: 'Épicé',           it: 'Piccante' } },
+      { id: 'legumes',  label: { es: 'Legumbres', en: 'Legumes',    fr: 'Légumineuses',    it: 'Legumi' } },
+      { id: 'caffeine', label: { es: 'Cafeína',   en: 'Caffeine',   fr: 'Caféine',         it: 'Caffeina' } },
+      { id: 'fried',    label: { es: 'Fritos',    en: 'Fried food', fr: 'Friture',         it: 'Fritto' } },
+      { id: 'other',    label: { es: 'Otro',      en: 'Other',      fr: 'Autre',           it: 'Altro' } },
+    ],
+  },
+
   // ── PIEL ────────────────────────────────────────────────────────────────────
   {
     id: 'skin',
