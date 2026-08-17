@@ -615,6 +615,6 @@ export function isRecommended(p, profileExtended = {}) {
  if (p.id === 'hiit_progressive' && sportGoal === 'tone') return true;
  if (p.id === 'cycle_strength' && sportGoal === 'muscle') return true;
  if (p.id === 'swim_beginner' && sports.includes('swimming')) return true;
- if (p.id === 'physio_sedentaire' && profileExtended?.fitnessLevel === 'sedentary') return true;
+ if (p.id === 'physio_sedentaire' && ['sedentary', 'light'].includes(profileExtended?.fitnessLevel)) return true;
  return false;
 }

@@ -924,14 +924,21 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
         program_id: chosenProg.id,
         level: chosenProg.level,
         weeks: chosenProg.weeks?.length || 0,
-        was_recommended: isRecommended(chosenProg, localFitness, profileExtended?.lifeStage),
+        was_recommended: isRecommended(chosenProg, { ...(profileExtended || {}), fitnessLevel: localFitness || profileExtended?.fitnessLevel }),
         is_change: !!(profileExtended?.activeProgram?.id && profileExtended.activeProgram.id !== chosenProg.id),
       });
     }
     await saveProfileExtended({
       fitnessLevel: localFitness, gymAccess: localGym, sportProfile, gymSetupDone: true,
       goals: { ...(profileExtended?.goals || {}), sport: sportGoal },
-      activeProgram: chosenProg ? { id: chosenProg.id, startedAt: profileExtended?.activeProgram?.id === chosenProg.id ? (profileExtended?.activeProgram?.startedAt || new Date().toISOString()) : new Date().toISOString() } : null,
+      activeProgram: chosenProg
+        ? (profileExtended?.activeProgram?.id === chosenProg.id
+            // Mismo programa: preserva el progreso existente
+            ? profileExtended.activeProgram
+            // Programa nuevo: empieza desde cero
+            : { id: chosenProg.id, started: new Date().toISOString().split('T')[0], done: 0,
+                ...(chosenProg.phaseRotation ? { pp: { menstrual:0, follicular:0, ovulatory:0, luteal:0 } } : {}) })
+        : null,
     });
     setSaving(false);
     setOpen(false);
@@ -1154,7 +1161,7 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
             const active = selectedProgram === pr.id;
             const lvl = LEVEL_LABEL[pr.level]?.[lang] || pr.level;
             const weeks = pr.weeks?.length || 0;
-            const rec = isRecommended(pr, profileExtended?.fitnessLevel || localFitness, profileExtended?.lifeStage);
+            const rec = isRecommended(pr, { ...(profileExtended || {}), fitnessLevel: localFitness || profileExtended?.fitnessLevel });
             return (
               <TouchableOpacity key={pr.id} onPress={() => setSelectedProgram(active ? '' : pr.id)}
                 style={[s.programRow, active && s.programRowActive]}>
