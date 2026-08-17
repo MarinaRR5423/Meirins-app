@@ -652,15 +652,18 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
 
  {/* ── Importar desde Apple Salud (iOS only) ── */}
  {Platform.OS === 'ios' && (
- <TouchableOpacity
-  style={styles.importBtn}
-  onPress={() => setImportOpen(true)}
-  activeOpacity={0.85}
- >
-  <BText style={styles.importBtnTxt}>
-   {tr('Importar historial de Apple Salud', 'Import Apple Health history', 'Importer depuis Santé Apple', 'Importa da Salute Apple')}
-  </BText>
- </TouchableOpacity>
+ <View style={styles.importCard}>
+  <BText style={styles.sectionLabel}>{tr('Apple Salud', 'Apple Health', 'Santé Apple', 'Salute Apple')}</BText>
+  <View style={styles.importRow}>
+   <BText style={styles.importRowName}>Apple Health</BText>
+   <BText style={styles.importRowSub}>{tr('Historial de ciclo', 'Cycle history', 'Historique du cycle', 'Cronologia ciclo')}</BText>
+  </View>
+  <TouchableOpacity style={styles.wearablesAddBtn} onPress={() => setImportOpen(true)} activeOpacity={0.85}>
+   <BText style={styles.wearablesAddTxt}>
+    {tr('Importar historial', 'Import history', 'Importer l\'historique', 'Importa cronologia')}
+   </BText>
+  </TouchableOpacity>
+ </View>
  )}
 
  {/* ── CONSEJOS ── */}
@@ -709,8 +712,13 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
 
 const styles = StyleSheet.create({
  container: { flex:1, backgroundColor:'#FFFFFF' },
- importBtn: { borderWidth:1, borderColor:'#429FE7', borderRadius:100, paddingVertical:12, paddingHorizontal:24, alignItems:'center' },
- importBtnTxt: { color:'#429FE7', fontSize:15, fontFamily: F.body, lineHeight:20 },
+ sectionLabel: { fontSize: 12, fontFamily: F.bodyB, color: '#737373', textTransform: 'uppercase', letterSpacing: 0.5 },
+ importCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, gap: 24 },
+ importRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: '#E5E5E5', gap: 8 },
+ importRowName: { flex: 1, fontSize: 16, fontFamily: F.bodyB, color: '#0A0A0A', lineHeight: 20.8 },
+ importRowSub: { fontSize: 14, fontFamily: F.body, color: '#737373', lineHeight: 20 },
+ wearablesAddBtn: { backgroundColor: '#0A0A0A', borderRadius: 12, height: 48, alignItems: 'center', justifyContent: 'center' },
+ wearablesAddTxt: { fontSize: 16, fontFamily: F.body, color: 'white', lineHeight: 24 },
  content: { padding:16, paddingTop:60, paddingBottom:100, gap:2 },
  card: { backgroundColor:'white', borderRadius:18, padding:16, shadowColor:'#000', shadowOffset:{ width:0, height:2 }, shadowOpacity:0.06, shadowRadius:8, elevation:2 },
 
