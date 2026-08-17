@@ -264,10 +264,10 @@ function normalizeName(name) {
  });
  // Quita comas y signos
  n = n.replace(/[,.;:\/\\]/g, '');
- // Espacios duplicados
- n = n.replace(/\s+/g, '').trim();
+ // Espacios duplicados → un solo espacio
+ n = n.replace(/\s+/g, ' ').trim();
  // Singulariza cada palabra
- n = n.split('').map(singularize).join('').trim();
+ n = n.split(' ').map(singularize).join(' ').trim();
  // Si solo queda una stop word o cadena vacía → inválido
  if (!n || n.split('').every(w => STOP_WORDS.has(w))) return '';
  return n;
