@@ -7,7 +7,7 @@ import { TouchableOpacity as GHTouchable } from 'react-native-gesture-handler';
 import T, { getDayLabels } from '../i18n/translations';
 import { GymSetupCard, SPORTS_LIST } from '../components/TabSetupCard';
 import ProgramsCard from '../components/ProgramsCard';
-import { getActiveProgramState, getProgramDays, programSessionToCard, getSession, sessionMinutes, LEVEL_LABEL } from '../data/trainingPrograms';
+import { getActiveProgramState, getProgramDays, programSessionToCard, getSession, sessionMinutes, formatSession, LEVEL_LABEL } from '../data/trainingPrograms';
 import { DAY_SHORT, DAY_LABELS, jsToIdx } from '../data/phases';
 import {
  getSessionType,
@@ -314,6 +314,7 @@ export default function GimnasioScreen({
  const [showVariations, setShowVariations] = useState(false);
  const [weekAction, setWeekAction] = useState(null); // { dateKey, step:'main'|'sport' }
  const [weekOffset, setWeekOffset] = useState(0); // 0 = semana actual, -1 = semana anterior, etc.
+ const [selectedPlanSession, setSelectedPlanSession] = useState(null); // { label, detail, lines[] }
  const gymOpenRef = useRef(null);
 
  const saveActivityDay = async (dateKey, data) => {
@@ -901,24 +902,31 @@ export default function GimnasioScreen({
      if (prog.phaseRotation) {
        // Programa por fase: mostrar la sesión actual de la fase
        const ps = progState.session;
-       if (ps) dynRows.push({ label: `${lang === 'en' ? 'Session' : lang === 'fr' ? 'Séance' : lang === 'it' ? 'Sessione' : 'Sesión'} (${ps.phase || ''})`, detail: `${sessionMinutes(ps.spec)}'` });
+       if (ps) dynRows.push({
+         label: `${lang === 'en' ? 'Session' : lang === 'fr' ? 'Séance' : lang === 'it' ? 'Sessione' : 'Sesión'} (${ps.phase || ''})`,
+         detail: `${sessionMinutes(ps.spec)}'`,
+         lines: formatSession(ps.spec, lang),
+       });
      } else {
        const firstWeek = prog.weeks[0];
        const sessions = firstWeek.list || Array(prog.spw).fill(firstWeek.all);
        dynRows = sessions.slice(0, 3).map((spec, i) => ({
          label: `${prog.emoji} ${lang === 'en' ? 'Session' : lang === 'fr' ? 'Séance' : lang === 'it' ? 'Sessione' : 'Sesión'} ${i + 1}`,
          detail: `${sessionMinutes(spec)}'`,
+         lines: formatSession(spec, lang),
        }));
      }
-     if (dynRows.length < 3) dynRows.push({ label: restLabel, detail: restDetail });
+     if (dynRows.length < 3) dynRows.push({ label: restLabel, detail: restDetail, lines: [] });
      return dynRows.map((row, i) => (
-       <View key={i} style={styles.planExercRow}>
+       <TouchableOpacity key={i} style={styles.planExercRow} activeOpacity={row.lines?.length ? 0.7 : 1}
+         onPress={() => row.lines?.length ? setSelectedPlanSession(row) : null}>
          <View style={styles.planExercAvatar}><BText style={styles.planExercAvatarTxt}>{letters[i] || '+'}</BText></View>
          <View style={{ flex: 1 }}>
            <BText style={styles.planExercLabel}>{row.label}</BText>
            <BText style={styles.planExercDetail}>{row.detail}</BText>
          </View>
-       </View>
+         {row.lines?.length > 0 && <ChevronRight size={14} color="#737373" />}
+       </TouchableOpacity>
      ));
    }
    return g.programRows.map((row, i) => (
@@ -1005,6 +1013,39 @@ export default function GimnasioScreen({
  )}
 
  </ScrollView>
+
+ {/* ── Modal: detalle de sesión del programa (A / B / C) ── */}
+ {selectedPlanSession && (
+  <Modal visible animationType="slide" presentationStyle="pageSheet" onRequestClose={() => setSelectedPlanSession(null)}>
+   <SafeAreaView style={{ flex: 1, backgroundColor: '#FAFCFF' }}>
+    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' }}>
+     <TouchableOpacity onPress={() => setSelectedPlanSession(null)} style={{ minWidth: 60 }}>
+      <BText style={{ color: '#429FE7', fontSize: 15, fontFamily: F.bodyB }}>
+       {{ es: 'Cerrar', en: 'Close', fr: 'Fermer', it: 'Chiudi' }[lang] || 'Cerrar'}
+      </BText>
+     </TouchableOpacity>
+     <BText style={{ fontSize: 16, fontFamily: F.bodyB, color: '#0A0A0A', flex: 1, textAlign: 'center' }} numberOfLines={1}>
+      {selectedPlanSession.label}
+     </BText>
+     <View style={{ minWidth: 60 }} />
+    </View>
+    <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 60 }}>
+     <BText style={{ fontSize: 13, color: '#737373', fontFamily: F.body, marginBottom: 20 }}>
+      {selectedPlanSession.detail}
+     </BText>
+     {selectedPlanSession.lines.map((line, i) => (
+      <View key={i} style={{ flexDirection: 'row', gap: 14, paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: '#F1F5F9', alignItems: 'flex-start' }}>
+       <View style={{ width: 26, height: 26, borderRadius: 13, backgroundColor: '#0A0A0A', alignItems: 'center', justifyContent: 'center', marginTop: 1 }}>
+        <BText style={{ fontSize: 11, fontFamily: F.bodyB, color: 'white' }}>{i + 1}</BText>
+       </View>
+       <BText style={{ flex: 1, fontSize: 15, fontFamily: F.body, color: '#0A0A0A', lineHeight: 22 }}>{line}</BText>
+      </View>
+     ))}
+    </ScrollView>
+   </SafeAreaView>
+  </Modal>
+ )}
+
  </SwipeableTabs>
  );
 }
