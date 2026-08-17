@@ -61,20 +61,107 @@ function fmtNum(n) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ─── Panel “Añadir actividad” — diseño Figma ────────────────
+// ─── Drum-roll picker estilo iOS Timer ───────────────────────────────────────
+const DRUM_ITEM_H = 50;
+const DRUM_VISIBLE = 5; // items visibles; el central es el seleccionado
+
+function DrumColumn({ values, selectedIndex, onSelect, label }) {
+ const ref = useRef(null);
+ const isTouching = useRef(false);
+
+ useEffect(() => {
+  // Scroll inicial al valor seleccionado sin animación
+  ref.current?.scrollTo({ y: selectedIndex * DRUM_ITEM_H, animated: false });
+ }, []);
+
+ const commitScroll = (y) => {
+  const idx = Math.max(0, Math.min(values.length - 1, Math.round(y / DRUM_ITEM_H)));
+  onSelect(idx);
+ };
+
+ return (
+  <View style={drum.colWrap}>
+   {/* líneas de selección */}
+   <View style={drum.selectionTop} pointerEvents="none" />
+   <View style={drum.selectionBottom} pointerEvents="none" />
+   {/* fade superior */}
+   <View style={drum.fadeTop} pointerEvents="none" />
+   {/* fade inferior */}
+   <View style={drum.fadeBottom} pointerEvents="none" />
+
+   <ScrollView
+    ref={ref}
+    showsVerticalScrollIndicator={false}
+    snapToInterval={DRUM_ITEM_H}
+    decelerationRate="fast"
+    contentContainerStyle={{ paddingVertical: DRUM_ITEM_H * Math.floor(DRUM_VISIBLE / 2) }}
+    onScrollBeginDrag={() => { isTouching.current = true; }}
+    onMomentumScrollEnd={e => { commitScroll(e.nativeEvent.contentOffset.y); isTouching.current = false; }}
+    onScrollEndDrag={e => {
+     if (!isTouching.current) return;
+     isTouching.current = false;
+     // por si no hay momentum (dedo suelto lento)
+     setTimeout(() => commitScroll(e.nativeEvent.contentOffset.y), 50);
+    }}
+   >
+    {values.map((val, i) => (
+     <View key={i} style={drum.item}>
+      <BText style={drum.itemTxt}>{String(val).padStart(2, '0')}</BText>
+     </View>
+    ))}
+   </ScrollView>
+
+   {/* etiqueta unidad */}
+   {label ? <BText style={drum.unitLabel}>{label}</BText> : null}
+  </View>
+ );
+}
+
+const drum = StyleSheet.create({
+ colWrap: {
+  width: 90, height: DRUM_ITEM_H * DRUM_VISIBLE, overflow: 'hidden', position: 'relative',
+ },
+ item: { height: DRUM_ITEM_H, alignItems: 'center', justifyContent: 'center' },
+ itemTxt: { fontSize: 38, fontFamily: F.body, color: '#0A0A0A', lineHeight: 46 },
+ selectionTop: {
+  position: 'absolute', top: DRUM_ITEM_H * Math.floor(DRUM_VISIBLE / 2),
+  left: 6, right: 6, height: 1, backgroundColor: '#D1D5DB', zIndex: 2,
+ },
+ selectionBottom: {
+  position: 'absolute', top: DRUM_ITEM_H * (Math.floor(DRUM_VISIBLE / 2) + 1) - 1,
+  left: 6, right: 6, height: 1, backgroundColor: '#D1D5DB', zIndex: 2,
+ },
+ fadeTop: {
+  position: 'absolute', top: 0, left: 0, right: 0,
+  height: DRUM_ITEM_H * Math.floor(DRUM_VISIBLE / 2),
+  backgroundColor: 'rgba(255,255,255,0.55)', zIndex: 1,
+ },
+ fadeBottom: {
+  position: 'absolute', bottom: 0, left: 0, right: 0,
+  height: DRUM_ITEM_H * Math.floor(DRUM_VISIBLE / 2),
+  backgroundColor: 'rgba(255,255,255,0.55)', zIndex: 1,
+ },
+ unitLabel: {
+  position: 'absolute',
+  top: DRUM_ITEM_H * Math.floor(DRUM_VISIBLE / 2),
+  right: 4, height: DRUM_ITEM_H, lineHeight: DRUM_ITEM_H,
+  fontSize: 16, fontFamily: F.bodyB, color: '#525252', zIndex: 3,
+ },
+});
+
+// ─── Panel "Añadir actividad" — diseño Figma ────────────────
+const DRUM_HOURS = Array.from({ length: 9 }, (_, i) => i);       // 0–8 h
+const DRUM_MINS  = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]; // 0–55 min
+
 function ExtraSportPicker({ lang, g, onPick, onClose }) {
  const [other, setOther] = useState(false);
  const [txt, setTxt] = useState('');
  const [sport, setSport] = useState(null);
- const [durationMin, setDurationMin] = useState(30);
+ const [hourIdx, setHourIdx] = useState(0);   // índice en DRUM_HOURS (default 0h)
+ const [minIdx,  setMinIdx]  = useState(6);   // índice en DRUM_MINS  (default 30min)
  const [intensity, setIntensity] = useState('media');
 
- const fmtDuration = (min) => {
-  if (min < 60) return `${min} min`;
-  const h = Math.floor(min / 60);
-  const m = min % 60;
-  return m === 0 ? `${h}h` : `${h}h ${m}min`;
- };
+ const durationMin = DRUM_HOURS[hourIdx] * 60 + DRUM_MINS[minIdx];
  const tr = (es, en, fr, it) => ({ es, en, fr, it }[lang] || es);
 
  const INTENSITIES = [
@@ -141,19 +228,13 @@ function ExtraSportPicker({ lang, g, onPick, onClose }) {
  )}
  </View>
 
- {/* Tiempo */}
+ {/* Tiempo — drum roll estilo iOS Timer */}
  <View style={{ gap: 12 }}>
  <BText style={sp.sectionLabel}>{tr('Tiempo', 'Time', 'Temps', 'Tempo')}</BText>
- <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
- <TouchableOpacity onPress={() => setDurationMin(m => Math.max(5, m - 5))} style={sp.stepBtn}>
- <BText style={sp.stepBtnTxt}>−</BText>
- </TouchableOpacity>
- <View style={sp.stepValue}>
- <BText style={sp.stepValueTxt}>{fmtDuration(durationMin)}</BText>
- </View>
- <TouchableOpacity onPress={() => setDurationMin(m => Math.min(480, m + 5))} style={sp.stepBtn}>
- <BText style={sp.stepBtnTxt}>+</BText>
- </TouchableOpacity>
+ <View style={sp.drumRow}>
+  <DrumColumn values={DRUM_HOURS} selectedIndex={hourIdx} onSelect={setHourIdx} label="h" />
+  <BText style={sp.drumSep}>:</BText>
+  <DrumColumn values={DRUM_MINS} selectedIndex={minIdx} onSelect={setMinIdx} label="min" />
  </View>
  </View>
 
@@ -202,10 +283,8 @@ const sp = StyleSheet.create({
  chipSelected: { backgroundColor: '#0A0A0A' },
  chipTxt: { fontSize: 14, fontFamily: F.body, color: '#0A0A0A' },
  chipTxtSelected: { color: 'white' },
- stepBtn: { width: 48, height: 48, borderRadius: 16, backgroundColor: '#262626', alignItems: 'center', justifyContent: 'center' },
- stepBtnTxt: { fontSize: 22, color: 'white', fontFamily: F.bodyB, lineHeight: 26 },
- stepValue: { flex: 1, height: 48, borderRadius: 12, backgroundColor: 'white', borderWidth: 1, borderColor: '#E5E5E5', alignItems: 'center', justifyContent: 'center' },
- stepValueTxt: { fontSize: 16, fontFamily: F.bodyB, color: '#0A0A0A' },
+ drumRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 0 },
+ drumSep: { fontSize: 38, fontFamily: F.body, color: '#0A0A0A', paddingBottom: 4, marginHorizontal: 2 },
  optRow: { minHeight: 56, borderRadius: 24, backgroundColor: '#FAFAFA', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, justifyContent: 'space-between' },
  optRowSelected: { backgroundColor: '#F5F5F5', borderWidth: 1.5, borderColor: '#262626' },
  optLabel: { fontSize: 16, fontFamily: F.body, color: '#0A0A0A' },
@@ -1475,4 +1554,5 @@ const ge = StyleSheet.create({
  btn: { alignSelf: 'stretch', height: 48, backgroundColor: '#171717', borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
  btnTxt: { fontSize: 18, fontFamily: F.body, color: '#FAFAFA', lineHeight: 24 },
 });
+
 
