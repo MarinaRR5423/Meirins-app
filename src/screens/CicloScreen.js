@@ -11,6 +11,7 @@ import TipsCard from '../components/TipsCard';
 import { CicloSetupCard, CicloHealthCard } from '../components/TabSetupCard';
 import CycleTrackingModal from '../components/CycleTrackingModal';
 import CycleImportModal from '../components/CycleImportModal';
+import CycleHistoryModal from '../components/CycleHistoryModal';
 import { trackScreen } from '../lib/analytics';
 import BText from '../components/BText';
 import ErrorBoundary from '../components/ErrorBoundary';
@@ -283,6 +284,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  const cicloOpenRef = useRef(null);
  const [trackingOpen, setTrackingOpen] = useState(false);
  const [importOpen, setImportOpen] = useState(false);
+ const [historyOpen, setHistoryOpen] = useState(false);
  const [expandedPhase, setExpanded] = useState(pi?.phase || null);
  const route = useRoute();
  const [selectedDate, setSelectedDate] = useState(null);
@@ -695,9 +697,11 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  <View style={styles.logDayCard}>
  <View style={styles.logDayHeader}>
  <BText style={styles.logDayHeaderTxt}>
- + {tr('Registro', 'Log', 'Journal', 'Registro')}
+ + {tr('Registro & Histórico', 'Log & History', 'Journal & Historique', 'Registro & Storico')}
  </BText>
+ <TouchableOpacity onPress={() => setHistoryOpen(true)} activeOpacity={0.7} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
  <ChevronRight size={16} color="#261E01" />
+ </TouchableOpacity>
  </View>
  <BText style={styles.logDayTitle}>
  {tr('No te olvides de registrar tu día', "Don't forget to log your day", "N'oublie pas d'enregistrer ta journée", 'Non dimenticare di registrare la tua giornata')}
@@ -764,6 +768,15 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  currentPhase={pi?.phase || null}
  trackingPrefs={profileExtended?.cycleTrackingPrefs || {}}
  onSavePrefs={(prefs) => saveProfileExtended({ cycleTrackingPrefs: prefs })}
+ />
+
+ <CycleHistoryModal
+ visible={historyOpen}
+ onClose={() => setHistoryOpen(false)}
+ lang={lang}
+ cycleDailyLogs={cycleDailyLogs}
+ lastPeriod={lastPeriod}
+ cycleLength={pi?.cycleLength ?? 28}
  />
 
  <CycleImportModal
