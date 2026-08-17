@@ -279,11 +279,11 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
 
  // Slots de comida — estructura fija, contenido 100% desde Supabase
  const MEAL_SLOTS = [
-  { id: 'desayuno',     ico: '🌅', label: 'breakfast' },
-  { id: 'snack_manana', ico: '🍎', label: 'morning_snack' },
-  { id: 'almuerzo',    ico: '☀️', label: 'lunch' },
-  { id: 'snack_tarde', ico: '🌿', label: 'afternoon_snack' },
-  { id: 'cena',        ico: '🌙', label: 'dinner' },
+  { id: 'desayuno',     ico: '🌅', label: 'Desayuno' },
+  { id: 'snack_manana', ico: '🍎', label: 'Snack de la mañana' },
+  { id: 'almuerzo',    ico: '☀️', label: 'Almuerzo' },
+  { id: 'snack_tarde', ico: '🌿', label: 'Snack de la tarde' },
+  { id: 'cena',        ico: '🌙', label: 'Cena' },
  ];
 
  // Filtrar comidas según protocolo de ayuno
@@ -1261,7 +1261,10 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
        <View style={{ gap: 8 }}>
         {toggleFavoriteRecipe && recipe._recipeId && (
          <TouchableOpacity style={styles.recipeOutlineBtn} onPress={() => toggleFavoriteRecipe(recipe._recipeId)}>
-          <BText style={styles.recipeOutlineBtnTxt}>{isFav ? (lang === 'en' ? 'Saved' : 'En favoritos') : (lang === 'en' ? 'Add to favourites' : 'Añadir a favorito')}</BText>
+          <BText style={styles.recipeOutlineBtnTxt}>{isFav
+            ? ({ es: 'En favoritos', en: 'Saved', fr: 'Enregistré', it: 'Salvato' }[lang] || 'En favoritos')
+            : ({ es: 'Añadir a favorito', en: 'Add to favourites', fr: 'Ajouter aux favoris', it: 'Aggiungi ai preferiti' }[lang] || 'Añadir a favorito')
+          }</BText>
           <Heart size={24} color="#171717" fill={isFav ? '#171717' : 'none'} />
          </TouchableOpacity>
         )}
