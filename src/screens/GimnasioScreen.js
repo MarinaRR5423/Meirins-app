@@ -24,6 +24,7 @@ import { buildPersonalizedWeekPlan } from '../utils/workoutEngine';
 import { ARTICLES } from '../data/articles';
 import TipsCard from '../components/TipsCard';
 import SwipeableTabs from '../components/SwipeableTabs';
+import WorkoutHistoryTab from '../components/WorkoutHistoryTab';
 import { trackScreen, trackEvent, Events } from '../lib/analytics';
 import BText from '../components/BText';
 import PhaseGlow from '../../assets/Calendar icons/PhaseGlow';
@@ -528,7 +529,7 @@ export default function GimnasioScreen({
  }
 
  return (
- <SwipeableTabs tabs={['hoy', 'salud', 'favoritos']} current={sub} onChange={setSub}>
+ <SwipeableTabs tabs={['hoy', 'salud', 'favoritos', 'registro']} current={sub} onChange={setSub}>
  <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
  <View style={{ height: 0, overflow: 'hidden' }}>
@@ -543,6 +544,7 @@ export default function GimnasioScreen({
  { id: 'hoy', l: g.today },
  { id: 'salud', l: g.salud },
  { id: 'favoritos', l: { es: 'Favs.', en: 'Favs.', fr: 'Favoris', it: 'Preferiti' }[lang] || 'Favs.' },
+ { id: 'registro', l: { es: 'Registro', en: 'Log', fr: 'Journal', it: 'Registro' }[lang] || 'Registro' },
  ].map(t => (
  <TouchableOpacity key={t.id} onPress={() => setSub(t.id)}
  style={[styles.tab, sub === t.id && styles.tabActive]}>
@@ -552,7 +554,7 @@ export default function GimnasioScreen({
  </View>
 
  {/* ════════ Calendario + mini programa (hoy y salud) ════════ */}
- <View style={styles.calCard}>
+ {sub !== 'registro' && <View style={styles.calCard}>
  {(() => {
   const refDate = offsetDays.length ? new Date(offsetDays[0].dateKey + 'T12:00:00') : new Date();
   const MONTHS = { es: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'], en: ['January','February','March','April','May','June','July','August','September','October','November','December'], fr: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'], it: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'] };
@@ -666,9 +668,9 @@ export default function GimnasioScreen({
  </View>
  );
  })()}
- </View>
+ </View>}
 
- {progState && (
+ {sub !== 'registro' && progState && (
  <ImageBackground source={require('../../assets/Apartados/Blumm_ejercicio_fondo.png')}
   style={styles.progMiniCard} imageStyle={{ borderRadius: 24 }}>
   <BlurView intensity={25} tint="light" style={styles.progMiniBlur}>
@@ -993,6 +995,14 @@ export default function GimnasioScreen({
   );
   });
  })()}
+
+ {/* ════════════════════════ REGISTRO ════════════════════════ */}
+ {sub === 'registro' && (
+ <WorkoutHistoryTab
+  activityLog={profileExtended?.activityLog || {}}
+  lang={lang}
+ />
+ )}
 
  </ScrollView>
  </SwipeableTabs>
