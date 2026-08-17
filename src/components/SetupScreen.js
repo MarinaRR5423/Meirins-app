@@ -169,13 +169,13 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange, unitSys
 
    {/* Pills flotantes */}
    <View style={[styles.introPill, styles.pillGreen, { top: SH * 0.14, left: SW * 0.06 }]}>
-    <BText style={[styles.introPillTxt, { color: '#0B1F08' }]}>CICLO</BText>
+    <BText style={[styles.introPillTxt, { color: '#0B1F08' }]}>{{ es: 'CICLO', en: 'CYCLE', fr: 'CYCLE', it: 'CICLO' }[lang] || 'CYCLE'}</BText>
    </View>
    <View style={[styles.introPill, styles.pillOrange, { top: SH * 0.22, right: SW * 0.12 }]}>
-    <BText style={[styles.introPillTxt, { color: '#260E01' }]}>NUTRICIÓN</BText>
+    <BText style={[styles.introPillTxt, { color: '#260E01' }]}>{{ es: 'NUTRICIÓN', en: 'NUTRITION', fr: 'NUTRITION', it: 'NUTRIZIONE' }[lang] || 'NUTRITION'}</BText>
    </View>
    <View style={[styles.introPill, styles.pillBlue, { top: SH * 0.08, right: SW * 0.06 }]}>
-    <BText style={[styles.introPillTxt, { color: '#0A1823' }]}>ENTRENAMIENTO</BText>
+    <BText style={[styles.introPillTxt, { color: '#0A1823' }]}>{{ es: 'ENTRENAMIENTO', en: 'TRAINING', fr: 'ENTRAÎNEMENT', it: 'ALLENAMENTO' }[lang] || 'TRAINING'}</BText>
    </View>
 
    {/* Panel blanco desde abajo */}
@@ -184,7 +184,7 @@ export default function SetupScreen({ onDone, lang = 'es', onLangChange, unitSys
      {/* Botón Volver */}
      {introSlide > 0 ? (
       <TouchableOpacity style={styles.backBtn} onPress={() => setIntroSlide(i => i - 1)}>
-       <BText style={styles.backBtnTxt}>← Volver</BText>
+       <BText style={styles.backBtnTxt}>{su.back}</BText>
       </TouchableOpacity>
      ) : (
       <View style={{ height: 32 }} />
