@@ -528,7 +528,7 @@ export default function GimnasioScreen({
  }
 
  return (
- <SwipeableTabs tabs={['hoy', 'salud']} current={sub} onChange={setSub}>
+ <SwipeableTabs tabs={['hoy', 'salud', 'favoritos']} current={sub} onChange={setSub}>
  <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
  <View style={{ height: 0, overflow: 'hidden' }}>
@@ -542,6 +542,7 @@ export default function GimnasioScreen({
  {[
  { id: 'hoy', l: g.today },
  { id: 'salud', l: g.salud },
+ { id: 'favoritos', l: { es: 'Favs.', en: 'Favs.', fr: 'Favoris', it: 'Preferiti' }[lang] || 'Favs.' },
  ].map(t => (
  <TouchableOpacity key={t.id} onPress={() => setSub(t.id)}
  style={[styles.tab, sub === t.id && styles.tabActive]}>
@@ -956,6 +957,42 @@ export default function GimnasioScreen({
  <WearablesCard hd={hd} hl={hl} lang={lang} />
  </>
  )}
+
+ {/* ── FAVORITOS ── */}
+ {sub === 'favoritos' && (() => {
+  const favIds = profileExtended?.favoriteWorkouts || [];
+  const favWorkouts = (dbWorkouts || []).filter(w => favIds.includes(w.id));
+  const emptyTxt = { es: 'Aún no tienes favoritos', en: 'No favourites yet', fr: 'Pas encore de favoris', it: 'Ancora nessun preferito' };
+  const hintTxt = { es: 'Pulsa el corazón en cualquier entrenamiento para guardarlo aquí.', en: 'Tap the heart on any workout to save it here.', fr: 'Appuie sur le cœur sur un entraînement pour le sauvegarder ici.', it: 'Tocca il cuore su un allenamento per salvarlo qui.' };
+  if (!favWorkouts.length) return (
+  <View style={{ alignItems: 'center', paddingTop: 48, paddingHorizontal: 24 }}>
+   <Heart size={40} color="#E5E5E5" style={{ marginBottom: 12 }} />
+   <BText style={{ fontSize: 16, fontFamily: F.bodyB, color: '#0A0A0A', marginBottom: 8, textAlign: 'center' }}>{emptyTxt[lang] || emptyTxt.es}</BText>
+   <BText style={{ fontSize: 13, color: '#737373', textAlign: 'center', lineHeight: 20 }}>{hintTxt[lang] || hintTxt.es}</BText>
+  </View>
+  );
+  return favWorkouts.map(w => {
+  const name = w.name?.[lang] || w.name?.es || w.name || '';
+  const desc = w.description?.[lang] || w.description?.es || w.description || '';
+  const dur  = w.duration ? `${w.duration}'` : '';
+  return (
+   <View key={w.id} style={styles.favCard}>
+   <View style={styles.favCardContent}>
+    <View style={styles.favCardTop}>
+    <BText style={styles.favCardTitle}>{w.emoji ? `${w.emoji} ` : ''}{name}</BText>
+    {dur ? <View style={styles.favTag}><BText style={styles.favTagTxt}>{dur}</BText></View> : null}
+    {desc ? <BText style={{ fontSize: 12, color: '#737373', fontFamily: F.body, lineHeight: 18, marginTop: 4 }} numberOfLines={2}>{desc}</BText> : null}
+    </View>
+    <View style={styles.favActions}>
+    <TouchableOpacity style={styles.favHeartBtn} onPress={() => toggleFavoriteWorkout?.(w.id)}>
+     <Heart size={16} color="white" fill="white" />
+    </TouchableOpacity>
+    </View>
+   </View>
+   </View>
+  );
+  });
+ })()}
 
  </ScrollView>
  </SwipeableTabs>
@@ -1460,6 +1497,16 @@ realizadosFill:  { backgroundColor: '#429FE7', borderRadius: 3 },
  addExtraBtn: { backgroundColor: '#0A0A0A', borderRadius: 14, height: 48, alignItems: 'center', justifyContent: 'center' },
  addExtraBtnTxt: { fontSize: 18, fontFamily: F.body, color: '#FAFAFA' },
 addExtraSub: { fontSize: 13, fontFamily: F.body, color: '#0A1823', lineHeight: 17, opacity: 0.7 },
+
+ // Favoritos tab
+ favCard: { backgroundColor: 'white', borderRadius: 18, marginBottom: 10, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 },
+ favCardContent: { padding: 14, gap: 10 },
+ favCardTop: { gap: 4 },
+ favCardTitle: { fontSize: 15, fontFamily: F.bodyB, color: '#0A0A0A', lineHeight: 20 },
+ favTag: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8, backgroundColor: '#EFF6FF' },
+ favTagTxt: { fontSize: 11, fontFamily: F.bodyB, color: '#2563EB' },
+ favActions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 8 },
+ favHeartBtn: { width: 36, height: 36, borderRadius: 10, backgroundColor: '#0A0A0A', alignItems: 'center', justifyContent: 'center' },
 
  // Consejos header card
  consejosCard: { backgroundColor: '#F5F5F5', borderRadius: 24, padding: 16, marginBottom: 2, gap: 8 },
