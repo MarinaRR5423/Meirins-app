@@ -174,6 +174,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  const todayStr = today.toISOString().split('T')[0];
  const cycleLen = pi?.cycleLen || 28;
  const d = pi?.data;
+ const dDisplay = pi?.phase ? getPhaseDisplay(lang, pi.phase, d) : null;
 
  // Anticoncepción hormonal: oculta ventana fértil y fases hormonales proyectadas
  const contra = profileExtended?.contraception;
@@ -368,8 +369,8 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  </>
  ) : (
  <>
- <BText style={styles.todayTagline}>{d?.tagline}</BText>
- <BText style={styles.todayPhaseName}>{d?.name}</BText>
+ <BText style={styles.todayTagline}>{dDisplay?.tagline}</BText>
+ <BText style={styles.todayPhaseName}>{dDisplay?.name}</BText>
  </>
  )}
  </BlurView>

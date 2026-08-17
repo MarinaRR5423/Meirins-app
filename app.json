@@ -1,88 +1,90 @@
 {
-  "expo": {
-    "name": "Blumm",
-    "slug": "meirins",
-    "scheme": "meirins",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": false,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#0A0A0A"
-    },
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.marina13.meirins",
-      "infoPlist": {
-        "NSCalendarsUsageDescription": "Blumm adds your scheduled workouts to your calendar so you never miss a session.",
-        "NSPhotoLibraryUsageDescription": "Blumm needs access to your photos to let you choose a profile picture.",
-        "NSCameraUsageDescription": "Blumm needs access to your camera to take a profile picture.",
-        "ITSAppUsesNonExemptEncryption": false,
-        "NSHealthShareUsageDescription": "Blumm reads your workouts, sleep and activity data to personalise your training and nutrition plan.",
-        "NSHealthUpdateUsageDescription": "Blumm does not write any data to Apple Health."
-      },
-      "entitlements": {
-        "com.apple.developer.healthkit": true,
-        "com.apple.developer.healthkit.background-delivery": true,
-        "com.apple.developer.applesignin": ["Default"]
-      },
-      "usesAppleSignIn": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#F5C400"
-      },
-      "edgeToEdgeEnabled": true,
-      "package": "com.marina13.meirins",
-      "versionCode": 3,
-      "intentFilters": []
-    },
-    "plugins": [
-      "@sentry/react-native",
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/icon.png",
-          "color": "#1A56DB",
-          "sounds": []
+    "expo": {
+        "name": "Blumm",
+        "slug": "meirins",
+        "scheme": "meirins",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "userInterfaceStyle": "light",
+        "newArchEnabled": false,
+        "splash": {
+            "image": "./assets/splash-icon.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#0A0A0A"
+        },
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.marina13.meirins",
+            "infoPlist": {
+                "NSCalendarsUsageDescription": "Blumm adds your scheduled workouts to your calendar so you never miss a session.",
+                "NSPhotoLibraryUsageDescription": "Blumm needs access to your photos to let you choose a profile picture.",
+                "NSCameraUsageDescription": "Blumm needs access to your camera to take a profile picture.",
+                "ITSAppUsesNonExemptEncryption": false,
+                "NSHealthShareUsageDescription": "Blumm reads your workouts, sleep and activity data to personalise your training and nutrition plan. With your permission, Blumm can also read your menstrual flow data to import your cycle history and improve phase predictions. Health data is never shared with third parties or used for advertising.",
+                "NSHealthUpdateUsageDescription": "Blumm does not write any data to Apple Health."
+            },
+            "entitlements": {
+                "com.apple.developer.healthkit": true,
+                "com.apple.developer.healthkit.background-delivery": true,
+                "com.apple.developer.applesignin": [
+                    "Default"
+                ]
+            },
+            "usesAppleSignIn": true
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#F5C400"
+            },
+            "edgeToEdgeEnabled": true,
+            "package": "com.marina13.meirins",
+            "versionCode": 3,
+            "intentFilters": []
+        },
+        "plugins": [
+            "@sentry/react-native",
+            [
+                "expo-notifications",
+                {
+                    "icon": "./assets/icon.png",
+                    "color": "#1A56DB",
+                    "sounds": []
+                }
+            ],
+            [
+                "expo-build-properties",
+                {
+                    "android": {
+                        "minSdkVersion": 26,
+                        "compileSdkVersion": 35,
+                        "targetSdkVersion": 35
+                    }
+                }
+            ],
+            "expo-localization",
+            "react-native-health",
+            "expo-font",
+            "expo-video",
+            "expo-secure-store",
+            "expo-web-browser",
+            "expo-apple-authentication"
+        ],
+        "web": {
+            "favicon": "./assets/favicon.png"
+        },
+        "extra": {
+            "eas": {
+                "projectId": "fbb700b3-e3f5-4d73-872a-663b87909838"
+            }
+        },
+        "owner": "blummapps-team",
+        "runtimeVersion": {
+            "policy": "appVersion"
+        },
+        "updates": {
+            "url": "https://u.expo.dev/fbb700b3-e3f5-4d73-872a-663b87909838"
         }
-      ],
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "minSdkVersion": 26,
-            "compileSdkVersion": 35,
-            "targetSdkVersion": 35
-          }
-        }
-      ],
-      "expo-localization",
-      "react-native-health",
-      "expo-font",
-      "expo-video",
-      "expo-secure-store",
-      "expo-web-browser",
-      "expo-apple-authentication"
-    ],
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "fbb700b3-e3f5-4d73-872a-663b87909838"
-      }
-    },
-    "owner": "blummapps-team",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/fbb700b3-e3f5-4d73-872a-663b87909838"
     }
-  }
 }
