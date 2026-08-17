@@ -1192,7 +1192,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
     <View style={styles.recipeModalOverlay}>
      <SafeAreaView style={styles.recipeModalSheet}>
       <View style={styles.recipeModalHeader}>
-       <BText style={styles.recipeModalTitle}>{lang === 'en' ? 'Recipe' : lang === 'fr' ? 'Recette' : 'Receta'}</BText>
+       <BText style={styles.recipeModalTitle}>{({ es: 'Receta', en: 'Recipe', fr: 'Recette', it: 'Ricetta' }[lang] || 'Receta')}</BText>
        <TouchableOpacity style={styles.recipeModalClose} onPress={() => setRecipe(null)}>
         <BText style={{ fontSize: 18, color: '#0A0A0A', fontFamily: F.body, lineHeight: 22 }}>✕</BText>
        </TouchableOpacity>
@@ -1234,7 +1234,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
        )}
        {(recipe.ingredients || []).length > 0 && (
         <View style={{ gap: 16 }}>
-         <BText style={styles.recipeSectionTitle}>{lang === 'en' ? 'Ingredients' : lang === 'fr' ? 'Ingrédients' : 'Ingredientes'}</BText>
+         <BText style={styles.recipeSectionTitle}>{({ es: 'Ingredientes', en: 'Ingredients', fr: 'Ingrédients', it: 'Ingredienti' }[lang] || 'Ingredientes')}</BText>
          <View style={{ gap: 2 }}>
           {(recipe.ingredients || []).map((ing, i) => (
            <View key={i} style={styles.recipeListItem}>
@@ -1247,7 +1247,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
        )}
        {(recipe.steps || []).length > 0 && (
         <View style={{ gap: 16 }}>
-         <BText style={styles.recipeSectionTitle}>{lang === 'en' ? 'Preparation' : lang === 'fr' ? 'Préparation' : 'Preparación'}</BText>
+         <BText style={styles.recipeSectionTitle}>{({ es: 'Preparación', en: 'Preparation', fr: 'Préparation', it: 'Preparazione' }[lang] || 'Preparación')}</BText>
          <View style={{ gap: 2 }}>
           {(recipe.steps || []).map((step, i) => (
            <View key={i} style={styles.recipeListItem}>
@@ -1270,7 +1270,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
         )}
         {logRecipeDone && recipe._recipeId && (
          <TouchableOpacity style={styles.recipeOutlineBtn} onPress={() => { logRecipeDone(recipe.mealId || recipe.mealLabel, 'done'); setRecipe(null); }}>
-          <BText style={styles.recipeOutlineBtnTxt}>{lang === 'en' ? "I've eaten it" : lang === 'fr' ? "Je l'ai mangé" : 'Lo he comido'}</BText>
+          <BText style={styles.recipeOutlineBtnTxt}>{({ es: 'Lo he comido', en: "I've eaten it", fr: "Je l'ai mangé", it: 'L\'ho mangiato' }[lang] || 'Lo he comido')}</BText>
           <Check size={24} color="#171717" />
          </TouchableOpacity>
         )}
@@ -1522,3 +1522,4 @@ const ne = StyleSheet.create({
  btn: { alignSelf: 'stretch', height: 48, backgroundColor: '#171717', borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
  btnTxt: { fontSize: 18, fontFamily: F.body, color: '#FAFAFA', lineHeight: 24 },
 });
+

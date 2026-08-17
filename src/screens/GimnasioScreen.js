@@ -534,11 +534,11 @@ export default function GimnasioScreen({
  <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
  <BText style={styles.weekDetailStatus}>
  {(logged === 'done' || logged === 'extra')
- ? ` ${lang === 'en' ? 'Logged' : 'Registrado'}${logEntry.extraSport ? ` · ${logEntry.extraSport}` : ''}`
- : `${lang === 'en' ? 'Rest' : 'Descanso'}`}
+ ? ` ${({ es: 'Registrado', en: 'Logged', fr: 'Enregistré', it: 'Registrato' }[lang] || 'Registrado')}${logEntry.extraSport ? ` · ${logEntry.extraSport}` : ''}`
+ : `${({ es: 'Descanso', en: 'Rest', fr: 'Repos', it: 'Riposo' }[lang] || 'Descanso')}`}
  </BText>
  <GHTouchable onPress={async () => { await clearActivityDay(day.dateKey); setWeekAction(null); }}>
- <BText style={{ fontSize: 12, color: '#737373' }}>{lang === 'en' ? 'Clear' : 'Borrar'}</BText>
+ <BText style={{ fontSize: 12, color: '#737373' }}>{({ es: 'Borrar', en: 'Clear', fr: 'Effacer', it: 'Cancella' }[lang] || 'Borrar')}</BText>
  </GHTouchable>
  </View>
  )}
@@ -547,18 +547,18 @@ export default function GimnasioScreen({
  <GHTouchable
  onPress={async () => { await saveActivityDay(day.dateKey, { workout: 'done' }); setWeekAction(null); }}
  style={styles.weekActionBtn}>
- <BText style={styles.weekActionBtnTxt}>{lang === 'en' ? 'I did it' : 'Lo hice'}</BText>
+ <BText style={styles.weekActionBtnTxt}>{({ es: 'Lo hice', en: 'I did it', fr: 'Je l\'ai fait', it: 'L\'ho fatto' }[lang] || 'Lo hice')}</BText>
  </GHTouchable>
  )}
  <GHTouchable
  onPress={() => setWeekAction(prev => ({ ...prev, step: 'sport' }))}
  style={styles.weekActionBtn}>
- <BText style={styles.weekActionBtnTxt}>{lang === 'en' ? 'Add sport' : 'Añadir deporte'}</BText>
+ <BText style={styles.weekActionBtnTxt}>{({ es: 'Añadir deporte', en: 'Add sport', fr: 'Ajouter un sport', it: 'Aggiungi sport' }[lang] || 'Añadir deporte')}</BText>
  </GHTouchable>
  <GHTouchable
  onPress={async () => { await saveActivityDay(day.dateKey, { workout: 'skipped' }); setWeekAction(null); }}
  style={styles.weekActionBtn}>
- <BText style={styles.weekActionBtnTxt}>{lang === 'en' ? 'Rest day' : 'Descansé'}</BText>
+ <BText style={styles.weekActionBtnTxt}>{({ es: 'Descansé', en: 'Rest day', fr: 'Journée de repos', it: 'Giorno di riposo' }[lang] || 'Descansé')}</BText>
  </GHTouchable>
  </View>
  </View>
@@ -568,7 +568,7 @@ export default function GimnasioScreen({
  <GHTouchable onPress={() => setWeekAction(prev => ({ ...prev, step: 'main' }))} style={{ marginBottom: 8 }}>
  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
  <ChevronLeft size={14} color="#737373" />
- <BText style={{ fontSize: 12, color: '#737373' }}>{lang === 'en' ? 'Back' : 'Volver'}</BText>
+ <BText style={{ fontSize: 12, color: '#737373' }}>{({ es: 'Volver', en: 'Back', fr: 'Retour', it: 'Indietro' }[lang] || 'Volver')}</BText>
  </View>
  </GHTouchable>
  <ExtraSportPicker
@@ -852,7 +852,7 @@ export default function GimnasioScreen({
  </View>
  <TouchableOpacity style={styles.planExercEditBtn} onPress={() => gymOpenRef.current?.()}>
  <BText style={styles.planExercEditTxt}>
- {lang === 'en' ? 'Edit plan' : lang === 'fr' ? 'Modifier le plan' : 'Editar plan'}
+ {({ es: 'Editar plan', en: 'Edit plan', fr: 'Modifier le plan', it: 'Modifica piano' }[lang] || 'Editar plan')}
  </BText>
  </TouchableOpacity>
  </View>
@@ -1103,13 +1103,13 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
      {latest.deepSleep > 0 && (
       <View style={styles.sleepHistRow}>
        <BText style={styles.sleepHistRowLabel}>{t(labelDeep)}</BText>
-       <View style={[styles.sleepHistChip, { backgroundColor: '#FEA068' }]}><BText style={[styles.sleepHistChipTxt, { color: '#6E2A02' }]}>{latest.deepSleep} {lang === 'en' ? 'hours' : lang === 'fr' ? 'heures' : 'horas'}</BText></View>
+       <View style={[styles.sleepHistChip, { backgroundColor: '#FEA068' }]}><BText style={[styles.sleepHistChipTxt, { color: '#6E2A02' }]}>{latest.deepSleep} {({ es: 'horas', en: 'hours', fr: 'heures', it: 'ore' }[lang] || 'horas')}</BText></View>
       </View>
      )}
      {latest.remSleep > 0 && (
       <View style={styles.sleepHistRow}>
        <BText style={styles.sleepHistRowLabel}>REM</BText>
-       <View style={[styles.sleepHistChip, { backgroundColor: '#92E288' }]}><BText style={[styles.sleepHistChipTxt, { color: '#205A18' }]}>{latest.remSleep} {lang === 'en' ? 'hours' : lang === 'fr' ? 'heures' : 'horas'}</BText></View>
+       <View style={[styles.sleepHistChip, { backgroundColor: '#92E288' }]}><BText style={[styles.sleepHistChipTxt, { color: '#205A18' }]}>{latest.remSleep} {({ es: 'horas', en: 'hours', fr: 'heures', it: 'ore' }[lang] || 'horas')}</BText></View>
       </View>
      )}
     </View>
@@ -1475,3 +1475,4 @@ const ge = StyleSheet.create({
  btn: { alignSelf: 'stretch', height: 48, backgroundColor: '#171717', borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
  btnTxt: { fontSize: 18, fontFamily: F.body, color: '#FAFAFA', lineHeight: 24 },
 });
+

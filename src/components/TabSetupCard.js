@@ -621,7 +621,7 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
               return (
                 <OptionCard key={d.id} variant="azote"
                   label={d.name[lang] || d.name.es}
-                  desc={fw?.eating_hours ? `${lang === 'es' ? 'Ventana de' : 'Window of'} ${fw.eating_hours}h` : undefined}
+                  desc={fw?.eating_hours ? `${({ es: 'Ventana de', en: 'Window of', fr: 'Fenêtre de', it: 'Finestra di' }[lang] || 'Ventana de')} ${fw.eating_hours}h` : undefined}
                   selected={sel} onPress={() => setFasting(sel ? '' : d.id)} />
               );
             })}
@@ -634,8 +634,8 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
         </Text>
         <Text style={[s.secSub, { color: '#737373', marginTop: -6 }]}>
           {localFasting && !usingCustom
-            ? (lang === 'en' ? 'Auto-set by your fasting. Tap to customise.' : 'Definido por tu ayuno. Toca para personalizar.')
-            : (lang === 'en' ? 'Untick the meals you skip.' : 'Desmarca las comidas que te saltas.')}
+            ? (({ es: 'Definido por tu ayuno. Toca para personalizar.', en: 'Auto-set by your fasting. Tap to customise.', fr: 'Défini par ton jeûne. Touche pour personnaliser.', it: 'Impostato dal tuo digiuno. Tocca per personalizzare.' }[lang] || 'Definido por tu ayuno. Toca para personalizar.'))
+            : (({ es: 'Desmarca las comidas que te saltas.', en: 'Untick the meals you skip.', fr: 'Décoche les repas que tu sautes.', it: 'Deseleziona i pasti che salti.' }[lang] || 'Desmarca las comidas que te saltas.'))}
         </Text>
         <View style={s.chips}>
           {ALL_MEALS.map(mealId => {
@@ -697,8 +697,8 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
            : 'Rotación de menús A/B/Libre para cocinar por lotes'}
         </Text>
         <View style={{ gap: 2 }}>
-          <OptionCard variant="azote" label={lang === 'en' ? 'Yes' : lang === 'fr' ? 'Oui' : 'Sí'} selected={localBatch} onPress={() => setBatch(true)} />
-          <OptionCard variant="azote" label={lang === 'en' ? 'No' : lang === 'fr' ? 'Non' : 'No'} selected={!localBatch} onPress={() => setBatch(false)} />
+          <OptionCard variant="azote" label={({ es: 'Sí', en: 'Yes', fr: 'Oui', it: 'Sì' }[lang] || 'Sí')} selected={localBatch} onPress={() => setBatch(true)} />
+          <OptionCard variant="azote" label={({ es: 'No', en: 'No', fr: 'Non', it: 'No' }[lang] || 'No')} selected={!localBatch} onPress={() => setBatch(false)} />
         </View>
 
         {localBatch && (() => {
@@ -1421,3 +1421,4 @@ const s = StyleSheet.create({
     textAlignVertical: 'top',
   },
 });
+

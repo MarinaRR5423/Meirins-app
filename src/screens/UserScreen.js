@@ -437,8 +437,8 @@ export default function PerfilScreen({ pi, profile, signOut }) {
  }
  if (perm.status !== 'granted') {
  Alert.alert(
- lang === 'en' ? 'Permission needed' : 'Permiso necesario',
- lang === 'en' ? 'Enable access in Settings.' : 'Actívalo en Ajustes.',
+ ({ es: 'Permiso necesario', en: 'Permission needed', fr: 'Autorisation requise', it: 'Autorizzazione necessaria' }[lang] || 'Permiso necesario'),
+ ({ es: 'Actívalo en Ajustes.', en: 'Enable access in Settings.', fr: 'Active l\'accès dans les réglages.', it: 'Attivalo nelle impostazioni.' }[lang] || 'Actívalo en Ajustes.'),
  );
  setAvatarUploading(false);
  return;
@@ -466,10 +466,10 @@ export default function PerfilScreen({ pi, profile, signOut }) {
 
  const removeAvatar = () => {
  Alert.alert(
- lang === 'en' ? 'Remove photo?' : '¿Eliminar foto?',
+ ({ es: '¿Eliminar foto?', en: 'Remove photo?', fr: 'Supprimer la photo ?', it: 'Rimuovere la foto?' }[lang] || '¿Eliminar foto?'),
  '',
  [
- { text: lang === 'en' ? 'Cancel' : 'Cancelar', style: 'cancel' },
+ { text: ({ es: 'Cancelar', en: 'Cancel', fr: 'Annuler', it: 'Annulla' }[lang] || 'Cancelar'), style: 'cancel' },
  { text: lang === 'en' ? 'Remove' : 'Eliminar', style: 'destructive', onPress: async () => {
  await profile.saveProfileExtended({ avatarUri: null });
  }},
@@ -479,13 +479,13 @@ export default function PerfilScreen({ pi, profile, signOut }) {
 
  const handleAvatarPress = () => {
  Alert.alert(
- lang === 'en' ? 'Profile picture' : lang === 'fr' ? 'Photo de profil' : 'Foto de perfil',
+ ({ es: 'Foto de perfil', en: 'Profile picture', fr: 'Photo de profil', it: 'Foto profilo' }[lang] || 'Foto de perfil'),
  '',
  [
- { text: lang === 'en' ? ' Camera' : 'Cámara', onPress: () => pickAvatar('camera') },
- { text: lang === 'en' ? ' Photos' : 'Galería', onPress: () => pickAvatar('library') },
- ...(avatarUri ? [{ text: lang === 'en' ? ' Remove' : 'Eliminar', style: 'destructive', onPress: removeAvatar }] : []),
- { text: lang === 'en' ? 'Cancel' : 'Cancelar', style: 'cancel' },
+ { text: ({ es: 'Cámara', en: ' Camera', fr: ' Appareil photo', it: ' Fotocamera' }[lang] || 'Cámara'), onPress: () => pickAvatar('camera') },
+ { text: ({ es: 'Galería', en: ' Photos', fr: ' Galerie', it: ' Galleria' }[lang] || 'Galería'), onPress: () => pickAvatar('library') },
+ ...(avatarUri ? [{ text: ({ es: 'Eliminar', en: ' Remove', fr: ' Supprimer', it: ' Rimuovi' }[lang] || 'Eliminar'), style: 'destructive', onPress: removeAvatar }] : []),
+ { text: ({ es: 'Cancelar', en: 'Cancel', fr: 'Annuler', it: 'Annulla' }[lang] || 'Cancelar'), style: 'cancel' },
  ],
  );
  };
@@ -524,7 +524,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
  { id: 'gluten_free', label: 'Sin gluten / Gluten-free / Sans gluten' },
  { id: 'vegetarian', label: 'Vegetariana / Vegetarian / Végétarienne' },
  { id: 'vegan', label: 'Vegana / Vegan / Végane' },
- { id: 'none', label: lang === 'fr' ? ' Aucune restriction' : lang === 'en' ? ' No restrictions' : 'Sin restricciones' },
+ { id: 'none', label: ({ es: 'Sin restricciones', en: ' No restrictions', fr: ' Aucune restriction', it: ' Nessuna restrizione' }[lang] || 'Sin restricciones') },
  ];
 
  const actOpt = ACTIVITY_OPTIONS.find(a => a.id === activityLevel);
@@ -1368,3 +1368,4 @@ const s2 = StyleSheet.create({
  nameInput: { borderWidth: 1, borderColor: '#E5E5E5', borderRadius: 12, padding: 12, fontSize: 16, fontFamily: F.body, color: '#0A0A0A' },
  nameModalBtn: { flex: 1, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
 });
+

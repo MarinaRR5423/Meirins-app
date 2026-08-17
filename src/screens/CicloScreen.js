@@ -299,7 +299,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  };
  const phaseInfo = cy.phaseInfo;
 
- const dateLocale = lang === 'en' ? 'en-GB' : lang === 'fr' ? 'fr-FR' : 'es-ES';
+ const dateLocale = ({ es: 'es-ES', en: 'en-GB', fr: 'fr-FR', it: 'it-IT' }[lang] || 'es-ES');
  const navigation = useNavigation();
 
  if (!lastPeriod) {
@@ -544,7 +544,7 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  const selCycleDay = ((diff % effectiveCycleLen) + effectiveCycleLen) % effectiveCycleLen + 1;
  const ph = PHASES[selPhase];
  const phTr = getPhaseDisplay(lang, selPhase, ph);
- const dayLabel = lang === 'en' ? 'Day' : lang === 'fr' ? 'Jour' : 'Día';
+ const dayLabel = ({ es: 'Día', en: 'Day', fr: 'Jour', it: 'Giorno' }[lang] || 'Día');
  const selDateFormatted = new Date(selectedDate + 'T12:00:00').toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long' });
  return (
  <View style={[styles.dayDetail, { backgroundColor: PHASE_BG[selPhase], borderColor: PHASE_TEXT[selPhase] + '44' }]}>
@@ -852,3 +852,4 @@ const es = StyleSheet.create({
  btn: { alignSelf: 'stretch', height: 48, backgroundColor: '#171717', borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
  btnTxt: { fontSize: 18, fontFamily: F.body, color: '#FAFAFA', lineHeight: 24 },
 });
+
