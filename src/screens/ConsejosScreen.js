@@ -6,8 +6,9 @@ import T from '../i18n/translations';
 import { F } from '../theme/fonts';
 import BText from '../components/BText';
 
-function ArticleCard({ article, lang, onPress }) {
+function ArticleCard({ article, lang, tips, onPress }) {
  const cat = ARTICLE_CATEGORIES[article.category];
+ const catLabel = tips?.categories?.[article.category] || article.category;
  return (
  <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.85}>
  <View style={[styles.cardIconBg, { backgroundColor: cat.bg }]}>
@@ -15,7 +16,7 @@ function ArticleCard({ article, lang, onPress }) {
  </View>
  <View style={styles.cardBody}>
  <View style={[styles.catChip, { backgroundColor: cat.bg }]}>
- <BText style={[styles.catChipText, { color: cat.color }]}>{cat.icon} {article.category}</BText>
+ <BText style={[styles.catChipText, { color: cat.color }]}>{cat.icon} {catLabel}</BText>
  </View>
  <BText style={styles.cardTitle}>{article.title[lang] || article.title.es}</BText>
  <BText style={styles.cardSummary} numberOfLines={2}>{article.summary[lang] || article.summary.es}</BText>
@@ -43,7 +44,7 @@ function ArticleModal({ article, lang, tips, onClose }) {
  <ScrollView style={styles.modalScroll} contentContainerStyle={styles.modalContent} showsVerticalScrollIndicator={false} nestedScrollEnabled>
  <BText style={styles.modalIcon}>{article.icon}</BText>
  <BText style={styles.modalTitle}>{article.title[lang] || article.title.es}</BText>
- <BText style={styles.modalMeta}> {article.readTime} {tips.readTime} · {cat.icon} {article.category}</BText>
+ <BText style={styles.modalMeta}> {article.readTime} {tips.readTime} · {cat.icon} {tips?.categories?.[article.category] || article.category}</BText>
  <View style={[styles.modalDivider, { backgroundColor: cat.color }]} />
  {body.map((para, i) => (
  <BText key={i} style={styles.modalPara}>{para}</BText>
@@ -115,6 +116,7 @@ export default function ConsejosScreen({ lang = 'es' }) {
  key={article.id}
  article={article}
  lang={lang}
+ tips={tips}
  onPress={() => setOpenArticle(article)}
  />
  ))}
