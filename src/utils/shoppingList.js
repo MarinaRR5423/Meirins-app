@@ -161,6 +161,18 @@ const CATEGORY_KEYWORDS = {
 
 const DEFAULT_CATEGORY = ' Otros';
 
+/** Traducciones de las categorías de la lista de la compra */
+export const CAT_LABEL_MAP = {
+ ' Proteínas':               { es: 'Proteínas',           en: 'Proteins',              fr: 'Protéines',           it: 'Proteine' },
+ ' Verduras':                { es: 'Verduras',             en: 'Vegetables',            fr: 'Légumes',             it: 'Verdure' },
+ ' Fruta':                   { es: 'Fruta',                en: 'Fruit',                 fr: 'Fruits',              it: 'Frutta' },
+ ' Cereales y panes':        { es: 'Cereales y panes',     en: 'Cereals & breads',      fr: 'Céréales & pains',    it: 'Cereali e pane' },
+ ' Frutos secos y semillas': { es: 'Frutos secos',         en: 'Nuts & seeds',          fr: 'Noix & graines',      it: 'Frutta secca' },
+ ' Lácteos y vegetales':     { es: 'Lácteos y vegetales',  en: 'Dairy & alternatives',  fr: 'Produits laitiers',   it: 'Latticini' },
+ ' Despensa y especias':     { es: 'Despensa y especias',  en: 'Pantry & spices',       fr: 'Épicerie & épices',   it: 'Dispensa e spezie' },
+ ' Otros':                   { es: 'Otros',                en: 'Other',                 fr: 'Autres',              it: 'Altro' },
+};
+
 // ── Plurales irregulares españoles ───────────────────────────────────────────
 const IRREGULAR_PLURALS = {
  // frutos secos

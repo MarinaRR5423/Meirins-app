@@ -138,13 +138,13 @@ function ArticleModal({ article, cat, lang, tips, onClose }) {
  </View>
  {part1.length > 0 && (
  <View style={m.section}>
- <BText style={m.sectionTitle}>{tips.readMore || 'Artículo'}</BText>
+ <BText style={m.sectionTitle}>{tips.readMore || 'Article'}</BText>
  {part1.map((para, i) => <BText key={i} style={m.bodyTxt}>{para}</BText>)}
  </View>
  )}
  {part2.length > 0 && (
  <View style={m.section}>
- <BText style={m.sectionTitle}>{tips.tips || 'Más'}</BText>
+ <BText style={m.sectionTitle}>{tips.moreInfo || 'More'}</BText>
  {part2.map((para, i) => <BText key={i} style={m.bodyTxt}>{para}</BText>)}
  </View>
  )}

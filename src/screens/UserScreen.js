@@ -540,7 +540,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
 
  const editModalTitle = {
   personal: tr('Datos personales','Personal data'),
-  goal: tr('Actividad y objetivo','Activity & goal'),
+  goal: tr('Actividad y objetivo','Activity & goal','Activité & objectif','Attività & obiettivo'),
   program: tr('Programa','Programme'),
   health: tr('Salud','Health'),
   notifications: tr('Recordatorios','Reminders'),

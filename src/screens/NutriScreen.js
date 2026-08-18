@@ -20,7 +20,7 @@ import { filterMealsByFasting } from '../utils/fastingMeals';
 import { useRecipes } from '../hooks/useRecipes';
 import { useFoodLog } from '../hooks/useFoodLog';
 import { getRecipesForMeal, appMealToDbMealType, recipeToMealCard, getDailyRecipe } from '../utils/recipeEngine';
-import { buildShoppingList, formatQuantity, countItems } from '../utils/shoppingList';
+import { buildShoppingList, formatQuantity, countItems, CAT_LABEL_MAP } from '../utils/shoppingList';
 import { trackScreen } from '../lib/analytics';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import WaterCard from '../components/WaterCard';
@@ -1063,7 +1063,7 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  {/* Categorías de ingredientes */}
  {Object.entries(finalShopData).map(([cat, items]) => (
  <View key={cat} style={styles.listCatCard}>
- <BText style={styles.listCatTitle}>{cat}</BText>
+ <BText style={styles.listCatTitle}>{CAT_LABEL_MAP[cat]?.[lang] || cat.trim()}</BText>
  <View>
  {items.map((item, idx) => {
  const qty = item.qty ?? item.totalQty;

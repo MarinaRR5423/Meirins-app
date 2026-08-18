@@ -300,6 +300,8 @@ const T = {
  readTime: 'min',
  readArticle: 'Leer artículo',
  back: '← Volver',
+ readMore: 'Artículo',
+ moreInfo: 'Más',
  categories: { cycle: 'Ciclo', nutrition: 'Nutrición', health: 'Salud', fitness: 'Fitness', sleep: 'Sueño' },
  },
 
@@ -794,6 +796,8 @@ const T = {
  readTime: 'min',
  readArticle: 'Read article',
  back: '← Back',
+ readMore: 'Article',
+ moreInfo: 'More',
  categories: { cycle: 'Cycle', nutrition: 'Nutrition', health: 'Health', fitness: 'Fitness', sleep: 'Sleep' },
  },
 
@@ -1359,6 +1363,8 @@ const T = {
  readTime: 'min',
  readArticle: "Lire l'article",
  back: '← Retour',
+ readMore: 'Article',
+ moreInfo: 'En savoir plus',
  categories: { cycle: 'Cycle', nutrition: 'Nutrition', health: 'Santé', fitness: 'Fitness', sleep: 'Sommeil' },
  },
 
@@ -1924,6 +1930,8 @@ const T = {
  readTime: 'min',
  readArticle: 'Leggi l\'articolo',
  back: '← Indietro',
+ readMore: 'Articolo',
+ moreInfo: 'Altro',
  categories: { cycle: 'Ciclo', nutrition: 'Nutrizione', health: 'Salute', fitness: 'Fitness', sleep: 'Sonno' },
  },
 
