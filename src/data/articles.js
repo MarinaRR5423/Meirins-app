@@ -1,5 +1,5 @@
 // ─── Meirins · Articles / Tips content ────────────────────────────────────────
-// Each article: id, category, icon, readTime, title{es,en,fr}, summary{es,en,fr}, body{es,en,fr}
+// Each article: id, category, icon, readTime, title{es,en,fr,it}, summary{es,en,fr,it}, body{es,en,fr,it}
 
 export const ARTICLE_CATEGORIES = {
  cycle: { icon: '', color: '#7C3AED', bg: '#F5F3FF' },
@@ -19,11 +19,13 @@ export const ARTICLES = [
  es: 'Qué comer durante la menstruación',
  en: 'What to eat during your period',
  fr: 'Que manger pendant les règles',
+ it: 'Cosa mangiare durante il ciclo',
  },
  summary: {
  es: 'Los alimentos correctos pueden reducir el dolor, los antojos y la fatiga menstrual.',
  en: 'The right foods can reduce pain, cravings and menstrual fatigue.',
  fr: 'Les bons aliments peuvent réduire la douleur, les envies et la fatigue menstruelle.',
+ it: 'I cibi giusti possono ridurre il dolore, i desideri e la stanchezza mestruale.',
  },
  body: {
  es: [
@@ -44,6 +46,12 @@ export const ARTICLES = [
  "Réduis le sel et l'alcool, qui augmentent la rétention d'eau et aggravent les ballonnements. Les acides gras oméga-3 du saumon, des noix et des graines de lin ont des effets anti-inflammatoires prouvés.",
  "Les glucides complexes (flocons d'avoine, riz complet, patate douce) aident à stabiliser l'humeur et l'énergie, tandis que les sucres simples font monter puis chuter le cortisol. Écoute tes envies mais choisis des versions nutritives.",
  ],
+ it: [
+ "Durante il ciclo, il corpo perde ferro con il sangue. Dai priorità ad alimenti ricchi di ferro eme (carne rossa magra, cozze) o non eme (lenticchie, spinaci, tofu) abbinati alla vitamina C per migliorarne l'assorbimento.",
+ "Il magnesio è il tuo alleato contro i crampi. Lo trovi nel cioccolato fondente, nelle mandorle, nei semi di zucca e nelle banane. Un quadratino di cioccolato fondente 85% non è solo piacevole, è anche antinfiammatorio.",
+ "Riduci sale e alcol, che aumentano la ritenzione idrica e peggiorano il gonfiore. Gli acidi grassi omega-3 di salmone, noci e semi di lino hanno effetti antinfiammatori comprovati.",
+ "I carboidrati complessi (avena, riso integrale, patata dolce) aiutano a stabilizzare umore ed energia, mentre gli zuccheri semplici fanno salire e poi crollare il cortisol. Ascolta i tuoi desideri ma scegli versioni nutrienti.",
+ ],
  },
  },
 
@@ -56,11 +64,13 @@ export const ARTICLES = [
  es: 'Entrena con tu ciclo, no contra él',
  en: 'Train with your cycle, not against it',
  fr: 'Entraîne-toi avec ton cycle, pas contre lui',
+ it: 'Allenati con il tuo ciclo, non contro di esso',
  },
  summary: {
  es: 'Sincronizar tu entrenamiento con tus fases hormonales multiplica los resultados y reduce las lesiones.',
  en: 'Syncing your training with your hormonal phases multiplies results and reduces injury.',
  fr: 'Synchroniser ton entraînement avec tes phases hormonales multiplie les résultats et réduit les blessures.',
+ it: 'Sincronizzare il tuo allenamento con le fasi ormonali moltiplica i risultati e riduce gli infortuni.',
  },
  body: {
  es: [
@@ -81,6 +91,12 @@ export const ARTICLES = [
  "L'ovulation marque ton pic d'énergie et de performance. La coordination motrice et la force explosive sont à leur maximum. Profite-en pour les tests, compétitions ou séances plus exigeantes.",
  "En phase lutéale, la progestérone élève la température corporelle et augmente l'effort perçu. Tu n'es pas moins capable — ton corps travaille simplement plus fort pour le même résultat. Adapte progressivement l'intensité vers la mobilité, la force modérée et le yoga.",
  ],
+ it: [
+ "La periodizzazione del ciclo mestruale è una strategia reale usata da atlete d'élite. I tuoi livelli ormonali cambiano drasticamente nel corso del ciclo, insieme a forza, resistenza, temperatura corporea e recupero.",
+ "Durante la fase follicolare (giorni 6-13), gli estrogeni salgono e con loro la forza muscolare, la tolleranza al dolore e la capacità di adattamento. È il momento migliore per allenamenti intensi, HIIT e record personali. Il muscolo si costruisce in modo più efficiente ora.",
+ "L'ovulazione segna il picco di energia e prestazioni. Coordinazione motoria e forza esplosiva sono al massimo. Approfittane per test, gare o sessioni più impegnative.",
+ "Nella fase luteale, il progesterone alza la temperatura corporea e aumenta lo sforzo percepito. Non sei meno capace — il tuo corpo lavora semplicemente di più per la stessa prestazione. Adatta progressivamente l'intensità verso mobilità, forza moderata e yoga.",
+ ],
  },
  },
 
@@ -93,11 +109,13 @@ export const ARTICLES = [
  es: 'Endometriosis y alimentación antiinflamatoria',
  en: 'Endometriosis and anti-inflammatory nutrition',
  fr: 'Endométriose et alimentation anti-inflammatoire',
+ it: 'Endometriosi e alimentazione antinfiammatoria',
  },
  summary: {
  es: 'La dieta no cura la endometriosis, pero puede reducir significativamente el dolor y la inflamación.',
  en: 'Diet does not cure endometriosis, but it can significantly reduce pain and inflammation.',
  fr: "L'alimentation ne guérit pas l'endométriose, mais elle peut réduire significativement la douleur et l'inflammation.",
+ it: "La dieta non guarisce l'endometriosi, ma può ridurre significativamente il dolore e l'infiammazione.",
  },
  body: {
  es: [
@@ -118,6 +136,12 @@ export const ARTICLES = [
  "En revanche, un régime méditerranéen riche en oméga-3 (saumon, sardines, graines de lin), en antioxydants (fruits rouges, curcuma, gingembre) et en fibres (légumes, légumineuses) a montré une réduction des marqueurs inflammatoires dans des études cliniques.",
  "Le gluten et les produits laitiers peuvent aggraver les symptômes chez certaines femmes atteintes d'endométriose, mais pas toutes. Si tu suspectes qu'un aliment aggrave ta douleur, tiens un journal des symptômes pendant 4-6 semaines avant de l'éliminer complètement. Consulte toujours ton gynécologue et une diététicienne spécialisée.",
  ],
+ it: [
+ "L'endometriosi è una malattia infiammatoria cronica in cui tessuto simile all'endometrio cresce fuori dall'utero. Sebbene chirurgia e farmaci siano i pilastri del trattamento, la dieta può essere uno strumento complementare potente per controllare l'infiammazione sistemica.",
+ "Gli alimenti pro-infiammatori da limitare includono: carni rosse lavorate (salumi, salsicce), grassi trans, zuccheri raffinati, alcol e latticini interi. Questi alimenti stimolano la produzione di prostaglandine, responsabili dei crampi e del dolore.",
+ "Al contrario, una dieta mediterranea ricca di omega-3 (salmone, sardine, semi di lino), antiossidanti (frutti rossi, curcuma, zenzero) e fibre (verdure, legumi) ha dimostrato di ridurre i marcatori infiammatori in studi clinici.",
+ "Glutine e latticini possono peggiorare i sintomi in alcune donne con endo, ma non in tutte. Se sospetti che un alimento aggravi il tuo dolore, tieni un diario dei sintomi per 4-6 settimane prima di eliminarlo. Consulta sempre la tua ginecologa e una dietista specializzata.",
+ ],
  },
  },
 
@@ -130,11 +154,13 @@ export const ARTICLES = [
  es: 'SOP: equilibrio hormonal a través del estilo de vida',
  en: 'PCOS: hormonal balance through lifestyle',
  fr: 'SMOP : équilibre hormonal par le style de vie',
+ it: 'PCOS: equilibrio ormonale attraverso lo stile di vita',
  },
  summary: {
  es: 'El síndrome de ovario poliquístico responde muy bien a cambios en la alimentación y el ejercicio.',
  en: 'Polycystic ovary syndrome responds very well to changes in diet and exercise.',
- fr: 'Le SMOP répond très bien aux changements alimentaires et à l\'exercice.',
+ fr: "Le SMOP répond très bien aux changements alimentaires et à l'exercice.",
+ it: "La sindrome dell'ovaio policistico risponde molto bene ai cambiamenti nell'alimentazione e nell'esercizio.",
  },
  body: {
  es: [
@@ -155,6 +181,12 @@ export const ARTICLES = [
  "L'entraînement en force (haltères, pilates, bandes élastiques) est particulièrement bénéfique dans le SMOP car il améliore la sensibilité à l'insuline et aide à réguler les androgènes. Le HIIT est également efficace, mais chez les femmes avec des symptômes sévères, il peut élever le cortisol et aggraver les symptômes si excessif.",
  "Compléments avec des preuves dans le SMOP : inositol (myo-inositol + D-chiro), vitamine D, oméga-3 et magnésium. Consulte toujours ton médecin avant de commencer tout supplément. L'objectif n'est pas de \"guérir\" le SMOP mais de réduire les symptômes et d'améliorer la qualité de vie.",
  ],
+ it: [
+ "La PCOS è il disturbo ormonale più comune nelle donne in età riproduttiva, colpendo il 10-15%. È caratterizzata da androgeni elevati, resistenza all'insulina in molti casi e cicli irregolari. La buona notizia: lo stile di vita è uno dei pilastri principali del trattamento.",
+ "La resistenza all'insulina, presente nel 70% delle donne con PCOS, rende difficile controllare la glicemia. Una dieta a basso indice glicemico — riducendo farine raffinate, zuccheri e alcol — può migliorare significativamente la sensibilità insulinica in poche settimane.",
+ "L'allenamento di forza (pesi, pilates, elastici) è particolarmente benefico nella PCOS perché migliora la sensibilità all'insulina e aiuta a regolare gli androgeni. Anche l'HIIT è efficace, ma nelle donne con sintomi severi può alzare il cortisolo e peggiorare i sintomi se eccessivo.",
+ 'Integratori con evidenza nella PCOS: inositolo (mio-inositolo + D-chiro), vitamina D, omega-3 e magnesio. Parla sempre con il tuo medico prima di iniziare qualsiasi integrazione. L\'obiettivo non è "guarire" la PCOS, ma ridurre i sintomi e migliorare la qualità della vita.',
+ ],
  },
  },
 
@@ -167,11 +199,13 @@ export const ARTICLES = [
  es: 'Cómo el sueño regula tus hormonas',
  en: 'How sleep regulates your hormones',
  fr: 'Comment le sommeil régule tes hormones',
+ it: 'Come il sonno regola i tuoi ormoni',
  },
  summary: {
  es: 'El sueño de calidad no es un lujo: es la base sobre la que se construyen tus ciclos hormonales.',
  en: 'Quality sleep is not a luxury: it is the foundation on which your hormonal cycles are built.',
  fr: "Un sommeil de qualité n'est pas un luxe : c'est la base sur laquelle se construisent tes cycles hormonaux.",
+ it: 'Un sonno di qualità non è un lusso: è la base su cui si costruiscono i tuoi cicli ormonali.',
  },
  body: {
  es: [
@@ -192,6 +226,12 @@ export const ARTICLES = [
  "Le sommeil profond (phases N3) est le moment où le corps sécrète le plus d'hormone de croissance, essentielle à la réparation musculaire et au maintien du poids. En phase lutéale, la progestérone peut fragmenter davantage le sommeil — c'est normal. Un rituel de relaxation aide.",
  "Température, obscurité et silence sont les trois piliers d'un environnement de sommeil optimal. Maintiens la chambre entre 17 et 19°C. Si tu as des cycles très symptomatiques, le suivi du sommeil peut t'aider à corréler la qualité du repos avec tes symptômes menstruels.",
  ],
+ it: [
+ "La privazione del sonno — anche cronica moderata, dormire 6 ore invece di 8 — alza il cortisolo, l'ormone dello stress. Il cortisolo elevato sopprime la produzione di progesterone, altera l'asse ipotalamo-ipofisi-ovaio e può causare cicli più brevi, irregolari o con più sintomi premestruali.",
+ "La melatonina, secreta durante il sonno, non solo regola il ciclo circadiano ma ha anche effetti antiossidanti sulle ovaie e può migliorare la qualità degli ovociti. Esponiti alla luce naturale al mattino e evita schermi luminosi nelle 2 ore prima di dormire.",
+ "Il sonno profondo (fasi N3) è quando il corpo secerne la maggior quantità di ormone della crescita, fondamentale per la riparazione muscolare e il mantenimento del peso. Nella fase luteale, il progesterone può frammentare di più il sonno — è normale. Un rituale di rilassamento aiuta.",
+ "Temperatura, oscurità e silenzio sono i tre pilastri dell'ambiente di sonno ottimale. Mantieni la stanza tra 17-19°C. Se hai cicli molto sintomatici, il monitoraggio del sonno può aiutarti a correlare la qualità del riposo con i tuoi sintomi mestruali.",
+ ],
  },
  },
 
@@ -204,11 +244,13 @@ export const ARTICLES = [
  es: 'Nutrición en el embarazo: los esenciales',
  en: 'Nutrition during pregnancy: the essentials',
  fr: 'Nutrition pendant la grossesse : les essentiels',
+ it: 'Nutrizione in gravidanza: gli essenziali',
  },
  summary: {
  es: 'Lo que comes durante el embarazo influye en el desarrollo del bebé y en tu recuperación post-parto.',
  en: 'What you eat during pregnancy influences baby development and your postpartum recovery.',
  fr: "Ce que tu manges pendant la grossesse influence le développement du bébé et ta récupération post-partum.",
+ it: "Ciò che mangi durante la gravidanza influenza lo sviluppo del bambino e il tuo recupero post-parto.",
  },
  body: {
  es: [
@@ -228,6 +270,12 @@ export const ARTICLES = [
  "Nutriments clés pendant la grossesse : acide folique (essentiel au premier trimestre pour prévenir les anomalies du tube neural), fer (les besoins doublent), calcium et vitamine D, iode, oméga-3 DHA (pour le développement cérébral du bébé) et protéines de qualité.",
  "Aliments à éviter : grands poissons gras (thon, espadon, requin) en raison du mercure, viandes et poissons crus ou peu cuits, charcuteries non pasteurisées, fromages à pâte molle non pasteurisés, alcool et caféine en excès (moins de 200 mg/jour).",
  "L'anémie ferriprive est la carence nutritionnelle la plus courante pendant la grossesse. Associe les sources de fer à la vitamine C (un jus d'orange avec les lentilles) et évite le thé ou le café pendant les repas principaux. Ton médecin ou ta sage-femme définira la supplémentation spécifique dont tu as besoin.",
+ ],
+ it: [
+ 'La gravidanza non significa "mangiare per due" in quantità, ma in qualità. Il fabbisogno calorico aumenta solo di ~300 kcal/giorno nel secondo trimestre e ~500 kcal/giorno nel terzo. Ciò che conta davvero è la densità nutrizionale di ogni pasto.',
+ "Nutrienti chiave in gravidanza: acido folico (essenziale nel primo trimestre per prevenire difetti del tubo neurale), ferro (il fabbisogno raddoppia), calcio e vitamina D, iodio, omega-3 DHA (per lo sviluppo cerebrale del bambino) e proteine di qualità.",
+ "Alimenti da evitare: pesci grassi di grandi dimensioni (tonno, pesce spada, squalo) per il mercurio, carni e pesci crudi o poco cotti, salumi non pastorizzati, formaggi a pasta molle non pastorizzati, alcol e caffeina in eccesso (meno di 200 mg/giorno).",
+ "L'anemia sideropenica è la carenza nutrizionale più comune in gravidanza. Abbina fonti di ferro con vitamina C (un succo d'arancia con le lenticchie) e evita tè o caffè durante i pasti principali. La tua medica o ostetrica definirà l'integrazione specifica di cui hai bisogno.",
  ],
  },
  },

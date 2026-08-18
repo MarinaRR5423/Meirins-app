@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ScrollView, TouchableOpacity, StyleSheet, TextInput, LayoutAnimation, Platform, UIManager, Dimensions, ActivityIndicator, Modal, SafeAreaView } from 'react-native';
 import { F } from '../theme/fonts';
 import { Check, ChevronRight, X, UserRound, Salad, Heart, CalendarFold, Scale, Flag, CircleAlert, Camera } from 'lucide-react-native';
@@ -539,12 +539,12 @@ export default function PerfilScreen({ pi, profile, signOut }) {
  const goalOpt2 = GOAL_OPTIONS.find(g => g.id === goal);
 
  const editModalTitle = {
-  personal: tr('Datos personales','Personal data'),
+  personal: tr('Datos personales','Personal data','Données personnelles','Dati personali'),
   goal: tr('Actividad y objetivo','Activity & goal','Activité & objectif','Attività & obiettivo'),
-  program: tr('Programa','Programme'),
-  health: tr('Salud','Health'),
-  notifications: tr('Recordatorios','Reminders'),
-  calendar: tr('Agenda','Calendar'),
+  program: tr('Programa','Programme','Programme','Programma'),
+  health: tr('Salud','Health','Santé','Salute'),
+  notifications: tr('Recordatorios','Reminders','Rappels','Promemoria'),
+  calendar: tr('Agenda','Calendar','Agenda','Agenda'),
   language: p.profile.language || 'Idioma',
  }[editing] || '';
 
@@ -632,11 +632,11 @@ export default function PerfilScreen({ pi, profile, signOut }) {
    <TouchableOpacity onPress={handleEditName}>
     {name
      ? <BText style={s2.profileName}>{name}</BText>
-     : <BText style={[s2.profileName, { color: '#A3A3A3' }]}>+ {tr('Añadir nombre','Add name')}</BText>}
+     : <BText style={[s2.profileName, { color: '#A3A3A3' }]}>+ {tr('Añadir nombre','Add name','Ajouter un prénom','Aggiungi nome')}</BText>}
    </TouchableOpacity>
    <View style={s2.tagsRow}>
     {pi?.data?.name && <View style={s2.tag}><BText style={s2.tagTxt}>{pi.data.name.toUpperCase()}</BText></View>}
-    {pi && <View style={s2.tag}><BText style={s2.tagTxt}>{tr('DÍA','DAY')} {pi.day}/{pi.cycleLen}</BText></View>}
+    {pi && <View style={s2.tag}><BText style={s2.tagTxt}>{tr('DÍA','DAY','JOUR','GIORNO')} {pi.day}/{pi.cycleLen}</BText></View>}
     {pi?.data?.intensity && <View style={s2.tag}><BText style={s2.tagTxt}>{pi.data.intensity.toUpperCase()}</BText></View>}
     {primaryGoals[0] && <View style={s2.tag}><BText style={s2.tagTxt}>{((GOAL_L[lang]||GOAL_L.es)[primaryGoals[0]]||'').trim().toUpperCase()}</BText></View>}
    </View>
@@ -647,15 +647,15 @@ export default function PerfilScreen({ pi, profile, signOut }) {
  <Modal visible={editingName} transparent animationType="fade">
   <View style={s2.modalOverlay}>
    <View style={s2.nameModal}>
-    <BText style={s2.nameModalTitle}>{tr('Tu nombre','Your name')}</BText>
+    <BText style={s2.nameModalTitle}>{tr('Tu nombre','Your name','Ton prénom','Il tuo nome')}</BText>
     <TextInput style={s2.nameInput} value={nameDraft} onChangeText={setNameDraft}
-     placeholder={tr('Tu nombre…','Your name…')} autoFocus maxLength={30} placeholderTextColor="#A3A3A3" />
+     placeholder={tr('Tu nombre…','Your name…','Ton prénom…','Il tuo nome…')} autoFocus maxLength={30} placeholderTextColor="#A3A3A3" />
     <View style={{ flexDirection: 'row', gap: 8, marginTop: 14 }}>
      <TouchableOpacity onPress={() => setEditingName(false)} style={[s2.nameModalBtn, { backgroundColor: '#F5F5F5' }]}>
-      <BText style={{ fontFamily: F.body, color: '#737373' }}>{tr('Cancelar','Cancel')}</BText>
+      <BText style={{ fontFamily: F.body, color: '#737373' }}>{tr('Cancelar','Cancel','Annuler','Annulla')}</BText>
      </TouchableOpacity>
      <TouchableOpacity onPress={saveName} style={[s2.nameModalBtn, { backgroundColor: '#0A0A0A' }]}>
-      <BText style={{ fontFamily: F.bodyB, color: 'white' }}>{tr('Guardar','Save')}</BText>
+      <BText style={{ fontFamily: F.bodyB, color: 'white' }}>{tr('Guardar','Save','Enregistrer','Salva')}</BText>
      </TouchableOpacity>
     </View>
    </View>
@@ -663,49 +663,49 @@ export default function PerfilScreen({ pi, profile, signOut }) {
  </Modal>
 
  {/* ── Datos personales ── */}
- <NavCard iconEl={<UserRound size={16} color="#FECA04" />} title={tr('Datos personales','Personal data')}>
+ <NavCard iconEl={<UserRound size={16} color="#FECA04" />} title={tr('Datos personales','Personal data','Données personnelles','Dati personali')}>
   <NavItem label={tr('Edad','Age','Âge','Età')} value={age || '—'} onPress={() => setEditing('personal')} />
   <NavItem label={tr('Altura','Height','Taille','Altezza')} value={height ? `${height} cm` : '—'} onPress={() => setEditing('personal')} />
   <NavItem label={tr('Peso','Weight','Poids','Peso')} value={weight ? `${weight} kg` : '—'} last onPress={() => setEditing('personal')} />
  </NavCard>
 
  {/* ── Entrenamiento ── */}
- <NavCard iconEl={<UserRound size={16} color="#429FE7" />} title={tr('Entrenamiento','Training')}>
-  <NavItem label={tr('Nivel de actividad','Activity level')} value={actOpt2?.label || '—'} onPress={() => setEditing('goal')} />
-  <NavItem label={tr('Objetivo','Goal')} value={goalOpt2?.label || '—'} onPress={() => setEditing('goal')} />
-  <NavItem label={tr('Nivel fitness','Fitness level')} value={lbl(FITNESS_L, editFitness, lang) || '—'} onPress={() => setEditing('fitness')} />
-  <NavItem label={tr('Lugar entreno','Training location')} value={(Array.isArray(editGym)?editGym:[editGym]).filter(Boolean).map(g=>lbl(GYM_L,g,lang)).filter(Boolean).join(', ')||'—'} last onPress={() => setEditing('gym')} />
+ <NavCard iconEl={<UserRound size={16} color="#429FE7" />} title={tr('Entrenamiento','Training','Entraînement','Allenamento')}>
+  <NavItem label={tr('Nivel de actividad','Activity level',"Niveau d'activité",'Livello di attività')} value={actOpt2?.label || '—'} onPress={() => setEditing('goal')} />
+  <NavItem label={tr('Objetivo','Goal','Objectif','Obiettivo')} value={goalOpt2?.label || '—'} onPress={() => setEditing('goal')} />
+  <NavItem label={tr('Nivel fitness','Fitness level','Niveau fitness','Livello fitness')} value={lbl(FITNESS_L, editFitness, lang) || '—'} onPress={() => setEditing('fitness')} />
+  <NavItem label={tr('Lugar entreno','Training location',"Lieu d'entraînement",'Luogo allenamento')} value={(Array.isArray(editGym)?editGym:[editGym]).filter(Boolean).map(g=>lbl(GYM_L,g,lang)).filter(Boolean).join(', ')||'—'} last onPress={() => setEditing('gym')} />
  </NavCard>
 
  {/* ── Nutrición ── */}
- <NavCard iconEl={<Salad size={16} color="#FE6004" />} title={tr('Nutrición','Nutrition')}>
-  <NavItem label={p.profile.dietType || tr('Tipo de dieta','Diet type')} value={[editDiet?(getDiet(normalizeDietId(editDiet))?.name?.[lang]||lbl(DIET_L,editDiet,lang)):null,editFasting?getDiet(editFasting)?.name?.[lang]:null].filter(Boolean).join(' + ')||'—'} onPress={() => setEditing('diet')} />
-  <NavItem label={p.profile.cookingTime || tr('Tiempo cocina','Cooking time')} value={lbl(COOKING_L, editCooking) || '—'} onPress={() => setEditing('cooking')} />
-  <NavItem label={p.profile.budget || tr('Presupuesto','Budget')} value={lbl(BUDGET_L, editBudget, lang) || '—'} last onPress={() => setEditing('budget')} />
+ <NavCard iconEl={<Salad size={16} color="#FE6004" />} title={tr('Nutrición','Nutrition','Nutrition','Nutrizione')}>
+  <NavItem label={p.profile.dietType || tr('Tipo de dieta','Diet type','Type de régime','Tipo di dieta')} value={[editDiet?(getDiet(normalizeDietId(editDiet))?.name?.[lang]||lbl(DIET_L,editDiet,lang)):null,editFasting?getDiet(editFasting)?.name?.[lang]:null].filter(Boolean).join(' + ')||'—'} onPress={() => setEditing('diet')} />
+  <NavItem label={p.profile.cookingTime || tr('Tiempo cocina','Cooking time','Temps cuisine','Tempo cucina')} value={lbl(COOKING_L, editCooking) || '—'} onPress={() => setEditing('cooking')} />
+  <NavItem label={p.profile.budget || tr('Presupuesto','Budget','Budget','Budget')} value={lbl(BUDGET_L, editBudget, lang) || '—'} last onPress={() => setEditing('budget')} />
  </NavCard>
 
  {/* ── Salud ── */}
- <NavCard iconEl={<Heart size={16} color="#49CF38" />} title={tr('Salud','Health')}>
-  <NavItem label={tr('Etapa vital','Life stage')} value={lbl(LIFE_L, editLifeStage, lang) || '—'} onPress={() => setEditing('health')} />
-  <NavItem label={tr('Condiciones','Conditions')} value={editConditions.filter(c=>c!=='none').length ? String(editConditions.filter(c=>c!=='none').length) : '—'} onPress={() => setEditing('health')} />
-  <NavItem label={tr('Anticonceptivos','Contraception')} value={editContraUse === true ? yesStr : editContraUse === false ? noStr : '—'} last onPress={() => setEditing('health')} />
+ <NavCard iconEl={<Heart size={16} color="#49CF38" />} title={tr('Salud','Health','Santé','Salute')}>
+  <NavItem label={tr('Etapa vital','Life stage','Étape de vie','Fase della vita')} value={lbl(LIFE_L, editLifeStage, lang) || '—'} onPress={() => setEditing('health')} />
+  <NavItem label={tr('Condiciones','Conditions','Conditions','Condizioni')} value={editConditions.filter(c=>c!=='none').length ? String(editConditions.filter(c=>c!=='none').length) : '—'} onPress={() => setEditing('health')} />
+  <NavItem label={tr('Anticonceptivos','Contraception','Contraception','Contraccezione')} value={editContraUse === true ? yesStr : editContraUse === false ? noStr : '—'} last onPress={() => setEditing('health')} />
  </NavCard>
 
  {/* ── Agenda y recordatorios ── */}
  {Platform.OS !== 'web' && (
-  <NavCard iconEl={<CalendarFold size={16} color="#F04747" />} title={tr('Agenda y recordatorios','Reminders & calendar')}>
-   <NavItem label={tr('Ciclo','Cycle')} value={notifSettings.cycle !== false ? yesStr : noStr} onPress={() => setEditing('notifications')} />
-   <NavItem label={tr('Entrenamiento','Training')} value={notifSettings.workout !== false ? yesStr : noStr} onPress={() => setEditing('notifications')} />
-   <NavItem label={tr('Hidratación','Hydration')} value={notifSettings.hydration !== false ? yesStr : noStr} onPress={() => setEditing('notifications')} />
-   <NavItem label={tr('Sincronizar agenda','Sync calendar')} value={calSyncEnabled ? yesStr : noStr} last onPress={() => setEditing('calendar')} />
+  <NavCard iconEl={<CalendarFold size={16} color="#F04747" />} title={tr('Agenda y recordatorios','Reminders & calendar','Agenda et rappels','Agenda e promemoria')}>
+   <NavItem label={tr('Ciclo','Cycle','Cycle','Ciclo')} value={notifSettings.cycle !== false ? yesStr : noStr} onPress={() => setEditing('notifications')} />
+   <NavItem label={tr('Entrenamiento','Training','Entraînement','Allenamento')} value={notifSettings.workout !== false ? yesStr : noStr} onPress={() => setEditing('notifications')} />
+   <NavItem label={tr('Hidratación','Hydration','Hydratation','Idratazione')} value={notifSettings.hydration !== false ? yesStr : noStr} onPress={() => setEditing('notifications')} />
+   <NavItem label={tr('Sincronizar agenda','Sync calendar','Synchroniser agenda','Sincronizza agenda')} value={calSyncEnabled ? yesStr : noStr} last onPress={() => setEditing('calendar')} />
   </NavCard>
  )}
 
  {/* ── Legal y soporte ── */}
- <NavCard iconEl={<Scale size={16} color="#737373" />} title={tr('Legal y soporte','Legal & support')}>
-  <NavItem label={tr('Política de privacidad','Privacy policy')} onPress={() => Linking.openURL(PRIVACY_URL)} />
-  <NavItem label={tr('Términos de uso','Terms of use')} onPress={() => Linking.openURL(TERMS_URL)} />
-  <NavItem label={tr('Contactar con soporte','Contact support')} last onPress={() => Linking.openURL(`mailto:${SUPPORT_EMAIL}?subject=Blumm%20support`)} />
+ <NavCard iconEl={<Scale size={16} color="#737373" />} title={tr('Legal y soporte','Legal & support','Légal et support','Legale e supporto')}>
+  <NavItem label={tr('Política de privacidad','Privacy policy',"Politique de confidentialité",'Informativa privacy')} onPress={() => Linking.openURL(PRIVACY_URL)} />
+  <NavItem label={tr('Términos de uso','Terms of use',"Conditions d'utilisation",'Termini di utilizzo')} onPress={() => Linking.openURL(TERMS_URL)} />
+  <NavItem label={tr('Contactar con soporte','Contact support','Contacter le support','Contatta il supporto')} last onPress={() => Linking.openURL(`mailto:${SUPPORT_EMAIL}?subject=Blumm%20support`)} />
  </NavCard>
 
  {/* ── Idioma ── */}
@@ -854,7 +854,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
      {/* ── diet ── */}
      {editing === 'diet' && (
       <View>
-       <BText style={styles.editSection}>{tr('TIPO DE DIETA','DIET TYPE')}</BText>
+       <BText style={styles.editSection}>{tr('TIPO DE DIETA','DIET TYPE','TYPE DE RÉGIME','TIPO DI DIETA')}</BText>
        {Object.entries(DIET_L[lang] || DIET_L.es).map(([id, label]) => (
         <TouchableOpacity key={id} onPress={() => setEditDiet(id)}
          style={[styles.optRow, editDiet === id && styles.optRowActive]}>
@@ -875,7 +875,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
      {/* ── cooking time ── */}
      {editing === 'cooking' && (
       <View>
-       <BText style={styles.editSection}>{tr('TIEMPO DE COCINA','COOKING TIME')}</BText>
+       <BText style={styles.editSection}>{tr('TIEMPO DE COCINA','COOKING TIME','TEMPS DE CUISINE','TEMPO IN CUCINA')}</BText>
        {Object.entries(COOKING_L).map(([id, label]) => (
         <TouchableOpacity key={id} onPress={() => setEditCooking(id)}
          style={[styles.optRow, editCooking === id && styles.optRowActive]}>
@@ -896,7 +896,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
      {/* ── budget ── */}
      {editing === 'budget' && (
       <View>
-       <BText style={styles.editSection}>{tr('PRESUPUESTO SEMANAL','WEEKLY BUDGET')}</BText>
+       <BText style={styles.editSection}>{tr('PRESUPUESTO SEMANAL','WEEKLY BUDGET','BUDGET HEBDOMADAIRE','BUDGET SETTIMANALE')}</BText>
        {Object.entries(BUDGET_L[lang] || BUDGET_L.es).map(([id, label]) => (
         <TouchableOpacity key={id} onPress={() => setEditBudget(id)}
          style={[styles.optRow, editBudget === id && styles.optRowActive]}>
@@ -917,7 +917,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
      {/* ── fitness level ── */}
      {editing === 'fitness' && (
       <View>
-       <BText style={styles.editSection}>{tr('NIVEL FITNESS','FITNESS LEVEL')}</BText>
+       <BText style={styles.editSection}>{tr('NIVEL FITNESS','FITNESS LEVEL','NIVEAU FITNESS','LIVELLO FITNESS')}</BText>
        {Object.entries(FITNESS_L[lang] || FITNESS_L.es).map(([id, label]) => (
         <TouchableOpacity key={id} onPress={() => setEditFitness(id)}
          style={[styles.optRow, editFitness === id && styles.optRowActive]}>
@@ -938,7 +938,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
      {/* ── gym location ── */}
      {editing === 'gym' && (
       <View>
-       <BText style={styles.editSection}>{tr('LUGAR DE ENTRENAMIENTO','TRAINING LOCATION')}</BText>
+       <BText style={styles.editSection}>{tr('LUGAR DE ENTRENAMIENTO','TRAINING LOCATION',"LIEU D'ENTRAÎNEMENT",'LUOGO DI ALLENAMENTO')}</BText>
        {Object.entries(GYM_L[lang] || GYM_L.es).map(([id, label]) => (
         <TouchableOpacity key={id} onPress={() => setEditGym(id)}
          style={[styles.optRow, editGym === id && styles.optRowActive]}>
@@ -964,7 +964,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
        { v:'hypertension', l:lbl(COND_L,'hypertension',lang) }, { v:'anemia', l:lbl(COND_L,'anemia',lang) }];
       const MED_OPTIONS = [
        { v:'thyroid_hormone', l:lbl(MED_L,'levothyroxine',lang) }, { v:'metformin', l:lbl(MED_L,'metformin',lang) },
-       { v:'insulin', l:tr('Insulina','Insulin') }, { v:'antidepressants', l:lbl(MED_L,'antidepressants',lang) },
+       { v:'insulin', l:tr('Insulina','Insulin','Insuline','Insulina') }, { v:'antidepressants', l:lbl(MED_L,'antidepressants',lang) },
        { v:'iron', l:lbl(MED_L,'iron',lang) }, { v:'ssri', l:lbl(MED_L,'ssri',lang) }, { v:'none', l:lbl(MED_L,'none',lang) }];
       return (
        <View>
@@ -1015,7 +1015,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
           })}
          </View>
         )}
-        <BText style={[styles.editSection, { marginTop: 16 }]}>{tr('MEDICACIÓN HABITUAL','REGULAR MEDICATION')}</BText>
+        <BText style={[styles.editSection, { marginTop: 16 }]}>{tr('MEDICACIÓN HABITUAL','REGULAR MEDICATION','MÉDICAMENTS HABITUELS','FARMACI ABITUALI')}</BText>
         <View style={styles.row}>
          {MED_OPTIONS.map(o => {
           const sel = editMedications.includes(o.v);
@@ -1039,12 +1039,12 @@ export default function PerfilScreen({ pi, profile, signOut }) {
      {/* ── notifications ── */}
      {editing === 'notifications' && (
       <View>
-       {notifStatus === 'ok' && <BText style={styles.calOk}>¡{tr('Recordatorios guardados','Reminders saved')}!</BText>}
-       {notifStatus === 'denied' && <BText style={styles.calAlert}>{tr('Permiso denegado. Activa las notificaciones en Ajustes.','Permission denied. Enable notifications in Settings.')}</BText>}
+       {notifStatus === 'ok' && <BText style={styles.calOk}>¡{tr('Recordatorios guardados','Reminders saved','Rappels enregistrés','Promemoria salvati')}!</BText>}
+       {notifStatus === 'denied' && <BText style={styles.calAlert}>{tr('Permiso denegado. Activa las notificaciones en Ajustes.','Permission denied. Enable notifications in Settings.','Permission refusée. Active les notifications dans Réglages.','Permesso negato. Attiva le notifiche nelle Impostazioni.')}</BText>}
        {[
-        { key:'cycle', label:{ es:'Aviso de ciclo', en:'Cycle reminder' }, enabled: notifSettings.cycle!==false },
-        { key:'workout', label:{ es:'Recordatorio de entreno', en:'Workout reminder' }, enabled: notifSettings.workout!==false },
-        { key:'hydration', label:{ es:'Hidratación diaria', en:'Daily hydration' }, enabled: notifSettings.hydration!==false },
+        { key:'cycle', label:{ es:'Aviso de ciclo', en:'Cycle reminder', fr:'Rappel de cycle', it:'Promemoria ciclo' }, enabled: notifSettings.cycle!==false },
+        { key:'workout', label:{ es:'Recordatorio de entreno', en:'Workout reminder', fr:"Rappel d'entraînement", it:'Promemoria allenamento' }, enabled: notifSettings.workout!==false },
+        { key:'hydration', label:{ es:'Hidratación diaria', en:'Daily hydration', fr:'Hydratation quotidienne', it:'Idratazione quotidiana' }, enabled: notifSettings.hydration!==false },
        ].map(item => (
         <View key={item.key} style={styles.notifRow}>
          <BText style={[styles.notifLabel, { flex:1 }]}>{item.label[lang]||item.label.es}</BText>
@@ -1056,7 +1056,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
        ))}
        {notifSettings.workout !== false && (
         <View style={{ marginTop: 12 }}>
-         <BText style={styles.editSection}>{tr('HORA DEL RECORDATORIO','REMINDER TIME')}</BText>
+         <BText style={styles.editSection}>{tr('HORA DEL RECORDATORIO','REMINDER TIME','HEURE DU RAPPEL','ORA DEL PROMEMORIA')}</BText>
          <View style={styles.hoursRow}>
           {NOTIF_HOUR_OPTS.map(h => (
            <TouchableOpacity key={h} onPress={() => handleSaveNotifSettings({ workoutHour: h })}
@@ -1075,19 +1075,19 @@ export default function PerfilScreen({ pi, profile, signOut }) {
       <View>
        <View style={{ flexDirection:'row', alignItems:'center', justifyContent:'space-between', marginBottom:16 }}>
         <View style={{ flex: 1 }}>
-         <BText style={styles.notifLabel}>{tr('Sincronizar agenda','Sync calendar')}</BText>
-         <BText style={styles.calSubtitle}>{tr('Añade entrenamientos al calendario','Add workouts to your calendar')}</BText>
+         <BText style={styles.notifLabel}>{tr('Sincronizar agenda','Sync calendar','Synchroniser agenda','Sincronizza agenda')}</BText>
+         <BText style={styles.calSubtitle}>{tr('Añade entrenamientos al calendario','Add workouts to your calendar','Ajoute les entraînements au calendrier','Aggiungi allenamenti al calendario')}</BText>
         </View>
         <TouchableOpacity onPress={handleToggleCalSync} disabled={calSyncing} style={[styles.toggle, calSyncEnabled && styles.toggleOn]}>
          <View style={[styles.toggleDot, calSyncEnabled && styles.toggleDotOn]} />
         </TouchableOpacity>
        </View>
-       {calStatus==='synced' && <BText style={styles.calOk}>{tr('¡Listo! Comprueba tu app Calendario.','Done! Check your Calendar app.')}</BText>}
-       {calStatus==='denied' && <BText style={styles.calAlert}>{tr('Permiso denegado.','Permission denied.')}</BText>}
-       {calStatus==='error' && <BText style={styles.calAlert}>{tr('Algo fue mal.','Something went wrong.')}</BText>}
+       {calStatus==='synced' && <BText style={styles.calOk}>{tr('¡Listo! Comprueba tu app Calendario.','Done! Check your Calendar app.','Fait ! Vérifie ton app Calendrier.','Fatto! Controlla la tua app Calendario.')}</BText>}
+       {calStatus==='denied' && <BText style={styles.calAlert}>{tr('Permiso denegado.','Permission denied.','Permission refusée.','Permesso negato.')}</BText>}
+       {calStatus==='error' && <BText style={styles.calAlert}>{tr('Algo fue mal.','Something went wrong.','Quelque chose a mal tourné.','Qualcosa è andato storto.')}</BText>}
        {calSyncEnabled && (
         <View style={{ marginTop: 8 }}>
-         <BText style={styles.editSection}>{tr('HORA PREFERIDA','PREFERRED TIME')}</BText>
+         <BText style={styles.editSection}>{tr('HORA PREFERIDA','PREFERRED TIME','HEURE PRÉFÉRÉE','ORA PREFERITA')}</BText>
          <View style={styles.hoursRow}>
           {HOUR_OPTIONS.map(h => (
            <TouchableOpacity key={h} onPress={() => handleChangeHour(h)}
@@ -1097,7 +1097,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
           ))}
          </View>
          <TouchableOpacity style={[styles.resyncBtn, calSyncing && { opacity:0.5 }]} onPress={handleResync} disabled={calSyncing}>
-          <BText style={styles.resyncTxt}>{calSyncing ? '…' : tr('Sincronizar esta semana','Sync this week')}</BText>
+          <BText style={styles.resyncTxt}>{calSyncing ? '…' : tr('Sincronizar esta semana','Sync this week','Synchroniser cette semaine','Sincronizza questa settimana')}</BText>
          </TouchableOpacity>
         </View>
        )}
