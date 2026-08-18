@@ -24,7 +24,7 @@ import { buildPersonalizedWeekPlan } from '../utils/workoutEngine';
 import { ARTICLES } from '../data/articles';
 import TipsCard from '../components/TipsCard';
 import SwipeableTabs from '../components/SwipeableTabs';
-import WorkoutHistoryTab from '../components/WorkoutHistoryTab';
+import WorkoutHistoryModal from '../components/WorkoutHistoryModal';
 import { trackScreen, trackEvent, Events } from '../lib/analytics';
 import BText from '../components/BText';
 import PhaseGlow from '../../assets/Calendar icons/PhaseGlow';
@@ -308,6 +308,7 @@ export default function GimnasioScreen({
 }) {
  useEffect(() => { trackScreen('Gimnasio', { phase: pi?.phase }); }, []);
  const [sub, setSub] = useState('hoy');
+ const [historyOpen, setHistoryOpen] = useState(false);
  const [addingSport, setAddingSport] = useState(false);
  const [workoutLog, setWorkoutLog] = useState({});
  const [completedExercises, setCompletedExercises] = useState({});
@@ -530,7 +531,7 @@ export default function GimnasioScreen({
  }
 
  return (
- <SwipeableTabs tabs={['hoy', 'salud', 'favoritos', 'registro']} current={sub} onChange={setSub}>
+ <SwipeableTabs tabs={['hoy', 'salud', 'favoritos']} current={sub} onChange={setSub}>
  <ScrollView style={styles.container} contentContainerStyle={styles.content}>
 
  <View style={{ height: 0, overflow: 'hidden' }}>
@@ -545,7 +546,6 @@ export default function GimnasioScreen({
  { id: 'hoy', l: g.today },
  { id: 'salud', l: g.salud },
  { id: 'favoritos', l: { es: 'Favs.', en: 'Favs.', fr: 'Favoris', it: 'Preferiti' }[lang] || 'Favs.' },
- { id: 'registro', l: { es: 'Registro', en: 'Log', fr: 'Journal', it: 'Registro' }[lang] || 'Registro' },
  ].map(t => (
  <TouchableOpacity key={t.id} onPress={() => setSub(t.id)}
  style={[styles.tab, sub === t.id && styles.tabActive]}>
@@ -555,7 +555,7 @@ export default function GimnasioScreen({
  </View>
 
  {/* ════════ Calendario + mini programa (hoy y salud) ════════ */}
- {sub !== 'registro' && <View style={styles.calCard}>
+ {<View style={styles.calCard}>
  {(() => {
   const refDate = offsetDays.length ? new Date(offsetDays[0].dateKey + 'T12:00:00') : new Date();
   const MONTHS = { es: ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'], en: ['January','February','March','April','May','June','July','August','September','October','November','December'], fr: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'], it: ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'] };
@@ -671,7 +671,7 @@ export default function GimnasioScreen({
  })()}
  </View>}
 
- {sub !== 'registro' && progState && (
+ {progState && (
  <ImageBackground source={require('../../assets/Apartados/Blumm_ejercicio_fondo.png')}
   style={styles.progMiniCard} imageStyle={{ borderRadius: 24 }}>
   <BlurView intensity={25} tint="light" style={styles.progMiniBlur}>
@@ -788,13 +788,13 @@ export default function GimnasioScreen({
 
  {/* Actividad extra — tarjeta azul Figma */}
  <View style={styles.addExtraCard}>
- <View style={styles.addExtraTitleRow}>
+ <TouchableOpacity style={styles.addExtraTitleRow} onPress={() => setHistoryOpen(true)} activeOpacity={0.7}>
   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
    <Plus size={16} color="#0A1823" />
-   <BText style={styles.addExtraLabel}>{g.logLabel || 'Registro'}</BText>
+   <BText style={styles.addExtraLabel}>{{ es: 'Registro & Histórico', en: 'Log & History', fr: 'Journal & Historique', it: 'Registro & Storico' }[lang] || 'Registro & Histórico'}</BText>
   </View>
   <ChevronRight size={16} color="#0A1823" />
- </View>
+ </TouchableOpacity>
  <View style={{ gap: 16 }}>
  <BText style={styles.addExtraTitle}>{g.addExtra}</BText>
  {todayLog?.extraSport ? (
@@ -826,13 +826,13 @@ export default function GimnasioScreen({
  <BText style={styles.restSub}>{g.restDesc}</BText>
  </View>
  <View style={styles.extraSportCard}>
-  <View style={styles.extraSportHeader}>
+  <TouchableOpacity style={styles.extraSportHeader} onPress={() => setHistoryOpen(true)} activeOpacity={0.7}>
    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
     <BookOpen size={16} color="#0A1823" />
-    <BText style={styles.extraSportHeaderTxt}>{lang === 'en' ? 'Log' : lang === 'fr' ? 'Journal' : lang === 'it' ? 'Registro' : 'Registro'}</BText>
+    <BText style={styles.extraSportHeaderTxt}>{{ es: 'Registro & Histórico', en: 'Log & History', fr: 'Journal & Historique', it: 'Registro & Storico' }[lang] || 'Registro & Histórico'}</BText>
    </View>
    <ChevronRight size={16} color="#0A1823" />
-  </View>
+  </TouchableOpacity>
   {addingSport ? (
    <ExtraSportPicker lang={lang} g={g}
     onPick={(label, minutes) => {
@@ -1004,13 +1004,12 @@ export default function GimnasioScreen({
   });
  })()}
 
- {/* ════════════════════════ REGISTRO ════════════════════════ */}
- {sub === 'registro' && (
- <WorkoutHistoryTab
+ <WorkoutHistoryModal
+  visible={historyOpen}
+  onClose={() => setHistoryOpen(false)}
   activityLog={profileExtended?.activityLog || {}}
   lang={lang}
  />
- )}
 
  </ScrollView>
 
