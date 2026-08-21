@@ -288,16 +288,16 @@ export const PROGRAMS = [
   id: 'physio_active', emoji: 'Flame', cat: 'strength', level: 'beginner', spw: 2,
   phaseRotation: true,
   name: {
-   es: 'Activa (3 meses)',
-   en: 'Active (3 months)',
-   fr: 'Active (3 mois)',
-   it: 'Attiva (3 mesi)',
+   es: 'Ocasional (3 meses)',
+   en: 'Occasional (3 months)',
+   fr: 'Occasionnelle (3 mois)',
+   it: 'Occasionale (3 mesi)',
   },
   desc: {
-   es: 'Programa para mujeres activas: 1-2 sesiones/semana adaptadas a tu fase del ciclo. Fuerza, cardio y movilidad progresivos en ~3 meses.',
-   en: 'Programme for active women: 1-2 sessions/week adapted to your cycle phase. Progressive strength, cardio and mobility over ~3 months.',
-   fr: 'Programme pour femmes actives : 1-2 séances/semaine adaptées à ta phase du cycle. Force, cardio et mobilité progressifs en ~3 mois.',
-   it: 'Programma per donne attive: 1-2 sessioni/settimana adattate alla tua fase del ciclo. Forza, cardio e mobilità progressivi in ~3 mesi.',
+   es: 'Programa para mujeres que se mueven de vez en cuando: 1-2 sesiones/semana adaptadas a tu fase del ciclo. Fuerza, cardio y movilidad progresivos en ~3 meses.',
+   en: 'Programme for women who exercise occasionally: 1-2 sessions/week adapted to your cycle phase. Progressive strength, cardio and mobility over ~3 months.',
+   fr: 'Programme pour femmes qui bougent de temps en temps : 1-2 séances/semaine adaptées à ta phase du cycle. Force, cardio et mobilité progressifs en ~3 mois.',
+   it: 'Programma per donne che si muovono ogni tanto: 1-2 sessioni/settimana adattate alla tua fase del ciclo. Forza, cardio e mobilità progressivi in ~3 mesi.',
   },
   phases: {
 
