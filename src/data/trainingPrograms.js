@@ -274,16 +274,16 @@ export const PROGRAMS = [
  id: 'physio_sedentaire', emoji: 'Sprout', cat: 'strength', level: 'beginner', spw: 1,
  phaseRotation: true, // sesión determinada por fase del ciclo
  name: {
-  es: 'Fisio: sedentaria (3 meses)',
-  en: 'Physio: sedentary (3 months)',
-  fr: 'Kiné : sédentaire (3 mois)',
-  it: 'Fisio: sedentaria (3 mesi)',
+  es: 'Sedentaria (3 meses)',
+  en: 'Sedentary (3 months)',
+  fr: 'Sédentaire (3 mois)',
+  it: 'Sedentaria (3 mesi)',
  },
  desc: {
-  es: 'Programa de fisioterapeuta para mujeres sedentarias: 1 sesión/semana adaptada a tu fase del ciclo. ~14 sesiones para completar el programa en 3 meses.',
-  en: 'Physiotherapist programme for sedentary women: 1 session/week adapted to your cycle phase. ~14 sessions to complete in 3 months.',
-  fr: 'Programme de kinésithérapeute pour femmes sédentaires : 1 séance/semaine adaptée à ta phase du cycle. ~14 séances pour compléter le programme en 3 mois.',
-  it: 'Programma del fisioterapista per donne sedentarie: 1 sessione/settimana adattata alla tua fase del ciclo. ~14 sessioni per completare il programma in 3 mesi.',
+  es: 'Programa para mujeres sedentarias: 1 sesión/semana adaptada a tu fase del ciclo. ~14 sesiones para completar el programa en 3 meses.',
+  en: 'Programme for sedentary women: 1 session/week adapted to your cycle phase. ~14 sessions to complete in 3 months.',
+  fr: 'Programme pour femmes sédentaires : 1 séance/semaine adaptée à ta phase du cycle. ~14 séances pour compléter le programme en 3 mois.',
+  it: 'Programma per donne sedentarie: 1 sessione/settimana adattata alla tua fase del ciclo. ~14 sessioni per completare il programma in 3 mesi.',
  },
  phases: {
   // ─ Menstrual: 4 séances (détente, marche, haut, bas) ────────────────────────
