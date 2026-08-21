@@ -9,7 +9,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const DEEPL_KEY = 'd651b864-b407-4b94-805a-157693d05411:fx';
+const DEEPL_KEY = process.env.DEEPL_API_KEY;
 const DEEPL_URL = 'https://api-free.deepl.com/v2/translate';
 const DATA_FILE = path.join(__dirname, 'keto-recipes-raw.json');
 const DELAY_MS  = 1500;

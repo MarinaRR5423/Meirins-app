@@ -9,7 +9,7 @@
 
 const SUPABASE_URL = 'https://lpcvkzmfemxziuhdmzpx.supabase.co';
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const DEEPL_KEY    = 'd651b864-b407-4b94-805a-157693d05411:fx';
+const DEEPL_KEY    = process.env.DEEPL_API_KEY;
 const DEEPL_URL    = 'https://api-free.deepl.com/v2/translate';
 
 // Pausa entre recetas (ms) — 2 s para no saturar el plan Free
