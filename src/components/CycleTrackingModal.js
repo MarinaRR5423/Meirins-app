@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Modal, SafeAreaView, View, TouchableOpacity, ScrollView, TextInput, StyleSheet, Switch } from 'react-native';
+import { cancelTodayMoodCheck } from '../utils/notifications';
 import { CYCLE_CATEGORIES } from '../data/cycleTracking';
 import { F } from '../theme/fonts';
 import { getInsight } from '../data/symptomInsights';
@@ -121,6 +122,9 @@ export default function CycleTrackingModal({ visible, onClose, lang = 'es', cycl
    delete fullData.food_note;
   }
   await onSave?.(selectedDate, fullData);
+  // Cancela el recordatorio "apunta cómo te sientes" del día si el registro es de hoy
+  const today = new Date().toISOString().split('T')[0];
+  if (selectedDate === today) cancelTodayMoodCheck().catch(() => {});
   onClose?.();
  };
 

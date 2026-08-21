@@ -13,6 +13,7 @@ import CycleTrackingModal from '../components/CycleTrackingModal';
 import CycleImportModal from '../components/CycleImportModal';
 import CycleHistoryModal from '../components/CycleHistoryModal';
 import { trackScreen } from '../lib/analytics';
+import { cancelPeriodCheckNotifications } from '../utils/notifications';
 import BText from '../components/BText';
 import ErrorBoundary from '../components/ErrorBoundary';
 import PhaseGlow from '../../assets/Calendar icons/PhaseGlow';
@@ -402,6 +403,8 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
 
  // Guardar en cycle_periods (tabla propia) — upsert por start_date
  await savePeriod?.(entry, 'manual');
+ // Cancela los avisos "¿te ha venido el período?" ya que ha llegado
+ cancelPeriodCheckNotifications().catch(() => {});
 
  // Si es el período más reciente, actualizar también last_period en profiles
  // para que el motor de fases (pi) lo recoja correctamente

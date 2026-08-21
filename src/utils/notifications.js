@@ -25,6 +25,7 @@ export const NOTIF_IDS = {
  CYCLE_TODAY: 'cycle-today',
  HYDRATION: 'hydration-daily',
  // Workout IDs se generan dinámicamente: 'workout-YYYY-MM-DD'
+ // period-check-YYYY-MM-DD, training-check-YYYY-MM-DD, mood-daily-YYYY-MM-DD
 };
 
 // ── Configuración del handler ────────────────────────────────────────────────
@@ -86,8 +87,8 @@ export async function cancelAllMeirinsNotifications() {
  await Promise.all(meirins.map(n => Notifications.cancelScheduledNotificationAsync(n.identifier)));
 }
 
-/** Cancela un grupo de notificaciones por prefijo */
-async function cancelByPrefix(prefix) {
+/** Cancela un grupo de notificaciones por prefijo (también exportada para uso externo) */
+export async function cancelByPrefix(prefix) {
  const scheduled = await Notifications.getAllScheduledNotificationsAsync();
  await Promise.all(
  scheduled
@@ -232,6 +233,133 @@ export async function scheduleHydrationNotification(hour = 12, texts = {}) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// 4. PERIOD CHECK — aviso de "¿te ha venido el periodo?"
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Programa notificaciones diarias desde el día (cycleLength - 2) al (cycleLength + 5)
+ * preguntando si ha llegado el período.
+ * Al clicar → navega a "Ciclo".
+ *
+ * @param {string} lastPeriod  'YYYY-MM-DD'
+ * @param {number} cycleLength duración estimada del ciclo
+ * @param {object} texts       { title, body }
+ */
+export async function schedulePeriodCheckNotifications(lastPeriod, cycleLength = 28, texts = {}) {
+ if (!lastPeriod) return;
+ await cancelByPrefix('period-check-');
+
+ const last = new Date(lastPeriod + 'T12:00:00');
+ const startDay = Math.max(cycleLength - 2, 24);
+
+ const title = texts.title || '¿Te ha venido el período?';
+ const body  = texts.body  || 'Si ha llegado, márcalo en Blumm para que tu ciclo sea preciso.';
+
+ const promises = [];
+ for (let d = startDay; d <= startDay + 6; d++) {
+  const fireDate = new Date(last);
+  fireDate.setDate(last.getDate() + d);
+  fireDate.setHours(9, 0, 0, 0);
+  if (fireDate.getTime() <= Date.now()) continue;
+  promises.push(Notifications.scheduleNotificationAsync({
+   identifier: `period-check-${fireDate.toISOString().split('T')[0]}`,
+   content: { title, body, channelId: CHANNEL_CYCLE, data: { screen: 'Ciclo' } },
+   trigger: { type: 'date', date: fireDate },
+  }));
+ }
+ await Promise.all(promises);
+}
+
+/** Cancela todos los avisos de periodo-check (llamar cuando la usuaria marca nuevo periodo) */
+export async function cancelPeriodCheckNotifications() {
+ await cancelByPrefix('period-check-');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 5. TRAINING CHECK — aviso vespertino "¿has completado la sesión?"
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Programa notificaciones en los próximos 14 días de entreno a una hora vespertina
+ * preguntando si se ha completado la sesión.
+ * Al clicar → navega a "Gimnasio".
+ *
+ * @param {number[]} trainDays días JS de entreno [0-6]
+ * @param {number}   hour      hora del aviso (default: 19)
+ * @param {object}   texts     { title, body }
+ */
+export async function scheduleTrainingCheckNotifications(trainDays = [], hour = 19, texts = {}) {
+ await cancelByPrefix('training-check-');
+ if (!trainDays.length) return;
+
+ const title = texts.title || '¿Has completado tu sesión de hoy?';
+ const body  = texts.body  || 'Apunta tu entreno para mantener tu racha activa 🔥';
+
+ const promises = [];
+ for (let i = 0; i <= 14; i++) {
+  const d = new Date();
+  d.setDate(d.getDate() + i);
+  const jsDay = d.getDay();
+  if (!trainDays.includes(jsDay)) continue;
+  const dateStr = d.toISOString().split('T')[0];
+  const trigger = buildTrigger(dateStr, hour);
+  if (!trigger) continue;
+  promises.push(Notifications.scheduleNotificationAsync({
+   identifier: `training-check-${dateStr}`,
+   content: { title, body, channelId: CHANNEL_WORKOUT, data: { screen: 'Gimnasio' } },
+   trigger,
+  }));
+ }
+ await Promise.all(promises);
+}
+
+/** Cancela el training-check de hoy (llamar cuando se registra el entreno) */
+export async function cancelTodayTrainingCheck() {
+ const today = new Date().toISOString().split('T')[0];
+ try { await Notifications.cancelScheduledNotificationAsync(`training-check-${today}`); } catch {}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 6. DAILY MOOD — recordatorio de apuntar cómo te sientes
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * Programa una notificación diaria (próximos 30 días) invitando a registrar
+ * el estado del día en el ciclo.
+ * Al clicar → navega a "Ciclo".
+ *
+ * @param {number} hour  hora del recordatorio (default: 20)
+ * @param {object} texts { title, body }
+ */
+export async function scheduleDailyMoodNotification(hour = 20, texts = {}) {
+ await cancelByPrefix('mood-daily-');
+
+ const title = texts.title || 'Apunta cómo te sientes hoy';
+ const body  = texts.body  || 'Un minuto de registro te ayuda a entender tu ciclo mejor.';
+
+ const promises = [];
+ for (let i = 1; i <= 30; i++) {
+  const d = new Date();
+  d.setDate(d.getDate() + i);
+  const dateStr = d.toISOString().split('T')[0];
+  const trigger = buildTrigger(dateStr, hour);
+  if (!trigger) continue;
+  promises.push(Notifications.scheduleNotificationAsync({
+   identifier: `mood-daily-${dateStr}`,
+   content: { title, body, channelId: CHANNEL_CYCLE, data: { screen: 'Ciclo' } },
+   trigger,
+  }));
+ }
+ await Promise.all(promises);
+}
+
+/** Cancela el mood-check de hoy (llamar cuando la usuaria guarda el registro del día) */
+export async function cancelTodayMoodCheck() {
+ const today = new Date().toISOString().split('T')[0];
+ try { await Notifications.cancelScheduledNotificationAsync(`mood-daily-${today}`); } catch {}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // API principal — reprogramar todo desde el perfil
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -271,46 +399,111 @@ export async function syncNotifications(profile, lang = 'es') {
  hydration: { title: 'As-tu bu de l\'eau aujourd\'hui ?', body: 'Rester hydratée améliore ton énergie et tes symptômes.' },
  },
  it: {
- cycleWarning: { title: 'Il tuo ciclo si avvicina', body: `Il tuo periodo potrebbe iniziare tra ${s.cycleWarningDays || 2} giorni.` },
- cycleToday: { title: 'Primo giorno del ciclo', body: 'Oggi inizia il tuo periodo. Prenditi cura di te.' },
- workout: { title: 'Oggi si allena!', body: 'La tua sessione è pronta. Dai tutto!' },
- hydration: { title: 'Hai bevuto acqua oggi?', body: 'Rimanere idratata migliora la tua energia e i sintomi del ciclo.' },
+ cycleWarning:  { title: 'Il tuo ciclo si avvicina', body: `Il tuo periodo potrebbe iniziare tra ${s.cycleWarningDays || 2} giorni.` },
+ cycleToday:    { title: 'Primo giorno del ciclo', body: 'Oggi inizia il tuo periodo. Prenditi cura di te.' },
+ workout:       { title: 'Oggi si allena!', body: 'La tua sessione è pronta. Dai tutto!' },
+ hydration:     { title: 'Hai bevuto acqua oggi?', body: 'Rimanere idratata migliora la tua energia e i sintomi del ciclo.' },
+ periodCheck:   { title: 'Ti è arrivato il ciclo?', body: 'Se è arrivato, segnalo in Blumm per mantenere il tuo ciclo preciso.' },
+ trainingCheck: { title: 'Hai completato la sessione di oggi?', body: 'Registra il tuo allenamento per mantenere la tua serie attiva 🔥' },
+ moodDaily:     { title: 'Come ti senti oggi?', body: 'Un minuto di registrazione ti aiuta a capire meglio il tuo ciclo.' },
+ },
+ es: {
+ cycleWarning:  { title: 'Tu ciclo se acerca', body: `Tu período podría empezar en ${s.cycleWarningDays || 2} días. Prepárate con calma.` },
+ cycleToday:    { title: 'Primer día de ciclo', body: 'Hoy empieza tu período. Cuídate y escucha tu cuerpo.' },
+ workout:       { title: '¡Hoy toca entrenar!', body: 'Tu sesión de hoy está lista. ¡A por ello!' },
+ hydration:     { title: '¿Has bebido agua hoy?', body: 'Mantenerte hidratada mejora tu energía y los síntomas del ciclo.' },
+ periodCheck:   { title: '¿Te ha venido el período?', body: 'Si ha llegado, márcalo en Blumm para que tu ciclo sea preciso.' },
+ trainingCheck: { title: '¿Has completado tu sesión de hoy?', body: 'Apunta tu entreno para mantener tu racha activa 🔥' },
+ moodDaily:     { title: 'Apunta cómo te sientes hoy', body: 'Un minuto de registro te ayuda a entender tu ciclo mejor.' },
+ },
+ en: {
+ cycleWarning:  { title: 'Your cycle is approaching', body: `Your period may start in ${s.cycleWarningDays || 2} days. Take it easy.` },
+ cycleToday:    { title: 'First day of your cycle', body: 'Your period starts today. Take care and listen to your body.' },
+ workout:       { title: 'Time to work out!', body: "Your session is ready. Let's go!" },
+ hydration:     { title: 'Have you drunk water today?', body: 'Staying hydrated improves your energy and cycle symptoms.' },
+ periodCheck:   { title: 'Has your period started?', body: 'If it has, mark it in Blumm to keep your cycle accurate.' },
+ trainingCheck: { title: "Did you complete today's session?", body: 'Log your workout to keep your streak going 🔥' },
+ moodDaily:     { title: 'How are you feeling today?', body: 'A minute of logging helps you understand your cycle better.' },
+ },
+ fr: {
+ cycleWarning:  { title: 'Ton cycle approche', body: `Tes règles pourraient commencer dans ${s.cycleWarningDays || 2} jours. Prends soin de toi.` },
+ cycleToday:    { title: 'Premier jour de cycle', body: "Tes règles commencent aujourd'hui. Prends soin de toi." },
+ workout:       { title: "C'est l'heure de s'entraîner !", body: 'Ta séance du jour est prête. En avant !' },
+ hydration:     { title: "As-tu bu de l'eau aujourd'hui ?", body: 'Rester hydratée améliore ton énergie et tes symptômes.' },
+ periodCheck:   { title: 'Tes règles sont-elles arrivées ?', body: "Si c'est le cas, note-le dans Blumm pour garder ton cycle précis." },
+ trainingCheck: { title: "As-tu terminé ta séance d'aujourd'hui ?", body: 'Note ton entraînement pour garder ta série active 🔥' },
+ moodDaily:     { title: 'Comment tu te sens aujourd\'hui ?', body: 'Une minute de suivi t\'aide à mieux comprendre ton cycle.' },
  },
  };
  const t = T[lang] || T.es;
 
- const results = { cycle: false, workout: false, hydration: false };
+ const results = { cycle: false, workout: false, hydration: false, periodCheck: false, trainingCheck: false, moodDaily: false };
 
- // Ciclo
+ // Ciclo — aviso previo + día 1
  if (s.cycle !== false && profile.lastPeriod) {
  await scheduleCycleNotifications(
- profile.lastPeriod,
- profile.cycleLength || 28,
- s.cycleWarningDays || 2,
- { warning: t.cycleWarning, today: t.cycleToday },
+  profile.lastPeriod,
+  profile.cycleLength || 28,
+  s.cycleWarningDays || 2,
+  { warning: t.cycleWarning, today: t.cycleToday },
  );
  results.cycle = true;
  } else {
  await cancelByPrefix('cycle-');
  }
 
- // Entreno
+ // Period check — "¿te ha venido el período?"
+ if (s.periodCheck !== false && profile.lastPeriod) {
+ await schedulePeriodCheckNotifications(
+  profile.lastPeriod,
+  profile.cycleLength || 28,
+  t.periodCheck,
+ );
+ results.periodCheck = true;
+ } else {
+ await cancelByPrefix('period-check-');
+ }
+
+ // Entreno — recordatorio matutino
  if (s.workout !== false && profile.trainDays?.length) {
  await scheduleWorkoutNotifications(
- profile.trainDays,
- s.workoutHour || 8,
- { title: t.workout.title, body: t.workout.body },
+  profile.trainDays,
+  s.workoutHour || 8,
+  { title: t.workout.title, body: t.workout.body },
  );
  results.workout = true;
  } else {
  await cancelByPrefix('workout-');
  }
 
+ // Training check — "¿has completado la sesión?" (vespertino)
+ if (s.trainingCheck !== false && profile.trainDays?.length) {
+ await scheduleTrainingCheckNotifications(
+  profile.trainDays,
+  s.trainingCheckHour || 19,
+  t.trainingCheck,
+ );
+ results.trainingCheck = true;
+ } else {
+ await cancelByPrefix('training-check-');
+ }
+
+ // Mood daily — "apunta cómo te sientes"
+ if (s.moodDaily !== false) {
+ await scheduleDailyMoodNotification(
+  s.moodDailyHour || 20,
+  t.moodDaily,
+ );
+ results.moodDaily = true;
+ } else {
+ await cancelByPrefix('mood-daily-');
+ }
+
  // Hidratación
  if (s.hydration !== false) {
  await scheduleHydrationNotification(
- s.hydrationHour || 12,
- { title: t.hydration.title, body: t.hydration.body },
+  s.hydrationHour || 12,
+  { title: t.hydration.title, body: t.hydration.body },
  );
  results.hydration = true;
  } else {

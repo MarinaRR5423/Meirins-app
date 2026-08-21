@@ -25,6 +25,7 @@ import { ARTICLES } from '../data/articles';
 import TipsCard from '../components/TipsCard';
 import SwipeableTabs from '../components/SwipeableTabs';
 import WorkoutHistoryModal from '../components/WorkoutHistoryModal';
+import { cancelTodayTrainingCheck } from '../utils/notifications';
 import { trackScreen, trackEvent, Events } from '../lib/analytics';
 import BText from '../components/BText';
 import PhaseGlow from '../../assets/Calendar icons/PhaseGlow';
@@ -418,6 +419,10 @@ export default function GimnasioScreen({
  const saveLog = (update) => {
  setWorkoutLog(prev => ({ ...prev, [todayKey]: update }));
  if (update?.status === 'done' && todayIsProgramDay) advanceProgram();
+ // Cancela la notificación vespertina "¿has completado la sesión?" del día
+ if (update?.status === 'done' || update?.status === 'extra' || update?.status === 'skipped') {
+  cancelTodayTrainingCheck().catch(() => {});
+ }
  };
 
  const toggleExercise = (idx) =>

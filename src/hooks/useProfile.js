@@ -165,7 +165,7 @@ export const useProfile = () => {
  lastPeriod: null,
  cycleLength: 28,
  trainDays: [],
- notifSettings: { cycle: true, workout: true, hydration: true, hydrationHour: 12 },
+ notifSettings: { cycle: true, workout: true, hydration: true, hydrationHour: 12, periodCheck: true, trainingCheck: true, moodDaily: true },
  }, extended.language || 'es').catch(() => {});
  }
  }).catch(() => {});
