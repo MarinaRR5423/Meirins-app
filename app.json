@@ -7,7 +7,7 @@
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "userInterfaceStyle": "light",
-        "newArchEnabled": false,
+        "newArchEnabled": true,
         "splash": {
             "image": "./assets/splash-icon.png",
             "resizeMode": "contain",
@@ -64,7 +64,6 @@
                 }
             ],
             "expo-localization",
-            "react-native-health",
             "@kingstinct/react-native-healthkit",
             "expo-font",
             "expo-video",
