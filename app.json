@@ -65,6 +65,7 @@
             ],
             "expo-localization",
             "react-native-health",
+            "@kingstinct/react-native-healthkit",
             "expo-font",
             "expo-video",
             "expo-secure-store",

@@ -2,9 +2,11 @@
  * useHealthKitCycleImport
  *
  * Lector de datos menstruales de Apple HealthKit.
+ * Usa @kingstinct/react-native-healthkit (v14) que soporta HKCategoryType
+ * incluyendo MenstrualFlow e IntermenstrualBleeding.
+ *
  * Separado de useHealthData para que el permiso de MenstrualFlow se pida
- * solo cuando la usuaria lo solicita explícitamente, no al conectar
- * workouts/sueño por primera vez.
+ * solo cuando la usuaria lo solicita explícitamente.
  *
  * Plataforma: iOS únicamente. En Android devuelve { available: false }.
  *
@@ -20,83 +22,69 @@ import { useState, useCallback } from 'react';
 import { Platform } from 'react-native';
 
 // ── Import condicional — falla silenciosamente en Android / Expo Go ───────────
-let AppleHealthKit = null;
+let HealthKit = null;
 if (Platform.OS === 'ios') {
   try {
-    const m = require('react-native-health');
-    AppleHealthKit = m.default ?? m;
+    HealthKit = require('@kingstinct/react-native-healthkit').default;
   } catch (_) {}
 }
 
-// ── Permisos de ciclo — solo lectura, nunca escritura ────────────────────────
-function getCycleReadPermissions() {
-  if (!AppleHealthKit) return [];
-  const P = AppleHealthKit.Constants?.Permissions;
-  if (!P) return []; // Constants no cargadas — no pasar strings crudos que HealthKit rechazaría
-  return [
-    P.MenstrualFlow,
-    P.IntermenstrualBleeding,
-  ].filter(Boolean); // Filtra valores undefined si algún permiso no existe en esta versión
+// Identificadores de HKCategoryType para ciclo
+const HK_MENSTRUAL_FLOW = 'HKCategoryTypeIdentifierMenstrualFlow';
+const HK_INTERMENSTRUAL = 'HKCategoryTypeIdentifierIntermenstrualBleeding';
+
+/** Solicita autorización de lectura para datos de ciclo. */
+async function requestCyclePermissions() {
+  if (!HealthKit) throw new Error('HealthKit no disponible');
+  // @kingstinct/react-native-healthkit usa requestAuthorization(read[], write[])
+  await HealthKit.requestAuthorization(
+    [HK_MENSTRUAL_FLOW, HK_INTERMENSTRUAL], // lectura
+    [],                                       // escritura
+  );
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+/** Lee muestras de MenstrualFlow de los últimos `years` años. */
+async function fetchMenstrualSamples(years = 5) {
+  if (!HealthKit) return [];
+  const startDate = new Date();
+  startDate.setFullYear(startDate.getFullYear() - years);
 
-/** Inicializa HealthKit con solo los permisos de ciclo. */
-function initCycleKit() {
-  return new Promise((resolve, reject) => {
-    const readPerms = getCycleReadPermissions();
-    if (!readPerms.length) {
-      // Guardia de seguridad: HealthKit lanza NSInvalidArgumentException si el array está vacío
-      reject(new Error('HealthKit permissions unavailable'));
-      return;
-    }
-    AppleHealthKit.initHealthKit(
-      { permissions: { read: readPerms, write: [] } },
-      (err) => { if (err) reject(err); else resolve(); },
-    );
-  });
-}
-
-/** Lee todas las muestras de MenstrualFlow de los últimos `years` años. */
-function fetchMenstrualSamples(years = 5) {
-  return new Promise((resolve) => {
-    const startDate = new Date();
-    startDate.setFullYear(startDate.getFullYear() - years);
-
-    AppleHealthKit.getSamples(
+  try {
+    const samples = await HealthKit.queryCategorySamples(
+      HK_MENSTRUAL_FLOW,
       {
-        type: 'MenstrualFlow',
-        startDate: startDate.toISOString(),
-        endDate: new Date().toISOString(),
+        from: startDate,
+        to: new Date(),
         ascending: true,
-      },
-      (err, results) => {
-        if (err || !results?.length) { resolve([]); return; }
-        resolve(results);
+        limit: 1000,
       },
     );
-  });
+    return samples ?? [];
+  } catch {
+    return [];
+  }
 }
 
 /** Lee muestras de IntermenstrualBleeding (spotting) de los últimos `years` años. */
-function fetchSpottingSamples(years = 5) {
-  return new Promise((resolve) => {
-    const startDate = new Date();
-    startDate.setFullYear(startDate.getFullYear() - years);
+async function fetchSpottingSamples(years = 5) {
+  if (!HealthKit) return [];
+  const startDate = new Date();
+  startDate.setFullYear(startDate.getFullYear() - years);
 
-    AppleHealthKit.getSamples(
+  try {
+    const samples = await HealthKit.queryCategorySamples(
+      HK_INTERMENSTRUAL,
       {
-        type: 'IntermenstrualBleeding',
-        startDate: startDate.toISOString(),
-        endDate: new Date().toISOString(),
+        from: startDate,
+        to: new Date(),
         ascending: true,
-      },
-      (err, results) => {
-        if (err || !results?.length) { resolve([]); return; }
-        resolve(results);
+        limit: 1000,
       },
     );
-  });
+    return samples ?? [];
+  } catch {
+    return [];
+  }
 }
 
 /**
@@ -107,10 +95,13 @@ function fetchSpottingSamples(years = 5) {
 function groupIntoPeriods(samples) {
   if (!samples.length) return [];
 
-  // Extraer fecha única por muestra (ignorar hora)
+  // @kingstinct/react-native-healthkit devuelve { startDate: Date, endDate: Date, value: number }
   const days = [
     ...new Set(
-      samples.map(s => (s.startDate ?? s.value?.startDate ?? '').split('T')[0])
+      samples.map(s => {
+        const d = s.startDate instanceof Date ? s.startDate : new Date(s.startDate);
+        return d.toISOString().split('T')[0];
+      })
     ),
   ]
     .filter(Boolean)
@@ -118,7 +109,7 @@ function groupIntoPeriods(samples) {
 
   if (!days.length) return [];
 
-  const GAP_DAYS = 2; // días de silencio para considerar un nuevo período
+  const GAP_DAYS = 2;
   const periods = [];
   let start = days[0];
   let prev = days[0];
@@ -128,20 +119,17 @@ function groupIntoPeriods(samples) {
     const diff = (new Date(curr) - new Date(prev)) / 86_400_000;
 
     if (diff > GAP_DAYS) {
-      // Cierra el período actual y abre uno nuevo
       periods.push({ start, end: prev });
       start = curr;
     }
     prev = curr;
   }
-
-  // Último período abierto
   periods.push({ start, end: prev });
 
-  // Descartar períodos de 1 día aislado (pueden ser spotting mal clasificado)
+  // Mínimo 1 día (períodos muy cortos pueden ser spotting)
   return periods.filter(p => {
-    const days = (new Date(p.end) - new Date(p.start)) / 86_400_000 + 1;
-    return days >= 1; // mínimo 1 día (períodos cortos son válidos)
+    const len = (new Date(p.end) - new Date(p.start)) / 86_400_000 + 1;
+    return len >= 1;
   });
 }
 
@@ -157,7 +145,7 @@ function monthsCovered(periods) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function useHealthKitCycleImport({ onImport }) {
-  const available = Platform.OS === 'ios' && !!AppleHealthKit;
+  const available = Platform.OS === 'ios' && !!HealthKit;
 
   const [status, setStatus]     = useState('idle');
   // 'idle' | 'requesting' | 'reading' | 'preview' | 'importing' | 'done' | 'error'
@@ -176,9 +164,8 @@ export function useHealthKitCycleImport({ onImport }) {
     setError(null);
 
     try {
-      await initCycleKit();
+      await requestCyclePermissions();
     } catch (e) {
-      // iOS no distingue "denegado" de "error" en el callback — lo tratamos como denegado
       setStatus('error');
       setError('Permiso denegado o HealthKit no disponible.');
       return;
@@ -187,13 +174,11 @@ export function useHealthKitCycleImport({ onImport }) {
     setStatus('reading');
 
     try {
-      const [menstrual, spotting] = await Promise.all([
+      const [menstrual] = await Promise.all([
         fetchMenstrualSamples(5),
-        fetchSpottingSamples(5),
+        fetchSpottingSamples(5), // leemos spotting pero no lo usamos para agrupar
       ]);
 
-      // Usamos solo MenstrualFlow para construir períodos.
-      // Las muestras de spotting las incorporamos si caen dentro del rango de un período.
       const periods = groupIntoPeriods(menstrual);
 
       if (!periods.length) {
