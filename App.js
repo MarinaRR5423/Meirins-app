@@ -295,6 +295,7 @@ function App() {
             skipWorkout={profile.skipWorkout}
             logWorkoutDone={profile.logWorkoutDone}
             sleepLog={sleepLog} logSleep={profile.logSleep}
+            age={profile.age}
             weight={profile.weight} height={profile.height} logWeight={profile.logWeight} />}
         </Tab.Screen>
         <Tab.Screen name="Perfil" options={{ tabBarLabel: tabs.profile, tabBarIcon: ({ color, size }) => <User color={color} size={size} /> }}>

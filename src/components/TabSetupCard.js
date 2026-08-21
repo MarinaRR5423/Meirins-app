@@ -14,7 +14,7 @@ import { F } from '../theme/fonts';
 import RangeCalendar from './RangeCalendar';
 import TrainerCard from './TrainerCard';
 import { useDiets, DIET_CATEGORIES, normalizeDietId } from '../hooks/useDiets';
-import { PROGRAMS, totalSessions, LEVEL_LABEL, isRecommended } from '../data/trainingPrograms';
+import { PROGRAMS, totalSessions, LEVEL_LABEL, isRecommended, isVisible } from '../data/trainingPrograms';
 import { ALL_MEALS, MEAL_LABELS, getActiveMeals } from '../utils/fastingMeals';
 import { trackEvent, Events } from '../lib/analytics';
 
@@ -843,7 +843,7 @@ const LAST_SESSION_OPTIONS = [
 ];
 
 // ─── GIMNASIO ─────────────────────────────────────────────────────────────────
-export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, saveProfileExtended, openModalRef }) {
+export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, saveProfileExtended, age = null, openModalRef }) {
   const p  = T[lang] || T.es;
   const ob = p.onboarding;
   const DAY_LETTERS = p.dayLetters || ['D','L','M','X','J','V','S'];
@@ -1157,7 +1157,7 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
           {L('Elige un plan estructurado por semanas', 'Choose a structured weekly plan', 'Choisis un plan structuré par semaines', 'Scegli un piano strutturato a settimane')}
         </Text>
         <View style={{ gap: 8, marginTop: 8 }}>
-          {PROGRAMS.map(pr => {
+          {PROGRAMS.filter(pr => isVisible(pr, profileExtended, age)).map(pr => {
             const active = selectedProgram === pr.id;
             const lvl = LEVEL_LABEL[pr.level]?.[lang] || pr.level;
             const weeks = pr.weeks?.length || 0;

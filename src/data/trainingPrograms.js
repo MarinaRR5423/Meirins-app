@@ -43,11 +43,15 @@ export const LBL = {
  ankle_circles:{ es: 'Movilidad de tobillo', en: 'Ankle mobility', fr: 'Mobilité des chevilles', it: 'Mobilità caviglia' },
  arm_circles: { es: 'Círculos de brazos', en: 'Arm circles', fr: 'Cercles de bras', it: 'Cerchi braccia' },
  shoulder_circles:{ es: 'Círculos de hombros', en: 'Shoulder circles', fr: "Cercles d'épaules", it: 'Cerchi spalle' },
- // ── Etiquetas programa activa ─────────────────────────────────────────────────
+ // ── Etiquetas programas Ocasional y Activa ───────────────────────────────────
  breath_chair:  { es: 'Respiración con piernas en silla', en: 'Breathing with legs on chair', fr: 'Respiration avec jambes sur chaise', it: 'Respirazione con gambe sulla sedia' },
  leg_rock:      { es: 'Balanceo de piernas (tumbada)', en: 'Leg rock (lying)', fr: 'Bascule de jambes (allongée)', it: 'Oscillazione gambe (sdraiata)' },
  thoracic_rot:  { es: 'Rotación torácica', en: 'Thoracic rotation', fr: 'Rotation thoracique', it: 'Rotazione toracica' },
  low_lunge:     { es: 'Zancada baja', en: 'Low lunge', fr: 'Fente basse', it: 'Affondo basso' },
+ toe_walk:      { es: 'Marcha de puntillas', en: 'Toe walk', fr: 'Marche sur les pointes', it: 'Camminata sulle punte' },
+ cross_seated:  { es: 'Torsión sentada en sastre', en: 'Seated spinal twist', fr: 'Torsion du rachis en tailleur', it: 'Torsione seduta in posizione a gambe incrociate' },
+ child_sides:   { es: 'Postura del niño (brazos a los lados)', en: "Child's pose (arms to each side)", fr: "Posture de l'enfant (bras à droite, à gauche)", it: 'Postura del bambino (braccia sui lati)' },
+ endurance_cardio:{ es: 'Cardio libre (bici / natación / footing / marcha rápida)', en: 'Free cardio (cycling / swimming / easy jog / brisk walk)', fr: 'Cardio libre (vélo / natation / footing / marche rapide)', it: 'Cardio libero (bici / nuoto / footing / camminata rapida)' },
 };
 
 // ── Catálogo de ejercicios ────────────────────────────────────────────────────
@@ -87,15 +91,36 @@ export const EX = {
  incline_pushup:{ es: 'Flexión inclinada', en: 'Incline push-up', fr: 'Pompe inclinée', it: 'Piegamento inclinato' },
  dips:         { es: 'Fondos de tríceps', en: 'Triceps dips', fr: 'Dips triceps', it: 'Dips tricipiti' },
  hip_abduction:{ es: 'Abducción de cadera', en: 'Hip abduction', fr: 'Abduction des hanches', it: 'Abduzione anca' },
- // ── Ejercicios programa activa ────────────────────────────────────────────────
- superman:      { es: 'Superman', en: 'Superman', fr: 'Superman', it: 'Superman' },
- updown_dog:    { es: 'Perro cara arriba / cara abajo', en: 'Upward / downward dog', fr: 'Chien tête en haut / tête en bas', it: 'Cane faccia su / giù' },
+ // ── Ejercicios programas Ocasional y Activa ───────────────────────────────────
+ superman:       { es: 'Superman', en: 'Superman', fr: 'Superman', it: 'Superman' },
+ updown_dog:     { es: 'Perro cara arriba / cara abajo', en: 'Upward / downward dog', fr: 'Chien tête en haut / tête en bas', it: 'Cane faccia su / giù' },
  worlds_greatest:{ es: "World's greatest stretch (por lado)", en: "World's greatest stretch (per side)", fr: "World's greatest stretch (par côté)", it: "World's greatest stretch (per lato)" },
- pistol_chair:  { es: 'Sentadilla pistol con silla', en: 'Chair-assisted pistol squat', fr: 'Pistol squat avec chaise', it: 'Pistol squat con sedia' },
- step_up_knee:  { es: 'Subida al cajón + rodilla arriba', en: 'Step-up + knee drive', fr: 'Montée sur step + montée de genou', it: 'Step-up + ginocchio su' },
- squat_calf:    { es: 'Sentadilla + elevación de talones', en: 'Squat + calf raise', fr: 'Squat + montée sur les pointes', it: 'Squat + sollevamento polpacci' },
- knee_pushup:   { es: 'Flexión sobre rodillas', en: 'Knee push-up', fr: 'Pompe sur les genoux', it: 'Piegamento sulle ginocchia' },
- deadlift:      { es: 'Peso muerto', en: 'Deadlift', fr: 'Soulevé de terre', it: 'Stacco da terra' },
+ pistol_chair:   { es: 'Sentadilla pistol con silla', en: 'Chair-assisted pistol squat', fr: 'Pistol squat avec chaise', it: 'Pistol squat con sedia' },
+ step_up_knee:   { es: 'Subida al cajón + rodilla arriba', en: 'Step-up + knee drive', fr: 'Montée sur step + montée de genou', it: 'Step-up + ginocchio su' },
+ squat_calf:     { es: 'Sentadilla + elevación de talones', en: 'Squat + calf raise', fr: 'Squat + montée sur les pointes', it: 'Squat + sollevamento polpacci' },
+ knee_pushup:    { es: 'Flexión sobre rodillas', en: 'Knee push-up', fr: 'Pompe sur les genoux', it: 'Piegamento sulle ginocchia' },
+ deadlift:       { es: 'Peso muerto', en: 'Deadlift', fr: 'Soulevé de terre', it: 'Stacco da terra' },
+ // programa activa
+ bulgarian_lunge:{ es: 'Sentadilla búlgara (por lado)', en: 'Bulgarian split squat (per side)', fr: 'Fente bulgare (par côté)', it: 'Squat bulgaro (per lato)' },
+ good_morning:   { es: 'Good morning', en: 'Good morning', fr: 'Good morning', it: 'Good morning' },
+ active_side_plank:{ es: 'Plancha lateral activa (codo-rodilla)', en: 'Active side plank (elbow-knee)', fr: 'Gainage latéral actif (coude-genou)', it: 'Plank laterale attivo (gomito-ginocchio)' },
+ jump_lunge:     { es: 'Zancada con salto (por lado)', en: 'Jump lunge (per side)', fr: 'Fente sautée (par côté)', it: 'Affondo con salto (per lato)' },
+ lateral_lunge:  { es: 'Zancada lateral (por lado)', en: 'Lateral lunge (per side)', fr: 'Fente latérale (par côté)', it: 'Affondo laterale (per lato)' },
+ leg_curl_chair: { es: 'Leg curl en silla (por lado)', en: 'Chair leg curl (per side)', fr: 'Leg curl unilatéral sur chaise (par côté)', it: 'Leg curl sulla sedia (per lato)' },
+ box_jump:       { es: 'Salto al cajón', en: 'Box jump', fr: 'Box jump', it: 'Box jump' },
+ med_ball_slam:  { es: 'Lanzamiento al suelo (medicine ball)', en: 'Med ball slam', fr: 'Med ball slam', it: 'Med ball slam' },
+ bicep_curl:     { es: 'Curl de bíceps (por lado)', en: 'Bicep curl (per side)', fr: 'Curl biceps (par côté)', it: 'Curl bicipiti (per lato)' },
+ med_ball_throw: { es: 'Lanzamiento de medicine ball', en: 'Medicine ball throw', fr: 'Lancé de medicine ball', it: 'Lancio medicine ball' },
+ kb_swing:       { es: 'Kettlebell swing', en: 'Kettlebell swing', fr: 'Kettlebell swing', it: 'Kettlebell swing' },
+ vertical_pull:  { es: 'Jalón vertical / dominadas', en: 'Vertical pull / lat pulldown', fr: 'Tirage vertical', it: 'Tirata verticale' },
+ horizontal_row: { es: 'Remo horizontal', en: 'Horizontal row', fr: 'Tirage horizontal', it: 'Rematore orizzontale' },
+ static_lunge:   { es: 'Zancada estática mantenida (por lado)', en: 'Static lunge hold (per side)', fr: 'Fente statique maintenue (par côté)', it: 'Affondo statico (per lato)' },
+ balance_arms:   { es: 'Equilibrio a 1 pierna + círculos de brazos', en: 'Single-leg balance + arm circles', fr: 'Équilibre unipodal + cercles de bras', it: 'Equilibrio + cerchi braccia' },
+ wall_angels:    { es: 'Wall angels', en: 'Wall angels', fr: 'Wall angels', it: 'Wall angels' },
+ sumo_squat:     { es: 'Sentadilla sumo', en: 'Sumo squat', fr: 'Squat sumo', it: 'Squat sumo' },
+ hip_90_90:      { es: 'Oscilación de cadera 90/90 (por lado)', en: 'Hip 90/90 rock (per side)', fr: 'Bascule de hanche 90/90 (par côté)', it: 'Oscillazione anca 90/90 (per lato)' },
+ open_book:      { es: 'Libro abierto (por lado)', en: 'Open book stretch (per side)', fr: 'Étirement du livre ouvert (par côté)', it: 'Libro aperto (per lato)' },
+ side_plank_abd: { es: 'Plancha lateral con abducción', en: 'Side plank with abduction', fr: 'Gainage latéral avec abduction', it: 'Plank laterale con abduzione' },
 };
 
 // ── Helpers de construcción ───────────────────────────────────────────────────
@@ -153,6 +178,7 @@ export const PROGRAMS = [
  },
  {
  id: 'postpartum_return', emoji: '', cat: 'strength', level: 'beginner', spw: 3,
+ showIf: 'postpartum',
  forLifeStage: 'postpartum',
  name: { es: 'Posparto: vuelta segura', en: 'Postpartum: safe return', fr: 'Post-partum : retour en douceur', it: 'Post parto: ritorno sicuro' },
  desc: {
@@ -170,22 +196,6 @@ export const PROGRAMS = [
  { all: { mix: [E('squat', 3, 12), E('lunge', 3, 8), E('row', 3, 12), E('side_plank', 2, null, 20), S('walk_fast', 30)] } },
  { all: { mix: [E('squat', 3, 12), E('calf_raise', 3, 15), E('jump_soft', 2, 10), S('wu', 5), R(6, [S('run', 1), S('walk', 2)])] } },
  { all: { mix: [E('squat', 3, 15), E('jump_soft', 3, 10), S('wu', 5), R(8, [S('run', 1), S('walk', 1)])] } },
- ],
- },
- {
- id: 'cycle_strength', emoji: '', cat: 'strength', level: 'intermediate', spw: 3,
- name: { es: 'Fuerza con tu ciclo', en: 'Strength with your cycle', fr: 'Force avec ton cycle', it: 'Forza con il tuo ciclo' },
- desc: {
- es: '4 semanas de fuerza sincronizadas con tu ciclo: suave en la menstruación, carga progresiva en la folicular, máxima en la ovulación y técnica en la lútea. Empiézalo el primer día de tu regla.',
- en: '4 weeks of strength synced with your cycle: gentle during your period, progressive load in follicular, max effort at ovulation and technique in luteal. Start it on day 1 of your period.',
- fr: '4 semaines de force synchronisées avec ton cycle : doux pendant les règles, charge progressive en folliculaire, max à l\'ovulation, technique en lutéale. Commence le 1er jour de tes règles.',
- it: '4 settimane di forza sincronizzate con il ciclo: leggera durante il ciclo, carico progressivo in follicolare, massimo all\'ovulazione, tecnica in luteale. Inizia il 1º giorno del ciclo.',
- },
- weeks: [
- { all: { mix: [S('mob_spine', 8), S('mob_hips', 8), E('squat', 2, 10), E('bridge', 2, 12), E('bird_dog', 2, 8), S('stretch', 8)] } },
- { all: { mix: [E('goblet', 3, 10), E('rdl', 3, 10), E('pushup', 3, 8), E('row', 3, 10), E('plank', 3, null, 30)] } },
- { all: { mix: [E('goblet', 4, 8), E('hip_thrust', 4, 8), E('press', 3, 8), E('lunge', 3, 8), E('jump_soft', 3, 8)] } },
- { all: { mix: [E('squat', 3, 12), E('rdl', 3, 12), E('row', 3, 12), E('dead_bug', 3, 10), S('stretch', 10)] } },
  ],
  },
  {
@@ -210,6 +220,7 @@ export const PROGRAMS = [
  },
  {
  id: 'strength_40plus', emoji: '', cat: 'strength', level: 'beginner', spw: 3,
+ showIf: 'age40plus',
  forStages: ['perimenopause', 'menopause', 'postmenopause'],
  name: { es: 'Fuerza 40+ (huesos y músculo)', en: 'Strength 40+ (bones & muscle)', fr: 'Force 40+ (os et muscles)', it: 'Forza 40+ (ossa e muscoli)' },
  desc: {
@@ -263,24 +274,261 @@ export const PROGRAMS = [
  { all: { mix: [S('mob_spine', 5), S('mob_hips', 6), E('kegel', 3, 15), S('squat_hold', 2), S('stretch', 3)] } },
  ],
  },
+
+ // ── Programa activa: 3 sesiones/semana sincronizadas con el ciclo (~3 meses) ───
  {
- id: 'hiit_progressive', emoji: '', cat: 'hiit', level: 'intermediate', spw: 3,
- name: { es: 'HIIT progresivo', en: 'Progressive HIIT', fr: 'HIIT progressif', it: 'HIIT progressivo' },
- desc: {
- es: '6 semanas de HIIT que crece contigo: de 6 intervalos de 20 segundos a 10 de 40. Sesiones de 20-30 minutos para tonificar con poco tiempo.',
- en: '6 weeks of HIIT that grows with you: from 6×20-second intervals to 10×40. 20-30 minute sessions to tone up with little time.',
- fr: '6 semaines de HIIT qui progresse avec toi : de 6 intervalles de 20 s à 10 de 40 s. Séances de 20-30 minutes.',
- it: '6 settimane di HIIT che cresce con te: da 6 intervalli di 20 secondi a 10 da 40. Sessioni di 20-30 minuti.',
- },
- // Bloque HIIT: jumping jacks, sentadilla, escalador, rodillas altas, burpee
- weeks: [
- { all: { mix: [S('wu', 5), ...hiitBlock(6, 20, 40), S('stretch', 5)] } },
- { all: { mix: [S('wu', 5), ...hiitBlock(8, 20, 40), S('stretch', 5)] } },
- { all: { mix: [S('wu', 5), ...hiitBlock(8, 30, 30), S('stretch', 5)] } },
- { all: { mix: [S('wu', 5), ...hiitBlock(10, 30, 30), S('stretch', 5)] } },
- { all: { mix: [S('wu', 5), ...hiitBlock(8, 40, 20), S('stretch', 5)] } },
- { all: { mix: [S('wu', 5), ...hiitBlock(10, 40, 20), S('stretch', 5)] } },
- ],
+  id: 'physio_active_plus', emoji: 'Zap', cat: 'strength', level: 'intermediate', spw: 3,
+  phaseRotation: true,
+  name: {
+   es: 'Activa (3 meses)',
+   en: 'Active (3 months)',
+   fr: 'Active (3 mois)',
+   it: 'Attiva (3 mesi)',
+  },
+  desc: {
+   es: 'Programa para mujeres activas: 3 sesiones/semana adaptadas a tu fase del ciclo. Fuerza, potencia y cardio progresivos en ~3 meses.',
+   en: 'Programme for active women: 3 sessions/week adapted to your cycle phase. Progressive strength, power and cardio over ~3 months.',
+   fr: 'Programme pour femmes actives : 3 séances/semaine adaptées à ta phase du cycle. Force, puissance et cardio progressifs en ~3 mois.',
+   it: 'Programma per donne attive: 3 sessioni/settimana adattate alla tua fase del ciclo. Forza, potenza e cardio progressivi in ~3 mesi.',
+  },
+  phases: {
+
+   // ── Menstrual ───────────────────────────────────────────────────────────────
+   menstrual: {
+    note: {
+     es: 'El objetivo es recuperarte y mantener tus capacidades. Ponle énfasis a la movilidad y la técnica.',
+     en: 'The goal is to recover and maintain your capacities. Focus on mobility and technique.',
+     fr: 'L\'objectif est de récupérer et maintenir tes capacités. Mets l\'accent sur la mobilité et la technique.',
+     it: 'L\'obiettivo è recuperare e mantenere le capacità. Dai priorità alla mobilità e alla tecnica.',
+    },
+    sessions: [
+     {
+      label: { es: 'Refuerzo suave cuerpo entero', en: 'Light full-body strength', fr: 'Renfo léger corps entier', it: 'Rinforzo leggero corpo intero' },
+      spec: { mix: [
+       // Calentamiento
+       E('cat_cow', 1, 10),
+       E('superman', 1, 10),
+       E('worlds_greatest', 1, 10),
+       // Circuito ×3
+       R(3, [
+        E('squat', 1, 12),
+        E('bridge', 1, 12),
+        E('horizontal_row', 1, 12),
+        E('reverse_lunge', 1, 10),
+        E('incline_pushup', 1, 10),
+        E('bird_dog', 1, 8),
+        E('balance', 1, null, 30),
+        E('press', 1, 10),
+       ]),
+       // Vuelta a la calma
+       S('hip_circles', 2),
+       S('arm_circles', 2),
+       S('child_pose', 1),
+      ] },
+     },
+     {
+      label: { es: 'Cardio: endurance 45-60 min', en: 'Cardio: endurance 45-60 min', fr: 'Endurance fondamentale 45-60 min', it: 'Cardio: resistenza 45-60 min' },
+      spec: { seg: [S('endurance_cardio', 50)] },
+     },
+     {
+      label: { es: 'Pilates / yoga / movilidad', en: 'Pilates / yoga / mobility', fr: 'Pilates / yoga / mobilité', it: 'Pilates / yoga / mobilità' },
+      spec: { mix: [
+       S('breath', 3),
+       E('cat_cow', 1, 15),
+       E('lunge_thoracic', 1, 10),
+       E('updown_dog', 1, 10),
+       E('bridge', 1, 15),
+       E('dead_bug', 1, 10),
+       S('supine_twist', 4),
+       S('child_pose', 1),
+       S('breath_chair', 5),
+      ] },
+     },
+    ],
+   },
+
+   // ── Follicular ──────────────────────────────────────────────────────────────
+   follicular: {
+    note: {
+     es: 'Desarrolla fuerza, potencia y capacidad cardiovascular.',
+     en: 'Build strength, power and cardiovascular capacity.',
+     fr: 'Développe force, puissance et capacités cardiovasculaires.',
+     it: 'Sviluppa forza, potenza e capacità cardiovascolare.',
+    },
+    sessions: [
+     {
+      label: { es: 'Parte inferior', en: 'Lower body', fr: 'Bas du corps', it: 'Parte inferiore' },
+      spec: { mix: [
+       // Calentamiento
+       E('superman', 1, 10),
+       E('worlds_greatest', 1, 10),
+       E('jump_squat', 1, 10),
+       // Circuito ×3
+       R(3, [
+        E('bulgarian_lunge', 1, 10),
+        E('good_morning', 1, 10),
+        E('pistol_chair', 1, 10),
+        E('active_side_plank', 1, 10),
+        S('toe_walk', 1),
+        E('lunge_thoracic', 1, 10),
+       ]),
+       // Vuelta a la calma
+       S('supine_twist', 2),
+       E('cat_cow', 1, 10),
+       S('child_pose', 1),
+      ] },
+     },
+     {
+      label: { es: 'Parte superior', en: 'Upper body', fr: 'Haut du corps', it: 'Parte superiore' },
+      spec: { mix: [
+       // Calentamiento
+       E('bird_dog', 1, 10),
+       E('cat_cow', 1, 10),
+       E('jumping_jack', 1, 10),
+       // Circuito ×3
+       R(3, [
+        E('horizontal_row', 1, 10),
+        E('dips', 1, 10),
+        E('press', 1, 10),
+        E('superman', 1, 10),
+        E('mtn_climber', 1, 10),
+        E('pushup', 1, 6),
+       ]),
+       // Vuelta a la calma
+       S('cross_seated', 2),
+       S('child_pose', 1),
+      ] },
+     },
+     {
+      label: { es: 'Cardio fraccionado', en: 'Interval cardio', fr: 'Fractionné', it: 'Cardio a intervalli' },
+      spec: { seg: [
+       S('walk_fast', 10),
+       R(10, [S('hiit_work', 1), S('hiit_rest', 2)]),
+       S('walk', 10),
+      ] },
+     },
+    ],
+   },
+
+   // ── Ovulatory ───────────────────────────────────────────────────────────────
+   ovulatory: {
+    note: {
+     es: 'Aprovecha este período para trabajar intensidad, potencia y velocidad.',
+     en: 'Exploit this period to work on intensity, power and speed.',
+     fr: 'Exploite cette période pour travailler intensité, puissance et vitesse.',
+     it: 'Sfrutta questo periodo per lavorare su intensità, potenza e velocità.',
+    },
+    sessions: [
+     {
+      label: { es: 'Parte inferior intensa', en: 'Intense lower body', fr: 'Bas du corps intensif', it: 'Parte inferiore intensa' },
+      spec: { mix: [
+       // Calentamiento
+       E('cat_cow', 1, 10),
+       E('worlds_greatest', 1, 10),
+       E('jumping_jack', 1, 10),
+       // Circuito ×3
+       R(3, [
+        E('jump_lunge', 1, 12),
+        E('single_bridge', 1, 12),
+        E('lateral_lunge', 1, 12),
+        E('burpee', 1, 6),
+        E('leg_curl_chair', 1, 12),
+        E('box_jump', 1, 10),
+       ]),
+       // Vuelta a la calma
+       S('supine_twist', 2),
+       E('updown_dog', 1, 10),
+       S('child_pose', 1),
+      ] },
+     },
+     {
+      label: { es: 'Parte superior intensa', en: 'Intense upper body', fr: 'Haut du corps intensif', it: 'Parte superiore intensa' },
+      spec: { mix: [
+       // Calentamiento
+       E('cat_cow', 1, 10),
+       E('superman', 1, 10),
+       E('worlds_greatest', 1, 10),
+       // Circuito ×3
+       R(3, [
+        E('med_ball_slam', 1, 10),
+        E('bicep_curl', 1, 10),
+        E('med_ball_throw', 1, 10),
+        E('kb_swing', 1, 10),
+        E('horizontal_row', 1, 10),
+        E('side_plank_abd', 1, null, 15),
+       ]),
+       // Vuelta a la calma
+       S('child_sides', 2),
+       S('breath_chair', 3),
+      ] },
+     },
+     {
+      label: { es: 'Cardio fraccionado intenso', en: 'Intense interval cardio', fr: 'Fractionné intensif', it: 'Cardio intervalli intenso' },
+      spec: { seg: [
+       S('walk_fast', 10),
+       R(8, [S('hiit_work', 2), S('hiit_rest', 2)]),
+       S('walk', 10),
+      ] },
+     },
+    ],
+   },
+
+   // ── Luteal ──────────────────────────────────────────────────────────────────
+   luteal: {
+    note: {
+     es: 'Mantén tus avances y favorece la recuperación al final de la fase.',
+     en: 'Maintain your gains and favour recovery towards the end of the phase.',
+     fr: 'Maintiens tes acquis et favorise la récupération en fin de phase.',
+     it: 'Mantieni i progressi e favorisci il recupero a fine fase.',
+    },
+    sessions: [
+     {
+      label: { es: 'Refuerzo global', en: 'Global strength', fr: 'Renforcement global', it: 'Rinforzo globale' },
+      spec: { mix: [
+       // Calentamiento
+       E('high_knees', 1, null, 90),
+       E('superman', 1, 10),
+       E('worlds_greatest', 1, 10),
+       // Circuito ×3
+       R(3, [
+        E('squat', 1, 15),
+        E('bridge', 1, 12),
+        E('vertical_pull', 1, 12),
+        E('horizontal_row', 1, 12),
+        E('static_lunge', 1, 10, 10),
+        E('incline_pushup', 1, 10),
+        E('lateral_band', 1, 20),
+        E('balance_arms', 1, null, 30),
+        E('press', 1, 12),
+       ]),
+       // Vuelta a la calma
+       E('cat_cow', 1, 10),
+       S('child_pose', 1),
+       S('breath_chair', 3),
+      ] },
+     },
+     {
+      label: { es: 'Movilidad y recuperación (fin de fase / SPM)', en: 'Mobility & recovery (end of phase / PMS)', fr: 'Mobilité et récupération (fin de phase / SPM)', it: 'Mobilità e recupero (fine fase / SPM)' },
+      spec: { mix: [
+       E('cat_cow', 1, 10),
+       E('bird_dog', 1, 10),
+       E('worlds_greatest', 1, 10),
+       E('lunge_thoracic', 1, 10),
+       E('wall_angels', 1, 10),
+       E('sumo_squat', 1, 10),
+       E('hip_90_90', 1, 10),
+       E('open_book', 1, 10),
+       S('child_sides', 2),
+       S('breath', 3),
+      ] },
+     },
+     {
+      label: { es: 'Cardio: endurance 45-60 min', en: 'Cardio: endurance 45-60 min', fr: 'Endurance fondamentale 45-60 min', it: 'Cardio: resistenza 45-60 min' },
+      spec: { seg: [S('endurance_cardio', 50)] },
+     },
+    ],
+   },
+  },
  },
 
  // ── Programa activa: 1-2 sesiones/semana sincronizadas con el ciclo (~3 meses) ─
@@ -826,6 +1074,18 @@ export function programSessionToCard(state, lang = 'es', n = null) {
  };
 }
 
+/**
+ * ¿Debe mostrarse este programa a esta usuaria?
+ * showIf: 'postpartum' → solo si lifeStage === 'postpartum'
+ * showIf: 'age40plus'  → solo si la usuaria tiene ≥ 40 años
+ */
+export function isVisible(p, profileExtended = {}, age = null) {
+ if (!p.showIf) return true;
+ if (p.showIf === 'postpartum') return (profileExtended.lifeStage || '') === 'postpartum';
+ if (p.showIf === 'age40plus') return age != null && age >= 40;
+ return true;
+}
+
 /** ¿Es recomendado para esta usuaria? (badge "Para ti") */
 export function isRecommended(p, profileExtended = {}) {
  const lifeStage = profileExtended.lifeStage || '';
@@ -836,8 +1096,6 @@ export function isRecommended(p, profileExtended = {}) {
  if (p.id === 'run_0_5k' && sportGoal === 'resume') return true;
  if (p.id === 'run_5k_10k' && (sportGoal === 'competition' || sports.includes('running'))) return true;
  if (p.id === 'strength_beginner' && sportGoal === 'muscle') return true;
- if (p.id === 'hiit_progressive' && sportGoal === 'tone') return true;
- if (p.id === 'cycle_strength' && sportGoal === 'muscle') return true;
  if (p.id === 'swim_beginner' && sports.includes('swimming')) return true;
  if (p.id === 'physio_sedentaire' && ['sedentary', 'light'].includes(profileExtended?.fitnessLevel)) return true;
  return false;

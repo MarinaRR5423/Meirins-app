@@ -306,7 +306,7 @@ export default function GimnasioScreen({
  healthData, profileExtended, saveProfileExtended,
  toggleFavoriteWorkout, skipWorkout, logWorkoutDone,
  sleepLog = [], logSleep,
- weight, height, logWeight,
+ age = null, weight, height, logWeight,
 }) {
  useEffect(() => { trackScreen('Gimnasio', { phase: pi?.phase }); }, []);
  const [sub, setSub] = useState('hoy');
@@ -531,7 +531,7 @@ export default function GimnasioScreen({
     </View>
     <GymSetupCard lang={lang} trainDays={trainDays} setTrainDays={setTrainDays}
      profileExtended={profileExtended} saveProfileExtended={saveProfileExtended || (() => {})}
-     openModalRef={gymOpenRef} />
+     age={age} openModalRef={gymOpenRef} />
    </ImageBackground>
   );
  }

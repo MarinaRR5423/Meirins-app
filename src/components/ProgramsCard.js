@@ -15,12 +15,12 @@ import { F } from '../theme/fonts';
 import BText from './BText';
 import {
  PROGRAMS, totalSessions, getSession, formatSession, sessionMinutes,
- LEVEL_LABEL, isRecommended,
+ LEVEL_LABEL, isRecommended, isVisible,
 } from '../data/trainingPrograms';
 
 const BLUE = '#429FE7';
 
-export default function ProgramsCard({ lang = 'es', profileExtended, saveProfileExtended, compact = false }) {
+export default function ProgramsCard({ lang = 'es', profileExtended, saveProfileExtended, compact = false, age = null }) {
  const tr = (es, en, fr, it) => ({ es, en, fr, it }[lang] || es);
  const L = (o) => o?.[lang] || o?.es || '';
 
@@ -226,6 +226,7 @@ export default function ProgramsCard({ lang = 'es', profileExtended, saveProfile
  </TouchableOpacity>
  )}
  {[...PROGRAMS]
+ .filter(p => isVisible(p, profileExtended, age))
  .sort((a, b) => Number(isRecommended(b, profileExtended)) - Number(isRecommended(a, profileExtended)))
  .map(p => {
  const rec = isRecommended(p, profileExtended);
