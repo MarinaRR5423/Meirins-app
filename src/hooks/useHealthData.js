@@ -100,7 +100,7 @@ export function useHealthData() {
       if (saved === 'true') {
         try {
           // @kingstinct solo necesita requestAuthorization — no hay initHealthKit
-          await HealthKit.requestAuthorization(Object.values(HK), []);
+          await HealthKit.requestAuthorization({ toRead: Object.values(HK), toShare: [] });
           setIsConnected(true);
           await _performSync();
         } catch (e) {
@@ -127,7 +127,7 @@ export function useHealthData() {
   const requestPermissions = useCallback(async () => {
     if (Platform.OS === 'ios' && HealthKit) {
       try {
-        await HealthKit.requestAuthorization(Object.values(HK), []);
+        await HealthKit.requestAuthorization({ toRead: Object.values(HK), toShare: [] });
         setIsConnected(true);
         await AsyncStorage.setItem(STORAGE_KEY, 'true');
         await _performSync();

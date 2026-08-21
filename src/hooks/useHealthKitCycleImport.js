@@ -37,10 +37,10 @@ const HK_INTERMENSTRUAL = 'HKCategoryTypeIdentifierIntermenstrualBleeding';
 async function requestCyclePermissions() {
   if (!HealthKit) throw new Error('HealthKit no disponible');
   // @kingstinct/react-native-healthkit usa requestAuthorization(read[], write[])
-  await HealthKit.requestAuthorization(
-    [HK_MENSTRUAL_FLOW, HK_INTERMENSTRUAL], // lectura
-    [],                                       // escritura
-  );
+  await HealthKit.requestAuthorization({
+    toRead:  [HK_MENSTRUAL_FLOW, HK_INTERMENSTRUAL],
+    toShare: [],
+  });
 }
 
 /** Lee muestras de MenstrualFlow de los últimos `years` años. */
