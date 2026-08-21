@@ -1103,12 +1103,16 @@ function HealthTab({ hl, hd, lang, wLabel, wEmoji, profileExtended, saveProfileE
  {{ es: '¿Qué deporte fue?', en: 'What sport was it?', fr: 'Quel sport était-ce ?', it: 'Che sport era?' }[lang] || '¿Qué deporte fue?'}
  </BText>
  <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
- {SPORTS_LIST.filter(s => s.id !== 'other').map(s => (
+ {SPORTS_LIST.filter(s => s.id !== 'other').map(s => {
+ const SI = s.Icon;
+ return (
  <TouchableOpacity key={s.id} onPress={() => saveTypeOverride(workoutId, s.id)}
- style={{ paddingHorizontal: 10, paddingVertical: 6, borderRadius: 50, backgroundColor: '#EFF6FF', borderWidth: 1, borderColor: '#BFDBFE' }}>
- <BText style={{ fontSize: 12, color: '#1E40AF', fontWeight: '500' }}>{s.emoji} {s.label[lang] || s.label.es}</BText>
+ style={{ flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 50, backgroundColor: '#EFF6FF', borderWidth: 1, borderColor: '#BFDBFE' }}>
+ {SI && <SI size={11} color="#1E40AF" strokeWidth={1.8} />}
+ <BText style={{ fontSize: 12, color: '#1E40AF', fontWeight: '500' }}>{s.label[lang] || s.label.es}</BText>
  </TouchableOpacity>
- ))}
+ );
+ })}
  </View>
  <TouchableOpacity onPress={() => setIdentifyingId(null)} style={{ marginTop: 8 }}>
  <BText style={{ fontSize: 12, color: '#737373', textAlign: 'center' }}>

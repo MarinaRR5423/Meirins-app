@@ -8,7 +8,7 @@ import {
   View, Text, TouchableOpacity, StyleSheet, ScrollView,
   TextInput, Modal, SafeAreaView, Platform, ImageBackground,
 } from 'react-native';
-import { Check, X, ChevronRight, Calendar, CalendarDays } from 'lucide-react-native';
+import { Check, X, ChevronRight, Calendar, CalendarDays, Footprints, Dumbbell, Leaf, Waves, Bike, CircleDot, Shield, Zap, Music2, Mountain, Swords, MoreHorizontal, Circle } from 'lucide-react-native';
 import T from '../i18n/translations';
 import { F } from '../theme/fonts';
 import RangeCalendar from './RangeCalendar';
@@ -809,22 +809,22 @@ const COMP_LEVELS = [
 // Deportes habituales para "¿qué deporte realizas?" (selección múltiple)
 // Exportado: también lo usa GimnasioScreen para "añadir deporte extra"
 export const SPORTS_LIST = [
-  { id: 'running',   emoji: '', label: { es: 'Running',            en: 'Running',          fr: 'Running',            it: 'Corsa' } },
-  { id: 'gym',       emoji: '', label: { es: 'Musculación',        en: 'Weight training',  fr: 'Musculation',        it: 'Pesi' } },
-  { id: 'yoga',      emoji: '', label: { es: 'Yoga',               en: 'Yoga',             fr: 'Yoga',               it: 'Yoga' } },
-  { id: 'pilates',   emoji: '', label: { es: 'Pilates',            en: 'Pilates',          fr: 'Pilates',            it: 'Pilates' } },
-  { id: 'swimming',  emoji: '', label: { es: 'Natación',           en: 'Swimming',         fr: 'Natation',           it: 'Nuoto' } },
-  { id: 'cycling',   emoji: '', label: { es: 'Ciclismo',           en: 'Cycling',          fr: 'Vélo',               it: 'Ciclismo' } },
-  { id: 'padel',     emoji: '', label: { es: 'Pádel / Tenis',      en: 'Padel / Tennis',   fr: 'Padel / Tennis',     it: 'Padel / Tennis' } },
-  { id: 'football',  emoji: '', label: { es: 'Fútbol',             en: 'Football',         fr: 'Football',           it: 'Calcio' } },
-  { id: 'rugby',     emoji: '', label: { es: 'Rugby',              en: 'Rugby',            fr: 'Rugby',              it: 'Rugby' } },
-  { id: 'basketball',emoji: '', label: { es: 'Baloncesto',         en: 'Basketball',       fr: 'Basket',             it: 'Basket' } },
-  { id: 'crossfit',  emoji: '', label: { es: 'CrossFit / HIIT',    en: 'CrossFit / HIIT',  fr: 'CrossFit / HIIT',    it: 'CrossFit / HIIT' } },
-  { id: 'dance',     emoji: '', label: { es: 'Baile',              en: 'Dance',            fr: 'Danse',              it: 'Danza' } },
-  { id: 'hiking',    emoji: '', label: { es: 'Senderismo',         en: 'Hiking',           fr: 'Randonnée',          it: 'Escursionismo' } },
-  { id: 'martial',   emoji: '', label: { es: 'Boxeo / Artes marciales', en: 'Boxing / Martial arts', fr: 'Boxe / Arts martiaux', it: 'Boxe / Arti marziali' } },
-  { id: 'climbing',  emoji: '', label: { es: 'Escalada',           en: 'Climbing',         fr: 'Escalade',           it: 'Arrampicata' } },
-  { id: 'other',     emoji: '', label: { es: 'Otro',               en: 'Other',            fr: 'Autre',              it: 'Altro' } },
+  { id: 'running',    emoji: '', Icon: Footprints,    label: { es: 'Running',            en: 'Running',          fr: 'Running',            it: 'Corsa' } },
+  { id: 'gym',        emoji: '', Icon: Dumbbell,      label: { es: 'Musculación',        en: 'Weight training',  fr: 'Musculation',        it: 'Pesi' } },
+  { id: 'yoga',       emoji: '', Icon: Leaf,          label: { es: 'Yoga',               en: 'Yoga',             fr: 'Yoga',               it: 'Yoga' } },
+  { id: 'pilates',    emoji: '', Icon: Circle,        label: { es: 'Pilates',            en: 'Pilates',          fr: 'Pilates',            it: 'Pilates' } },
+  { id: 'swimming',   emoji: '', Icon: Waves,         label: { es: 'Natación',           en: 'Swimming',         fr: 'Natation',           it: 'Nuoto' } },
+  { id: 'cycling',    emoji: '', Icon: Bike,          label: { es: 'Ciclismo',           en: 'Cycling',          fr: 'Vélo',               it: 'Ciclismo' } },
+  { id: 'padel',      emoji: '', Icon: CircleDot,     label: { es: 'Pádel / Tenis',      en: 'Padel / Tennis',   fr: 'Padel / Tennis',     it: 'Padel / Tennis' } },
+  { id: 'football',   emoji: '', Icon: CircleDot,     label: { es: 'Fútbol',             en: 'Football',         fr: 'Football',           it: 'Calcio' } },
+  { id: 'rugby',      emoji: '', Icon: Shield,        label: { es: 'Rugby',              en: 'Rugby',            fr: 'Rugby',              it: 'Rugby' } },
+  { id: 'basketball', emoji: '', Icon: CircleDot,     label: { es: 'Baloncesto',         en: 'Basketball',       fr: 'Basket',             it: 'Basket' } },
+  { id: 'crossfit',   emoji: '', Icon: Zap,           label: { es: 'CrossFit / HIIT',    en: 'CrossFit / HIIT',  fr: 'CrossFit / HIIT',    it: 'CrossFit / HIIT' } },
+  { id: 'dance',      emoji: '', Icon: Music2,        label: { es: 'Baile',              en: 'Dance',            fr: 'Danse',              it: 'Danza' } },
+  { id: 'hiking',     emoji: '', Icon: Mountain,      label: { es: 'Senderismo',         en: 'Hiking',           fr: 'Randonnée',          it: 'Escursionismo' } },
+  { id: 'martial',    emoji: '', Icon: Swords,        label: { es: 'Boxeo / Artes marciales', en: 'Boxing / Martial arts', fr: 'Boxe / Arts martiaux', it: 'Boxe / Arti marziali' } },
+  { id: 'climbing',   emoji: '', Icon: Mountain,      label: { es: 'Escalada',           en: 'Climbing',         fr: 'Escalade',           it: 'Arrampicata' } },
+  { id: 'other',      emoji: '', Icon: MoreHorizontal,label: { es: 'Otro',               en: 'Other',            fr: 'Autre',              it: 'Altro' } },
 ];
 
 // Objetivos deportivos (mismos ids que el paso 3 del onboarding)
@@ -1126,10 +1126,14 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
           <View style={s.chips}>
             {SPORTS_LIST.map(o => {
               const sel = currentSports.includes(o.id);
+              const SportIcon = o.Icon;
+              const lbl = o.label[lang] || o.label.es;
               return (
-                <Chip key={o.id} variant="azote"
-                  label={sel ? (o.label[lang] || o.label.es) : `${o.emoji} ${o.label[lang] || o.label.es}`}
-                  selected={sel} onPress={() => toggleSport(o.id)} />
+                <TouchableOpacity key={o.id} onPress={() => toggleSport(o.id)}
+                  style={[s.chipAzote, sel && s.chipAzoteActive]}>
+                  {!sel && SportIcon && <SportIcon size={13} color="#0A0A0A" strokeWidth={1.8} style={{ marginRight: 4 }} />}
+                  <Text style={[s.chipAzoteLabel, sel && s.chipAzoteLabelActive]}>{lbl}</Text>
+                </TouchableOpacity>
               );
             })}
           </View>
@@ -1303,7 +1307,7 @@ const s = StyleSheet.create({
   radioBase:       { width: 20, height: 20, borderRadius: 10, borderWidth: 1, borderColor: '#737373', backgroundColor: 'white', alignItems: 'center', justifyContent: 'center' },
   radioBaseActive: { backgroundColor: '#262626', borderColor: '#262626' },
   radioDot:        { width: 8, height: 8, borderRadius: 4, backgroundColor: 'white' },
-  chipAzote:            { height: 40, paddingHorizontal: 8, borderRadius: 16, backgroundColor: '#FAFAFA', alignItems: 'center', justifyContent: 'center' },
+  chipAzote:            { height: 40, paddingHorizontal: 8, borderRadius: 16, backgroundColor: '#FAFAFA', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   chipAzoteActive:      { backgroundColor: '#0A0A0A' },
   chipAzoteLabel:       { fontSize: 16, color: '#0A0A0A', fontFamily: F.body, lineHeight: 20.8 },
   chipAzoteLabelActive: { color: 'white', fontFamily: F.body, textAlign: 'center' },
