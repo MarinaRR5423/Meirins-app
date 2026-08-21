@@ -11,15 +11,15 @@ const { width: SW, height: SH } = Dimensions.get('window');
 //   assets/splash/folicular.mp4
 //   assets/splash/ovulacion.mp4
 //   assets/splash/lutea.mp4
-const PHASE_VIDEOS = {
- menstrual: require('../../assets/splash/menstrual.mp4'),
- folicular: require('../../assets/splash/folicular.mp4'),
- ovulacion: require('../../assets/splash/ovulacion.mp4'),
- lutea: require('../../assets/splash/lutea.mp4'),
-};
-
+//
+// IMPORTANT: No cargamos los 4 vídeos en módulo — solo el de la fase activa.
+// Tener los 4 en un objeto de módulo los fuerza a entrar en memoria simultáneamente
+// al arrancar, disparando el Watchdog de iOS por exceso de RAM.
 function resolveSource(phase) {
- return PHASE_VIDEOS[phase] || PHASE_VIDEOS.folicular;
+ if (phase === 'menstrual') return require('../../assets/splash/menstrual.mp4');
+ if (phase === 'ovulacion') return require('../../assets/splash/ovulacion.mp4');
+ if (phase === 'lutea')     return require('../../assets/splash/lutea.mp4');
+ return require('../../assets/splash/folicular.mp4'); // default y 'folicular'
 }
 
 // ─── SplashVideo ──────────────────────────────────────────────────────────────
@@ -59,6 +59,19 @@ function VideoSplash({ phase, mod }) {
      SplashScreen.hideAsync().catch(() => {});
    }
  }, [ready, error]);
+
+ // Timeout de seguridad — si el video tarda más de 4s en estar listo, mostramos fallback
+ useEffect(() => {
+   const t = setTimeout(() => setError(true), 4000);
+   return () => clearTimeout(t);
+ }, []);
+
+ // Libera el player al desmontar para recuperar RAM inmediatamente
+ useEffect(() => {
+   return () => {
+     try { player?.pause?.(); player?.release?.(); } catch {}
+   };
+ }, [player]);
 
  if (error) return <SplashFallback />;
 

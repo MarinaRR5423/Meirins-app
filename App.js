@@ -126,8 +126,10 @@ function App() {
     AgletMono_Regular: require('./assets/fonts/AgletMono-Regular.otf'),
     AgletMono_Bold:    require('./assets/fonts/AgletMono-Bold.otf'),
   });
-  if (fontError) console.warn('[Fonts] Error loading fonts:', fontError);
-  console.log('[Fonts] loaded:', fontsLoaded, 'error:', fontError?.message);
+  useEffect(() => {
+    if (fontError) console.warn('[Fonts] Error loading fonts:', fontError);
+    console.log('[Fonts] loaded:', fontsLoaded, 'error:', fontError?.message);
+  }, [fontsLoaded, fontError]);
   const profile    = useProfile();
   const healthData = useHealthData();
   const [setupLang, setSetupLang] = React.useState(getDeviceLang);
@@ -194,6 +196,7 @@ function App() {
   }, []);
 
   // Detector de conexión — ping ligero a Supabase cada 30s
+  // Primer check retrasado 10s para no competir con la carga inicial (vídeo + perfil + fonts)
   useEffect(() => {
     if (Platform.OS === 'web') return;
     const check = async () => {
@@ -204,9 +207,9 @@ function App() {
         setIsOffline(true);
       }
     };
-    check();
+    const firstCheck = setTimeout(check, 10000);
     const interval = setInterval(check, 30000);
-    return () => clearInterval(interval);
+    return () => { clearTimeout(firstCheck); clearInterval(interval); };
   }, []);
   const { authState, profileLoaded, setupDone, lastPeriod, cycleLength } = profile;
   const lang = profile.profileExtended?.language || setupLang;
