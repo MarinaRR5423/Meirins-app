@@ -1124,10 +1124,14 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
           </Text>
           <Text style={[s.secSub, { color: '#737373', marginTop: -6 }]}>{L('Puedes elegir varios', 'You can pick several', 'Tu peux en choisir plusieurs', 'Puoi sceglierne più di uno')}</Text>
           <View style={s.chips}>
-            {SPORTS_LIST.map(o => (
-              <Chip key={o.id} variant="azote" label={`${o.emoji} ${o.label[lang] || o.label.es}`}
-                selected={currentSports.includes(o.id)} onPress={() => toggleSport(o.id)} />
-            ))}
+            {SPORTS_LIST.map(o => {
+              const sel = currentSports.includes(o.id);
+              return (
+                <Chip key={o.id} variant="azote"
+                  label={sel ? (o.label[lang] || o.label.es) : `${o.emoji} ${o.label[lang] || o.label.es}`}
+                  selected={sel} onPress={() => toggleSport(o.id)} />
+              );
+            })}
           </View>
           {currentSports.includes('other') && (
             <TextInput style={s.otherInputAzote} value={currentSportOther} onChangeText={setCurrentSportOther}
@@ -1302,7 +1306,7 @@ const s = StyleSheet.create({
   chipAzote:            { height: 40, paddingHorizontal: 8, borderRadius: 16, backgroundColor: '#FAFAFA', alignItems: 'center', justifyContent: 'center' },
   chipAzoteActive:      { backgroundColor: '#0A0A0A' },
   chipAzoteLabel:       { fontSize: 16, color: '#0A0A0A', fontFamily: F.body, lineHeight: 20.8 },
-  chipAzoteLabelActive: { color: 'white', fontFamily: F.body },
+  chipAzoteLabelActive: { color: 'white', fontFamily: F.body, textAlign: 'center' },
   saveBtnAzote:    { marginTop: 28, height: 48, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center' },
   saveBtnAzoteTxt: { color: '#FAFAFA', fontFamily: F.body, fontSize: 18 },
   batchDayBtn:       { width: 44, height: 44, borderRadius: 12, backgroundColor: '#F5F5F5', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'transparent' },
