@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Modal, SafeAreaView, View, TouchableOpacity, ScrollView, TextInput, StyleSheet, Switch } from 'react-native';
+import { Modal, View, TouchableOpacity, ScrollView, TextInput, StyleSheet, Switch } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { cancelTodayMoodCheck } from '../utils/notifications';
 import { CYCLE_CATEGORIES } from '../data/cycleTracking';
 import { F } from '../theme/fonts';

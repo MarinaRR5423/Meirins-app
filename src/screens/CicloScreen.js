@@ -1,6 +1,7 @@
 ﻿import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { View, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Image, ImageBackground, Modal, SafeAreaView, Platform } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet, Dimensions, Image, ImageBackground, Modal, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { F } from '../theme/fonts';
 import { ChevronRight, ChevronLeft } from 'lucide-react-native';

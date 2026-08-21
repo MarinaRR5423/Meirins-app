@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Modal, ScrollView, SafeAreaView, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Modal, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { F } from '../theme/fonts';
 import { ChevronRight, BookOpen } from 'lucide-react-native';
 import { ARTICLE_CATEGORIES } from '../data/articles';

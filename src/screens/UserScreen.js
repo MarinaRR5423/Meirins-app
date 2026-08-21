@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, StyleSheet, TextInput, LayoutAnimation, Platform, UIManager, Dimensions, ActivityIndicator, Modal, SafeAreaView } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet, TextInput, LayoutAnimation, Platform, UIManager, Dimensions, ActivityIndicator, Modal } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { F } from '../theme/fonts';
 import { Check, ChevronRight, X, UserRound, Salad, Heart, CalendarFold, Scale, Flag, CircleAlert, Camera } from 'lucide-react-native';
 import T, { LANGUAGES, t } from '../i18n/translations';

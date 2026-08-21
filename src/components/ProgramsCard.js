@@ -8,7 +8,8 @@
  * Historial en profile_extended.completedPrograms = [id, ...]
  */
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Modal, SafeAreaView, ScrollView, StyleSheet, ImageBackground } from 'react-native';
+import { View, TouchableOpacity, Modal, ScrollView, StyleSheet, ImageBackground } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { X, ChevronRight, ChevronLeft, Check, SportShoe } from 'lucide-react-native';
 import { F } from '../theme/fonts';
 import BText from './BText';

@@ -1,5 +1,6 @@
 ﻿import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { View, ScrollView, TouchableOpacity, StyleSheet, Share, Modal, TextInput, ImageBackground, Image, SafeAreaView } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet, Share, Modal, TextInput, ImageBackground, Image } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { F } from '../theme/fonts';

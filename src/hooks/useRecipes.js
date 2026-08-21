@@ -14,7 +14,7 @@ export function useRecipes() {
  setLoading(true);
  Promise.all([
  supabase.from('recipes').select('*').order('display_order'),
- supabase.from('recipe_nutrition').select('recipe_id,kcal,protein_g,carbs_g,fat_g,fiber_g'),
+ supabase.from('recipe_nutrition').select('recipe_id,kcal,protein_g,carbs_g,fat_g,fiber_g').then(r => r).catch(() => ({ data: null })),
  ]).then(([{ data, error: err }, { data: nutrition }]) => {
  if (err) { setError(err); setLoading(false); return; }
  if (data) {

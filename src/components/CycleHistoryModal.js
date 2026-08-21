@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { Modal, SafeAreaView, View, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { Modal, View, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   X, ChevronLeft, ChevronRight,
   Droplets, Smile, Zap, Moon, Activity,

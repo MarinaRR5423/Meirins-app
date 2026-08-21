@@ -249,7 +249,7 @@ function App() {
   return (
     <SafeAreaProvider>
     <GestureHandlerRootView style={{ flex: 1 }}>
-    <PostHogProvider apiKey={process.env.EXPO_PUBLIC_POSTHOG_KEY} options={{ host: process.env.EXPO_PUBLIC_POSTHOG_HOST }}>
+    <PostHogProvider apiKey={process.env.EXPO_PUBLIC_POSTHOG_KEY} options={{ host: process.env.EXPO_PUBLIC_POSTHOG_HOST, captureScreens: false }}>
     <PostHogBridge />
     <ErrorBoundary>
     <NavigationContainer ref={navigationRef}>

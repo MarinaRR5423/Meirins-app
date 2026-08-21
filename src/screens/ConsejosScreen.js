@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, TouchableOpacity, StyleSheet, Modal, SafeAreaView, Platform, StatusBar } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet, Modal, Platform, StatusBar } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ARTICLES, ARTICLE_CATEGORIES } from '../data/articles';
 import { fetchArticles } from '../data/dataService';
 import T from '../i18n/translations';

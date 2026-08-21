@@ -31,11 +31,12 @@ if (Platform.OS === 'ios') {
 // ── Permisos de ciclo — solo lectura, nunca escritura ────────────────────────
 function getCycleReadPermissions() {
   if (!AppleHealthKit) return [];
-  const P = AppleHealthKit.Constants?.Permissions ?? {};
+  const P = AppleHealthKit.Constants?.Permissions;
+  if (!P) return []; // Constants no cargadas — no pasar strings crudos que HealthKit rechazaría
   return [
-    P.MenstrualFlow            ?? 'MenstrualFlow',
-    P.IntermenstrualBleeding   ?? 'IntermenstrualBleeding',
-  ];
+    P.MenstrualFlow,
+    P.IntermenstrualBleeding,
+  ].filter(Boolean); // Filtra valores undefined si algún permiso no existe en esta versión
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -43,8 +44,14 @@ function getCycleReadPermissions() {
 /** Inicializa HealthKit con solo los permisos de ciclo. */
 function initCycleKit() {
   return new Promise((resolve, reject) => {
+    const readPerms = getCycleReadPermissions();
+    if (!readPerms.length) {
+      // Guardia de seguridad: HealthKit lanza NSInvalidArgumentException si el array está vacío
+      reject(new Error('HealthKit permissions unavailable'));
+      return;
+    }
     AppleHealthKit.initHealthKit(
-      { permissions: { read: getCycleReadPermissions(), write: [] } },
+      { permissions: { read: readPerms, write: [] } },
       (err) => { if (err) reject(err); else resolve(); },
     );
   });
