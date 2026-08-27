@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, ScrollView, StyleSheet, TouchableOpacity, Animated, ImageBackground } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from 'expo-notifications';
 import Svg, { Circle } from 'react-native-svg';
 import { F } from '../theme/fonts';
 import { useNavigation } from '@react-navigation/native';
@@ -64,8 +65,71 @@ const wwStyles = StyleSheet.create({
  xBadgeTxt: { fontSize: 10, color: 'white', fontFamily: F.bodyB, lineHeight: 12 },
 });
 const FAST_KEY = 'blumm_fast_start';
+const FAST_NOTIF_COMPLETE  = 'blumm_fast_notif_complete';
+const FAST_NOTIF_REMINDER  = 'blumm_fast_notif_reminder';
 const RING_R = 58;
 const RING_CIRC = 2 * Math.PI * RING_R;
+
+// ── Notificaciones de ayuno ───────────────────────────────────────────────────
+async function scheduleFastingNotifications(startTs, goalHours, lang) {
+  // Pedir permiso si aún no se ha concedido
+  const { status } = await Notifications.getPermissionsAsync();
+  if (status !== 'granted') {
+    const { status: s } = await Notifications.requestPermissionsAsync();
+    if (s !== 'granted') return;
+  }
+
+  // Cancelar notificaciones previas de ayuno
+  await Notifications.cancelScheduledNotificationAsync(FAST_NOTIF_COMPLETE).catch(() => {});
+  await Notifications.cancelScheduledNotificationAsync(FAST_NOTIF_REMINDER).catch(() => {});
+
+  const tr = (es, en, fr, it) => ({ es, en, fr, it }[lang] || es);
+  const completeMs = startTs + goalHours * 3600_000;
+  const reminderMs = completeMs - 30 * 60_000; // 30 min antes
+
+  // 1. Notificación al completar el ayuno
+  const completeDate = new Date(completeMs);
+  if (completeDate > new Date()) {
+    await Notifications.scheduleNotificationAsync({
+      identifier: FAST_NOTIF_COMPLETE,
+      content: {
+        title: tr('🎉 ¡Ayuno completado!', '🎉 Fast complete!', '🎉 Jeûne terminé !', '🎉 Digiuno completato!'),
+        body: tr(
+          `Has completado tu ayuno de ${goalHours}h. Ya puedes comer. ¡Bien hecho!`,
+          `You completed your ${goalHours}h fast. Time to eat!`,
+          `Tu as complété ton jeûne de ${goalHours}h. Bon appétit !`,
+          `Hai completato il digiuno di ${goalHours}h. Puoi mangiare!`,
+        ),
+        sound: true,
+      },
+      trigger: { type: 'date', date: completeDate },
+    });
+  }
+
+  // 2. Recordatorio 30 min antes de terminar
+  const reminderDate = new Date(reminderMs);
+  if (reminderDate > new Date()) {
+    await Notifications.scheduleNotificationAsync({
+      identifier: FAST_NOTIF_REMINDER,
+      content: {
+        title: tr('⏳ Quedan 30 minutos', '⏳ 30 minutes left', '⏳ 30 minutes restantes', '⏳ 30 minuti rimasti'),
+        body: tr(
+          `Tu ayuno de ${goalHours}h termina en 30 min. ¡Casi lo tienes!`,
+          `Your ${goalHours}h fast ends in 30 min. Almost there!`,
+          `Ton jeûne de ${goalHours}h se termine dans 30 min. Encore un effort !`,
+          `Il tuo digiuno di ${goalHours}h finisce tra 30 min. Ci siamo quasi!`,
+        ),
+        sound: true,
+      },
+      trigger: { type: 'date', date: reminderDate },
+    });
+  }
+}
+
+async function cancelFastingNotifications() {
+  await Notifications.cancelScheduledNotificationAsync(FAST_NOTIF_COMPLETE).catch(() => {});
+  await Notifications.cancelScheduledNotificationAsync(FAST_NOTIF_REMINDER).catch(() => {});
+}
 
 function FastingRingCard({ lang, fastingProtocol }) {
   const [fastStart, setFastStart] = useState(null);
@@ -115,12 +179,36 @@ function FastingRingCard({ lang, fastingProtocol }) {
 
   const handleToggle = async () => {
     if (fastStart) {
+      // Terminar ayuno → cancelar notificaciones y programar recordatorio diario
       await AsyncStorage.removeItem(FAST_KEY);
       setFastStart(null);
+      await cancelFastingNotifications();
+      // 3. Recordatorio diario para iniciar el siguiente ayuno (misma hora + 24h)
+      const nextFastDate = new Date(fastStart + 24 * 3600_000);
+      if (nextFastDate > new Date()) {
+        const { status } = await Notifications.getPermissionsAsync();
+        if (status === 'granted') {
+          await Notifications.scheduleNotificationAsync({
+            content: {
+              title: tr('🕐 Hora de tu ayuno', '🕐 Time to fast', '🕐 Heure de jeûner', '🕐 Ora del digiuno'),
+              body: tr(
+                `Ayer iniciaste tu ayuno a esta hora. ¿Empezamos?`,
+                `You started your fast at this time yesterday. Ready to begin?`,
+                `Tu as commencé ton jeûne à cette heure hier. On commence ?`,
+                `Ieri hai iniziato il digiuno a quest'ora. Iniziamo?`,
+              ),
+              sound: true,
+            },
+            trigger: { type: 'date', date: nextFastDate },
+          });
+        }
+      }
     } else {
+      // Iniciar ayuno → guardar timestamp y programar notificaciones
       const t = Date.now();
       await AsyncStorage.setItem(FAST_KEY, String(t));
       setFastStart(t);
+      await scheduleFastingNotifications(t, goalHours, lang);
     }
   };
 
