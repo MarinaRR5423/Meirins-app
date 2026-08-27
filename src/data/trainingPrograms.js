@@ -1,147 +1,147 @@
-/**
- * trainingPrograms.js — catálogo de programas de entrenamiento guiados.
+﻿/**
+ * trainingPrograms.js â€” catÃ¡logo de programas de entrenamiento guiados.
  *
- * Contenido paramétrico: las sesiones se componen de segmentos (correr X min,
- * caminar X min, repetir N veces…) o ejercicios (sentadilla 3×12). Los textos
- * salen de los catálogos LBL/EX en 4 idiomas, así que añadir un programa nuevo
+ * Contenido paramÃ©trico: las sesiones se componen de segmentos (correr X min,
+ * caminar X min, repetir N vecesâ€¦) o ejercicios (sentadilla 3Ã—12). Los textos
+ * salen de los catÃ¡logos LBL/EX en 4 idiomas, asÃ­ que aÃ±adir un programa nuevo
  * no requiere traducir prosa.
  *
- * Progreso de la usuaria → profile_extended.activeProgram = { id, started, done }
- * (done = nº de sesiones completadas; semana/sesión se derivan).
+ * Progreso de la usuaria â†’ profile_extended.activeProgram = { id, started, done }
+ * (done = nÂº de sesiones completadas; semana/sesiÃ³n se derivan).
  */
 
-// ── Etiquetas de segmentos ────────────────────────────────────────────────────
+// â”€â”€ Etiquetas de segmentos â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const LBL = {
- wu: { es: 'Calentamiento andando', en: 'Warm-up walk', fr: 'Échauffement en marchant', it: 'Riscaldamento camminando' },
+ wu: { es: 'Calentamiento andando', en: 'Warm-up walk', fr: 'Ã‰chauffement en marchant', it: 'Riscaldamento camminando' },
  cd: { es: 'Vuelta a la calma', en: 'Cool-down', fr: 'Retour au calme', it: 'Defaticamento' },
  run: { es: 'Correr', en: 'Run', fr: 'Courir', it: 'Correre' },
- run_easy: { es: 'Trote suave', en: 'Easy jog', fr: 'Footing léger', it: 'Corsa leggera' },
- run_fast: { es: 'Ritmo rápido', en: 'Fast pace', fr: 'Allure rapide', it: 'Ritmo veloce' },
+ run_easy: { es: 'Trote suave', en: 'Easy jog', fr: 'Footing lÃ©ger', it: 'Corsa leggera' },
+ run_fast: { es: 'Ritmo rÃ¡pido', en: 'Fast pace', fr: 'Allure rapide', it: 'Ritmo veloce' },
  walk: { es: 'Caminar', en: 'Walk', fr: 'Marcher', it: 'Camminare' },
- walk_fast: { es: 'Caminar rápido', en: 'Brisk walk', fr: 'Marche rapide', it: 'Camminata veloce' },
- stretch: { es: 'Estiramientos', en: 'Stretching', fr: 'Étirements', it: 'Stretching' },
- breath: { es: 'Respiración diafragmática', en: 'Diaphragmatic breathing', fr: 'Respiration diaphragmatique', it: 'Respirazione diaframmatica' },
- swim_breath:{ es: 'Respiración en el agua', en: 'Water breathing drills', fr: 'Respiration dans l\'eau', it: 'Respirazione in acqua' },
- swim_float:{ es: 'Flotación y deslizamiento', en: 'Floating & gliding', fr: 'Flottaison et glisse', it: 'Galleggiamento e scivolamento' },
+ walk_fast: { es: 'Caminar rÃ¡pido', en: 'Brisk walk', fr: 'Marche rapide', it: 'Camminata veloce' },
+ stretch: { es: 'Estiramientos', en: 'Stretching', fr: 'Ã‰tirements', it: 'Stretching' },
+ breath: { es: 'RespiraciÃ³n diafragmÃ¡tica', en: 'Diaphragmatic breathing', fr: 'Respiration diaphragmatique', it: 'Respirazione diaframmatica' },
+ swim_breath:{ es: 'RespiraciÃ³n en el agua', en: 'Water breathing drills', fr: 'Respiration dans l\'eau', it: 'Respirazione in acqua' },
+ swim_float:{ es: 'FlotaciÃ³n y deslizamiento', en: 'Floating & gliding', fr: 'Flottaison et glisse', it: 'Galleggiamento e scivolamento' },
  swim_kick: { es: 'Batida con tabla', en: 'Kick with board', fr: 'Battements avec planche', it: 'Gambata con tavoletta' },
  swim_arms: { es: 'Brazos de crol con tabla', en: 'Crawl arms with board', fr: 'Bras de crawl avec planche', it: 'Bracciata stile libero con tavoletta' },
  swim_crawl:{ es: 'Crol', en: 'Front crawl', fr: 'Crawl', it: 'Stile libero' },
- swim_back: { es: 'Espalda suave', en: 'Easy backstroke', fr: 'Dos léger', it: 'Dorso leggero' },
+ swim_back: { es: 'Espalda suave', en: 'Easy backstroke', fr: 'Dos lÃ©ger', it: 'Dorso leggero' },
  swim_rest: { es: 'Descanso en el borde', en: 'Rest at the wall', fr: 'Repos au mur', it: 'Riposo al bordo' },
- hiit_work: { es: 'Alta intensidad', en: 'High intensity', fr: 'Haute intensité', it: 'Alta intensità' },
- hiit_rest: { es: 'Recuperación', en: 'Recovery', fr: 'Récupération', it: 'Recupero' },
- mob_hips: { es: 'Movilidad de cadera', en: 'Hip mobility', fr: 'Mobilité des hanches', it: 'Mobilità delle anche' },
- mob_spine: { es: 'Movilidad de columna', en: 'Spine mobility', fr: 'Mobilité du dos', it: 'Mobilità della colonna' },
+ hiit_work: { es: 'Alta intensidad', en: 'High intensity', fr: 'Haute intensitÃ©', it: 'Alta intensitÃ ' },
+ hiit_rest: { es: 'RecuperaciÃ³n', en: 'Recovery', fr: 'RÃ©cupÃ©ration', it: 'Recupero' },
+ mob_hips: { es: 'Movilidad de cadera', en: 'Hip mobility', fr: 'MobilitÃ© des hanches', it: 'MobilitÃ  delle anche' },
+ mob_spine: { es: 'Movilidad de columna', en: 'Spine mobility', fr: 'MobilitÃ© du dos', it: 'MobilitÃ  della colonna' },
  squat_hold:{ es: 'Sentadilla profunda mantenida', en: 'Deep squat hold', fr: 'Squat profond maintenu', it: 'Squat profondo mantenuto' },
- // ── Movilidad / relajación (programa fisio) ─────────────────────────────────
- child_pose: { es: 'Postura del niño', en: "Child's pose", fr: "Posture de l'enfant", it: 'Postura del bambino' },
+ // â”€â”€ Movilidad / relajaciÃ³n (programa fisio) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+ child_pose: { es: 'Postura del niÃ±o', en: "Child's pose", fr: "Posture de l'enfant", it: 'Postura del bambino' },
  happy_baby: { es: 'Happy baby', en: 'Happy baby', fr: 'Happy baby', it: 'Happy baby' },
- supine_twist:{ es: 'Torsión supina', en: 'Supine twist', fr: 'Torsion allongée', it: 'Torsione supina' },
+ supine_twist:{ es: 'TorsiÃ³n supina', en: 'Supine twist', fr: 'Torsion allongÃ©e', it: 'Torsione supina' },
  sphinx:      { es: 'Esfinge', en: 'Sphinx', fr: 'Sphinx', it: 'Sfinge' },
- hip_circles: { es: 'Círculos de cadera', en: 'Hip circles', fr: 'Cercles de bassin', it: 'Cerchi fianchi' },
- spine_rotation:{ es: 'Rotación de columna', en: 'Spine rotation', fr: 'Rotation du dos', it: 'Rotazione colonna' },
- ankle_circles:{ es: 'Movilidad de tobillo', en: 'Ankle mobility', fr: 'Mobilité des chevilles', it: 'Mobilità caviglia' },
- arm_circles: { es: 'Círculos de brazos', en: 'Arm circles', fr: 'Cercles de bras', it: 'Cerchi braccia' },
- shoulder_circles:{ es: 'Círculos de hombros', en: 'Shoulder circles', fr: "Cercles d'épaules", it: 'Cerchi spalle' },
- // ── Etiquetas programas Ocasional y Activa ───────────────────────────────────
- breath_chair:  { es: 'Respiración con piernas en silla', en: 'Breathing with legs on chair', fr: 'Respiration avec jambes sur chaise', it: 'Respirazione con gambe sulla sedia' },
- leg_rock:      { es: 'Balanceo de piernas (tumbada)', en: 'Leg rock (lying)', fr: 'Bascule de jambes (allongée)', it: 'Oscillazione gambe (sdraiata)' },
- thoracic_rot:  { es: 'Rotación torácica', en: 'Thoracic rotation', fr: 'Rotation thoracique', it: 'Rotazione toracica' },
+ hip_circles: { es: 'CÃ­rculos de cadera', en: 'Hip circles', fr: 'Cercles de bassin', it: 'Cerchi fianchi' },
+ spine_rotation:{ es: 'RotaciÃ³n de columna', en: 'Spine rotation', fr: 'Rotation du dos', it: 'Rotazione colonna' },
+ ankle_circles:{ es: 'Movilidad de tobillo', en: 'Ankle mobility', fr: 'MobilitÃ© des chevilles', it: 'MobilitÃ  caviglia' },
+ arm_circles: { es: 'CÃ­rculos de brazos', en: 'Arm circles', fr: 'Cercles de bras', it: 'Cerchi braccia' },
+ shoulder_circles:{ es: 'CÃ­rculos de hombros', en: 'Shoulder circles', fr: "Cercles d'Ã©paules", it: 'Cerchi spalle' },
+ // â”€â”€ Etiquetas programas Ocasional y Activa â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+ breath_chair:  { es: 'RespiraciÃ³n con piernas en silla', en: 'Breathing with legs on chair', fr: 'Respiration avec jambes sur chaise', it: 'Respirazione con gambe sulla sedia' },
+ leg_rock:      { es: 'Balanceo de piernas (tumbada)', en: 'Leg rock (lying)', fr: 'Bascule de jambes (allongÃ©e)', it: 'Oscillazione gambe (sdraiata)' },
+ thoracic_rot:  { es: 'RotaciÃ³n torÃ¡cica', en: 'Thoracic rotation', fr: 'Rotation thoracique', it: 'Rotazione toracica' },
  low_lunge:     { es: 'Zancada baja', en: 'Low lunge', fr: 'Fente basse', it: 'Affondo basso' },
  toe_walk:      { es: 'Marcha de puntillas', en: 'Toe walk', fr: 'Marche sur les pointes', it: 'Camminata sulle punte' },
- cross_seated:  { es: 'Torsión sentada en sastre', en: 'Seated spinal twist', fr: 'Torsion du rachis en tailleur', it: 'Torsione seduta in posizione a gambe incrociate' },
- child_sides:   { es: 'Postura del niño (brazos a los lados)', en: "Child's pose (arms to each side)", fr: "Posture de l'enfant (bras à droite, à gauche)", it: 'Postura del bambino (braccia sui lati)' },
- endurance_cardio:{ es: 'Cardio libre (bici / natación / footing / marcha rápida)', en: 'Free cardio (cycling / swimming / easy jog / brisk walk)', fr: 'Cardio libre (vélo / natation / footing / marche rapide)', it: 'Cardio libero (bici / nuoto / footing / camminata rapida)' },
+ cross_seated:  { es: 'TorsiÃ³n sentada en sastre', en: 'Seated spinal twist', fr: 'Torsion du rachis en tailleur', it: 'Torsione seduta in posizione a gambe incrociate' },
+ child_sides:   { es: 'Postura del niÃ±o (brazos a los lados)', en: "Child's pose (arms to each side)", fr: "Posture de l'enfant (bras Ã  droite, Ã  gauche)", it: 'Postura del bambino (braccia sui lati)' },
+ endurance_cardio:{ es: 'Cardio libre (bici / nataciÃ³n / footing / marcha rÃ¡pida)', en: 'Free cardio (cycling / swimming / easy jog / brisk walk)', fr: 'Cardio libre (vÃ©lo / natation / footing / marche rapide)', it: 'Cardio libero (bici / nuoto / footing / camminata rapida)' },
 };
 
-// ── Catálogo de ejercicios ────────────────────────────────────────────────────
+// â”€â”€ CatÃ¡logo de ejercicios â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const EX = {
  squat: { es: 'Sentadilla', en: 'Squat', fr: 'Squat', it: 'Squat' },
  goblet: { es: 'Sentadilla goblet', en: 'Goblet squat', fr: 'Goblet squat', it: 'Goblet squat' },
- rdl: { es: 'Peso muerto rumano', en: 'Romanian deadlift', fr: 'Soulevé de terre roumain', it: 'Stacco rumeno' },
+ rdl: { es: 'Peso muerto rumano', en: 'Romanian deadlift', fr: 'SoulevÃ© de terre roumain', it: 'Stacco rumeno' },
  lunge: { es: 'Zancada', en: 'Lunge', fr: 'Fente', it: 'Affondo' },
- pushup: { es: 'Flexión (rodillas si hace falta)', en: 'Push-up (knees if needed)', fr: 'Pompe (genoux si besoin)', it: 'Piegamento (ginocchia se serve)' },
- row: { es: 'Remo (mancuerna o banda)', en: 'Row (dumbbell or band)', fr: 'Rowing (haltère ou élastique)', it: 'Rematore (manubrio o elastico)' },
- press: { es: 'Press de hombros', en: 'Shoulder press', fr: 'Développé épaules', it: 'Lento avanti' },
+ pushup: { es: 'FlexiÃ³n (rodillas si hace falta)', en: 'Push-up (knees if needed)', fr: 'Pompe (genoux si besoin)', it: 'Piegamento (ginocchia se serve)' },
+ row: { es: 'Remo (mancuerna o banda)', en: 'Row (dumbbell or band)', fr: 'Rowing (haltÃ¨re ou Ã©lastique)', it: 'Rematore (manubrio o elastico)' },
+ press: { es: 'Press de hombros', en: 'Shoulder press', fr: 'DÃ©veloppÃ© Ã©paules', it: 'Lento avanti' },
  plank: { es: 'Plancha', en: 'Plank', fr: 'Planche', it: 'Plank' },
- side_plank: { es: 'Plancha lateral', en: 'Side plank', fr: 'Planche latérale', it: 'Plank laterale' },
- bridge: { es: 'Puente de glúteos', en: 'Glute bridge', fr: 'Pont fessier', it: 'Ponte glutei' },
+ side_plank: { es: 'Plancha lateral', en: 'Side plank', fr: 'Planche latÃ©rale', it: 'Plank laterale' },
+ bridge: { es: 'Puente de glÃºteos', en: 'Glute bridge', fr: 'Pont fessier', it: 'Ponte glutei' },
  hip_thrust: { es: 'Hip thrust', en: 'Hip thrust', fr: 'Hip thrust', it: 'Hip thrust' },
- step_up: { es: 'Subida al cajón', en: 'Step-up', fr: 'Montée sur step', it: 'Step-up' },
+ step_up: { es: 'Subida al cajÃ³n', en: 'Step-up', fr: 'MontÃ©e sur step', it: 'Step-up' },
  dead_bug: { es: 'Dead bug', en: 'Dead bug', fr: 'Dead bug', it: 'Dead bug' },
  bird_dog: { es: 'Bird dog', en: 'Bird dog', fr: 'Bird dog', it: 'Bird dog' },
  cat_cow: { es: 'Gato-vaca', en: 'Cat-cow', fr: 'Chat-vache', it: 'Gatto-mucca' },
- kegel: { es: 'Kegel (suelo pélvico)', en: 'Kegel (pelvic floor)', fr: 'Kegel (périnée)', it: 'Kegel (pavimento pelvico)' },
- calf_raise: { es: 'Elevación de talones', en: 'Calf raise', fr: 'Élévation des mollets', it: 'Sollevamento polpacci' },
+ kegel: { es: 'Kegel (suelo pÃ©lvico)', en: 'Kegel (pelvic floor)', fr: 'Kegel (pÃ©rinÃ©e)', it: 'Kegel (pavimento pelvico)' },
+ calf_raise: { es: 'ElevaciÃ³n de talones', en: 'Calf raise', fr: 'Ã‰lÃ©vation des mollets', it: 'Sollevamento polpacci' },
  jump_soft: { es: 'Saltos suaves', en: 'Soft jumps', fr: 'Petits sauts', it: 'Salti leggeri' },
- balance: { es: 'Equilibrio a una pierna', en: 'Single-leg balance', fr: 'Équilibre sur une jambe', it: 'Equilibrio su una gamba' },
- burpee: { es: 'Burpee (versión adaptada ok)', en: 'Burpee (modified ok)', fr: 'Burpee (version adaptée ok)', it: 'Burpee (versione adattata ok)' },
+ balance: { es: 'Equilibrio a una pierna', en: 'Single-leg balance', fr: 'Ã‰quilibre sur une jambe', it: 'Equilibrio su una gamba' },
+ burpee: { es: 'Burpee (versiÃ³n adaptada ok)', en: 'Burpee (modified ok)', fr: 'Burpee (version adaptÃ©e ok)', it: 'Burpee (versione adattata ok)' },
  mtn_climber:{ es: 'Escalador', en: 'Mountain climber', fr: 'Mountain climber', it: 'Mountain climber' },
  jumping_jack:{ es: 'Jumping jacks', en: 'Jumping jacks', fr: 'Jumping jacks', it: 'Jumping jacks' },
- high_knees: { es: 'Rodillas altas', en: 'High knees', fr: 'Montées de genoux', it: 'Ginocchia alte' },
- // ── Ejercicios programa fisio sedentaria ──────────────────────────────────────
- wall_pushup:  { es: 'Flexión en pared', en: 'Wall push-up', fr: 'Pompe contre le mur', it: 'Piegamento al muro' },
+ high_knees: { es: 'Rodillas altas', en: 'High knees', fr: 'MontÃ©es de genoux', it: 'Ginocchia alte' },
+ // â”€â”€ Ejercicios programa fisio sedentaria â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+ wall_pushup:  { es: 'FlexiÃ³n en pared', en: 'Wall push-up', fr: 'Pompe contre le mur', it: 'Piegamento al muro' },
  knee_plank:   { es: 'Plancha sobre rodillas', en: 'Knee plank', fr: 'Planche sur genoux', it: 'Plank sulle ginocchia' },
- lunge_thoracic:{ es: 'Fente + rotación torácica', en: 'Lunge + thoracic rotation', fr: 'Fente + rotation thoracique', it: 'Affondo + rotazione toracica' },
- quad_hip_open:{ es: 'Apertura de cadera en cuadrupedia', en: 'Hip opening in quadruped', fr: 'Ouverture hanche en quadrupédie', it: 'Apertura anca in quadrupedia' },
- single_bridge:{ es: 'Puente de glúteos a 1 pierna', en: 'Single-leg glute bridge', fr: 'Pont fessier 1 jambe', it: 'Ponte glutei 1 gamba' },
- reverse_lunge:{ es: 'Zancada hacia atrás', en: 'Reverse lunge', fr: 'Fente arrière', it: 'Affondo indietro' },
- jump_squat:   { es: 'Sentadilla con salto', en: 'Jump squat', fr: 'Squat sauté', it: 'Squat con salto' },
- lateral_band: { es: 'Marcha lateral con banda', en: 'Lateral band walk', fr: 'Marche latérale avec élastique', it: 'Marcia laterale con elastico' },
- incline_pushup:{ es: 'Flexión inclinada', en: 'Incline push-up', fr: 'Pompe inclinée', it: 'Piegamento inclinato' },
- dips:         { es: 'Fondos de tríceps', en: 'Triceps dips', fr: 'Dips triceps', it: 'Dips tricipiti' },
- hip_abduction:{ es: 'Abducción de cadera', en: 'Hip abduction', fr: 'Abduction des hanches', it: 'Abduzione anca' },
- // ── Ejercicios programas Ocasional y Activa ───────────────────────────────────
+ lunge_thoracic:{ es: 'Fente + rotaciÃ³n torÃ¡cica', en: 'Lunge + thoracic rotation', fr: 'Fente + rotation thoracique', it: 'Affondo + rotazione toracica' },
+ quad_hip_open:{ es: 'Apertura de cadera en cuadrupedia', en: 'Hip opening in quadruped', fr: 'Ouverture hanche en quadrupÃ©die', it: 'Apertura anca in quadrupedia' },
+ single_bridge:{ es: 'Puente de glÃºteos a 1 pierna', en: 'Single-leg glute bridge', fr: 'Pont fessier 1 jambe', it: 'Ponte glutei 1 gamba' },
+ reverse_lunge:{ es: 'Zancada hacia atrÃ¡s', en: 'Reverse lunge', fr: 'Fente arriÃ¨re', it: 'Affondo indietro' },
+ jump_squat:   { es: 'Sentadilla con salto', en: 'Jump squat', fr: 'Squat sautÃ©', it: 'Squat con salto' },
+ lateral_band: { es: 'Marcha lateral con banda', en: 'Lateral band walk', fr: 'Marche latÃ©rale avec Ã©lastique', it: 'Marcia laterale con elastico' },
+ incline_pushup:{ es: 'FlexiÃ³n inclinada', en: 'Incline push-up', fr: 'Pompe inclinÃ©e', it: 'Piegamento inclinato' },
+ dips:         { es: 'Fondos de trÃ­ceps', en: 'Triceps dips', fr: 'Dips triceps', it: 'Dips tricipiti' },
+ hip_abduction:{ es: 'AbducciÃ³n de cadera', en: 'Hip abduction', fr: 'Abduction des hanches', it: 'Abduzione anca' },
+ // â”€â”€ Ejercicios programas Ocasional y Activa â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
  superman:       { es: 'Superman', en: 'Superman', fr: 'Superman', it: 'Superman' },
- updown_dog:     { es: 'Perro cara arriba / cara abajo', en: 'Upward / downward dog', fr: 'Chien tête en haut / tête en bas', it: 'Cane faccia su / giù' },
- worlds_greatest:{ es: "World's greatest stretch (por lado)", en: "World's greatest stretch (per side)", fr: "World's greatest stretch (par côté)", it: "World's greatest stretch (per lato)" },
+ updown_dog:     { es: 'Perro cara arriba / cara abajo', en: 'Upward / downward dog', fr: 'Chien tÃªte en haut / tÃªte en bas', it: 'Cane faccia su / giÃ¹' },
+ worlds_greatest:{ es: "World's greatest stretch (por lado)", en: "World's greatest stretch (per side)", fr: "World's greatest stretch (par cÃ´tÃ©)", it: "World's greatest stretch (per lato)" },
  pistol_chair:   { es: 'Sentadilla pistol con silla', en: 'Chair-assisted pistol squat', fr: 'Pistol squat avec chaise', it: 'Pistol squat con sedia' },
- step_up_knee:   { es: 'Subida al cajón + rodilla arriba', en: 'Step-up + knee drive', fr: 'Montée sur step + montée de genou', it: 'Step-up + ginocchio su' },
- squat_calf:     { es: 'Sentadilla + elevación de talones', en: 'Squat + calf raise', fr: 'Squat + montée sur les pointes', it: 'Squat + sollevamento polpacci' },
- knee_pushup:    { es: 'Flexión sobre rodillas', en: 'Knee push-up', fr: 'Pompe sur les genoux', it: 'Piegamento sulle ginocchia' },
- deadlift:       { es: 'Peso muerto', en: 'Deadlift', fr: 'Soulevé de terre', it: 'Stacco da terra' },
+ step_up_knee:   { es: 'Subida al cajÃ³n + rodilla arriba', en: 'Step-up + knee drive', fr: 'MontÃ©e sur step + montÃ©e de genou', it: 'Step-up + ginocchio su' },
+ squat_calf:     { es: 'Sentadilla + elevaciÃ³n de talones', en: 'Squat + calf raise', fr: 'Squat + montÃ©e sur les pointes', it: 'Squat + sollevamento polpacci' },
+ knee_pushup:    { es: 'FlexiÃ³n sobre rodillas', en: 'Knee push-up', fr: 'Pompe sur les genoux', it: 'Piegamento sulle ginocchia' },
+ deadlift:       { es: 'Peso muerto', en: 'Deadlift', fr: 'SoulevÃ© de terre', it: 'Stacco da terra' },
  // programa activa
- bulgarian_lunge:{ es: 'Sentadilla búlgara (por lado)', en: 'Bulgarian split squat (per side)', fr: 'Fente bulgare (par côté)', it: 'Squat bulgaro (per lato)' },
+ bulgarian_lunge:{ es: 'Sentadilla bÃºlgara (por lado)', en: 'Bulgarian split squat (per side)', fr: 'Fente bulgare (par cÃ´tÃ©)', it: 'Squat bulgaro (per lato)' },
  good_morning:   { es: 'Good morning', en: 'Good morning', fr: 'Good morning', it: 'Good morning' },
- active_side_plank:{ es: 'Plancha lateral activa (codo-rodilla)', en: 'Active side plank (elbow-knee)', fr: 'Gainage latéral actif (coude-genou)', it: 'Plank laterale attivo (gomito-ginocchio)' },
- jump_lunge:     { es: 'Zancada con salto (por lado)', en: 'Jump lunge (per side)', fr: 'Fente sautée (par côté)', it: 'Affondo con salto (per lato)' },
- lateral_lunge:  { es: 'Zancada lateral (por lado)', en: 'Lateral lunge (per side)', fr: 'Fente latérale (par côté)', it: 'Affondo laterale (per lato)' },
- leg_curl_chair: { es: 'Leg curl en silla (por lado)', en: 'Chair leg curl (per side)', fr: 'Leg curl unilatéral sur chaise (par côté)', it: 'Leg curl sulla sedia (per lato)' },
- box_jump:       { es: 'Salto al cajón', en: 'Box jump', fr: 'Box jump', it: 'Box jump' },
+ active_side_plank:{ es: 'Plancha lateral activa (codo-rodilla)', en: 'Active side plank (elbow-knee)', fr: 'Gainage latÃ©ral actif (coude-genou)', it: 'Plank laterale attivo (gomito-ginocchio)' },
+ jump_lunge:     { es: 'Zancada con salto (por lado)', en: 'Jump lunge (per side)', fr: 'Fente sautÃ©e (par cÃ´tÃ©)', it: 'Affondo con salto (per lato)' },
+ lateral_lunge:  { es: 'Zancada lateral (por lado)', en: 'Lateral lunge (per side)', fr: 'Fente latÃ©rale (par cÃ´tÃ©)', it: 'Affondo laterale (per lato)' },
+ leg_curl_chair: { es: 'Leg curl en silla (por lado)', en: 'Chair leg curl (per side)', fr: 'Leg curl unilatÃ©ral sur chaise (par cÃ´tÃ©)', it: 'Leg curl sulla sedia (per lato)' },
+ box_jump:       { es: 'Salto al cajÃ³n', en: 'Box jump', fr: 'Box jump', it: 'Box jump' },
  med_ball_slam:  { es: 'Lanzamiento al suelo (medicine ball)', en: 'Med ball slam', fr: 'Med ball slam', it: 'Med ball slam' },
- bicep_curl:     { es: 'Curl de bíceps (por lado)', en: 'Bicep curl (per side)', fr: 'Curl biceps (par côté)', it: 'Curl bicipiti (per lato)' },
- med_ball_throw: { es: 'Lanzamiento de medicine ball', en: 'Medicine ball throw', fr: 'Lancé de medicine ball', it: 'Lancio medicine ball' },
+ bicep_curl:     { es: 'Curl de bÃ­ceps (por lado)', en: 'Bicep curl (per side)', fr: 'Curl biceps (par cÃ´tÃ©)', it: 'Curl bicipiti (per lato)' },
+ med_ball_throw: { es: 'Lanzamiento de medicine ball', en: 'Medicine ball throw', fr: 'LancÃ© de medicine ball', it: 'Lancio medicine ball' },
  kb_swing:       { es: 'Kettlebell swing', en: 'Kettlebell swing', fr: 'Kettlebell swing', it: 'Kettlebell swing' },
- vertical_pull:  { es: 'Jalón vertical / dominadas', en: 'Vertical pull / lat pulldown', fr: 'Tirage vertical', it: 'Tirata verticale' },
+ vertical_pull:  { es: 'JalÃ³n vertical / dominadas', en: 'Vertical pull / lat pulldown', fr: 'Tirage vertical', it: 'Tirata verticale' },
  horizontal_row: { es: 'Remo horizontal', en: 'Horizontal row', fr: 'Tirage horizontal', it: 'Rematore orizzontale' },
- static_lunge:   { es: 'Zancada estática mantenida (por lado)', en: 'Static lunge hold (per side)', fr: 'Fente statique maintenue (par côté)', it: 'Affondo statico (per lato)' },
- balance_arms:   { es: 'Equilibrio a 1 pierna + círculos de brazos', en: 'Single-leg balance + arm circles', fr: 'Équilibre unipodal + cercles de bras', it: 'Equilibrio + cerchi braccia' },
+ static_lunge:   { es: 'Zancada estÃ¡tica mantenida (por lado)', en: 'Static lunge hold (per side)', fr: 'Fente statique maintenue (par cÃ´tÃ©)', it: 'Affondo statico (per lato)' },
+ balance_arms:   { es: 'Equilibrio a 1 pierna + cÃ­rculos de brazos', en: 'Single-leg balance + arm circles', fr: 'Ã‰quilibre unipodal + cercles de bras', it: 'Equilibrio + cerchi braccia' },
  wall_angels:    { es: 'Wall angels', en: 'Wall angels', fr: 'Wall angels', it: 'Wall angels' },
  sumo_squat:     { es: 'Sentadilla sumo', en: 'Sumo squat', fr: 'Squat sumo', it: 'Squat sumo' },
- hip_90_90:      { es: 'Oscilación de cadera 90/90 (por lado)', en: 'Hip 90/90 rock (per side)', fr: 'Bascule de hanche 90/90 (par côté)', it: 'Oscillazione anca 90/90 (per lato)' },
- open_book:      { es: 'Libro abierto (por lado)', en: 'Open book stretch (per side)', fr: 'Étirement du livre ouvert (par côté)', it: 'Libro aperto (per lato)' },
- side_plank_abd: { es: 'Plancha lateral con abducción', en: 'Side plank with abduction', fr: 'Gainage latéral avec abduction', it: 'Plank laterale con abduzione' },
+ hip_90_90:      { es: 'OscilaciÃ³n de cadera 90/90 (por lado)', en: 'Hip 90/90 rock (per side)', fr: 'Bascule de hanche 90/90 (par cÃ´tÃ©)', it: 'Oscillazione anca 90/90 (per lato)' },
+ open_book:      { es: 'Libro abierto (por lado)', en: 'Open book stretch (per side)', fr: 'Ã‰tirement du livre ouvert (par cÃ´tÃ©)', it: 'Libro aperto (per lato)' },
+ side_plank_abd: { es: 'Plancha lateral con abducciÃ³n', en: 'Side plank with abduction', fr: 'Gainage latÃ©ral avec abduction', it: 'Plank laterale con abduzione' },
 };
 
-// ── Helpers de construcción ───────────────────────────────────────────────────
+// â”€â”€ Helpers de construcciÃ³n â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const S = (t, m) => ({ t, m }); // segmento simple: tipo + minutos
 const R = (x, of) => ({ x, of }); // repetir x veces
 const E = (e, sets, reps, secs) => ({ e, sets, reps, secs }); // ejercicio
 const seg = (...items) => ({ seg: items });
 const exs = (...items) => ({ ex: items });
 
-// Sesión C25K estándar: wu 5' + intervalos + cd 5'
+// SesiÃ³n C25K estÃ¡ndar: wu 5' + intervalos + cd 5'
 const c25k = (...mid) => seg(S('wu', 5), ...mid, S('cd', 5));
 
-// ── LOS 9 PROGRAMAS ───────────────────────────────────────────────────────────
+// â”€â”€ LOS 9 PROGRAMAS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const PROGRAMS = [
  {
  id: 'run_0_5k', emoji: '', cat: 'run', level: 'beginner', spw: 3,
- name: { es: 'De 0 a 5K', en: 'Couch to 5K', fr: 'De 0 à 5 km', it: 'Da 0 a 5K' },
+ name: { es: 'De 0 a 5K', en: 'Couch to 5K', fr: 'De 0 Ã  5 km', it: 'Da 0 a 5K' },
  desc: {
- es: 'Aprende a correr desde cero en 8 semanas alternando caminar y correr. Al final correrás 30 minutos seguidos (~5 km).',
+ es: 'Aprende a correr desde cero en 8 semanas alternando caminar y correr. Al final correrÃ¡s 30 minutos seguidos (~5 km).',
  en: 'Learn to run from scratch in 8 weeks alternating walking and running. By the end you\'ll run 30 minutes non-stop (~5 km).',
- fr: 'Apprends à courir de zéro en 8 semaines en alternant marche et course. À la fin tu courras 30 minutes sans t\'arrêter (~5 km).',
+ fr: 'Apprends Ã  courir de zÃ©ro en 8 semaines en alternant marche et course. Ã€ la fin tu courras 30 minutes sans t\'arrÃªter (~5 km).',
  it: 'Impara a correre da zero in 8 settimane alternando camminata e corsa. Alla fine correrai 30 minuti di fila (~5 km).',
  },
  weeks: [
@@ -157,11 +157,11 @@ export const PROGRAMS = [
  },
  {
  id: 'swim_beginner', emoji: '', cat: 'swim', level: 'beginner', spw: 2,
- name: { es: 'Natación desde cero', en: 'Swimming from scratch', fr: 'Natation de zéro', it: 'Nuoto da zero' },
+ name: { es: 'NataciÃ³n desde cero', en: 'Swimming from scratch', fr: 'Natation de zÃ©ro', it: 'Nuoto da zero' },
  desc: {
- es: 'De no saber nadar (o casi) a nadar 400 m de crol seguidos en 6 semanas. Respiración, flotación, técnica y resistencia.',
+ es: 'De no saber nadar (o casi) a nadar 400 m de crol seguidos en 6 semanas. RespiraciÃ³n, flotaciÃ³n, tÃ©cnica y resistencia.',
  en: 'From barely swimming to 400 m of continuous crawl in 6 weeks. Breathing, floating, technique and endurance.',
- fr: 'De presque rien à 400 m de crawl en continu en 6 semaines. Respiration, flottaison, technique et endurance.',
+ fr: 'De presque rien Ã  400 m de crawl en continu en 6 semaines. Respiration, flottaison, technique et endurance.',
  it: 'Da quasi zero a 400 m di stile libero continuo in 6 settimane. Respirazione, galleggiamento, tecnica e resistenza.',
  },
  weeks: [
@@ -182,10 +182,10 @@ export const PROGRAMS = [
  forLifeStage: 'postpartum',
  name: { es: 'Posparto: vuelta segura', en: 'Postpartum: safe return', fr: 'Post-partum : retour en douceur', it: 'Post parto: ritorno sicuro' },
  desc: {
- es: 'Vuelta progresiva al deporte tras el parto: suelo pélvico → core profundo → fuerza → impacto. Empieza solo con el alta médica (≥6-8 semanas posparto).',
- en: 'Progressive return to sport after birth: pelvic floor → deep core → strength → impact. Start only with medical clearance (≥6-8 weeks postpartum).',
- fr: 'Retour progressif au sport après l\'accouchement : périnée → core profond → force → impact. Commence uniquement avec l\'accord médical (≥6-8 semaines).',
- it: 'Ritorno progressivo allo sport dopo il parto: pavimento pelvico → core profondo → forza → impatto. Inizia solo con l\'ok medico (≥6-8 settimane).',
+ es: 'Vuelta progresiva al deporte tras el parto: suelo pÃ©lvico â†’ core profundo â†’ fuerza â†’ impacto. Empieza solo con el alta mÃ©dica (â‰¥6-8 semanas posparto).',
+ en: 'Progressive return to sport after birth: pelvic floor â†’ deep core â†’ strength â†’ impact. Start only with medical clearance (â‰¥6-8 weeks postpartum).',
+ fr: 'Retour progressif au sport aprÃ¨s l\'accouchement : pÃ©rinÃ©e â†’ core profond â†’ force â†’ impact. Commence uniquement avec l\'accord mÃ©dical (â‰¥6-8 semaines).',
+ it: 'Ritorno progressivo allo sport dopo il parto: pavimento pelvico â†’ core profondo â†’ forza â†’ impatto. Inizia solo con l\'ok medico (â‰¥6-8 settimane).',
  },
  weeks: [
  { all: { mix: [S('breath', 5), E('kegel', 3, 10), E('cat_cow', 2, 10), S('walk', 15)] } },
@@ -200,11 +200,11 @@ export const PROGRAMS = [
  },
  {
  id: 'strength_beginner', emoji: '', cat: 'strength', level: 'beginner', spw: 3,
- name: { es: 'Fuerza desde cero', en: 'Strength from scratch', fr: 'Force de zéro', it: 'Forza da zero' },
+ name: { es: 'Fuerza desde cero', en: 'Strength from scratch', fr: 'Force de zÃ©ro', it: 'Forza da zero' },
  desc: {
- es: 'Aprende los patrones básicos de fuerza en 8 semanas: sentadilla, bisagra de cadera, empuje y tracción. De tu peso corporal a entrenar con carga.',
+ es: 'Aprende los patrones bÃ¡sicos de fuerza en 8 semanas: sentadilla, bisagra de cadera, empuje y tracciÃ³n. De tu peso corporal a entrenar con carga.',
  en: 'Learn the basic strength patterns in 8 weeks: squat, hip hinge, push and pull. From bodyweight to training with load.',
- fr: 'Apprends les mouvements de base en 8 semaines : squat, charnière de hanche, poussée et tirage. Du poids du corps à la charge.',
+ fr: 'Apprends les mouvements de base en 8 semaines : squat, charniÃ¨re de hanche, poussÃ©e et tirage. Du poids du corps Ã  la charge.',
  it: 'Impara gli schemi base della forza in 8 settimane: squat, hip hinge, spinta e trazione. Dal corpo libero al carico.',
  },
  weeks: [
@@ -222,11 +222,11 @@ export const PROGRAMS = [
  id: 'strength_40plus', emoji: '', cat: 'strength', level: 'intermediate', spw: 3,
  showIf: 'age40plus',
  forStages: ['perimenopause', 'menopause', 'postmenopause'],
- name: { es: 'Fuerza 40+ (huesos y músculo)', en: 'Strength 40+ (bones & muscle)', fr: 'Force 40+ (os et muscles)', it: 'Forza 40+ (ossa e muscoli)' },
+ name: { es: 'Fuerza 40+ (huesos y mÃºsculo)', en: 'Strength 40+ (bones & muscle)', fr: 'Force 40+ (os et muscles)', it: 'Forza 40+ (ossa e muscoli)' },
  desc: {
- es: 'Programa de 8 semanas para perimenopausia y menopausia: fuerza progresiva + impacto suave + equilibrio para proteger densidad ósea y masa muscular.',
+ es: 'Programa de 8 semanas para perimenopausia y menopausia: fuerza progresiva + impacto suave + equilibrio para proteger densidad Ã³sea y masa muscular.',
  en: '8-week programme for perimenopause and menopause: progressive strength + gentle impact + balance to protect bone density and muscle mass.',
- fr: 'Programme de 8 semaines pour la périménopause et la ménopause : force progressive + impact doux + équilibre pour protéger os et muscles.',
+ fr: 'Programme de 8 semaines pour la pÃ©rimÃ©nopause et la mÃ©nopause : force progressive + impact doux + Ã©quilibre pour protÃ©ger os et muscles.',
  it: 'Programma di 8 settimane per perimenopausa e menopausa: forza progressiva + impatto leggero + equilibrio per proteggere ossa e muscoli.',
  },
  weeks: [
@@ -242,12 +242,12 @@ export const PROGRAMS = [
  },
  {
  id: 'run_5k_10k', emoji: '', cat: 'run', level: 'intermediate', spw: 3,
- name: { es: 'De 5K a 10K', en: 'From 5K to 10K', fr: 'De 5 à 10 km', it: 'Da 5K a 10K' },
+ name: { es: 'De 5K a 10K', en: 'From 5K to 10K', fr: 'De 5 Ã  10 km', it: 'Da 5K a 10K' },
  desc: {
- es: 'Si ya corres 5 km, en 6 semanas llegarás a 10. Tres sesiones: rodaje suave, intervalos y tirada larga progresiva.',
+ es: 'Si ya corres 5 km, en 6 semanas llegarÃ¡s a 10. Tres sesiones: rodaje suave, intervalos y tirada larga progresiva.',
  en: 'If you already run 5 km, you\'ll reach 10 in 6 weeks. Three sessions: easy run, intervals and a progressive long run.',
- fr: 'Si tu cours déjà 5 km, tu atteindras 10 km en 6 semaines. Trois séances : footing, fractionné et sortie longue progressive.',
- it: 'Se già corri 5 km, in 6 settimane arriverai a 10. Tre sessioni: corsa facile, ripetute e lungo progressivo.',
+ fr: 'Si tu cours dÃ©jÃ  5 km, tu atteindras 10 km en 6 semaines. Trois sÃ©ances : footing, fractionnÃ© et sortie longue progressive.',
+ it: 'Se giÃ  corri 5 km, in 6 settimane arriverai a 10. Tre sessioni: corsa facile, ripetute e lungo progressivo.',
  },
  weeks: [
  { list: [c25k(S('run_easy', 25)), c25k(R(5, [S('run_fast', 3), S('run_easy', 2)])), c25k(S('run_easy', 35))] },
@@ -260,11 +260,11 @@ export const PROGRAMS = [
  },
  {
  id: 'mobility_pelvic', emoji: '', cat: 'mobility', level: 'intermediate', spw: 5,
- name: { es: 'Movilidad y suelo pélvico', en: 'Mobility & pelvic floor', fr: 'Mobilité et périnée', it: 'Mobilità e pavimento pelvico' },
+ name: { es: 'Movilidad y suelo pÃ©lvico', en: 'Mobility & pelvic floor', fr: 'MobilitÃ© et pÃ©rinÃ©e', it: 'MobilitÃ  e pavimento pelvico' },
  desc: {
- es: '10-15 minutos al día, 5 días a la semana, durante 4 semanas: cadera, columna y suelo pélvico. Ideal como complemento de cualquier otro entreno.',
+ es: '10-15 minutos al dÃ­a, 5 dÃ­as a la semana, durante 4 semanas: cadera, columna y suelo pÃ©lvico. Ideal como complemento de cualquier otro entreno.',
  en: '10-15 minutes a day, 5 days a week, for 4 weeks: hips, spine and pelvic floor. A perfect add-on to any other training.',
- fr: '10-15 minutes par jour, 5 jours par semaine, pendant 4 semaines : hanches, dos et périnée. Le complément idéal de tout entraînement.',
+ fr: '10-15 minutes par jour, 5 jours par semaine, pendant 4 semaines : hanches, dos et pÃ©rinÃ©e. Le complÃ©ment idÃ©al de tout entraÃ®nement.',
  it: '10-15 minuti al giorno, 5 giorni a settimana, per 4 settimane: anche, colonna e pavimento pelvico. Complemento ideale a qualsiasi allenamento.',
  },
  weeks: [
@@ -275,41 +275,41 @@ export const PROGRAMS = [
  ],
  },
 
- // ── Programa activa: 3 sesiones/semana sincronizadas con el ciclo (~3 meses) ───
+ // â”€â”€ Programa activa: 3 sesiones/semana sincronizadas con el ciclo (~3 meses) â”€â”€â”€
  {
   id: 'physio_active_plus', emoji: 'Zap', cat: 'strength', level: 'advanced', spw: 3,
   phaseRotation: true,
   name: {
-   es: 'Activa (3 meses)',
-   en: 'Active (3 months)',
-   fr: 'Active (3 mois)',
-   it: 'Attiva (3 mesi)',
+   es: 'Activa',
+   en: 'Active',
+   fr: 'Active',
+   it: 'Attiva',
   },
   desc: {
    es: 'Programa para mujeres activas: 3 sesiones/semana adaptadas a tu fase del ciclo. Fuerza, potencia y cardio progresivos en ~3 meses.',
    en: 'Programme for active women: 3 sessions/week adapted to your cycle phase. Progressive strength, power and cardio over ~3 months.',
-   fr: 'Programme pour femmes actives : 3 séances/semaine adaptées à ta phase du cycle. Force, puissance et cardio progressifs en ~3 mois.',
+   fr: 'Programme pour femmes actives : 3 sÃ©ances/semaine adaptÃ©es Ã  ta phase du cycle. Force, puissance et cardio progressifs en ~3 mois.',
    it: 'Programma per donne attive: 3 sessioni/settimana adattate alla tua fase del ciclo. Forza, potenza e cardio progressivi in ~3 mesi.',
   },
   phases: {
 
-   // ── Menstrual ───────────────────────────────────────────────────────────────
+   // â”€â”€ Menstrual â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    menstrual: {
     note: {
-     es: 'El objetivo es recuperarte y mantener tus capacidades. Ponle énfasis a la movilidad y la técnica.',
+     es: 'El objetivo es recuperarte y mantener tus capacidades. Ponle Ã©nfasis a la movilidad y la tÃ©cnica.',
      en: 'The goal is to recover and maintain your capacities. Focus on mobility and technique.',
-     fr: 'L\'objectif est de récupérer et maintenir tes capacités. Mets l\'accent sur la mobilité et la technique.',
-     it: 'L\'obiettivo è recuperare e mantenere le capacità. Dai priorità alla mobilità e alla tecnica.',
+     fr: 'L\'objectif est de rÃ©cupÃ©rer et maintenir tes capacitÃ©s. Mets l\'accent sur la mobilitÃ© et la technique.',
+     it: 'L\'obiettivo Ã¨ recuperare e mantenere le capacitÃ . Dai prioritÃ  alla mobilitÃ  e alla tecnica.',
     },
     sessions: [
      {
-      label: { es: 'Refuerzo suave cuerpo entero', en: 'Light full-body strength', fr: 'Renfo léger corps entier', it: 'Rinforzo leggero corpo intero' },
+      label: { es: 'Refuerzo suave cuerpo entero', en: 'Light full-body strength', fr: 'Renfo lÃ©ger corps entier', it: 'Rinforzo leggero corpo intero' },
       spec: { mix: [
        // Calentamiento
        E('cat_cow', 1, 10),
        E('superman', 1, 10),
        E('worlds_greatest', 1, 10),
-       // Circuito ×3
+       // Circuito Ã—3
        R(3, [
         E('squat', 1, 12),
         E('bridge', 1, 12),
@@ -331,7 +331,7 @@ export const PROGRAMS = [
       spec: { seg: [S('endurance_cardio', 50)] },
      },
      {
-      label: { es: 'Pilates / yoga / movilidad', en: 'Pilates / yoga / mobility', fr: 'Pilates / yoga / mobilité', it: 'Pilates / yoga / mobilità' },
+      label: { es: 'Pilates / yoga / movilidad', en: 'Pilates / yoga / mobility', fr: 'Pilates / yoga / mobilitÃ©', it: 'Pilates / yoga / mobilitÃ ' },
       spec: { mix: [
        S('breath', 3),
        E('cat_cow', 1, 15),
@@ -347,13 +347,13 @@ export const PROGRAMS = [
     ],
    },
 
-   // ── Follicular ──────────────────────────────────────────────────────────────
+   // â”€â”€ Follicular â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    follicular: {
     note: {
      es: 'Desarrolla fuerza, potencia y capacidad cardiovascular.',
      en: 'Build strength, power and cardiovascular capacity.',
-     fr: 'Développe force, puissance et capacités cardiovasculaires.',
-     it: 'Sviluppa forza, potenza e capacità cardiovascolare.',
+     fr: 'DÃ©veloppe force, puissance et capacitÃ©s cardiovasculaires.',
+     it: 'Sviluppa forza, potenza e capacitÃ  cardiovascolare.',
     },
     sessions: [
      {
@@ -363,7 +363,7 @@ export const PROGRAMS = [
        E('superman', 1, 10),
        E('worlds_greatest', 1, 10),
        E('jump_squat', 1, 10),
-       // Circuito ×3
+       // Circuito Ã—3
        R(3, [
         E('lateral_lunge', 1, 12),
         E('reverse_lunge', 1, 12),
@@ -384,7 +384,7 @@ export const PROGRAMS = [
        E('bird_dog', 1, 10),
        E('cat_cow', 1, 10),
        E('jumping_jack', 1, 10),
-       // Circuito ×3
+       // Circuito Ã—3
        R(3, [
         E('horizontal_row', 1, 10),
         E('dips', 1, 10),
@@ -399,7 +399,7 @@ export const PROGRAMS = [
       ] },
      },
      {
-      label: { es: 'Cardio fraccionado', en: 'Interval cardio', fr: 'Fractionné', it: 'Cardio a intervalli' },
+      label: { es: 'Cardio fraccionado', en: 'Interval cardio', fr: 'FractionnÃ©', it: 'Cardio a intervalli' },
       spec: { seg: [
        S('walk_fast', 10),
        R(8, [S('hiit_work', 1), S('hiit_rest', 1.5)]),
@@ -409,13 +409,13 @@ export const PROGRAMS = [
     ],
    },
 
-   // ── Ovulatory ───────────────────────────────────────────────────────────────
+   // â”€â”€ Ovulatory â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    ovulatory: {
     note: {
-     es: 'Aprovecha este período para trabajar intensidad, potencia y velocidad.',
+     es: 'Aprovecha este perÃ­odo para trabajar intensidad, potencia y velocidad.',
      en: 'Exploit this period to work on intensity, power and speed.',
-     fr: 'Exploite cette période pour travailler intensité, puissance et vitesse.',
-     it: 'Sfrutta questo periodo per lavorare su intensità, potenza e velocità.',
+     fr: 'Exploite cette pÃ©riode pour travailler intensitÃ©, puissance et vitesse.',
+     it: 'Sfrutta questo periodo per lavorare su intensitÃ , potenza e velocitÃ .',
     },
     sessions: [
      {
@@ -425,7 +425,7 @@ export const PROGRAMS = [
        E('cat_cow', 1, 10),
        E('worlds_greatest', 1, 10),
        E('jumping_jack', 1, 10),
-       // Circuito ×3
+       // Circuito Ã—3
        R(3, [
         E('jump_squat', 1, 12),
         E('pistol_chair', 1, 6),
@@ -446,7 +446,7 @@ export const PROGRAMS = [
        E('cat_cow', 1, 10),
        E('superman', 1, 10),
        E('worlds_greatest', 1, 10),
-       // Circuito ×3
+       // Circuito Ã—3
        R(3, [
         E('med_ball_slam', 1, 10),
         E('bicep_curl', 1, 10),
@@ -461,7 +461,7 @@ export const PROGRAMS = [
       ] },
      },
      {
-      label: { es: 'Cardio fraccionado intenso', en: 'Intense interval cardio', fr: 'Fractionné intensif', it: 'Cardio intervalli intenso' },
+      label: { es: 'Cardio fraccionado intenso', en: 'Intense interval cardio', fr: 'FractionnÃ© intensif', it: 'Cardio intervalli intenso' },
       spec: { seg: [
        S('walk_fast', 10),
        R(10, [S('hiit_work', 1), S('hiit_rest', 1)]),
@@ -471,12 +471,12 @@ export const PROGRAMS = [
     ],
    },
 
-   // ── Luteal ──────────────────────────────────────────────────────────────────
+   // â”€â”€ Luteal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    luteal: {
     note: {
-     es: 'Mantén tus avances y favorece la recuperación al final de la fase.',
+     es: 'MantÃ©n tus avances y favorece la recuperaciÃ³n al final de la fase.',
      en: 'Maintain your gains and favour recovery towards the end of the phase.',
-     fr: 'Maintiens tes acquis et favorise la récupération en fin de phase.',
+     fr: 'Maintiens tes acquis et favorise la rÃ©cupÃ©ration en fin de phase.',
      it: 'Mantieni i progressi e favorisci il recupero a fine fase.',
     },
     sessions: [
@@ -487,7 +487,7 @@ export const PROGRAMS = [
        E('high_knees', 1, null, 90),
        E('superman', 1, 10),
        E('worlds_greatest', 1, 10),
-       // Circuito ×3
+       // Circuito Ã—3
        R(3, [
         E('squat', 1, 15),
         E('bridge', 1, 12),
@@ -506,7 +506,7 @@ export const PROGRAMS = [
       ] },
      },
      {
-      label: { es: 'Movilidad y recuperación (fin de fase / SPM)', en: 'Mobility & recovery (end of phase / PMS)', fr: 'Mobilité et récupération (fin de phase / SPM)', it: 'Mobilità e recupero (fine fase / SPM)' },
+      label: { es: 'Movilidad y recuperaciÃ³n (fin de fase / SPM)', en: 'Mobility & recovery (end of phase / PMS)', fr: 'MobilitÃ© et rÃ©cupÃ©ration (fin de phase / SPM)', it: 'MobilitÃ  e recupero (fine fase / SPM)' },
       spec: { mix: [
        E('cat_cow', 1, 10),
        E('bird_dog', 1, 10),
@@ -529,35 +529,35 @@ export const PROGRAMS = [
   },
  },
 
- // ── Programa muy activa: 4+ sesiones/semana sincronizadas con el ciclo (~3 meses) ─
+ // â”€â”€ Programa muy activa: 4+ sesiones/semana sincronizadas con el ciclo (~3 meses) â”€
  {
   id: 'physio_active_advanced', emoji: 'Trophy', cat: 'strength', level: 'advanced', spw: 4,
   phaseRotation: true,
   name: {
-   es: 'Muy activa (3 meses)',
-   en: 'Very active (3 months)',
-   fr: 'Très active (3 mois)',
-   it: 'Molto attiva (3 mesi)',
+   es: 'Muy activa',
+   en: 'Very active',
+   fr: 'TrÃ¨s active (3 mois)',
+   it: 'Molto attiva',
   },
   desc: {
    es: 'Programa para mujeres muy activas: 4+ sesiones/semana adaptadas a tu fase del ciclo. Fuerza, potencia y cardio de alta intensidad progresivos en ~3 meses.',
    en: 'Programme for very active women: 4+ sessions/week adapted to your cycle phase. Progressive strength, power and high-intensity cardio over ~3 months.',
-   fr: 'Programme pour femmes très actives : 4+ séances/semaine adaptées à ta phase du cycle. Force, puissance et cardio haute intensité progressifs en ~3 mois.',
-   it: 'Programma per donne molto attive: 4+ sessioni/settimana adattate alla tua fase del ciclo. Forza, potenza e cardio ad alta intensità progressivi in ~3 mesi.',
+   fr: 'Programme pour femmes trÃ¨s actives : 4+ sÃ©ances/semaine adaptÃ©es Ã  ta phase du cycle. Force, puissance et cardio haute intensitÃ© progressifs en ~3 mois.',
+   it: 'Programma per donne molto attive: 4+ sessioni/settimana adattate alla tua fase del ciclo. Forza, potenza e cardio ad alta intensitÃ  progressivi in ~3 mesi.',
   },
   phases: {
 
-   // ── Menstrual ───────────────────────────────────────────────────────────────
+   // â”€â”€ Menstrual â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    menstrual: {
     note: {
-     es: 'El objetivo es recuperarte y mantener tus capacidades. Pon el énfasis en la movilidad y la técnica.',
+     es: 'El objetivo es recuperarte y mantener tus capacidades. Pon el Ã©nfasis en la movilidad y la tÃ©cnica.',
      en: 'The goal is to recover and maintain your capacities. Focus on mobility and technique.',
-     fr: 'L\'objectif est de récupérer et maintenir tes capacités. Mets l\'accent sur la mobilité et la technique.',
-     it: 'L\'obiettivo è recuperare e mantenere le capacità. Dai priorità alla mobilità e alla tecnica.',
+     fr: 'L\'objectif est de rÃ©cupÃ©rer et maintenir tes capacitÃ©s. Mets l\'accent sur la mobilitÃ© et la technique.',
+     it: 'L\'obiettivo Ã¨ recuperare e mantenere le capacitÃ . Dai prioritÃ  alla mobilitÃ  e alla tecnica.',
     },
     sessions: [
      {
-      label: { es: 'Refuerzo suave cuerpo entero', en: 'Light full-body strength', fr: 'Renfo léger corps entier', it: 'Rinforzo leggero corpo intero' },
+      label: { es: 'Refuerzo suave cuerpo entero', en: 'Light full-body strength', fr: 'Renfo lÃ©ger corps entier', it: 'Rinforzo leggero corpo intero' },
       spec: { mix: [
        E('cat_cow', 1, 10),
        E('superman', 1, 10),
@@ -582,7 +582,7 @@ export const PROGRAMS = [
       spec: { seg: [S('endurance_cardio', 50)] },
      },
      {
-      label: { es: 'Pilates / yoga / movilidad', en: 'Pilates / yoga / mobility', fr: 'Pilates / yoga / mobilité', it: 'Pilates / yoga / mobilità' },
+      label: { es: 'Pilates / yoga / movilidad', en: 'Pilates / yoga / mobility', fr: 'Pilates / yoga / mobilitÃ©', it: 'Pilates / yoga / mobilitÃ ' },
       spec: { mix: [
        S('breath', 3),
        E('cat_cow', 1, 15),
@@ -600,13 +600,13 @@ export const PROGRAMS = [
     ],
    },
 
-   // ── Follicular ──────────────────────────────────────────────────────────────
+   // â”€â”€ Follicular â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    follicular: {
     note: {
      es: 'Desarrolla fuerza, potencia y capacidades cardiovasculares.',
      en: 'Build strength, power and cardiovascular capacity.',
-     fr: 'Développe force, puissance et capacités cardiovasculaires.',
-     it: 'Sviluppa forza, potenza e capacità cardiovascolare.',
+     fr: 'DÃ©veloppe force, puissance et capacitÃ©s cardiovasculaires.',
+     it: 'Sviluppa forza, potenza e capacitÃ  cardiovascolare.',
     },
     sessions: [
      {
@@ -648,7 +648,7 @@ export const PROGRAMS = [
       ] },
      },
      {
-      label: { es: 'Cardio fraccionado', en: 'Interval cardio', fr: 'Fractionné', it: 'Cardio a intervalli' },
+      label: { es: 'Cardio fraccionado', en: 'Interval cardio', fr: 'FractionnÃ©', it: 'Cardio a intervalli' },
       spec: { seg: [
        S('walk_fast', 10),
        R(10, [S('hiit_work', 1), S('hiit_rest', 1.5)]),
@@ -658,13 +658,13 @@ export const PROGRAMS = [
     ],
    },
 
-   // ── Ovulatory ───────────────────────────────────────────────────────────────
+   // â”€â”€ Ovulatory â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    ovulatory: {
     note: {
-     es: 'Aprovecha este período para trabajar intensidad, potencia y velocidad.',
+     es: 'Aprovecha este perÃ­odo para trabajar intensidad, potencia y velocidad.',
      en: 'Exploit this period to work on intensity, power and speed.',
-     fr: 'Exploite cette période pour travailler intensité, puissance et vitesse.',
-     it: 'Sfrutta questo periodo per lavorare su intensità, potenza e velocità.',
+     fr: 'Exploite cette pÃ©riode pour travailler intensitÃ©, puissance et vitesse.',
+     it: 'Sfrutta questo periodo per lavorare su intensitÃ , potenza e velocitÃ .',
     },
     sessions: [
      {
@@ -705,7 +705,7 @@ export const PROGRAMS = [
       ] },
      },
      {
-      label: { es: 'Cardio fraccionado intenso', en: 'Intense interval cardio', fr: 'Fractionné intensif', it: 'Cardio intervalli intenso' },
+      label: { es: 'Cardio fraccionado intenso', en: 'Intense interval cardio', fr: 'FractionnÃ© intensif', it: 'Cardio intervalli intenso' },
       spec: { seg: [
        S('walk_fast', 10),
        R(8, [S('hiit_work', 2), S('hiit_rest', 2)]),
@@ -715,12 +715,12 @@ export const PROGRAMS = [
     ],
    },
 
-   // ── Luteal ──────────────────────────────────────────────────────────────────
+   // â”€â”€ Luteal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    luteal: {
     note: {
-     es: 'Mantén tus avances y favorece la recuperación al final de la fase.',
+     es: 'MantÃ©n tus avances y favorece la recuperaciÃ³n al final de la fase.',
      en: 'Maintain your gains and favour recovery towards the end of the phase.',
-     fr: 'Maintiens tes acquis et favorise la récupération en fin de phase.',
+     fr: 'Maintiens tes acquis et favorise la rÃ©cupÃ©ration en fin de phase.',
      it: 'Mantieni i progressi e favorisci il recupero a fine fase.',
     },
     sessions: [
@@ -747,7 +747,7 @@ export const PROGRAMS = [
       ] },
      },
      {
-      label: { es: 'Movilidad y recuperación (fin de fase / SPM)', en: 'Mobility & recovery (end of phase / PMS)', fr: 'Mobilité et récupération (fin de phase / SPM)', it: 'Mobilità e recupero (fine fase / SPM)' },
+      label: { es: 'Movilidad y recuperaciÃ³n (fin de fase / SPM)', en: 'Mobility & recovery (end of phase / PMS)', fr: 'MobilitÃ© et rÃ©cupÃ©ration (fin de phase / SPM)', it: 'MobilitÃ  e recupero (fine fase / SPM)' },
       spec: { mix: [
        E('cat_cow', 1, 10),
        E('bird_dog', 1, 10),
@@ -770,31 +770,31 @@ export const PROGRAMS = [
   },
  },
 
- // ── Programa activa: 1-2 sesiones/semana sincronizadas con el ciclo (~3 meses) ─
+ // â”€â”€ Programa activa: 1-2 sesiones/semana sincronizadas con el ciclo (~3 meses) â”€
  {
   id: 'physio_active', emoji: 'Flame', cat: 'strength', level: 'intermediate', spw: 2,
   phaseRotation: true,
   name: {
-   es: 'Ocasional (3 meses)',
-   en: 'Occasional (3 months)',
-   fr: 'Occasionnelle (3 mois)',
-   it: 'Occasionale (3 mesi)',
+   es: 'Ocasional',
+   en: 'Occasional',
+   fr: 'Occasionnelle',
+   it: 'Occasionale',
   },
   desc: {
    es: 'Programa para mujeres que se mueven de vez en cuando: 1-2 sesiones/semana adaptadas a tu fase del ciclo. Fuerza, cardio y movilidad progresivos en ~3 meses.',
    en: 'Programme for women who exercise occasionally: 1-2 sessions/week adapted to your cycle phase. Progressive strength, cardio and mobility over ~3 months.',
-   fr: 'Programme pour femmes qui bougent de temps en temps : 1-2 séances/semaine adaptées à ta phase du cycle. Force, cardio et mobilité progressifs en ~3 mois.',
-   it: 'Programma per donne che si muovono ogni tanto: 1-2 sessioni/settimana adattate alla tua fase del ciclo. Forza, cardio e mobilità progressivi in ~3 mesi.',
+   fr: 'Programme pour femmes qui bougent de temps en temps : 1-2 sÃ©ances/semaine adaptÃ©es Ã  ta phase du cycle. Force, cardio et mobilitÃ© progressifs en ~3 mois.',
+   it: 'Programma per donne che si muovono ogni tanto: 1-2 sessioni/settimana adattate alla tua fase del ciclo. Forza, cardio e mobilitÃ  progressivi in ~3 mesi.',
   },
   phases: {
 
-   // ── Menstrual ───────────────────────────────────────────────────────────────
+   // â”€â”€ Menstrual â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    menstrual: {
     note: {
-     es: 'Adapta la intensidad a tus sensaciones. Incluso una sesión corta es mejor que nada.',
+     es: 'Adapta la intensidad a tus sensaciones. Incluso una sesiÃ³n corta es mejor que nada.',
      en: 'Adapt intensity to how you feel. Even a short session is better than nothing.',
-     fr: 'Adapte l\'intensité à tes sensations. Même une petite séance vaut mieux que rien.',
-     it: 'Adatta l\'intensità alle tue sensazioni. Anche una sessione breve è meglio di niente.',
+     fr: 'Adapte l\'intensitÃ© Ã  tes sensations. MÃªme une petite sÃ©ance vaut mieux que rien.',
+     it: 'Adatta l\'intensitÃ  alle tue sensazioni. Anche una sessione breve Ã¨ meglio di niente.',
     },
     sessions: [
      {
@@ -805,7 +805,7 @@ export const PROGRAMS = [
        S('hip_circles', 2),
        S('arm_circles', 2),
        E('cat_cow', 1, 20),
-       // Circuito ×2-3
+       // Circuito Ã—2-3
        R(2, [
         E('squat', 1, 12),
         E('bridge', 1, 15),
@@ -821,7 +821,7 @@ export const PROGRAMS = [
       ] },
      },
      {
-      label: { es: 'Movilidad suave (si regla dolorosa)', en: 'Gentle mobility (if painful period)', fr: 'Mobilité douce (si règles douloureuses)', it: 'Mobilità dolce (se ciclo doloroso)' },
+      label: { es: 'Movilidad suave (si regla dolorosa)', en: 'Gentle mobility (if painful period)', fr: 'MobilitÃ© douce (si rÃ¨gles douloureuses)', it: 'MobilitÃ  dolce (se ciclo doloroso)' },
       spec: { mix: [
        S('breath_chair', 5),
        E('cat_cow', 1, 12),
@@ -840,24 +840,24 @@ export const PROGRAMS = [
     ],
    },
 
-   // ── Follicular ──────────────────────────────────────────────────────────────
+   // â”€â”€ Follicular â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    follicular: {
     note: {
-     es: 'Desarrolla progresivamente tu fuerza, resistencia y coordinación. Puedes añadir peso o elástico.',
+     es: 'Desarrolla progresivamente tu fuerza, resistencia y coordinaciÃ³n. Puedes aÃ±adir peso o elÃ¡stico.',
      en: 'Progressively build strength, endurance and coordination. You can add weights or a band.',
-     fr: 'Développe progressivement ta force, ton endurance et ta coordination. Possibilité d\'ajouter poids ou élastique.',
+     fr: 'DÃ©veloppe progressivement ta force, ton endurance et ta coordination. PossibilitÃ© d\'ajouter poids ou Ã©lastique.',
      it: 'Sviluppa progressivamente forza, resistenza e coordinazione. Puoi aggiungere pesi o elastico.',
     },
     sessions: [
      {
-      label: { es: 'Fuerza completa', en: 'Full-body strength', fr: 'Force complète', it: 'Forza completa' },
+      label: { es: 'Fuerza completa', en: 'Full-body strength', fr: 'Force complÃ¨te', it: 'Forza completa' },
       spec: { mix: [
        // Calentamiento
        E('updown_dog', 1, 10),
        E('jumping_jack', 1, 10),
        E('worlds_greatest', 1, 10),
        E('superman', 1, 10),
-       // Circuito ×3
+       // Circuito Ã—3
        R(3, [
         E('squat', 1, 12),
         E('reverse_lunge', 1, 10),
@@ -874,7 +874,7 @@ export const PROGRAMS = [
       ] },
      },
      {
-      label: { es: 'Cardio fraccionado (principiante)', en: 'Beginner interval cardio', fr: 'Cardio fractionné débutant', it: 'Cardio a intervalli (principiante)' },
+      label: { es: 'Cardio fraccionado (principiante)', en: 'Beginner interval cardio', fr: 'Cardio fractionnÃ© dÃ©butant', it: 'Cardio a intervalli (principiante)' },
       spec: { seg: [
        S('walk_fast', 10),
        R(5, [S('hiit_work', 1), S('hiit_rest', 2)]),
@@ -884,13 +884,13 @@ export const PROGRAMS = [
     ],
    },
 
-   // ── Ovulatory ───────────────────────────────────────────────────────────────
+   // â”€â”€ Ovulatory â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    ovulatory: {
     note: {
-     es: 'Si te sientes en forma, es la fase donde puedes proponer a tu cuerpo las sesiones más estimulantes.',
+     es: 'Si te sientes en forma, es la fase donde puedes proponer a tu cuerpo las sesiones mÃ¡s estimulantes.',
      en: 'If you feel good, this is the phase to push your body with the most stimulating sessions.',
-     fr: 'Si tu te sens en forme, c\'est la phase où tu peux proposer à ton corps les séances les plus stimulantes.',
-     it: 'Se ti senti in forma, è la fase in cui puoi proporre al tuo corpo le sessioni più stimolanti.',
+     fr: 'Si tu te sens en forme, c\'est la phase oÃ¹ tu peux proposer Ã  ton corps les sÃ©ances les plus stimulantes.',
+     it: 'Se ti senti in forma, Ã¨ la fase in cui puoi proporre al tuo corpo le sessioni piÃ¹ stimolanti.',
     },
     sessions: [
      {
@@ -901,7 +901,7 @@ export const PROGRAMS = [
        E('high_knees', 1, 10),
        E('worlds_greatest', 1, 10),
        E('superman', 1, 10),
-       // Circuito ×3
+       // Circuito Ã—3
        R(3, [
         E('jump_squat', 1, 15),
         E('reverse_lunge', 1, 10),
@@ -919,13 +919,13 @@ export const PROGRAMS = [
       ] },
      },
      {
-      label: { es: 'Cardio dinámico', en: 'Dynamic cardio', fr: 'Cardio dynamique', it: 'Cardio dinamico' },
+      label: { es: 'Cardio dinÃ¡mico', en: 'Dynamic cardio', fr: 'Cardio dynamique', it: 'Cardio dinamico' },
       spec: { seg: [
        // Calentamiento 10 min
        S('walk_fast', 5),
        S('mob_hips', 3),
        S('arm_circles', 2),
-       // Bloques HIIT: 8×(1min rápido / 1min recuperación)
+       // Bloques HIIT: 8Ã—(1min rÃ¡pido / 1min recuperaciÃ³n)
        R(8, [S('hiit_work', 1), S('hiit_rest', 1)]),
        // Cardio continuo moderado
        S('walk_fast', 10),
@@ -937,13 +937,13 @@ export const PROGRAMS = [
     ],
    },
 
-   // ── Luteal ──────────────────────────────────────────────────────────────────
+   // â”€â”€ Luteal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
    luteal: {
     note: {
-     es: 'El objetivo es mantener tus avances. Adapta la sesión según cómo te encuentres.',
+     es: 'El objetivo es mantener tus avances. Adapta la sesiÃ³n segÃºn cÃ³mo te encuentres.',
      en: 'The goal is to maintain your gains. Adjust the session according to how you feel.',
-     fr: 'L\'objectif est de maintenir tes acquis. Adapte la séance en fonction de ton ressenti.',
-     it: 'L\'obiettivo è mantenere i tuoi progressi. Adatta la sessione in base a come ti senti.',
+     fr: 'L\'objectif est de maintenir tes acquis. Adapte la sÃ©ance en fonction de ton ressenti.',
+     it: 'L\'obiettivo Ã¨ mantenere i tuoi progressi. Adatta la sessione in base a come ti senti.',
     },
     sessions: [
      {
@@ -954,7 +954,7 @@ export const PROGRAMS = [
        E('cat_cow', 1, 10),
        S('breath', 3),
        E('superman', 1, 10),
-       // Circuito ×3
+       // Circuito Ã—3
        R(3, [
         E('squat_calf', 1, 10),
         E('bridge', 1, 15),
@@ -972,7 +972,7 @@ export const PROGRAMS = [
       ] },
      },
      {
-      label: { es: 'Cardio moderado + movilidad', en: 'Moderate cardio + mobility', fr: 'Cardio modéré + mobilité', it: 'Cardio moderato + mobilità' },
+      label: { es: 'Cardio moderado + movilidad', en: 'Moderate cardio + mobility', fr: 'Cardio modÃ©rÃ© + mobilitÃ©', it: 'Cardio moderato + mobilitÃ ' },
       spec: { mix: [
        S('walk_fast', 25),
        S('thoracic_rot', 3),
@@ -987,34 +987,34 @@ export const PROGRAMS = [
   },
  },
 
- // ── Programa fisio: mujer sedentaria (1 séance/semaine, ~14 séances = 3 meses) ─
+ // â”€â”€ Programa fisio: mujer sedentaria (1 sÃ©ance/semaine, ~14 sÃ©ances = 3 meses) â”€
  {
  id: 'physio_sedentaire', emoji: 'Sprout', cat: 'strength', level: 'beginner', spw: 1,
- phaseRotation: true, // sesión determinada por fase del ciclo
+ phaseRotation: true, // sesiÃ³n determinada por fase del ciclo
  name: {
-  es: 'Sedentaria (3 meses)',
-  en: 'Sedentary (3 months)',
-  fr: 'Sédentaire (3 mois)',
-  it: 'Sedentaria (3 mesi)',
+  es: 'Sedentaria',
+  en: 'Sedentary',
+  fr: 'SÃ©dentaire (3 mois)',
+  it: 'Sedentaria',
  },
  desc: {
-  es: 'Programa para mujeres sedentarias: 1 sesión/semana adaptada a tu fase del ciclo. ~14 sesiones para completar el programa en 3 meses.',
+  es: 'Programa para mujeres sedentarias: 1 sesiÃ³n/semana adaptada a tu fase del ciclo. ~14 sesiones para completar el programa en 3 meses.',
   en: 'Programme for sedentary women: 1 session/week adapted to your cycle phase. ~14 sessions to complete in 3 months.',
-  fr: 'Programme pour femmes sédentaires : 1 séance/semaine adaptée à ta phase du cycle. ~14 séances pour compléter le programme en 3 mois.',
+  fr: 'Programme pour femmes sÃ©dentaires : 1 sÃ©ance/semaine adaptÃ©e Ã  ta phase du cycle. ~14 sÃ©ances pour complÃ©ter le programme en 3 mois.',
   it: 'Programma per donne sedentarie: 1 sessione/settimana adattata alla tua fase del ciclo. ~14 sessioni per completare il programma in 3 mesi.',
  },
  phases: {
-  // ─ Menstrual: 4 séances (détente, marche, haut, bas) ────────────────────────
+  // â”€ Menstrual: 4 sÃ©ances (dÃ©tente, marche, haut, bas) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   menstrual: {
    note: {
     es: 'Fase menstrual: movimiento muy suave. Escucha tu cuerpo.',
     en: 'Menstrual phase: very gentle movement. Listen to your body.',
-    fr: 'Phase menstruelle : mouvement très doux. Écoute ton corps.',
+    fr: 'Phase menstruelle : mouvement trÃ¨s doux. Ã‰coute ton corps.',
     it: 'Fase mestruale: movimento molto dolce. Ascolta il tuo corpo.',
    },
    sessions: [
     {
-     label: { es: 'Relajación suave', en: 'Gentle relaxation', fr: 'Relaxation douce', it: 'Rilassamento dolce' },
+     label: { es: 'RelajaciÃ³n suave', en: 'Gentle relaxation', fr: 'Relaxation douce', it: 'Rilassamento dolce' },
      spec: { mix: [
       S('breath', 3),
       E('cat_cow', 1, 10),
@@ -1054,12 +1054,12 @@ export const PROGRAMS = [
    ],
   },
 
-  // ─ Follicular: 3 séances (haut, bas, cardio ludique) ────────────────────────
+  // â”€ Follicular: 3 sÃ©ances (haut, bas, cardio ludique) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   follicular: {
    note: {
-    es: 'Fase folicular: energía creciente. Botellitas de 0,5 L como peso.',
+    es: 'Fase folicular: energÃ­a creciente. Botellitas de 0,5 L como peso.',
     en: 'Follicular phase: growing energy. Water bottles (0.5 L) as weights.',
-    fr: 'Phase folliculaire : énergie croissante. Bouteilles d\'eau (0,5 L) comme poids.',
+    fr: 'Phase folliculaire : Ã©nergie croissante. Bouteilles d\'eau (0,5 L) comme poids.',
     it: 'Fase follicolare: energia in aumento. Bottiglie da 0,5 L come pesi.',
    },
    sessions: [
@@ -1088,12 +1088,12 @@ export const PROGRAMS = [
    ],
   },
 
-  // ─ Ovulatory: 3 séances (bas, haut, cardio intervalos) ─────────────────────
+  // â”€ Ovulatory: 3 sÃ©ances (bas, haut, cardio intervalos) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   ovulatory: {
    note: {
-    es: 'Fase ovulatoria: pico de energía. Añade 2-5 kg si te sientes con fuerza.',
+    es: 'Fase ovulatoria: pico de energÃ­a. AÃ±ade 2-5 kg si te sientes con fuerza.',
     en: 'Ovulatory phase: energy peak. Add 2-5 kg if you feel strong.',
-    fr: 'Phase ovulatoire : pic d\'énergie. Ajouter 2-5 kg si tu te sens bien.',
+    fr: 'Phase ovulatoire : pic d\'Ã©nergie. Ajouter 2-5 kg si tu te sens bien.',
     it: 'Fase ovulatoria: picco di energia. Aggiungi 2-5 kg se ti senti forte.',
    },
    sessions: [
@@ -1124,13 +1124,13 @@ export const PROGRAMS = [
    ],
   },
 
-  // ─ Luteal: 4 séances (haut, bas, cardio fácil, si síntomas) ─────────────────
+  // â”€ Luteal: 4 sÃ©ances (haut, bas, cardio fÃ¡cil, si sÃ­ntomas) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   luteal: {
    note: {
-    es: 'Fase lútea: reduce la intensidad. Si hay síntomas, opta por la sesión de movilidad.',
+    es: 'Fase lÃºtea: reduce la intensidad. Si hay sÃ­ntomas, opta por la sesiÃ³n de movilidad.',
     en: 'Luteal phase: reduce intensity. If symptoms appear, choose the mobility session.',
-    fr: 'Phase lutéale : réduis l\'intensité. Si symptômes, opte pour la séance mobilité.',
-    it: 'Fase luteale: riduci l\'intensità. Se ci sono sintomi, scegli la sessione di mobilità.',
+    fr: 'Phase lutÃ©ale : rÃ©duis l\'intensitÃ©. Si symptÃ´mes, opte pour la sÃ©ance mobilitÃ©.',
+    it: 'Fase luteale: riduci l\'intensitÃ . Se ci sono sintomi, scegli la sessione di mobilitÃ .',
    },
    sessions: [
     {
@@ -1156,7 +1156,7 @@ export const PROGRAMS = [
      spec: { seg: [S('walk_fast', 30)] },
     },
     {
-     label: { es: 'Movilidad (si hay síntomas)', en: 'Mobility (if symptoms)', fr: 'Mobilité (si symptômes)', it: 'Mobilità (se sintomi)' },
+     label: { es: 'Movilidad (si hay sÃ­ntomas)', en: 'Mobility (if symptoms)', fr: 'MobilitÃ© (si symptÃ´mes)', it: 'MobilitÃ  (se sintomi)' },
      spec: { mix: [
       S('ankle_circles', 2),
       E('cat_cow', 1, 10),
@@ -1178,7 +1178,7 @@ function hiitBlock(rounds, workSec, restSec) {
  return [{ x: rounds, of: [{ t: 'hiit_work', s: workSec }, { t: 'hiit_rest', s: restSec }] }];
 }
 
-// ── API ───────────────────────────────────────────────────────────────────────
+// â”€â”€ API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 /** Sesiones totales de un programa */
 export function totalSessions(p) {
@@ -1188,9 +1188,9 @@ export function totalSessions(p) {
  return p.weeks.reduce((sum, w) => sum + (w.list ? w.list.length : p.spw), 0);
 }
 
-/** Devuelve { week (1-based), idx (1-based), spec } de la sesión nº n (0-based) */
+/** Devuelve { week (1-based), idx (1-based), spec } de la sesiÃ³n nÂº n (0-based) */
 export function getSession(p, n) {
- if (p.phaseRotation) return null; // programas de rotación por fase usan getPhaseSession
+ if (p.phaseRotation) return null; // programas de rotaciÃ³n por fase usan getPhaseSession
  let i = n;
  for (let w = 0; w < p.weeks.length; w++) {
  const sessions = p.weeks[w].list || Array(p.spw).fill(p.weeks[w].all);
@@ -1200,7 +1200,7 @@ export function getSession(p, n) {
  return null;
 }
 
-/** Para programas phaseRotation: devuelve la sesión correspondiente a la fase actual.
+/** Para programas phaseRotation: devuelve la sesiÃ³n correspondiente a la fase actual.
  * pp = phase progress map { menstrual: 0, follicular: 1, ... } guardado en activeProgram.pp */
 export function getPhaseSession(p, phase = 'follicular', pp = {}) {
  if (!p.phaseRotation) return null;
@@ -1220,30 +1220,30 @@ export function getPhaseSession(p, phase = 'follicular', pp = {}) {
  };
 }
 
-/** Formatea un item (segmento, repetición o ejercicio) a texto legible */
+/** Formatea un item (segmento, repeticiÃ³n o ejercicio) a texto legible */
 export function formatItem(item, lang = 'es') {
  const L = (o) => o?.[lang] || o?.es || '';
  if (item.e) {
  const name = L(EX[item.e]);
- if (item.secs) return `${name} — ${item.sets}×${item.secs}"`;
- return `${name} — ${item.sets}×${item.reps}`;
+ if (item.secs) return `${name} â€” ${item.sets}Ã—${item.secs}"`;
+ return `${name} â€” ${item.sets}Ã—${item.reps}`;
  }
  if (item.x) {
  const inner = item.of.map(s => formatItem(s, lang)).join(' + ');
- return `${item.x} × (${inner})`;
+ return `${item.x} Ã— (${inner})`;
  }
  const name = L(LBL[item.t]);
  if (item.s) return `${name} ${item.s}"`;
  return item.m ? `${name} ${item.m}'` : name;
 }
 
-/** Lista de líneas legibles de una sesión */
+/** Lista de lÃ­neas legibles de una sesiÃ³n */
 export function formatSession(spec, lang = 'es') {
  const items = spec.seg || spec.mix || spec.ex || [];
  return items.map(it => formatItem(it, lang));
 }
 
-/** Duración aproximada de una sesión en minutos */
+/** DuraciÃ³n aproximada de una sesiÃ³n en minutos */
 export function sessionMinutes(spec) {
  const items = spec.seg || spec.mix || spec.ex || [];
  const one = (it) => {
@@ -1257,11 +1257,11 @@ export function sessionMinutes(spec) {
 
 /** Nivel en texto */
 export const LEVEL_LABEL = {
- beginner: { es: 'Principiante', en: 'Beginner', fr: 'Débutante', it: 'Principiante' },
- intermediate: { es: 'Intermedio', en: 'Intermediate', fr: 'Intermédiaire', it: 'Intermedio' },
+ beginner: { es: 'Principiante', en: 'Beginner', fr: 'DÃ©butante', it: 'Principiante' },
+ intermediate: { es: 'Intermedio', en: 'Intermediate', fr: 'IntermÃ©diaire', it: 'Intermedio' },
 };
 
-/** Estado del programa activo de la usuaria (null si no hay o está terminado) */
+/** Estado del programa activo de la usuaria (null si no hay o estÃ¡ terminado) */
 export function getActiveProgramState(profileExtended, phase = 'follicular') {
  const active = profileExtended?.activeProgram;
  if (!active) return null;
@@ -1277,14 +1277,14 @@ export function getActiveProgramState(profileExtended, phase = 'follicular') {
  return { program, active, total, done, session: getSession(program, done) };
 }
 
-/** Días JS (0-6) de la semana en los que toca sesión del programa:
- * los primeros N días de entreno de la usuaria (N = sesiones/semana del programa) */
+/** DÃ­as JS (0-6) de la semana en los que toca sesiÃ³n del programa:
+ * los primeros N dÃ­as de entreno de la usuaria (N = sesiones/semana del programa) */
 export function getProgramDays(program, trainDays = []) {
  const days = [...trainDays].sort((a, b) => a - b);
  return days.slice(0, Math.min(program.spw, days.length));
 }
 
-/** Sesión nº n del programa en formato tarjeta "Sesión de hoy" */
+/** SesiÃ³n nÂº n del programa en formato tarjeta "SesiÃ³n de hoy" */
 export function programSessionToCard(state, lang = 'es', n = null) {
  const { program, total, isPhaseProgram } = state;
  const L = (o) => o?.[lang] || o?.es || '';
@@ -1294,7 +1294,7 @@ export function programSessionToCard(state, lang = 'es', n = null) {
   return {
    id: `program_${program.id}_${ps.phase}`,
    isProgram: true,
-   name: `${L(program.name)} · ${L(ps.label)}`,
+   name: `${L(program.name)} Â· ${L(ps.label)}`,
    ico: program.emoji,
    dur: `${sessionMinutes(ps.spec)}'`,
    duration: sessionMinutes(ps.spec),
@@ -1311,7 +1311,7 @@ export function programSessionToCard(state, lang = 'es', n = null) {
  return {
  id: `program_${program.id}_${idx}`,
  isProgram: true,
- name: `${L(program.name)} · ${wkLabel} ${sess.week}/${program.weeks.length}`,
+ name: `${L(program.name)} Â· ${wkLabel} ${sess.week}/${program.weeks.length}`,
  ico: program.emoji,
  dur: `${sessionMinutes(sess.spec)}'`,
  duration: sessionMinutes(sess.spec),
@@ -1322,9 +1322,9 @@ export function programSessionToCard(state, lang = 'es', n = null) {
 }
 
 /**
- * ¿Debe mostrarse este programa a esta usuaria?
- * showIf: 'postpartum' → solo si lifeStage === 'postpartum'
- * showIf: 'age40plus'  → solo si la usuaria tiene ≥ 40 años
+ * Â¿Debe mostrarse este programa a esta usuaria?
+ * showIf: 'postpartum' â†’ solo si lifeStage === 'postpartum'
+ * showIf: 'age40plus'  â†’ solo si la usuaria tiene â‰¥ 40 aÃ±os
  */
 export function isVisible(p, profileExtended = {}, age = null) {
  if (!p.showIf) return true;
@@ -1333,7 +1333,7 @@ export function isVisible(p, profileExtended = {}, age = null) {
  return true;
 }
 
-/** ¿Es recomendado para esta usuaria? (badge "Para ti") */
+/** Â¿Es recomendado para esta usuaria? (badge "Para ti") */
 export function isRecommended(p, profileExtended = {}) {
  const lifeStage = profileExtended.lifeStage || '';
  const sportGoal = profileExtended.goals?.sport || '';
@@ -1348,3 +1348,4 @@ export function isRecommended(p, profileExtended = {}) {
  if (p.id === 'physio_active_advanced' && profileExtended?.fitnessLevel === 'very_active') return true;
  return false;
 }
+
