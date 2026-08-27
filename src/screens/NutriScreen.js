@@ -17,7 +17,7 @@ import { NutriSetupCard } from '../components/TabSetupCard';
 import { calcCalories } from '../utils/calories';
 import { useDiets, normalizeDietId } from '../hooks/useDiets';
 import { getDayNutritionContext } from '../utils/programEngine';
-import { getCurrentNutriTip } from '../data/nutriTipsPhase';
+import { getCurrentNutriTip, getFertilitySleepTip } from '../data/nutriTipsPhase';
 import { filterMealsByFasting } from '../utils/fastingMeals';
 import { useRecipes } from '../hooks/useRecipes';
 import { useFoodLog } from '../hooks/useFoodLog';
@@ -281,6 +281,14 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
 
  // ── Tip rotativo de la nutricionista (por fase + día) ───────────────────────
  const nutriTip = getCurrentNutriTip(pi, profileExtended);
+
+ // ── Tip de sueño para goal 'fertility' ──────────────────────────────────────
+ const hasFertilityGoal = (() => {
+  const pg = profileExtended?.primaryGoals;
+  if (Array.isArray(pg)) return pg.includes('fertility');
+  return pg?.fertility === true || pg?.fertility === 1;
+ })();
+ const sleepTip = hasFertilityGoal ? getFertilitySleepTip(pi) : null;
 
  // Slots de comida — estructura fija, contenido 100% desde Supabase
  const MEAL_SLOTS = [
@@ -695,6 +703,55 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
 
  {cals && !nutritionCtx && !nutriTip && <BText style={styles.orangeHeroKcal}>{cals.total} kcal</BText>}
  </View>
+ )}
+
+ {/* ── SUEÑO Y FERTILIDAD ── solo para goal 'fertility' */}
+ {!!sleepTip && (
+  <View style={styles.sleepTipCard}>
+   {/* Header */}
+   <View style={styles.sleepTipHeader}>
+    <BText style={styles.sleepTipIcon}>🌙</BText>
+    <BText style={styles.sleepTipLabel}>
+     {{ es: 'SUEÑO Y FERTILIDAD', en: 'SLEEP & FERTILITY', fr: 'SOMMEIL & FERTILITÉ', it: 'SONNO & FERTILITÀ' }[lang] || 'SUEÑO Y FERTILIDAD'}
+    </BText>
+   </View>
+   {/* Chips de foco */}
+   <View style={styles.sleepTipChips}>
+    {sleepTip.focus.map(f => (
+     <View key={f} style={styles.sleepChip}>
+      <BText style={styles.sleepChipTxt}>{f}</BText>
+     </View>
+    ))}
+   </View>
+   {/* Frase */}
+   <BText style={styles.sleepTipPhrase}>{sleepTip.phrase}</BText>
+   {/* Bullets positivos */}
+   <View style={styles.orangeHeroBullets}>
+    {sleepTip.bullets.filter(b => !b.isAvoid).map((b, i) => (
+     <View key={i} style={styles.orangeHeroBulletRow}>
+      <View style={styles.orangeHeroBulletDot} />
+      <BText style={styles.orangeHeroBulletTxt}>{b.text}</BText>
+     </View>
+    ))}
+   </View>
+   {/* Evitar */}
+   {sleepTip.bullets.filter(b => b.isAvoid).length > 0 && (
+    <View style={[styles.orangeHeroWarn, { backgroundColor: '#EDE9FE', marginTop: 8 }]}>
+     <View style={styles.orangeHeroWarnHeader}>
+      <BText style={[styles.orangeHeroWarnIcon, { color: '#6D28D9' }]}>⚠</BText>
+      <BText style={[styles.orangeHeroWarnTitle, { color: '#6D28D9' }]}>
+       {{ es: 'Mejor evitar', en: 'Better to avoid', fr: 'Mieux éviter', it: 'Meglio evitare' }[lang] || 'Mejor evitar'}
+      </BText>
+     </View>
+     {sleepTip.bullets.filter(b => b.isAvoid).map((b, i) => (
+      <View key={i} style={styles.orangeHeroBulletRow}>
+       <View style={[styles.orangeHeroAvoidDot, { backgroundColor: '#6D28D9' }]} />
+       <BText style={[styles.orangeHeroAvoidTxt, { color: '#6D28D9' }]}>{b.text}</BText>
+      </View>
+     ))}
+    </View>
+   )}
+  </View>
  )}
 
  {/* Comidas del día seleccionado */}
@@ -1367,6 +1424,16 @@ const styles = StyleSheet.create({
  orangeHeroAvoidDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: '#DC2626', marginTop: 7 },
  orangeHeroAvoidTxt: { flex: 1, fontSize: 14, color: '#DC2626', lineHeight: 20, fontFamily: F.body },
  orangeHeroTip: { fontSize: 14, color: '#0A0A0A', lineHeight: 20, fontFamily: F.body },
+
+ // Sueño y Fertilidad
+ sleepTipCard: { backgroundColor: '#F5F3FF', borderRadius: 20, padding: 16, gap: 10, marginBottom: 8 },
+ sleepTipHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+ sleepTipIcon: { fontSize: 18 },
+ sleepTipLabel: { fontSize: 11, fontFamily: F.bodyB, color: '#6D28D9', textTransform: 'uppercase', letterSpacing: 0.6 },
+ sleepTipChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+ sleepChip: { backgroundColor: '#EDE9FE', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4 },
+ sleepChipTxt: { fontSize: 11, color: '#6D28D9', fontFamily: F.bodyB, textTransform: 'uppercase', letterSpacing: 0.4 },
+ sleepTipPhrase: { fontSize: 15, color: '#0A0A0A', lineHeight: 21, fontFamily: F.bodyB },
 
  // Lista de la compra — week strip Figma
  listWeekCard: { backgroundColor: '#F5F5F5', borderRadius: 32, padding: 16, marginBottom: 2, gap: 4 },

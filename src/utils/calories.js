@@ -56,13 +56,21 @@ const GOAL_ADJ = {
 };
 
 /**
- * @param {object} profile { weight, height, age, activityLevel, goal, trainDays }
+ * @param {object} profile { weight, height, age, activityLevel, goal, trainDays, primaryGoals }
  * @param {string} phase fase actual del ciclo ('menstrual'|'follicular'|'ovulation'|'luteal')
- * @returns {{ bmr, tdee, total, phaseAdj, goalAdj } | null}
+ * @returns {{ bmr, tdee, total, phaseAdj, goalAdj, fertilityMode } | null}
  */
 export function calcCalories(profile, phase) {
- const { weight, height, age, activityLevel, goal, trainDays } = profile || {};
+ const { weight, height, age, activityLevel, goal, trainDays, primaryGoals } = profile || {};
  if (!weight || !height || !age) return null;
+
+ // Modo fertilidad: no aplicar déficit calórico nunca
+ // (déficit interfiere con la ovulación y la implantación)
+ const hasFertilityGoal = Array.isArray(primaryGoals)
+   ? primaryGoals.includes('fertility')
+   : primaryGoals?.fertility === true || primaryGoals?.fertility === 1;
+ const isPregnant = goal === 'pregnant' || goal === 'postpartum';
+ const fertilityMode = hasFertilityGoal || isPregnant;
 
  // 1. BMR — Mifflin-St Jeor (mujer)
  const bmr = Math.round(10 * weight + 6.25 * height - 5 * age - 161);
@@ -70,7 +78,6 @@ export function calcCalories(profile, phase) {
  // 2. Factor de actividad: media ponderada entre nivel declarado y días reales
  const levelAct = ACT_LEVEL_MAP[activityLevel] || 1.375;
  const daysAct = actFromDays(trainDays?.length ?? 0);
- // Si la usuaria no ha configurado días de entreno, usamos solo su nivel declarado
  const act = trainDays && trainDays.length > 0
  ? (levelAct + daysAct) / 2
  : levelAct;
@@ -78,12 +85,13 @@ export function calcCalories(profile, phase) {
  // 3. TDEE
  const tdee = Math.round(bmr * act);
 
- // 4. Ajustes
- const goalAdj = GOAL_ADJ[goal] ?? 0;
+ // 4. Ajuste de objetivo — en modo fertilidad/embarazo nunca se aplica déficit
+ const rawGoalAdj = GOAL_ADJ[goal] ?? 0;
+ const goalAdj = fertilityMode ? Math.max(0, rawGoalAdj) : rawGoalAdj;
  const phaseAdj = PHASE_ADJ[phase] ?? 0;
 
  // 5. Total con suelo mínimo
  const total = Math.max(1200, tdee + goalAdj + phaseAdj);
 
- return { bmr, tdee, total, goalAdj, phaseAdj };
+ return { bmr, tdee, total, goalAdj, phaseAdj, fertilityMode };
 }

@@ -50,6 +50,17 @@ export const NUTRI_PHASE_TIPS = {
         { text: 'Lácteos junto a alimentos ricos en hierro', isAvoid: true },
       ],
     },
+    {
+      id: 'men_fertility_iron',
+      focus: ['HIERRO', 'FERTILIDAD'],
+      phrase: 'Un buen nivel de hierro es clave para preparar el endometrio en cada ciclo.',
+      conditionalGoal: 'fertility',
+      bullets: [
+        { text: 'Lentejas, alubias, tofu, espinacas', isAvoid: false },
+        { text: 'Combina con vitamina C para mejor absorción', isAvoid: false },
+        { text: 'Alcohol y cafeína en exceso (reducen absorción)', isAvoid: true },
+      ],
+    },
   ],
 
   // ─── FOLICULAR (5 tips) ────────────────────────────────────────────
@@ -105,9 +116,36 @@ export const NUTRI_PHASE_TIPS = {
         { text: 'Verduras de hoja verde', isAvoid: false },
       ],
     },
+    {
+      id: 'fol_fertility_folate',
+      focus: ['FOLATO', 'B9', 'FERTILIDAD'],
+      phrase: 'El folato es el nutriente más importante antes de quedarte embarazada. Empieza a priorizar ahora.',
+      conditionalGoal: 'fertility',
+      bullets: [
+        { text: 'Espinacas, acelgas, brócoli, aguacate', isAvoid: false },
+        { text: 'Legumbres (lentejas, garbanzos)', isAvoid: false },
+        { text: 'Considera un suplemento de ácido fólico con tu médica', isAvoid: false },
+        { text: 'Alcohol (interfiere con la absorción del folato)', isAvoid: true },
+      ],
+    },
+    {
+      id: 'fol_fertility_omega3',
+      focus: ['OMEGA-3', 'FERTILIDAD', 'HORMONAS'],
+      phrase: 'El omega-3 mejora la calidad ovocitaria y regula las prostaglandinas del ciclo.',
+      conditionalGoal: 'fertility',
+      bullets: [
+        { text: 'Salmón, sardinas, caballa (2-3 veces/semana)', isAvoid: false },
+        { text: 'Nueces, semillas de chía y lino', isAvoid: false },
+        { text: 'Pescados con alto mercurio en exceso (atún rojo, pez espada)', isAvoid: true },
+      ],
+    },
   ],
 
   // ─── OVULATORIA (7 tips, T6 solo embarazo) ────────────────────────
+  // ─── FERTILIDAD: tips extra condicionales a goal 'fertility' ──────
+  // Se intercalan en la rotación normal cuando la usuaria tiene ese goal.
+  // Cada fase recibe 1-2 tips extra de fertilidad para enriquecer la rotación.
+
   ovulation: [
     {
       id: 'ovu_protein',
@@ -164,7 +202,7 @@ export const NUTRI_PHASE_TIPS = {
       id: 'ovu_folate',
       focus: ['FOLATO', 'B9'],
       phrase: 'El folato es esencial para el desarrollo del tubo neural.',
-      conditionalGoal: 'embarazo',  // solo si goal incluye 'embarazo'
+      conditionalGoal: 'embarazo',
       bullets: [
         { text: 'Espinacas, acelgas, brócoli', isAvoid: false },
         { text: 'Legumbres, aguacate', isAvoid: false },
@@ -178,6 +216,30 @@ export const NUTRI_PHASE_TIPS = {
       bullets: [
         { text: 'Pimiento rojo, kiwi, naranja, fresas', isAvoid: false },
         { text: 'Brócoli, coles de Bruselas', isAvoid: false },
+      ],
+    },
+    {
+      id: 'ovu_fertility_zinc',
+      focus: ['ZINC', 'FERTILIDAD', 'OVULACIÓN'],
+      phrase: 'La ovulación es el momento clave. El zinc apoya directamente la calidad del óvulo.',
+      conditionalGoal: 'fertility',
+      bullets: [
+        { text: 'Ostras, marisco, carnes magras', isAvoid: false },
+        { text: 'Semillas de calabaza, legumbres', isAvoid: false },
+        { text: 'Alcohol y tabaco (afectan la calidad ovocitaria)', isAvoid: true },
+        { text: 'Ultraprocesados y azúcares añadidos', isAvoid: true },
+      ],
+    },
+    {
+      id: 'ovu_fertility_antioxidants',
+      focus: ['ANTIOXIDANTES', 'FERTILIDAD'],
+      phrase: 'Los antioxidantes protegen los óvulos del estrés oxidativo. Esta fase es la más importante.',
+      conditionalGoal: 'fertility',
+      bullets: [
+        { text: 'Frutos rojos, tomate, zanahoria', isAvoid: false },
+        { text: 'Frutos secos, semillas, aceite de oliva virgen', isAvoid: false },
+        { text: 'Vitamina E: almendras, avellanas, espinacas', isAvoid: false },
+        { text: 'Azúcar refinado y alcohol', isAvoid: true },
       ],
     },
   ],
@@ -254,6 +316,30 @@ export const NUTRI_PHASE_TIPS = {
         { text: 'Semillas de chía y lino', isAvoid: false },
       ],
     },
+    {
+      id: 'lut_fertility_progesterone',
+      focus: ['PROGESTERONA', 'FERTILIDAD', 'IMPLANTACIÓN'],
+      phrase: 'La fase lútea es clave para la implantación. Nutre tu cuerpo para sostener el nivel de progesterona.',
+      conditionalGoal: 'fertility',
+      bullets: [
+        { text: 'Vitamina B6: pollo, salmón, garbanzos, plátano', isAvoid: false },
+        { text: 'Zinc: semillas de calabaza, legumbres', isAvoid: false },
+        { text: 'Vitamina C: pimiento, kiwi, fresas (apoya el cuerpo lúteo)', isAvoid: false },
+        { text: 'Alcohol y cafeína en exceso', isAvoid: true },
+      ],
+    },
+    {
+      id: 'lut_fertility_stress',
+      focus: ['CORTISOL', 'FERTILIDAD', 'ESTRÉS'],
+      phrase: 'El estrés eleva el cortisol y puede interferir con la progesterona. Esta semana, prioriza el descanso.',
+      conditionalGoal: 'fertility',
+      bullets: [
+        { text: 'Magnesio: chocolate negro, frutos secos, legumbres', isAvoid: false },
+        { text: 'Adaptógenos suaves: caldo de huesos, cúrcuma', isAvoid: false },
+        { text: 'Cafeína en exceso (>2 cafés/día)', isAvoid: true },
+        { text: 'Ayuno prolongado o déficit calórico severo', isAvoid: true },
+      ],
+    },
   ],
 
   // ─── PREMENOPAUSIA (5 tips, 1 por semana) ─────────────────────────
@@ -312,6 +398,54 @@ export const NUTRI_PHASE_TIPS = {
     },
   ],
 };
+
+// ─── TIPS DE SUEÑO — solo para goal 'fertility' ───────────────────────────────
+// Se muestran como un bloque adicional en NutriScreen debajo del tip del día.
+export const FERTILITY_SLEEP_TIPS = [
+  {
+    id: 'sleep_melatonin',
+    focus: ['SUEÑO', 'MELATONINA', 'FERTILIDAD'],
+    phrase: 'La melatonina protege los óvulos del estrés oxidativo y regula tu ciclo.',
+    bullets: [
+      { text: 'Duerme en oscuridad total — la melatonina se produce en la oscuridad', isAvoid: false },
+      { text: 'Apaga pantallas 1h antes de dormir', isAvoid: false },
+      { text: 'Alimentos ricos en triptófano antes de dormir: pavo, plátano, avena', isAvoid: false },
+      { text: 'Pantallas con luz azul hasta tarde', isAvoid: true },
+    ],
+  },
+  {
+    id: 'sleep_cortisol',
+    focus: ['SUEÑO', 'CORTISOL', 'HORMONAS'],
+    phrase: 'Dormir menos de 7h eleva el cortisol y puede alterar la ovulación. El sueño es parte del tratamiento.',
+    bullets: [
+      { text: 'Busca entre 7-9h de sueño cada noche', isAvoid: false },
+      { text: 'Mantén horarios regulares, también el fin de semana', isAvoid: false },
+      { text: 'Magnesio por la noche: frutos secos, chocolate negro', isAvoid: false },
+      { text: 'Alcohol por la noche (fragmenta el sueño)', isAvoid: true },
+    ],
+  },
+  {
+    id: 'sleep_temperature',
+    focus: ['SUEÑO', 'TEMPERATURA', 'PROGESTERONA'],
+    phrase: 'Tu temperatura corporal varía con el ciclo. Adaptar el ambiente de sueño mejora la calidad del descanso.',
+    bullets: [
+      { text: 'En fase lútea la temperatura sube 0,2–0,5 °C: ventila el dormitorio', isAvoid: false },
+      { text: 'Ducha templada antes de dormir para bajar la temperatura corporal', isAvoid: false },
+      { text: 'Infusiones relajantes sin cafeína: manzanilla, valeriana', isAvoid: false },
+      { text: 'Cafeína después de las 14:00h', isAvoid: true },
+    ],
+  },
+];
+
+/**
+ * Devuelve el tip de sueño del día para usuarias con goal fertility.
+ * Rota semanalmente para no repetirse demasiado.
+ */
+export function getFertilitySleepTip(pi) {
+  if (!pi) return FERTILITY_SLEEP_TIPS[0];
+  const week = Math.floor((pi.day ?? 0) / 7);
+  return FERTILITY_SLEEP_TIPS[week % FERTILITY_SLEEP_TIPS.length];
+}
 
 /**
  * Calcula el día dentro de la fase actual (0-indexed).
