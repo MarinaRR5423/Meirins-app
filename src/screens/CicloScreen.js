@@ -676,20 +676,23 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  const dayLabel = ({ es: 'Día', en: 'Day', fr: 'Jour', it: 'Giorno' }[lang] || 'Día');
  const selDateFormatted = new Date(selectedDate + 'T12:00:00').toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long' });
  return (
- <View style={[styles.dayDetail, { backgroundColor: PHASE_BG[selPhase], borderColor: PHASE_TEXT[selPhase] + '44' }]}>
- <BText style={[styles.dayDetailDate, { color: PHASE_TEXT[selPhase] }]}>
- {selDateFormatted.charAt(0).toUpperCase() + selDateFormatted.slice(1)}
- </BText>
- <View style={styles.dayDetailRow}>
- <BText style={styles.dayDetailEmoji}>{ph.emoji}</BText>
- <View style={{ flex: 1 }}>
- <BText style={[styles.dayDetailPhase, { color: PHASE_TEXT[selPhase] }]}>{phTr.name}</BText>
- <BText style={[styles.dayDetailTagline, { color: PHASE_TEXT[selPhase] }]}>{phTr.tagline}</BText>
- </View>
- <View style={[styles.dayDetailBadge, { backgroundColor: PHASE_TEXT[selPhase] }]}>
- <BText style={styles.dayDetailBadgeText}>{dayLabel} {selCycleDay}</BText>
- </View>
- </View>
+ <View style={[styles.dayDetail, { backgroundColor: PHASE_BG[selPhase] }]}>
+  {/* Badge día — izquierda */}
+  <View style={[styles.dayDetailDayBadge, { backgroundColor: PHASE_TEXT[selPhase] }]}>
+   <BText style={styles.dayDetailDayNum}>{selCycleDay}</BText>
+   <BText style={styles.dayDetailDayLbl}>{dayLabel}</BText>
+  </View>
+  {/* Info — derecha */}
+  <View style={{ flex: 1, minWidth: 0 }}>
+   <BText style={[styles.dayDetailDate, { color: PHASE_TEXT[selPhase] }]}>
+    {selDateFormatted.charAt(0).toUpperCase() + selDateFormatted.slice(1)}
+   </BText>
+   <View style={styles.dayDetailRow}>
+    <BText style={styles.dayDetailEmoji}>{ph.emoji}</BText>
+    <BText style={[styles.dayDetailPhase, { color: PHASE_TEXT[selPhase] }]}>{phTr.name}</BText>
+   </View>
+   <BText style={[styles.dayDetailTagline, { color: PHASE_TEXT[selPhase] }]}>{phTr.tagline}</BText>
+  </View>
  </View>
  );
  })()}
@@ -911,14 +914,15 @@ const styles = StyleSheet.create({
  noDataNote: { fontSize:12, color:'#737373', textAlign:'center', marginTop:8, lineHeight:18, fontFamily: F.body },
 
  // Day detail panel
- dayDetail: { marginTop:14, borderRadius:14, padding:14, borderWidth:1 },
- dayDetailDate: { fontSize:12, fontFamily: F.bodyB, marginBottom:8, textTransform:'capitalize' },
- dayDetailRow: { flexDirection:'row', alignItems:'center', gap:10 },
- dayDetailEmoji: { fontSize:28, fontFamily: F.body },
- dayDetailPhase: { fontSize:15, fontFamily: F.bodyB, lineHeight:20 },
- dayDetailTagline: { fontSize:12, opacity:0.8, marginTop:2, fontFamily: F.body },
- dayDetailBadge: { paddingHorizontal:10, paddingVertical:5, borderRadius:12 },
- dayDetailBadgeText: { color:'white', fontSize:12, fontFamily: F.bodyB },
+ dayDetail: { marginTop:14, borderRadius:16, padding:14, flexDirection:'row', alignItems:'center', gap:14 },
+ dayDetailDayBadge: { width:52, height:52, borderRadius:12, alignItems:'center', justifyContent:'center', flexShrink:0 },
+ dayDetailDayNum: { fontSize:22, fontFamily: F.bodyB, color:'white', lineHeight:26 },
+ dayDetailDayLbl: { fontSize:9, fontFamily: F.bodyB, color:'rgba(255,255,255,0.7)', textTransform:'uppercase', letterSpacing:0.5 },
+ dayDetailDate: { fontSize:11, fontFamily: F.body, opacity:0.7, marginBottom:3 },
+ dayDetailRow: { flexDirection:'row', alignItems:'center', gap:6, marginBottom:2 },
+ dayDetailEmoji: { fontSize:18, fontFamily: F.body },
+ dayDetailPhase: { fontSize:16, fontFamily: F.bodyB },
+ dayDetailTagline: { fontSize:12, opacity:0.8, fontFamily: F.body },
 
  // Sleep card
  sleepLogRow: { flexDirection:'row', alignItems:'center', justifyContent:'space-between', marginBottom:12 },
