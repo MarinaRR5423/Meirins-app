@@ -36,11 +36,11 @@ const HK_INTERMENSTRUAL = 'HKCategoryTypeIdentifierIntermenstrualBleeding';
 /** Solicita autorización de lectura para datos de ciclo. */
 async function requestCyclePermissions() {
   if (!HealthKit) throw new Error('HealthKit no disponible');
-  // @kingstinct/react-native-healthkit usa requestAuthorization(read[], write[])
-  await HealthKit.requestAuthorization({
-    toRead:  [HK_MENSTRUAL_FLOW, HK_INTERMENSTRUAL],
-    toShare: [],
-  });
+  // @kingstinct/react-native-healthkit v14 usa API posicional: (read[], write[])
+  await HealthKit.requestAuthorization(
+    [HK_MENSTRUAL_FLOW, HK_INTERMENSTRUAL], // lectura
+    [],                                      // escritura
+  );
 }
 
 /** Lee muestras de MenstrualFlow de los últimos `years` años. */
@@ -166,6 +166,7 @@ export function useHealthKitCycleImport({ onImport }) {
     try {
       await requestCyclePermissions();
     } catch (e) {
+      console.warn('[HealthKit] requestAuthorization error:', e?.message ?? e);
       setStatus('error');
       setError('Permiso denegado o HealthKit no disponible.');
       return;

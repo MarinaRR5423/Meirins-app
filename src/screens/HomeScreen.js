@@ -72,9 +72,13 @@ function FastingRingCard({ lang, fastingProtocol }) {
   const [now, setNow] = useState(Date.now());
   const tr = (es, en, fr, it) => ({ es, en, fr, it }[lang] || es);
 
-  // Parse goal hours from protocol like "16-8" → 16
+  // Parse goal hours from protocol: 'fasting_16_8' → 16, 'fasting_18_6' → 18, 'omad' → 23
   const goalHours = (() => {
-    const n = parseInt((fastingProtocol || '16-8').split('-')[0], 10);
+    if (!fastingProtocol) return 16;
+    if (fastingProtocol === 'omad') return 23;
+    // formato 'fasting_16_8' → extraer primer número
+    const m = fastingProtocol.match(/(\d+)/);
+    const n = m ? parseInt(m[1], 10) : NaN;
     return isNaN(n) ? 16 : n;
   })();
 
@@ -134,7 +138,7 @@ function FastingRingCard({ lang, fastingProtocol }) {
         <View style={fastStyles.headerLeft}>
           <BText style={fastStyles.headerLabel}>
             {tr('Ayuno', 'Fasting', 'Jeûne', 'Digiuno')}
-            {' · '}{fastingProtocol || '16:8'}
+            {' · '}{fastingProtocol === 'omad' ? 'OMAD' : fastingProtocol === 'fasting_5_2' ? '5:2' : `${goalHours}:${24 - goalHours}`}
           </BText>
           <View style={[fastStyles.dot, { backgroundColor: statusColor }]} />
           <BText style={[fastStyles.statusTxt, { color: statusColor }]}>{statusLabel}</BText>
@@ -641,7 +645,7 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  <WidgetWrap {...ww} id="fasting">
   <FastingRingCard
    lang={lang}
-   fastingProtocol={profile?.profileExtended?.editFasting || '16-8'}
+   fastingProtocol={profile?.profileExtended?.fastingProtocol || '16-8'}
   />
  </WidgetWrap>
 
