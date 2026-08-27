@@ -1168,17 +1168,19 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
           {PROGRAMS.filter(pr => isVisible(pr, profileExtended, age)).map(pr => {
             const active = selectedProgram === pr.id;
             const lvl = LEVEL_LABEL[pr.level]?.[lang] || pr.level;
-            const weeks = pr.weeks?.length || 0;
+            const durationTxt = pr.phaseRotation
+              ? L('3 meses', '3 months', '3 mois', '3 mesi')
+              : `${pr.weeks?.length || 0} ${L('semanas', 'weeks', 'semaines', 'settimane')}`;
             const rec = isRecommended(pr, { ...(profileExtended || {}), fitnessLevel: localFitness || profileExtended?.fitnessLevel });
             return (
               <TouchableOpacity key={pr.id} onPress={() => setSelectedProgram(active ? '' : pr.id)}
                 style={[s.programRow, active && s.programRowActive]}>
                 <View style={{ flex: 1 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                    <Text style={s.programName}>{pr.emoji} {pr.name[lang] || pr.name.es}</Text>
+                    <Text style={s.programName}>{pr.name[lang] || pr.name.es}</Text>
                     {rec && <View style={s.programRecBadge}><Text style={s.programRecTxt}>{L('Recomendado', 'Recommended', 'Recommandé', 'Consigliato')}</Text></View>}
                   </View>
-                  <Text style={s.programMeta}>{lvl} · {weeks} {L('semanas', 'weeks', 'semaines', 'settimane')}</Text>
+                  <Text style={s.programMeta}>{lvl} · {durationTxt}</Text>
                 </View>
                 {active && <Check size={16} color="#FE6004" strokeWidth={2.5} />}
               </TouchableOpacity>
