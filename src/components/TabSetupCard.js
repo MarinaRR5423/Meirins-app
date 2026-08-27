@@ -1206,6 +1206,7 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
           });
         })()}
 
+        <View style={{ height: 16 }} />
         <TrainerCard lang={lang} />
 
         <TouchableOpacity style={[s.saveBtnAzote, saving && { opacity: 0.45 }]} onPress={save} disabled={saving}>
