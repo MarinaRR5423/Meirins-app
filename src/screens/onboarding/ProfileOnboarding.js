@@ -107,7 +107,53 @@ function toggle(arr, val) {
 
 const LIFE_STAGE_ICONS = { reproductive: '', perimenopause: '', menopause: '', postmenopause: '', pregnant: '', postpartum: '' };
 
-function Step1({ data, save, onBack, onNext, ob }) {
+// Opciones de semana de gestación agrupadas por trimestre
+const PREGNANCY_WEEK_OPTIONS = [
+ // Trimestre 1
+ { v: '4',  l: '4 semanas',  t: 1 }, { v: '5',  l: '5 semanas',  t: 1 },
+ { v: '6',  l: '6 semanas',  t: 1 }, { v: '7',  l: '7 semanas',  t: 1 },
+ { v: '8',  l: '8 semanas',  t: 1 }, { v: '9',  l: '9 semanas',  t: 1 },
+ { v: '10', l: '10 semanas', t: 1 }, { v: '11', l: '11 semanas', t: 1 },
+ { v: '12', l: '12 semanas', t: 1 }, { v: '13', l: '13 semanas', t: 1 },
+ // Trimestre 2
+ { v: '14', l: '14 semanas', t: 2 }, { v: '15', l: '15 semanas', t: 2 },
+ { v: '16', l: '16 semanas', t: 2 }, { v: '17', l: '17 semanas', t: 2 },
+ { v: '18', l: '18 semanas', t: 2 }, { v: '19', l: '19 semanas', t: 2 },
+ { v: '20', l: '20 semanas', t: 2 }, { v: '21', l: '21 semanas', t: 2 },
+ { v: '22', l: '22 semanas', t: 2 }, { v: '23', l: '23 semanas', t: 2 },
+ { v: '24', l: '24 semanas', t: 2 }, { v: '25', l: '25 semanas', t: 2 },
+ { v: '26', l: '26 semanas', t: 2 },
+ // Trimestre 3
+ { v: '27', l: '27 semanas', t: 3 }, { v: '28', l: '28 semanas', t: 3 },
+ { v: '29', l: '29 semanas', t: 3 }, { v: '30', l: '30 semanas', t: 3 },
+ { v: '31', l: '31 semanas', t: 3 }, { v: '32', l: '32 semanas', t: 3 },
+ { v: '33', l: '33 semanas', t: 3 }, { v: '34', l: '34 semanas', t: 3 },
+ { v: '35', l: '35 semanas', t: 3 }, { v: '36', l: '36 semanas', t: 3 },
+ { v: '37', l: '37 semanas', t: 3 }, { v: '38', l: '38 semanas', t: 3 },
+ { v: '39', l: '39 semanas', t: 3 }, { v: '40', l: '40 semanas', t: 3 },
+];
+
+const TRIMESTER_LABELS = {
+ 1: { es: '1er trimestre', en: '1st trimester', fr: '1er trimestre', it: '1° trimestre' },
+ 2: { es: '2º trimestre', en: '2nd trimester', fr: '2e trimestre', it: '2° trimestre' },
+ 3: { es: '3er trimestre', en: '3rd trimester', fr: '3e trimestre', it: '3e trimestre' },
+};
+
+function Step1({ data, save, onBack, onNext, ob, lang }) {
+ const pregnancyWeekLabel = {
+  es: '¿EN QUÉ SEMANA DE GESTACIÓN ESTÁS?',
+  en: 'WHAT WEEK OF PREGNANCY ARE YOU IN?',
+  fr: 'À QUELLE SEMAINE DE GROSSESSE ES-TU ?',
+  it: 'A CHE SETTIMANA DI GRAVIDANZA SEI?',
+ }[lang] || '¿EN QUÉ SEMANA DE GESTACIÓN ESTÁS?';
+
+ // Agrupar semanas por trimestre para mostrar secciones
+ const trimesterGroups = [1, 2, 3].map(t => ({
+  t,
+  label: TRIMESTER_LABELS[t][lang] || TRIMESTER_LABELS[t].es,
+  weeks: PREGNANCY_WEEK_OPTIONS.filter(o => o.t === t),
+ }));
+
  return (
  <Layout step={1} title={ob.step1Title} subtitle={ob.step1Sub}
  onBack={onBack} onNext={onNext} nextLabel={ob.next} backLabel={ob.back} nextDisabled={false}>
@@ -130,9 +176,47 @@ function Step1({ data, save, onBack, onNext, ob }) {
  selected={data.lifeStage === o.v} onPress={() => save({ lifeStage: o.v })} />
  ))}
  {data.lifeStage === 'pregnant' && (
- <View style={s.infoBanner}>
- <BText style={s.infoBannerText}>{ob.pregnantBanner}</BText>
- </View>
+ <>
+  <View style={s.infoBanner}>
+   <BText style={s.infoBannerText}>{ob.pregnantBanner}</BText>
+  </View>
+  {/* ── Semana de gestación ── */}
+  <View style={{ marginTop: 16, gap: 14 }}>
+   <SecLabel>{pregnancyWeekLabel}</SecLabel>
+   {trimesterGroups.map(({ t, label, weeks }) => (
+    <View key={t} style={{ gap: 8 }}>
+     <View style={s.trimesterHeader}>
+      <BText style={s.trimesterLabel}>{label}</BText>
+     </View>
+     <View style={s.weekGrid}>
+      {weeks.map(w => (
+       <TouchableOpacity
+        key={w.v}
+        style={[s.weekChip, data.pregnancyWeek === w.v && s.weekChipSelected]}
+        onPress={() => save({ pregnancyWeek: w.v })}
+        activeOpacity={0.75}
+       >
+        <BText style={[s.weekChipTxt, data.pregnancyWeek === w.v && s.weekChipTxtSelected]}>
+         {w.v}
+        </BText>
+       </TouchableOpacity>
+      ))}
+     </View>
+    </View>
+   ))}
+   {data.pregnancyWeek && (
+    <View style={s.weekSelectedBanner}>
+     <BText style={s.weekSelectedTxt}>
+      {`🌸 ${
+       { es: 'Semana', en: 'Week', fr: 'Semaine', it: 'Settimana' }[lang] || 'Semana'
+      } ${data.pregnancyWeek} · ${
+       TRIMESTER_LABELS[PREGNANCY_WEEK_OPTIONS.find(o => o.v === data.pregnancyWeek)?.t]?.[lang] || ''
+      }`}
+     </BText>
+    </View>
+   )}
+  </View>
+ </>
  )}
  </View>
  </Layout>
@@ -367,7 +451,7 @@ export default function ProfileOnboarding({ onDone, lang = 'es' }) {
 
  const props = { data, save, ob };
 
- if (step === 1) return <Step1 {...props} onBack={() => {}} onNext={() => setStep(2)} />;
+ if (step === 1) return <Step1 {...props} lang={lang} onBack={() => {}} onNext={() => setStep(2)} />;
  if (step === 2) return <Step2 {...props} onBack={() => setStep(1)} onNext={() => setStep(3)} />;
  if (step === 3) return <Step3 {...props} onBack={() => setStep(2)} onNext={() => setStep(4)} />;
  if (step === 4) return <Step4 {...props} onBack={() => setStep(3)} onNext={() => setStep(5)} />;
@@ -423,4 +507,15 @@ const s = StyleSheet.create({
  readyBanner: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: 'rgba(255,255,255,0.12)', borderRadius: 14, padding: 16, gap: 12, borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)' },
  readyTitle: { fontSize: 15, fontFamily: F.bodyB, color: 'white', marginBottom: 4 },
  readySubtitle: { fontSize: 12, color: 'rgba(255,255,255,0.7)', lineHeight: 18, fontFamily: F.body },
+
+ // Semana de gestación
+ trimesterHeader: { borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.2)', paddingBottom: 6 },
+ trimesterLabel: { fontSize: 11, fontFamily: F.bodyB, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: 0.6 },
+ weekGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+ weekChip: { width: 52, height: 36, borderRadius: 10, backgroundColor: 'rgba(255,255,255,0.10)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' },
+ weekChipSelected: { backgroundColor: '#429FE7', borderColor: '#429FE7' },
+ weekChipTxt: { fontSize: 13, color: 'rgba(255,255,255,0.7)', fontFamily: F.bodyB },
+ weekChipTxtSelected: { color: 'white' },
+ weekSelectedBanner: { backgroundColor: 'rgba(66,159,231,0.2)', borderRadius: 12, padding: 12, borderWidth: 1, borderColor: 'rgba(66,159,231,0.4)' },
+ weekSelectedTxt: { fontSize: 14, color: 'white', fontFamily: F.bodyB, textAlign: 'center' },
 });

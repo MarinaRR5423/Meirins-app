@@ -173,6 +173,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
  );
  // ── Salud ──
  const [editLifeStage, setEditLifeStage] = useState(ext.lifeStage || '');
+ const [editPregnancyWeek, setEditPregnancyWeek] = useState(ext.pregnancyWeek || '');
  const [editConditions, setEditConditions] = useState(ext.conditions || []);
  const [editContraUse, setEditContraUse] = useState(ext.contraUse ?? null);
  const [editContraType, setEditContraType] = useState(ext.contraType || '');
@@ -411,6 +412,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
  setSavingExt(true);
  await profile.saveProfileExtended({
  lifeStage: editLifeStage,
+ pregnancyWeek: editLifeStage === 'pregnant' ? editPregnancyWeek : '',
  conditions: editConditions,
  contraUse: editContraUse,
  contraType: editContraUse ? editContraType : '',
@@ -687,7 +689,7 @@ export default function PerfilScreen({ pi, profile, signOut }) {
 
  {/* ── Salud ── */}
  <NavCard iconEl={<Heart size={16} color="#49CF38" />} title={tr('Salud','Health','Santé','Salute')}>
-  <NavItem label={tr('Etapa vital','Life stage','Étape de vie','Fase della vita')} value={lbl(LIFE_L, editLifeStage, lang) || '—'} onPress={() => setEditing('health')} />
+  <NavItem label={tr('Etapa vital','Life stage','Étape de vie','Fase della vita')} value={`${lbl(LIFE_L, editLifeStage, lang) || '—'}${editLifeStage === 'pregnant' && editPregnancyWeek ? ` · ${tr('sem.','wk.','sem.','sett.')} ${editPregnancyWeek}` : ''}`} onPress={() => setEditing('health')} />
   <NavItem label={tr('Condiciones','Conditions','Conditions','Condizioni')} value={editConditions.filter(c=>c!=='none').length ? String(editConditions.filter(c=>c!=='none').length) : '—'} onPress={() => setEditing('health')} />
   <NavItem label={tr('Anticonceptivos','Contraception','Contraception','Contraccezione')} value={editContraUse === true ? yesStr : editContraUse === false ? noStr : '—'} last onPress={() => setEditing('health')} />
  </NavCard>
@@ -983,6 +985,36 @@ export default function PerfilScreen({ pi, profile, signOut }) {
            </View>
           </TouchableOpacity>
          ))}
+         {/* Semana de gestación — solo si lifeStage === 'pregnant' */}
+         {editLifeStage === 'pregnant' && (
+          <View style={{ marginTop: 14, gap: 10 }}>
+           <BText style={styles.editSection}>
+            {({ es: '¿EN QUÉ SEMANA ESTÁS?', en: 'WHAT WEEK ARE YOU IN?', fr: 'À QUELLE SEMAINE ES-TU ?', it: 'A CHE SETTIMANA SEI?' })[lang] || '¿EN QUÉ SEMANA ESTÁS?'}
+           </BText>
+           <TextInput
+            value={editPregnancyWeek}
+            onChangeText={v => {
+             const n = v.replace(/[^0-9]/g, '');
+             if (!n || (parseInt(n, 10) >= 4 && parseInt(n, 10) <= 42)) setEditPregnancyWeek(n);
+            }}
+            placeholder={{ es: 'Ej: 16', en: 'E.g. 16', fr: 'Ex: 16', it: 'Es. 16' }[lang] || 'Ej: 16'}
+            keyboardType="numeric"
+            maxLength={2}
+            style={[styles.input, { marginTop: 0, borderWidth: 1, borderColor: '#E5E5E5', borderRadius: 12, padding: 12, fontSize: 16, fontFamily: F.body, color: '#0A0A0A', backgroundColor: '#FAFAFA' }]}
+           />
+           {editPregnancyWeek ? (
+            <BText style={styles.pregnantNote}>
+             {`🌸 ${({ es: 'Semana', en: 'Week', fr: 'Semaine', it: 'Settimana' })[lang] || 'Semana'} ${editPregnancyWeek} · ${
+              parseInt(editPregnancyWeek, 10) >= 27
+               ? ({ es: '3er trimestre', en: '3rd trimester', fr: '3e trimestre', it: '3° trimestre' })[lang]
+               : parseInt(editPregnancyWeek, 10) >= 14
+               ? ({ es: '2º trimestre', en: '2nd trimester', fr: '2e trimestre', it: '2° trimestre' })[lang]
+               : ({ es: '1er trimestre', en: '1st trimester', fr: '1er trimestre', it: '1° trimestre' })[lang]
+             }`}
+            </BText>
+           ) : null}
+          </View>
+         )}
         </>}
         <BText style={[styles.editSection, { marginTop: 16, color: '#EF4444' }]}>{ob?.conditionsLabel || 'CONDICIONES'}</BText>
         <View style={styles.row}>
