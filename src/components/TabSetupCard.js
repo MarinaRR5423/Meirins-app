@@ -8,7 +8,7 @@ import {
   View, Text, TouchableOpacity, StyleSheet, ScrollView,
   TextInput, Modal, SafeAreaView, Platform, ImageBackground,
 } from 'react-native';
-import { Check, X, ChevronRight, Calendar, CalendarDays, Footprints, Dumbbell, Leaf, Waves, Bike, CircleDot, Shield, Zap, Music2, Mountain, Swords, MoreHorizontal, Circle } from 'lucide-react-native';
+import { Check, X, ChevronRight, ChevronDown, Calendar, CalendarDays, Footprints, Dumbbell, Leaf, Waves, Bike, CircleDot, Shield, Zap, Music2, Mountain, Swords, MoreHorizontal, Circle } from 'lucide-react-native';
 import T from '../i18n/translations';
 import { F } from '../theme/fonts';
 import RangeCalendar from './RangeCalendar';
@@ -19,6 +19,13 @@ import { ALL_MEALS, MEAL_LABELS, getActiveMeals } from '../utils/fastingMeals';
 import { trackEvent, Events } from '../lib/analytics';
 
 // ── Catálogos compartidos para CicloSetupCard y CicloHealthCard ────────────────
+const MENO_Q_OPTS = [
+  { v: 'over12m',      l: { es: 'Más de 12 meses',        en: 'More than 12 months',     fr: 'Plus de 12 mois',           it: 'Più di 12 mesi' } },
+  { v: '3to12m',       l: { es: 'Entre 3 y 12 meses',     en: 'Between 3 and 12 months', fr: 'Entre 3 et 12 mois',        it: 'Tra 3 e 12 mesi' } },
+  { v: 'under3m',      l: { es: 'Menos de 3 meses',       en: 'Less than 3 months',      fr: 'Moins de 3 mois',           it: 'Meno di 3 mesi' } },
+  { v: 'neverregular', l: { es: 'Nunca ha sido regular',  en: 'Never been regular',      fr: "N'a jamais été régulier",   it: 'Non è mai stato regolare' } },
+];
+
 const LIFE_STAGES_NEW = [
   { v: 'reproductive',  l: { es: 'Reproductiva',   en: 'Reproductive',   fr: 'Reproductive',   it: 'Riproduttiva' } },
   { v: 'perimenopause', l: { es: 'Perimenopausia', en: 'Perimenopause',  fr: 'Périménopause',  it: 'Perimenopausa' } },
@@ -191,19 +198,22 @@ export function CicloSetupCard({ lang, lastPeriod, setLastPeriod, cycleLength, s
   const [conditions, setConditions] = useState(profileExtended?.conditions || []);
   const [contraUse, setContraUse]   = useState(profileExtended?.contraUse ?? null);   // true | false | null
   const [contraType, setContraType] = useState(profileExtended?.contraType || '');
+  const [menoOpen, setMenoOpen]     = useState(false);
+  const [menoQ, setMenoQ]           = useState(profileExtended?.menoSuspectQ || '');
   const [saving, setSaving]         = useState(false);
 
   const toggleCondition = (v) =>
     conditions.includes(v) ? setConditions(conditions.filter(x => x !== v)) : setConditions([...conditions, v]);
 
   const save = async () => {
-    if (!rangeStart) return;
+    if (!menoOpen && !rangeStart) return;
     setSaving(true);
-    await setLastPeriod(rangeStart);
+    if (!menoOpen) await setLastPeriod(rangeStart);
     if (saveProfileExtended) {
       await saveProfileExtended({
         periodEnd: rangeEnd || null,
         lifeStage, conditions, contraUse, contraType,
+        ...(menoOpen ? { menoSuspectQ: menoQ } : {}),
       });
     }
     setSaving(false);
@@ -221,7 +231,7 @@ export function CicloSetupCard({ lang, lastPeriod, setLastPeriod, cycleLength, s
     noLabel:     ob?.no   || 'No',
   };
 
-  const canSave = !!rangeStart;
+  const canSave = menoOpen ? true : !!rangeStart;
 
   // Resiembra desde el perfil actual al abrir (el perfil llega async)
   const openModal = () => {
@@ -268,6 +278,29 @@ export function CicloSetupCard({ lang, lastPeriod, setLastPeriod, cycleLength, s
           color="#49CF38"
           lang={lang}
         />
+
+        {/* ── No recuerdo / No tengo regla ── */}
+        <TouchableOpacity
+          style={[s.menoToggleBtn, menoOpen && s.menoToggleBtnOpen]}
+          onPress={() => setMenoOpen(v => !v)}
+          activeOpacity={0.8}>
+          <Text style={[s.menoToggleTxt, menoOpen && s.menoToggleTxtOpen]}>
+            {tr({ es: 'No recuerdo / No tengo regla', en: "I don't remember / No period", fr: 'Je ne me souviens plus / Pas de règles', it: 'Non ricordo / Non ho il ciclo' }, lang)}
+          </Text>
+          <ChevronDown size={16} color={menoOpen ? '#49CF38' : '#888'} style={{ transform: [{ rotate: menoOpen ? '180deg' : '0deg' }] }} />
+        </TouchableOpacity>
+        {menoOpen && (
+          <View style={s.menoExpand}>
+            <Text style={s.menoExpandQ}>
+              {tr({ es: '¿Hace cuánto que no tienes la regla?', en: 'How long since your last period?', fr: "Depuis combien de temps n'as-tu pas tes règles ?", it: 'Da quanto tempo non hai il ciclo?' }, lang)}
+            </Text>
+            <View style={{ gap: 4 }}>
+              {MENO_Q_OPTS.map(o => (
+                <OptionCard key={o.v} variant="azote" label={tr(o.l, lang)} selected={menoQ === o.v} onPress={() => setMenoQ(o.v)} />
+              ))}
+            </View>
+          </View>
+        )}
 
         {/* ── Etapa vital ── */}
         <Text style={[s.secLabelAzote, { marginTop: 28 }]}>
@@ -1332,6 +1365,12 @@ const s = StyleSheet.create({
   chipAzoteActive:      { backgroundColor: '#0A0A0A' },
   chipAzoteLabel:       { fontSize: 16, color: '#0A0A0A', fontFamily: F.body, lineHeight: 20.8 },
   chipAzoteLabelActive: { color: 'white', fontFamily: F.body, textAlign: 'center' },
+  menoToggleBtn:     { marginTop: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderWidth: 1, borderColor: '#2a2a2a', borderStyle: 'dashed', borderRadius: 12, paddingVertical: 12, paddingHorizontal: 14 },
+  menoToggleBtnOpen: { borderColor: '#49CF38', borderStyle: 'solid', backgroundColor: 'rgba(73,207,56,0.06)' },
+  menoToggleTxt:     { fontSize: 14, fontFamily: F.body, color: '#888' },
+  menoToggleTxtOpen: { color: '#49CF38' },
+  menoExpand:        { marginTop: 8, backgroundColor: '#0e0e0e', borderRadius: 12, borderWidth: 1, borderColor: '#1e2e1e', padding: 14 },
+  menoExpandQ:       { fontSize: 13, fontFamily: F.bodyB, color: '#ccc', marginBottom: 10 },
   saveBtnAzote:    { marginTop: 28, height: 48, borderRadius: 12, backgroundColor: '#171717', alignItems: 'center', justifyContent: 'center' },
   saveBtnAzoteTxt: { color: '#FAFAFA', fontFamily: F.body, fontSize: 18 },
   batchDayBtn:       { width: 44, height: 44, borderRadius: 12, backgroundColor: '#F5F5F5', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: 'transparent' },
