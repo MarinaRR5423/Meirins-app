@@ -1161,32 +1161,50 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
         <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
           {L('Programa de entrenamiento', 'Training program', 'Programme d\'entraînement', 'Programma di allenamento')}
         </Text>
-        <Text style={[s.secSub, { color: '#737373', marginTop: -6 }]}>
-          {L('Elige un plan estructurado por semanas', 'Choose a structured weekly plan', 'Choisis un plan structuré par semaines', 'Scegli un piano strutturato a settimane')}
-        </Text>
-        <View style={{ gap: 8, marginTop: 8 }}>
-          {PROGRAMS.filter(pr => isVisible(pr, profileExtended, age)).map(pr => {
-            const active = selectedProgram === pr.id;
-            const lvl = LEVEL_LABEL[pr.level]?.[lang] || pr.level;
-            const durationTxt = pr.phaseRotation
-              ? L('3 meses', '3 months', '3 mois', '3 mesi')
-              : `${pr.weeks?.length || 0} ${L('semanas', 'weeks', 'semaines', 'settimane')}`;
-            const rec = isRecommended(pr, { ...(profileExtended || {}), fitnessLevel: localFitness || profileExtended?.fitnessLevel });
+
+        {/* Grupos por nivel apilados */}
+        {(() => {
+          const levels = [
+            { id: 'beginner',     label: L('Principiante', 'Beginner',     'Débutant',      'Principiante') },
+            { id: 'intermediate', label: L('Intermedio',   'Intermediate', 'Intermédiaire', 'Intermedio') },
+            { id: 'advanced',     label: L('Avanzado',     'Advanced',     'Avancé',        'Avanzato') },
+          ];
+          const recCfg = { ...(profileExtended || {}), fitnessLevel: localFitness || profileExtended?.fitnessLevel };
+          return levels.map(lv => {
+            const progs = PROGRAMS.filter(pr => isVisible(pr, profileExtended, age) && pr.level === lv.id);
             return (
-              <TouchableOpacity key={pr.id} onPress={() => setSelectedProgram(active ? '' : pr.id)}
-                style={[s.programRow, active && s.programRowActive]}>
-                <View style={{ flex: 1 }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                    <Text style={s.programName}>{pr.name[lang] || pr.name.es}</Text>
-                    {rec && <View style={s.programRecBadge}><Text style={s.programRecTxt}>{L('Recomendado', 'Recommended', 'Recommandé', 'Consigliato')}</Text></View>}
+              <View key={lv.id} style={{ marginTop: 16 }}>
+                <Text style={s.levelGroupHeader}>{lv.label}</Text>
+                {progs.length === 0 ? (
+                  <Text style={s.levelEmpty}>{L('Próximamente', 'Coming soon', 'Bientôt disponible', 'Prossimamente')}</Text>
+                ) : (
+                  <View style={{ gap: 8, marginTop: 6 }}>
+                    {progs.map(pr => {
+                      const active = selectedProgram === pr.id;
+                      const durationTxt = pr.phaseRotation
+                        ? L('3 meses', '3 months', '3 mois', '3 mesi')
+                        : `${pr.weeks?.length || 0} ${L('semanas', 'weeks', 'semaines', 'settimane')}`;
+                      const rec = isRecommended(pr, recCfg);
+                      return (
+                        <TouchableOpacity key={pr.id} onPress={() => setSelectedProgram(active ? '' : pr.id)}
+                          style={[s.programRow, active && s.programRowActive]}>
+                          <View style={{ flex: 1 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                              <Text style={s.programName}>{pr.name[lang] || pr.name.es}</Text>
+                              {rec && <View style={s.programRecBadge}><Text style={s.programRecTxt}>{L('Recomendado', 'Recommended', 'Recommandé', 'Consigliato')}</Text></View>}
+                            </View>
+                            <Text style={s.programMeta}>{durationTxt}</Text>
+                          </View>
+                          {active && <Check size={16} color="#FE6004" strokeWidth={2.5} />}
+                        </TouchableOpacity>
+                      );
+                    })}
                   </View>
-                  <Text style={s.programMeta}>{lvl} · {durationTxt}</Text>
-                </View>
-                {active && <Check size={16} color="#FE6004" strokeWidth={2.5} />}
-              </TouchableOpacity>
+                )}
+              </View>
             );
-          })}
-        </View>
+          });
+        })()}
 
         <TrainerCard lang={lang} />
 
@@ -1325,6 +1343,8 @@ const s = StyleSheet.create({
   programMeta:      { fontSize: 12, fontFamily: F.body, color: '#737373', marginTop: 2 },
   programRecBadge:  { backgroundColor: '#FE6004', borderRadius: 99, paddingHorizontal: 8, paddingVertical: 2 },
   programRecTxt:    { fontSize: 10, fontFamily: F.bodyB, color: 'white' },
+  levelGroupHeader: { fontSize: 11, fontFamily: F.bodyB, color: '#9CA3AF', letterSpacing: 0.8, textTransform: 'uppercase' },
+  levelEmpty:       { fontSize: 13, fontFamily: F.body, color: '#9CA3AF', paddingVertical: 10 },
 
   // Section
   secLabel: { fontSize: 11, fontFamily: F.bodyB, color: 'rgba(255,255,255,0.5)', letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 10, marginTop: 4 },
