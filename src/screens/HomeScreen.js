@@ -494,6 +494,11 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  ? `${tr('Día', 'Day', 'Jour', 'Giorno')} ${pi?.day}, ${tr('ciclo con anticoncepción hormonal', 'cycle on hormonal contraception', 'cycle sous contraception hormonale', 'ciclo con contraccezione ormonale')}`
  : `${tr('Día', 'Day', 'Jour', 'Giorno')} ${pi?.day}, ${(phaseCopyObj && (phaseCopyObj[lang] || phaseCopyObj.es)) || ''}`;
 
+ // Modo embarazo / postparto — banner especial en HomeScreen
+ const homeLifeStage = profile?.profileExtended?.lifeStage;
+ const isPregnantHome   = homeLifeStage === 'pregnant';
+ const isPostpartumHome = homeLifeStage === 'postpartum';
+
  return (
  <View style={styles.container}>
  <ScrollView style={styles.scroll} contentContainerStyle={{ padding: 16, paddingTop: 58, paddingBottom: 120 }}>
@@ -536,6 +541,25 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
    </View>
   </ImageBackground>
  </TouchableOpacity>
+
+ {/* ── BANNER EMBARAZO / POSTPARTO ── */}
+ {(isPregnantHome || isPostpartumHome) && (
+  <View style={styles.pregnancyBanner}>
+   <BText style={styles.pregnancyBannerEmoji}>{isPostpartumHome ? '🤱' : '🌸'}</BText>
+   <View style={{ flex: 1 }}>
+    <BText style={styles.pregnancyBannerTitle}>
+     {isPostpartumHome
+      ? tr('Modo postparto activo', 'Postpartum mode active', 'Mode post-partum actif', 'Modalità post-parto attiva')
+      : tr('Modo embarazo activo', 'Pregnancy mode active', 'Mode grossesse actif', 'Modalità gravidanza attiva')}
+    </BText>
+    <BText style={styles.pregnancyBannerSub}>
+     {isPostpartumHome
+      ? tr('Nutrición y sueño adaptados a tu recuperación', 'Nutrition & sleep adapted to your recovery', 'Nutrition et sommeil adaptés à ta récupération', 'Nutrizione e sonno adattati al recupero')
+      : tr('Sin déficit calórico · Consejos por trimestre', 'No caloric deficit · Trimester tips', 'Sans déficit calorique · Conseils par trimestre', 'Senza deficit calorico · Consigli per trimestre')}
+    </BText>
+   </View>
+  </View>
+ )}
 
  {/* ── KCAL + ENTRENO ── */}
  <View style={styles.row2col}>
@@ -790,6 +814,12 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
 const styles = StyleSheet.create({
  container: { flex: 1, backgroundColor: 'white' },
  scroll: { flex: 1 },
+
+ // Banner embarazo / postparto
+ pregnancyBanner: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#FDF2F8', borderRadius: 16, padding: 14, marginBottom: 8 },
+ pregnancyBannerEmoji: { fontSize: 28 },
+ pregnancyBannerTitle: { fontSize: 14, fontFamily: F.bodyB, color: '#BE185D', lineHeight: 18 },
+ pregnancyBannerSub: { fontSize: 12, fontFamily: F.body, color: '#9D174D', lineHeight: 16, marginTop: 2 },
 
  // Empty state
  emptyCardWrap: { flex: 1, justifyContent: 'center', paddingHorizontal: 16 },

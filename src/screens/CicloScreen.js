@@ -306,7 +306,9 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
 
  // Menopausia / postmenopausia: sustituye carrusel de fases por carrusel de bienestar
  const lifeStage = profileExtended?.lifeStage || '';
- const isMenopause = lifeStage === 'menopause' || lifeStage === 'postmenopause';
+ const isMenopause  = lifeStage === 'menopause' || lifeStage === 'postmenopause';
+ const isPregnantCiclo   = lifeStage === 'pregnant';
+ const isPostpartumCiclo = lifeStage === 'postpartum';
 
  // Calendar — navegación por meses (0 = mes actual, negativo = pasado, positivo = pronóstico)
  const [calOffset, setCalOffset] = useState(0);
@@ -728,10 +730,29 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  </TouchableOpacity>
  </View>
 
+ {/* ── Banner especial embarazo / postparto ── */}
+ {(isPregnantCiclo || isPostpartumCiclo) && (
+  <View style={cicStyles.pregnancyCicloBanner}>
+   <BText style={cicStyles.pregnancyCicloEmoji}>{isPostpartumCiclo ? '🤱' : '🌸'}</BText>
+   <View style={{ flex: 1, gap: 4 }}>
+    <BText style={cicStyles.pregnancyCicloTitle}>
+     {isPostpartumCiclo
+      ? { es: 'Modo postparto', en: 'Postpartum mode', fr: 'Mode post-partum', it: 'Modalità post-parto' }[lang]
+      : { es: 'Modo embarazo activo', en: 'Pregnancy mode active', fr: 'Mode grossesse actif', it: 'Modalità gravidanza attiva' }[lang]}
+    </BText>
+    <BText style={cicStyles.pregnancyCicloSub}>
+     {isPostpartumCiclo
+      ? { es: 'Tu ciclo volverá cuando termine la lactancia o en unas semanas. Puedes seguir registrando síntomas.', en: 'Your cycle will return when breastfeeding ends or in a few weeks. You can keep logging symptoms.', fr: 'Ton cycle reviendra à la fin de l\'allaitement ou dans quelques semaines. Tu peux continuer à noter tes symptômes.', it: 'Il tuo ciclo tornerà quando finisce l\'allattamento o tra qualche settimana. Puoi continuare a registrare i sintomi.' }[lang]
+      : { es: 'Tu ciclo está en pausa. Los consejos de nutrición y sueño están adaptados a tu embarazo en la pestaña Nutrición.', en: 'Your cycle is paused. Nutrition and sleep tips are adapted to your pregnancy in the Nutrition tab.', fr: 'Ton cycle est en pause. Les conseils de nutrition et de sommeil sont adaptés à ta grossesse dans l\'onglet Nutrition.', it: 'Il tuo ciclo è in pausa. I consigli di nutrizione e sonno sono adattati alla tua gravidanza nella scheda Nutrizione.' }[lang]}
+    </BText>
+   </View>
+  </View>
+ )}
+
  {/* ── Carrusel de fases (ciclo normal) o bienestar (menopausia/postmenopausia) ── */}
  {isMenopause ? (
   <MenopauseWellnessCarousel lang={lang} />
- ) : !isHormonalContra && (
+ ) : !isHormonalContra && !isPregnantCiclo && !isPostpartumCiclo && (
  <View style={{ backgroundColor:'#F5F5F5', borderRadius:24, padding:16, gap:40 }}>
  <View>
  <BText style={styles.phaseInfoTitle}>{tr('Información de las fases', 'Phase information', 'Infos sur les phases', 'Informazioni sulle fasi')}</BText>
@@ -855,6 +876,13 @@ export default function CicloScreen({ pi, lastPeriod, setLastPeriod, setCycleLen
  </>
  );
 }
+
+const cicStyles = StyleSheet.create({
+ pregnancyCicloBanner: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, backgroundColor: '#FDF2F8', borderRadius: 20, padding: 16, marginBottom: 8 },
+ pregnancyCicloEmoji: { fontSize: 28, lineHeight: 34 },
+ pregnancyCicloTitle: { fontSize: 15, fontFamily: F.bodyB, color: '#BE185D', lineHeight: 20 },
+ pregnancyCicloSub: { fontSize: 13, fontFamily: F.body, color: '#9D174D', lineHeight: 18 },
+});
 
 const styles = StyleSheet.create({
  container: { flex:1, backgroundColor:'#FFFFFF' },

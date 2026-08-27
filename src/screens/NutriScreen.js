@@ -17,7 +17,7 @@ import { NutriSetupCard } from '../components/TabSetupCard';
 import { calcCalories } from '../utils/calories';
 import { useDiets, normalizeDietId } from '../hooks/useDiets';
 import { getDayNutritionContext } from '../utils/programEngine';
-import { getCurrentNutriTip, getFertilitySleepTip } from '../data/nutriTipsPhase';
+import { getCurrentNutriTip, getFertilitySleepTip, getPregnancyNutriTip, getPregnancySleepTip, getPregnancyTrimester } from '../data/nutriTipsPhase';
 import { filterMealsByFasting } from '../utils/fastingMeals';
 import { useRecipes } from '../hooks/useRecipes';
 import { useFoodLog } from '../hooks/useFoodLog';
@@ -282,13 +282,22 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  // ── Tip rotativo de la nutricionista (por fase + día) ───────────────────────
  const nutriTip = getCurrentNutriTip(pi, profileExtended);
 
+ // ── Modo embarazo / postparto ────────────────────────────────────────────────
+ const lifeStageNutri = profileExtended?.lifeStage;
+ const isPregnant   = lifeStageNutri === 'pregnant';
+ const isPostpartum = lifeStageNutri === 'postpartum';
+ const isPregnancyMode = isPregnant || isPostpartum;
+ const pregnancyTrimester = isPregnant ? getPregnancyTrimester(profileExtended) : null;
+ const pregnancyNutriTip = isPregnancyMode ? getPregnancyNutriTip(profileExtended, pi) : null;
+ const pregnancySleepTip = isPregnancyMode ? getPregnancySleepTip(pi) : null;
+
  // ── Tip de sueño para goal 'fertility' ──────────────────────────────────────
  const hasFertilityGoal = (() => {
   const pg = profileExtended?.primaryGoals;
   if (Array.isArray(pg)) return pg.includes('fertility');
   return pg?.fertility === true || pg?.fertility === 1;
  })();
- const sleepTip = hasFertilityGoal ? getFertilitySleepTip(pi) : null;
+ const sleepTip = (!isPregnancyMode && hasFertilityGoal) ? getFertilitySleepTip(pi) : null;
 
  // Slots de comida — estructura fija, contenido 100% desde Supabase
  const MEAL_SLOTS = [
@@ -703,6 +712,99 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
 
  {cals && !nutritionCtx && !nutriTip && <BText style={styles.orangeHeroKcal}>{cals.total} kcal</BText>}
  </View>
+ )}
+
+ {/* ── EMBARAZO / POSTPARTO ── nutrición específica */}
+ {isPregnancyMode && !!pregnancyNutriTip && (
+  <View style={styles.pregnancyNutriCard}>
+   <View style={styles.pregnancyNutriHeader}>
+    <BText style={styles.pregnancyNutriIcon}>{isPostpartum ? '🤱' : '🌸'}</BText>
+    <View style={{ flex: 1 }}>
+     <BText style={styles.pregnancyNutriLabel}>
+      {isPostpartum
+       ? { es: 'POSTPARTO', en: 'POSTPARTUM', fr: 'POST-PARTUM', it: 'POST-PARTO' }[lang] || 'POSTPARTO'
+       : pregnancyTrimester === 't3'
+        ? { es: 'EMBARAZO · TERCER TRIMESTRE', en: 'PREGNANCY · THIRD TRIMESTER', fr: 'GROSSESSE · 3E TRIMESTRE', it: 'GRAVIDANZA · TERZO TRIMESTRE' }[lang]
+        : pregnancyTrimester === 't2'
+        ? { es: 'EMBARAZO · SEGUNDO TRIMESTRE', en: 'PREGNANCY · SECOND TRIMESTER', fr: 'GROSSESSE · 2E TRIMESTRE', it: 'GRAVIDANZA · SECONDO TRIMESTRE' }[lang]
+        : { es: 'EMBARAZO · PRIMER TRIMESTRE', en: 'PREGNANCY · FIRST TRIMESTER', fr: 'GROSSESSE · 1ER TRIMESTRE', it: 'GRAVIDANZA · PRIMO TRIMESTRE' }[lang]}
+     </BText>
+    </View>
+   </View>
+   {/* Chips */}
+   <View style={styles.sleepTipChips}>
+    {pregnancyNutriTip.focus.map(f => (
+     <View key={f} style={styles.pregnancyChip}>
+      <BText style={styles.pregnancyChipTxt}>{f}</BText>
+     </View>
+    ))}
+   </View>
+   {/* Frase */}
+   <BText style={styles.sleepTipPhrase}>{pregnancyNutriTip.phrase}</BText>
+   {/* Bullets positivos */}
+   <View style={styles.orangeHeroBullets}>
+    {pregnancyNutriTip.bullets.filter(b => !b.isAvoid).map((b, i) => (
+     <View key={i} style={styles.orangeHeroBulletRow}>
+      <View style={[styles.orangeHeroBulletDot, { backgroundColor: '#BE185D' }]} />
+      <BText style={styles.orangeHeroBulletTxt}>{b.text}</BText>
+     </View>
+    ))}
+   </View>
+   {/* Evitar */}
+   {pregnancyNutriTip.bullets.filter(b => b.isAvoid).length > 0 && (
+    <View style={[styles.orangeHeroWarn, { backgroundColor: '#FFF1F2', marginTop: 8 }]}>
+     <View style={styles.orangeHeroWarnHeader}>
+      <BText style={[styles.orangeHeroWarnIcon, { color: '#BE185D' }]}>⚠</BText>
+      <BText style={[styles.orangeHeroWarnTitle, { color: '#BE185D' }]}>
+       {{ es: 'Evitar en embarazo', en: 'Avoid in pregnancy', fr: 'À éviter en grossesse', it: 'Da evitare in gravidanza' }[lang] || 'Evitar en embarazo'}
+      </BText>
+     </View>
+     {pregnancyNutriTip.bullets.filter(b => b.isAvoid).map((b, i) => (
+      <View key={i} style={styles.orangeHeroBulletRow}>
+       <View style={[styles.orangeHeroAvoidDot]} />
+       <BText style={[styles.orangeHeroAvoidTxt]}>{b.text}</BText>
+      </View>
+     ))}
+    </View>
+   )}
+  </View>
+ )}
+
+ {/* ── SUEÑO EN EMBARAZO ── */}
+ {isPregnancyMode && !!pregnancySleepTip && (
+  <View style={[styles.sleepTipCard, { backgroundColor: '#FDF2F8' }]}>
+   <View style={styles.sleepTipHeader}>
+    <BText style={styles.sleepTipIcon}>🌙</BText>
+    <BText style={[styles.sleepTipLabel, { color: '#BE185D' }]}>
+     {{ es: 'SUEÑO EN EMBARAZO', en: 'SLEEP IN PREGNANCY', fr: 'SOMMEIL EN GROSSESSE', it: 'SONNO IN GRAVIDANZA' }[lang] || 'SUEÑO EN EMBARAZO'}
+    </BText>
+   </View>
+   <BText style={styles.sleepTipPhrase}>{pregnancySleepTip.phrase}</BText>
+   <View style={styles.orangeHeroBullets}>
+    {pregnancySleepTip.bullets.filter(b => !b.isAvoid).map((b, i) => (
+     <View key={i} style={styles.orangeHeroBulletRow}>
+      <View style={[styles.orangeHeroBulletDot, { backgroundColor: '#BE185D' }]} />
+      <BText style={styles.orangeHeroBulletTxt}>{b.text}</BText>
+     </View>
+    ))}
+   </View>
+   {pregnancySleepTip.bullets.filter(b => b.isAvoid).length > 0 && (
+    <View style={[styles.orangeHeroWarn, { backgroundColor: '#FFF1F2', marginTop: 8 }]}>
+     <View style={styles.orangeHeroWarnHeader}>
+      <BText style={[styles.orangeHeroWarnIcon, { color: '#BE185D' }]}>⚠</BText>
+      <BText style={[styles.orangeHeroWarnTitle, { color: '#BE185D' }]}>
+       {{ es: 'Mejor evitar', en: 'Better to avoid', fr: 'Mieux éviter', it: 'Meglio evitare' }[lang] || 'Mejor evitar'}
+      </BText>
+     </View>
+     {pregnancySleepTip.bullets.filter(b => b.isAvoid).map((b, i) => (
+      <View key={i} style={styles.orangeHeroBulletRow}>
+       <View style={styles.orangeHeroAvoidDot} />
+       <BText style={styles.orangeHeroAvoidTxt}>{b.text}</BText>
+      </View>
+     ))}
+    </View>
+   )}
+  </View>
  )}
 
  {/* ── SUEÑO Y FERTILIDAD ── solo para goal 'fertility' */}
@@ -1424,6 +1526,14 @@ const styles = StyleSheet.create({
  orangeHeroAvoidDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: '#DC2626', marginTop: 7 },
  orangeHeroAvoidTxt: { flex: 1, fontSize: 14, color: '#DC2626', lineHeight: 20, fontFamily: F.body },
  orangeHeroTip: { fontSize: 14, color: '#0A0A0A', lineHeight: 20, fontFamily: F.body },
+
+ // Embarazo y Postparto
+ pregnancyNutriCard: { backgroundColor: '#FDF2F8', borderRadius: 20, padding: 16, gap: 10, marginBottom: 8 },
+ pregnancyNutriHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+ pregnancyNutriIcon: { fontSize: 20 },
+ pregnancyNutriLabel: { fontSize: 11, fontFamily: F.bodyB, color: '#BE185D', textTransform: 'uppercase', letterSpacing: 0.6 },
+ pregnancyChip: { backgroundColor: '#FCE7F3', borderRadius: 100, paddingHorizontal: 10, paddingVertical: 4 },
+ pregnancyChipTxt: { fontSize: 11, color: '#BE185D', fontFamily: F.bodyB, textTransform: 'uppercase', letterSpacing: 0.4 },
 
  // Sueño y Fertilidad
  sleepTipCard: { backgroundColor: '#F5F3FF', borderRadius: 20, padding: 16, gap: 10, marginBottom: 8 },

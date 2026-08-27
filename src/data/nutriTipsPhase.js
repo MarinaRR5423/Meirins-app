@@ -399,6 +399,229 @@ export const NUTRI_PHASE_TIPS = {
   ],
 };
 
+// ─── EMBARAZO — tips por trimestre ───────────────────────────────────────────
+export const PREGNANCY_TIPS = {
+  // Trimestre 1 (semanas 1-13)
+  t1: [
+    {
+      id: 'preg_t1_folate',
+      focus: ['FOLATO', 'B9', 'NÁUSEAS'],
+      phrase: 'El primer trimestre pide folato, hierro y paciencia con las náuseas.',
+      bullets: [
+        { text: 'Espinacas, lentejas, aguacate, huevos', isAvoid: false },
+        { text: 'Suplemento de ácido fólico (400-600 mcg) prescrito por tu médica', isAvoid: false },
+        { text: 'Comidas pequeñas y frecuentes para las náuseas', isAvoid: false },
+        { text: 'Alcohol en cualquier cantidad', isAvoid: true },
+        { text: 'Carne cruda o poco hecha, embutidos no curados al calor', isAvoid: true },
+        { text: 'Quesos de pasta blanda no pasteurizados', isAvoid: true },
+      ],
+    },
+    {
+      id: 'preg_t1_protein',
+      focus: ['PROTEÍNAS', 'HIERRO', 'ENERGÍA'],
+      phrase: 'La demanda de proteína sube desde el inicio. Prioriza fuentes de calidad.',
+      bullets: [
+        { text: 'Pollo, pavo, huevos bien cocidos', isAvoid: false },
+        { text: 'Legumbres: lentejas, garbanzos (también aportan hierro)', isAvoid: false },
+        { text: 'Pescado blanco y salmón cocinado', isAvoid: false },
+        { text: 'Pescados con alto mercurio: atún rojo, pez espada, tiburón', isAvoid: true },
+        { text: 'Sushi y pescado crudo', isAvoid: true },
+      ],
+    },
+    {
+      id: 'preg_t1_hydration',
+      focus: ['HIDRATACIÓN', 'NÁUSEAS'],
+      phrase: 'Mantenerse hidratada es esencial, especialmente si tienes náuseas o vómitos.',
+      bullets: [
+        { text: 'Agua con limón o jengibre para las náuseas', isAvoid: false },
+        { text: 'Infusiones suaves sin cafeína: manzanilla, jengibre', isAvoid: false },
+        { text: 'Pequeños sorbos frecuentes si hay náuseas', isAvoid: false },
+        { text: 'Cafeína > 200 mg/día (equivale a 1-2 cafés)', isAvoid: true },
+        { text: 'Bebidas energéticas', isAvoid: true },
+      ],
+    },
+  ],
+
+  // Trimestre 2 (semanas 14-26)
+  t2: [
+    {
+      id: 'preg_t2_calcium',
+      focus: ['CALCIO', 'VITAMINA D', 'HUESOS'],
+      phrase: 'Los huesos del bebé se forman ahora. Calcio y vitamina D son imprescindibles.',
+      bullets: [
+        { text: 'Lácteos, bebidas vegetales enriquecidas', isAvoid: false },
+        { text: 'Sardinas con espinas, salmón cocido', isAvoid: false },
+        { text: 'Brócoli, col rizada, almendras', isAvoid: false },
+        { text: '15 min de sol al día para la vitamina D', isAvoid: false },
+      ],
+    },
+    {
+      id: 'preg_t2_iron',
+      focus: ['HIERRO', 'ANEMIA', 'ENERGÍA'],
+      phrase: 'El volumen de sangre aumenta. Las necesidades de hierro se duplican en el segundo trimestre.',
+      bullets: [
+        { text: 'Carne roja magra, hígado (con moderación)', isAvoid: false },
+        { text: 'Lentejas, espinacas con limón', isAvoid: false },
+        { text: 'Toma el suplemento de hierro en ayunas si lo tienes prescrito', isAvoid: false },
+        { text: 'Café o té junto al suplemento de hierro (bloquea absorción)', isAvoid: true },
+      ],
+    },
+    {
+      id: 'preg_t2_omega3',
+      focus: ['OMEGA-3', 'DHA', 'CEREBRO'],
+      phrase: 'El DHA es clave para el desarrollo cerebral y visual del bebé.',
+      bullets: [
+        { text: 'Salmón, sardinas, trucha (2-3 veces/semana)', isAvoid: false },
+        { text: 'Nueces, semillas de chía y lino', isAvoid: false },
+        { text: 'Suplemento de DHA si no comes pescado', isAvoid: false },
+        { text: 'Pescados con alto mercurio (atún rojo, pez espada)', isAvoid: true },
+      ],
+    },
+  ],
+
+  // Trimestre 3 (semanas 27-40)
+  t3: [
+    {
+      id: 'preg_t3_energy',
+      focus: ['ENERGÍA', 'CALORÍAS', 'PESO'],
+      phrase: 'Las necesidades calóricas suben ~300 kcal/día. Come más, pero de calidad.',
+      bullets: [
+        { text: 'Comidas pequeñas y frecuentes (el bebé comprime el estómago)', isAvoid: false },
+        { text: 'Frutos secos, aguacate, hummus para snacks nutritivos', isAvoid: false },
+        { text: 'Carbohidratos complejos: avena, arroz integral, legumbres', isAvoid: false },
+        { text: 'Ultraprocesados y azúcares añadidos en exceso', isAvoid: true },
+      ],
+    },
+    {
+      id: 'preg_t3_magnesium',
+      focus: ['MAGNESIO', 'CALAMBRES', 'SUEÑO'],
+      phrase: 'Los calambres nocturnos son comunes. El magnesio ayuda a reducirlos.',
+      bullets: [
+        { text: 'Frutos secos: almendras, nueces, semillas de calabaza', isAvoid: false },
+        { text: 'Legumbres, aguacate, plátano', isAvoid: false },
+        { text: 'Chocolate negro >70% (pequeñas cantidades)', isAvoid: false },
+      ],
+    },
+    {
+      id: 'preg_t3_prep',
+      focus: ['HIERRO', 'VITAMINA K', 'PARTO'],
+      phrase: 'Prepara tu cuerpo para el parto con hierro y vitamina K suficientes.',
+      bullets: [
+        { text: 'Espinacas, brócoli, col rizada (vitamina K)', isAvoid: false },
+        { text: 'Legumbres y carnes magras bien cocinadas (hierro)', isAvoid: false },
+        { text: 'Dátiles en las últimas semanas (puede ayudar a madurar el cuello uterino)', isAvoid: false },
+      ],
+    },
+  ],
+
+  // Postparto
+  postpartum: [
+    {
+      id: 'post_recovery',
+      focus: ['RECUPERACIÓN', 'HIERRO', 'PROTEÍNAS'],
+      phrase: 'Tu cuerpo acaba de hacer algo increíble. Prioriza la recuperación y la energía.',
+      bullets: [
+        { text: 'Proteína en cada comida: huevos, legumbres, pollo, pescado', isAvoid: false },
+        { text: 'Hierro: lentejas, espinacas, carnes magras', isAvoid: false },
+        { text: 'Vitamina C para absorber el hierro y acelerar la cicatrización', isAvoid: false },
+        { text: 'Dietas restrictivas o déficit calórico severo (interfiere con la lactancia)', isAvoid: true },
+      ],
+    },
+    {
+      id: 'post_lactation',
+      focus: ['LACTANCIA', 'CALCIO', 'HIDRATACIÓN'],
+      phrase: 'Si das el pecho, tus necesidades calóricas son las más altas de tu vida: +500 kcal/día.',
+      bullets: [
+        { text: 'Bebe agua antes y durante cada toma', isAvoid: false },
+        { text: 'Lácteos, sardinas, brócoli para el calcio', isAvoid: false },
+        { text: 'Avena, frutos secos y frutas para mantener la energía', isAvoid: false },
+        { text: 'Cafeína > 200 mg/día (pasa a la leche)', isAvoid: true },
+        { text: 'Alcohol (también pasa a la leche)', isAvoid: true },
+      ],
+    },
+    {
+      id: 'post_mood',
+      focus: ['ÁNIMO', 'TRIPTÓFANO', 'OMEGA-3'],
+      phrase: 'El estado de ánimo puede ser inestable en el postparto. La nutrición puede ayudar.',
+      bullets: [
+        { text: 'Omega-3: salmón, sardinas, nueces, semillas de chía', isAvoid: false },
+        { text: 'Triptófano: pavo, plátano, avena, frutos secos', isAvoid: false },
+        { text: 'Vitamina D: sol diario + pescado azul + huevos', isAvoid: false },
+      ],
+    },
+  ],
+};
+
+// ─── SUEÑO EMBARAZO ────────────────────────────────────────────────────────────
+export const PREGNANCY_SLEEP_TIPS = [
+  {
+    id: 'preg_sleep_position',
+    focus: ['SUEÑO', 'POSTURA', 'CIRCULACIÓN'],
+    phrase: 'A partir del segundo trimestre, dormir sobre el lado izquierdo mejora la circulación al bebé.',
+    bullets: [
+      { text: 'Lado izquierdo: mejor flujo sanguíneo a la placenta', isAvoid: false },
+      { text: 'Almohada entre las rodillas y otra detrás de la espalda', isAvoid: false },
+      { text: 'Almohada específica de embarazo en forma de U para mayor comodidad', isAvoid: false },
+      { text: 'Boca arriba en el tercer trimestre (comprime la vena cava)', isAvoid: true },
+    ],
+  },
+  {
+    id: 'preg_sleep_heartburn',
+    focus: ['SUEÑO', 'ACIDEZ', 'DIGESTIÓN'],
+    phrase: 'La acidez y las ganas de orinar pueden interrumpir el sueño. Pequeños ajustes ayudan mucho.',
+    bullets: [
+      { text: 'Cena 2-3h antes de acostarte', isAvoid: false },
+      { text: 'Cenas ligeras: ensalada, sopa, proteína magra', isAvoid: false },
+      { text: 'Cabecera de la cama ligeramente elevada si hay acidez', isAvoid: false },
+      { text: 'Comidas copiosas o picantes por la noche', isAvoid: true },
+      { text: 'Líquidos en exceso justo antes de dormir', isAvoid: true },
+    ],
+  },
+  {
+    id: 'preg_sleep_relax',
+    focus: ['SUEÑO', 'RELAJACIÓN', 'CORTISOL'],
+    phrase: 'La ansiedad prenatal es normal. Una rutina de relajación antes de dormir marca la diferencia.',
+    bullets: [
+      { text: 'Baño templado (no caliente) 1h antes de dormir', isAvoid: false },
+      { text: 'Respiración 4-7-8 o meditación guiada para embarazadas', isAvoid: false },
+      { text: 'Infusión de manzanilla o jengibre suave (sin valeriana en embarazo)', isAvoid: false },
+      { text: 'Pantallas en el dormitorio', isAvoid: true },
+      { text: 'Valeriana y melatonina sin consultar a tu médica', isAvoid: true },
+    ],
+  },
+];
+
+/**
+ * Devuelve el trimestre de embarazo basado en la semana de gestación.
+ * Si no hay semana guardada, devuelve 't1' por defecto.
+ */
+export function getPregnancyTrimester(profileExtended) {
+  const week = parseInt(profileExtended?.pregnancyWeek, 10) || 0;
+  if (week >= 27) return 't3';
+  if (week >= 14) return 't2';
+  return 't1';
+}
+
+/**
+ * Devuelve el tip de nutrición del día para embarazo/postparto.
+ * Rota por días.
+ */
+export function getPregnancyNutriTip(profileExtended, pi) {
+  const lifeStage = profileExtended?.lifeStage;
+  const isPostpartum = lifeStage === 'postpartum';
+  const tips = isPostpartum ? PREGNANCY_TIPS.postpartum : PREGNANCY_TIPS[getPregnancyTrimester(profileExtended)];
+  const day = pi?.day ?? 0;
+  return tips[day % tips.length] ?? tips[0];
+}
+
+/**
+ * Devuelve el tip de sueño del día para embarazo (rota semanalmente).
+ */
+export function getPregnancySleepTip(pi) {
+  const week = Math.floor((pi?.day ?? 0) / 7);
+  return PREGNANCY_SLEEP_TIPS[week % PREGNANCY_SLEEP_TIPS.length];
+}
+
 // ─── TIPS DE SUEÑO — solo para goal 'fertility' ───────────────────────────────
 // Se muestran como un bloque adicional en NutriScreen debajo del tip del día.
 export const FERTILITY_SLEEP_TIPS = [
