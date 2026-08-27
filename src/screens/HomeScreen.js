@@ -341,6 +341,11 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
     </View>
    </View>
   ) : null}
+  {todaySession?.isProgram && todaySession?.tips?.[0] ? (
+   <View style={styles.programNoteBubble}>
+    <BText style={styles.programNoteTxt} numberOfLines={3}>{todaySession.tips[0]}</BText>
+   </View>
+  ) : null}
  </TouchableOpacity>
  </View>
 
@@ -611,5 +616,8 @@ const styles = StyleSheet.create({
  // Entreno intensity tag
  intensityTag: { backgroundColor: '#429FE7', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 2, alignSelf: 'flex-start' },
  intensityTagTxt: { color: 'white', fontSize: 10, fontFamily: F.bodyB },
+ // Burbuja de nota de fase del programa
+ programNoteBubble: { backgroundColor: '#EFF6FF', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 8, borderLeftWidth: 3, borderLeftColor: '#429FE7' },
+ programNoteTxt: { fontSize: 11, color: '#1E40AF', lineHeight: 15.4, fontFamily: F.body },
 
 });
