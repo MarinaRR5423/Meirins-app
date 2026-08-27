@@ -219,7 +219,7 @@ export const PROGRAMS = [
  ],
  },
  {
- id: 'strength_40plus', emoji: '', cat: 'strength', level: 'beginner', spw: 3,
+ id: 'strength_40plus', emoji: '', cat: 'strength', level: 'intermediate', spw: 3,
  showIf: 'age40plus',
  forStages: ['perimenopause', 'menopause', 'postmenopause'],
  name: { es: 'Fuerza 40+ (huesos y músculo)', en: 'Strength 40+ (bones & muscle)', fr: 'Force 40+ (os et muscles)', it: 'Forza 40+ (ossa e muscoli)' },
@@ -259,7 +259,7 @@ export const PROGRAMS = [
  ],
  },
  {
- id: 'mobility_pelvic', emoji: '', cat: 'mobility', level: 'beginner', spw: 5,
+ id: 'mobility_pelvic', emoji: '', cat: 'mobility', level: 'intermediate', spw: 5,
  name: { es: 'Movilidad y suelo pélvico', en: 'Mobility & pelvic floor', fr: 'Mobilité et périnée', it: 'Mobilità e pavimento pelvico' },
  desc: {
  es: '10-15 minutos al día, 5 días a la semana, durante 4 semanas: cadera, columna y suelo pélvico. Ideal como complemento de cualquier otro entreno.',
@@ -277,7 +277,7 @@ export const PROGRAMS = [
 
  // ── Programa activa: 3 sesiones/semana sincronizadas con el ciclo (~3 meses) ───
  {
-  id: 'physio_active_plus', emoji: 'Zap', cat: 'strength', level: 'intermediate', spw: 3,
+  id: 'physio_active_plus', emoji: 'Zap', cat: 'strength', level: 'advanced', spw: 3,
   phaseRotation: true,
   name: {
    es: 'Activa (3 meses)',
@@ -531,7 +531,7 @@ export const PROGRAMS = [
 
  // ── Programa muy activa: 4+ sesiones/semana sincronizadas con el ciclo (~3 meses) ─
  {
-  id: 'physio_active_advanced', emoji: 'Trophy', cat: 'strength', level: 'intermediate', spw: 4,
+  id: 'physio_active_advanced', emoji: 'Trophy', cat: 'strength', level: 'advanced', spw: 4,
   phaseRotation: true,
   name: {
    es: 'Muy activa (3 meses)',
@@ -772,7 +772,7 @@ export const PROGRAMS = [
 
  // ── Programa activa: 1-2 sesiones/semana sincronizadas con el ciclo (~3 meses) ─
  {
-  id: 'physio_active', emoji: 'Flame', cat: 'strength', level: 'beginner', spw: 2,
+  id: 'physio_active', emoji: 'Flame', cat: 'strength', level: 'intermediate', spw: 2,
   phaseRotation: true,
   name: {
    es: 'Ocasional (3 meses)',

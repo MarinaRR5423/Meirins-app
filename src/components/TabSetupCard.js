@@ -1182,7 +1182,7 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
                     {progs.map(pr => {
                       const active = selectedProgram === pr.id;
                       const durationTxt = pr.phaseRotation
-                        ? L('3 meses', '3 months', '3 mois', '3 mesi')
+                        ? null
                         : `${pr.weeks?.length || 0} ${L('semanas', 'weeks', 'semaines', 'settimane')}`;
                       const rec = isRecommended(pr, recCfg);
                       return (
@@ -1193,7 +1193,7 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
                               <Text style={s.programName}>{pr.name[lang] || pr.name.es}</Text>
                               {rec && <View style={s.programRecBadge}><Text style={s.programRecTxt}>{L('Recomendado', 'Recommended', 'Recommandé', 'Consigliato')}</Text></View>}
                             </View>
-                            <Text style={s.programMeta}>{durationTxt}</Text>
+                            {durationTxt ? <Text style={s.programMeta}>{durationTxt}</Text> : null}
                           </View>
                           {active && <Check size={16} color="#FE6004" strokeWidth={2.5} />}
                         </TouchableOpacity>
