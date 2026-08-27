@@ -17,6 +17,7 @@ import { NutriSetupCard } from '../components/TabSetupCard';
 import { calcCalories } from '../utils/calories';
 import { useDiets, normalizeDietId } from '../hooks/useDiets';
 import { getDayNutritionContext } from '../utils/programEngine';
+import { getCurrentNutriTip } from '../data/nutriTipsPhase';
 import { filterMealsByFasting } from '../utils/fastingMeals';
 import { useRecipes } from '../hooks/useRecipes';
 import { useFoodLog } from '../hooks/useFoodLog';
@@ -277,6 +278,9 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  );
 
  const tipsNutri = resolveTips(program?.tipsNutri ?? TIPS_NUTRI, lang);
+
+ // ── Tip rotativo de la nutricionista (por fase + día) ───────────────────────
+ const nutriTip = getCurrentNutriTip(pi, profileExtended);
 
  // Slots de comida — estructura fija, contenido 100% desde Supabase
  const MEAL_SLOTS = [
@@ -621,35 +625,75 @@ export default function NutriScreen({ pi, program, lang = 'es', goal, activityLe
  })()}
 
  {/* ── FOCO DE HOY ── */}
- {(cals || nutritionCtx) && (
+ {(cals || nutritionCtx || nutriTip) && (
  <View style={styles.orangeHeroCard}>
  <BText style={styles.orangeHeroLabel}>
  {{ es: 'Foco de hoy', en: "Today's focus", fr: 'Focus du jour', it: 'Focus di oggi' }[lang] || 'Foco de hoy'}
  </BText>
- {nutritionCtx && (
- <>
- {(Array.isArray(nutritionCtx.nutrients) ? nutritionCtx.nutrients : [nutritionCtx.nutrients]).length > 0 && (
-  <View style={styles.orangeHeroPills}>
-  {(Array.isArray(nutritionCtx.nutrients) ? nutritionCtx.nutrients : [nutritionCtx.nutrients]).map((nu, i) => (
-   <View key={i} style={styles.orangeHeroPill}>
-   <BText style={styles.orangeHeroPillTxt}>{nu}</BText>
+
+ {/* Chips — tip rotativo tiene prioridad sobre nutritionCtx */}
+ {(() => {
+  const chips = nutriTip?.focus?.length
+   ? nutriTip.focus
+   : nutritionCtx
+   ? (Array.isArray(nutritionCtx.nutrients) ? nutritionCtx.nutrients : [nutritionCtx.nutrients])
+   : [];
+  return chips.length > 0 ? (
+   <View style={styles.orangeHeroPills}>
+   {chips.map((nu, i) => (
+    <View key={i} style={styles.orangeHeroPill}>
+    <BText style={styles.orangeHeroPillTxt}>{nu}</BText>
+    </View>
+   ))}
    </View>
-  ))}
+  ) : null;
+ })()}
+
+ {/* Frase principal */}
+ {!!(nutriTip?.phrase || nutritionCtx?.tip || nutritionCtx?.dietNote) && (
+  <BText style={styles.orangeHeroTipMain}>
+   {nutriTip?.phrase || nutritionCtx?.tip || nutritionCtx?.dietNote}
+  </BText>
+ )}
+
+ {/* Bullets positivos */}
+ {(nutriTip?.bullets?.filter(b => !b.isAvoid) ?? []).length > 0 && (
+  <View style={styles.orangeHeroBullets}>
+   {nutriTip.bullets.filter(b => !b.isAvoid).map((b, i) => (
+    <View key={i} style={styles.orangeHeroBulletRow}>
+     <View style={styles.orangeHeroBulletDot} />
+     <BText style={styles.orangeHeroBulletTxt}>{b.text}</BText>
+    </View>
+   ))}
   </View>
  )}
- {!!(nutritionCtx.tip || nutritionCtx.dietNote) && (
+
+ {/* Bubble "evitar" */}
+ {(nutriTip?.bullets?.filter(b => b.isAvoid) ?? []).length > 0 && (
   <View style={styles.orangeHeroWarn}>
-  <BText style={styles.orangeHeroTip}>{nutritionCtx.tip || nutritionCtx.dietNote}</BText>
+   <View style={styles.orangeHeroWarnHeader}>
+    <BText style={styles.orangeHeroWarnIcon}>⚠</BText>
+    <BText style={styles.orangeHeroWarnTitle}>
+     {{ es: 'Mejor evitar', en: 'Better to avoid', fr: 'Mieux éviter', it: 'Meglio evitare' }[lang] || 'Mejor evitar'}
+    </BText>
+   </View>
+   {nutriTip.bullets.filter(b => b.isAvoid).map((b, i) => (
+    <View key={i} style={styles.orangeHeroBulletRow}>
+     <View style={styles.orangeHeroAvoidDot} />
+     <BText style={styles.orangeHeroAvoidTxt}>{b.text}</BText>
+    </View>
+   ))}
   </View>
  )}
- {!!nutritionCtx.avoidNote && (
+
+ {/* Fallback avoidNote si no hay nutriTip */}
+ {!nutriTip && !!nutritionCtx?.avoidNote && (
   <View style={styles.orangeHeroWarn}>
   <BText style={styles.orangeHeroTip}>{nutritionCtx.avoidNote}</BText>
   </View>
  )}
- </>
- )}
- {cals && !nutritionCtx && <BText style={styles.orangeHeroKcal}>{cals.total} kcal</BText>}
+
+ {cals && !nutritionCtx && !nutriTip && <BText style={styles.orangeHeroKcal}>{cals.total} kcal</BText>}
  </View>
  )}
 
@@ -1298,7 +1342,17 @@ const styles = StyleSheet.create({
  orangeHeroPills: { flexDirection: 'row', flexWrap: 'wrap', gap: 4 },
  orangeHeroPill: { height: 24, paddingHorizontal: 8, backgroundColor: '#FE6004', borderRadius: 8, justifyContent: 'center' },
  orangeHeroPillTxt: { fontSize: 10, fontFamily: F.bodyB, color: 'white', textTransform: 'uppercase', letterSpacing: 0.3 },
- orangeHeroWarn: { backgroundColor: '#FFDFCD', borderRadius: 8, padding: 8 },
+ orangeHeroTipMain: { fontSize: 15, color: '#0A0A0A', lineHeight: 21, fontFamily: F.bodyB },
+ orangeHeroBullets: { gap: 6 },
+ orangeHeroBulletRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 8 },
+ orangeHeroBulletDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: '#0A0A0A', marginTop: 7 },
+ orangeHeroBulletTxt: { flex: 1, fontSize: 14, color: '#0A0A0A', lineHeight: 20, fontFamily: F.body },
+ orangeHeroWarn: { backgroundColor: '#FFDFCD', borderRadius: 12, padding: 10, gap: 6 },
+ orangeHeroWarnHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 },
+ orangeHeroWarnIcon: { fontSize: 13, color: '#92400E' },
+ orangeHeroWarnTitle: { fontSize: 11, fontFamily: F.bodyB, color: '#92400E', textTransform: 'uppercase', letterSpacing: 0.4 },
+ orangeHeroAvoidDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: '#DC2626', marginTop: 7 },
+ orangeHeroAvoidTxt: { flex: 1, fontSize: 14, color: '#DC2626', lineHeight: 20, fontFamily: F.body },
  orangeHeroTip: { fontSize: 14, color: '#0A0A0A', lineHeight: 20, fontFamily: F.body },
 
  // Lista de la compra — week strip Figma
