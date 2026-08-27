@@ -133,51 +133,28 @@ const exs = (...items) => ({ ex: items });
 // SesiÃ³n C25K estÃ¡ndar: wu 5' + intervalos + cd 5'
 const c25k = (...mid) => seg(S('wu', 5), ...mid, S('cd', 5));
 
-// â”€â”€ LOS 9 PROGRAMAS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// â”€â”€ PROGRAMAS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export const PROGRAMS = [
  {
- id: 'run_0_5k', emoji: '', cat: 'run', level: 'beginner', spw: 3,
- name: { es: 'De 0 a 5K', en: 'Couch to 5K', fr: 'De 0 Ã  5 km', it: 'Da 0 a 5K' },
+ id: 'pre_partum', emoji: '', level: 'beginner', spw: 3,
+ showIf: 'pregnant',
+ forLifeStage: 'pregnant',
+ name: { es: 'Preparto activo', en: 'Active pregnancy', fr: 'Grossesse active', it: 'Gravidanza attiva' },
  desc: {
- es: 'Aprende a correr desde cero en 8 semanas alternando caminar y correr. Al final correrÃ¡s 30 minutos seguidos (~5 km).',
- en: 'Learn to run from scratch in 8 weeks alternating walking and running. By the end you\'ll run 30 minutes non-stop (~5 km).',
- fr: 'Apprends Ã  courir de zÃ©ro en 8 semaines en alternant marche et course. Ã€ la fin tu courras 30 minutes sans t\'arrÃªter (~5 km).',
- it: 'Impara a correre da zero in 8 settimane alternando camminata e corsa. Alla fine correrai 30 minuti di fila (~5 km).',
+  es: '4 semanas de ejercicio seguro durante el embarazo: suelo pélvico, movilidad, fuerza suave y caminar. Consulta a tu médico antes de empezar.',
+  en: '4 weeks of safe pregnancy exercise: pelvic floor, mobility, gentle strength and walking. Check with your doctor before starting.',
+  fr: '4 semaines d\'exercice sûr pendant la grossesse : périnée, mobilité, force douce et marche. Consultez votre médecin avant de commencer.',
+  it: '4 settimane di esercizio sicuro in gravidanza: pavimento pelvico, mobilità, forza leggera e camminata. Consulta il medico prima di iniziare.',
  },
  weeks: [
- { all: c25k(R(8, [S('run', 1), S('walk', 2)])) },
- { all: c25k(R(6, [S('run', 2), S('walk', 2)])) },
- { all: c25k(R(5, [S('run', 3), S('walk', 2)])) },
- { all: c25k(R(4, [S('run', 5), S('walk', 2)])) },
- { all: c25k(R(3, [S('run', 8), S('walk', 2)])) },
- { all: c25k(R(2, [S('run', 12), S('walk', 3)])) },
- { all: c25k(S('run', 20)) },
- { list: [c25k(S('run', 25)), c25k(S('run', 28)), c25k(S('run', 30))] },
+  { all: { mix: [S('breath', 5), E('kegel', 3, 10), E('cat_cow', 2, 10), S('walk', 20)] } },
+  { all: { mix: [S('breath', 5), E('kegel', 3, 12), E('bird_dog', 2, 8), E('squat', 2, 10), S('walk', 20)] } },
+  { all: { mix: [E('kegel', 3, 12), E('squat', 3, 10), E('bridge', 2, 12), E('cat_cow', 2, 10), S('walk', 25)] } },
+  { all: { mix: [E('kegel', 3, 15), E('squat', 3, 12), E('bird_dog', 2, 10), E('bridge', 2, 12), S('walk', 25)] } },
  ],
  },
  {
- id: 'swim_beginner', emoji: '', cat: 'swim', level: 'beginner', spw: 2,
- name: { es: 'NataciÃ³n desde cero', en: 'Swimming from scratch', fr: 'Natation de zÃ©ro', it: 'Nuoto da zero' },
- desc: {
- es: 'De no saber nadar (o casi) a nadar 400 m de crol seguidos en 6 semanas. RespiraciÃ³n, flotaciÃ³n, tÃ©cnica y resistencia.',
- en: 'From barely swimming to 400 m of continuous crawl in 6 weeks. Breathing, floating, technique and endurance.',
- fr: 'De presque rien Ã  400 m de crawl en continu en 6 semaines. Respiration, flottaison, technique et endurance.',
- it: 'Da quasi zero a 400 m di stile libero continuo in 6 settimane. Respirazione, galleggiamento, tecnica e resistenza.',
- },
- weeks: [
- { all: seg(S('swim_breath', 10), S('swim_float', 10), S('swim_kick', 10)) },
- { all: seg(S('swim_breath', 5), S('swim_kick', 10), S('swim_arms', 10), S('swim_float', 5)) },
- { all: seg(S('swim_kick', 5), R(8, [S('swim_crawl', 1), S('swim_rest', 1)]), S('swim_back', 5)) },
- { all: seg(S('swim_kick', 5), R(6, [S('swim_crawl', 2), S('swim_rest', 1)]), S('swim_back', 5)) },
- { all: seg(S('swim_kick', 5), R(4, [S('swim_crawl', 4), S('swim_rest', 1)]), S('swim_back', 5)) },
- { list: [
- seg(S('swim_kick', 5), R(2, [S('swim_crawl', 8), S('swim_rest', 2)]), S('swim_back', 5)),
- seg(S('swim_kick', 5), S('swim_crawl', 15), S('swim_back', 5)),
- ] },
- ],
- },
- {
- id: 'postpartum_return', emoji: '', cat: 'strength', level: 'beginner', spw: 3,
+ id: 'postpartum_return', emoji: '', level: 'beginner', spw: 3,
  showIf: 'postpartum',
  forLifeStage: 'postpartum',
  name: { es: 'Posparto: vuelta segura', en: 'Postpartum: safe return', fr: 'Post-partum : retour en douceur', it: 'Post parto: ritorno sicuro' },
@@ -196,30 +173,14 @@ export const PROGRAMS = [
  { all: { mix: [E('squat', 3, 12), E('lunge', 3, 8), E('row', 3, 12), E('side_plank', 2, null, 20), S('walk_fast', 30)] } },
  { all: { mix: [E('squat', 3, 12), E('calf_raise', 3, 15), E('jump_soft', 2, 10), S('wu', 5), R(6, [S('run', 1), S('walk', 2)])] } },
  { all: { mix: [E('squat', 3, 15), E('jump_soft', 3, 10), S('wu', 5), R(8, [S('run', 1), S('walk', 1)])] } },
+ { all: { mix: [E('goblet', 3, 10), E('hip_thrust', 3, 12), E('press', 2, 10), E('lunge', 2, 10), R(5, [S('run', 2), S('walk', 1)])] } },
+ { all: { mix: [E('goblet', 3, 12), E('hip_thrust', 3, 12), E('row', 3, 10), E('side_plank', 2, null, 25), R(6, [S('run', 2), S('walk', 1)])] } },
+ { all: { mix: [E('goblet', 4, 10), E('rdl', 3, 10), E('press', 3, 10), E('lunge', 3, 10), R(8, [S('run', 2), S('walk', 1)])] } },
+ { all: { mix: [E('goblet', 4, 12), E('hip_thrust', 4, 12), E('press', 3, 12), E('lunge', 3, 12), R(10, [S('run', 2), S('walk', 1)])] } },
  ],
  },
  {
- id: 'strength_beginner', emoji: '', cat: 'strength', level: 'beginner', spw: 3,
- name: { es: 'Fuerza desde cero', en: 'Strength from scratch', fr: 'Force de zÃ©ro', it: 'Forza da zero' },
- desc: {
- es: 'Aprende los patrones bÃ¡sicos de fuerza en 8 semanas: sentadilla, bisagra de cadera, empuje y tracciÃ³n. De tu peso corporal a entrenar con carga.',
- en: 'Learn the basic strength patterns in 8 weeks: squat, hip hinge, push and pull. From bodyweight to training with load.',
- fr: 'Apprends les mouvements de base en 8 semaines : squat, charniÃ¨re de hanche, poussÃ©e et tirage. Du poids du corps Ã  la charge.',
- it: 'Impara gli schemi base della forza in 8 settimane: squat, hip hinge, spinta e trazione. Dal corpo libero al carico.',
- },
- weeks: [
- { all: { mix: [E('squat', 2, 10), E('bridge', 2, 12), E('pushup', 2, 6), E('bird_dog', 2, 8), S('stretch', 5)] } },
- { all: { mix: [E('squat', 3, 10), E('bridge', 3, 12), E('pushup', 3, 6), E('row', 2, 10), E('plank', 2, null, 20)] } },
- { all: { mix: [E('squat', 3, 12), E('rdl', 2, 10), E('pushup', 3, 8), E('row', 3, 10), E('plank', 3, null, 25)] } },
- { all: { mix: [E('goblet', 3, 10), E('rdl', 3, 10), E('press', 2, 10), E('row', 3, 10), E('dead_bug', 2, 10)] } },
- { all: { mix: [E('goblet', 3, 10), E('rdl', 3, 12), E('press', 3, 10), E('lunge', 2, 8), E('plank', 3, null, 30)] } },
- { all: { mix: [E('goblet', 3, 12), E('hip_thrust', 3, 10), E('press', 3, 10), E('lunge', 3, 8), E('side_plank', 2, null, 20)] } },
- { all: { mix: [E('goblet', 4, 10), E('hip_thrust', 3, 12), E('pushup', 3, 10), E('row', 4, 10), E('plank', 3, null, 40)] } },
- { all: { mix: [E('goblet', 4, 12), E('hip_thrust', 4, 12), E('press', 3, 12), E('lunge', 3, 10), E('side_plank', 3, null, 30)] } },
- ],
- },
- {
- id: 'strength_40plus', emoji: '', cat: 'strength', level: 'intermediate', spw: 3,
+ id: 'strength_40plus', emoji: '', level: 'intermediate', spw: 3,
  showIf: 'age40plus',
  forStages: ['perimenopause', 'menopause', 'postmenopause'],
  name: { es: 'Fuerza 40+ (huesos y mÃºsculo)', en: 'Strength 40+ (bones & muscle)', fr: 'Force 40+ (os et muscles)', it: 'Forza 40+ (ossa e muscoli)' },
@@ -240,44 +201,10 @@ export const PROGRAMS = [
  { all: { mix: [E('goblet', 4, 12), E('hip_thrust', 4, 12), E('press', 3, 12), E('step_up', 3, 10), E('side_plank', 2, null, 25)] } },
  ],
  },
- {
- id: 'run_5k_10k', emoji: '', cat: 'run', level: 'intermediate', spw: 3,
- name: { es: 'De 5K a 10K', en: 'From 5K to 10K', fr: 'De 5 Ã  10 km', it: 'Da 5K a 10K' },
- desc: {
- es: 'Si ya corres 5 km, en 6 semanas llegarÃ¡s a 10. Tres sesiones: rodaje suave, intervalos y tirada larga progresiva.',
- en: 'If you already run 5 km, you\'ll reach 10 in 6 weeks. Three sessions: easy run, intervals and a progressive long run.',
- fr: 'Si tu cours dÃ©jÃ  5 km, tu atteindras 10 km en 6 semaines. Trois sÃ©ances : footing, fractionnÃ© et sortie longue progressive.',
- it: 'Se giÃ  corri 5 km, in 6 settimane arriverai a 10. Tre sessioni: corsa facile, ripetute e lungo progressivo.',
- },
- weeks: [
- { list: [c25k(S('run_easy', 25)), c25k(R(5, [S('run_fast', 3), S('run_easy', 2)])), c25k(S('run_easy', 35))] },
- { list: [c25k(S('run_easy', 25)), c25k(R(5, [S('run_fast', 3), S('run_easy', 2)])), c25k(S('run_easy', 40))] },
- { list: [c25k(S('run_easy', 30)), c25k(R(4, [S('run_fast', 5), S('run_easy', 2)])), c25k(S('run_easy', 45))] },
- { list: [c25k(S('run_easy', 30)), c25k(R(4, [S('run_fast', 5), S('run_easy', 2)])), c25k(S('run_easy', 50))] },
- { list: [c25k(S('run_easy', 30)), c25k(R(3, [S('run_fast', 8), S('run_easy', 3)])), c25k(S('run_easy', 55))] },
- { list: [c25k(S('run_easy', 25)), c25k(R(3, [S('run_fast', 5), S('run_easy', 2)])), c25k(S('run_easy', 60))] },
- ],
- },
- {
- id: 'mobility_pelvic', emoji: '', cat: 'mobility', level: 'intermediate', spw: 5,
- name: { es: 'Movilidad y suelo pÃ©lvico', en: 'Mobility & pelvic floor', fr: 'MobilitÃ© et pÃ©rinÃ©e', it: 'MobilitÃ  e pavimento pelvico' },
- desc: {
- es: '10-15 minutos al dÃ­a, 5 dÃ­as a la semana, durante 4 semanas: cadera, columna y suelo pÃ©lvico. Ideal como complemento de cualquier otro entreno.',
- en: '10-15 minutes a day, 5 days a week, for 4 weeks: hips, spine and pelvic floor. A perfect add-on to any other training.',
- fr: '10-15 minutes par jour, 5 jours par semaine, pendant 4 semaines : hanches, dos et pÃ©rinÃ©e. Le complÃ©ment idÃ©al de tout entraÃ®nement.',
- it: '10-15 minuti al giorno, 5 giorni a settimana, per 4 settimane: anche, colonna e pavimento pelvico. Complemento ideale a qualsiasi allenamento.',
- },
- weeks: [
- { all: { mix: [S('breath', 3), E('cat_cow', 2, 10), S('mob_hips', 4), E('kegel', 2, 10)] } },
- { all: { mix: [S('breath', 3), E('cat_cow', 2, 12), S('mob_hips', 5), E('kegel', 3, 10), S('squat_hold', 1)] } },
- { all: { mix: [S('breath', 3), S('mob_spine', 5), S('mob_hips', 5), E('kegel', 3, 12), S('squat_hold', 2)] } },
- { all: { mix: [S('mob_spine', 5), S('mob_hips', 6), E('kegel', 3, 15), S('squat_hold', 2), S('stretch', 3)] } },
- ],
- },
 
  // â”€â”€ Programa activa: 3 sesiones/semana sincronizadas con el ciclo (~3 meses) â”€â”€â”€
  {
-  id: 'physio_active_plus', emoji: 'Zap', cat: 'strength', level: 'advanced', spw: 3,
+  id: 'physio_active_plus', emoji: 'Zap', level: 'advanced', spw: 3,
   phaseRotation: true,
   name: {
    es: 'Activa',
@@ -531,7 +458,7 @@ export const PROGRAMS = [
 
  // â”€â”€ Programa muy activa: 4+ sesiones/semana sincronizadas con el ciclo (~3 meses) â”€
  {
-  id: 'physio_active_advanced', emoji: 'Trophy', cat: 'strength', level: 'advanced', spw: 4,
+  id: 'physio_active_advanced', emoji: 'Trophy', level: 'advanced', spw: 4,
   phaseRotation: true,
   name: {
    es: 'Muy activa',
@@ -772,7 +699,7 @@ export const PROGRAMS = [
 
  // â”€â”€ Programa activa: 1-2 sesiones/semana sincronizadas con el ciclo (~3 meses) â”€
  {
-  id: 'physio_active', emoji: 'Flame', cat: 'strength', level: 'intermediate', spw: 2,
+  id: 'physio_active', emoji: 'Flame', level: 'intermediate', spw: 2,
   phaseRotation: true,
   name: {
    es: 'Ocasional',
@@ -989,7 +916,7 @@ export const PROGRAMS = [
 
  // â”€â”€ Programa fisio: mujer sedentaria (1 sÃ©ance/semaine, ~14 sÃ©ances = 3 meses) â”€
  {
- id: 'physio_sedentaire', emoji: 'Sprout', cat: 'strength', level: 'beginner', spw: 1,
+ id: 'physio_sedentaire', emoji: 'Sprout', level: 'beginner', spw: 1,
  phaseRotation: true, // sesiÃ³n determinada por fase del ciclo
  name: {
   es: 'Sedentaria',
