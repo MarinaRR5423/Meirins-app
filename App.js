@@ -37,7 +37,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import ErrorBoundary from './src/components/ErrorBoundary';
 import FloatingTabBar from './src/components/FloatingTabBar';
 import { initAnalytics, wrapWithSentry, trackEvent, identifyUser, setPostHogClient, Events } from './src/lib/analytics';
-import { Audio } from 'expo-av';
+import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 import { useTodayMenu } from './src/hooks/useTodayMenu';
 import { useHomeWidgets } from './src/hooks/useHomeWidgets';
 
@@ -146,6 +146,9 @@ function App() {
       allowsRecordingIOS: false,
       playsInSilentModeIOS: false,
       staysActiveInBackground: false,
+      // MixWithOthers → la música del sistema NO se interrumpe al abrir la app
+      interruptionModeIOS: InterruptionModeIOS.MixWithOthers,
+      interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
       shouldDuckAndroid: false,
     }).catch(() => {});
   }, []);
