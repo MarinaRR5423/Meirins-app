@@ -1,5 +1,7 @@
 ﻿import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { View, ScrollView, StyleSheet, TouchableOpacity, Animated, ImageBackground } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Svg, { Circle } from 'react-native-svg';
 import { F } from '../theme/fonts';
 import { useNavigation } from '@react-navigation/native';
 import { ChevronRight, Salad, SportShoe, Flame, CalendarDays, Info, Check } from 'lucide-react-native';
@@ -61,6 +63,164 @@ const wwStyles = StyleSheet.create({
  xBadge: { position: 'absolute', top: -6, left: -6, width: 22, height: 22, borderRadius: 11, backgroundColor: '#0A0A0A', justifyContent: 'center', alignItems: 'center', zIndex: 10, borderWidth: 2, borderColor: 'white' },
  xBadgeTxt: { fontSize: 10, color: 'white', fontFamily: F.bodyB, lineHeight: 12 },
 });
+const FAST_KEY = 'blumm_fast_start';
+const RING_R = 58;
+const RING_CIRC = 2 * Math.PI * RING_R;
+
+function FastingRingCard({ lang, fastingProtocol }) {
+  const [fastStart, setFastStart] = useState(null);
+  const [now, setNow] = useState(Date.now());
+  const tr = (es, en, fr, it) => ({ es, en, fr, it }[lang] || es);
+
+  // Parse goal hours from protocol like "16-8" → 16
+  const goalHours = (() => {
+    const n = parseInt((fastingProtocol || '16-8').split('-')[0], 10);
+    return isNaN(n) ? 16 : n;
+  })();
+
+  useEffect(() => {
+    AsyncStorage.getItem(FAST_KEY).then(v => { if (v) setFastStart(parseInt(v, 10)); });
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const elapsedMs = fastStart ? now - fastStart : 0;
+  const elapsedH = elapsedMs / 3600000;
+  const progress = Math.min(elapsedH / goalHours, 1);
+  const dashOffset = RING_CIRC * (1 - progress);
+
+  const fmtHHMM = ms => {
+    const totalSec = Math.floor(ms / 1000);
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  };
+
+  const endTime = fastStart ? new Date(fastStart + goalHours * 3600000) : null;
+  const endStr = endTime ? `${String(endTime.getHours()).padStart(2, '0')}:${String(endTime.getMinutes()).padStart(2, '0')}` : '--:--';
+  const remainMs = fastStart ? Math.max(0, fastStart + goalHours * 3600000 - now) : 0;
+  const remainH = Math.floor(remainMs / 3600000);
+  const remainM = Math.floor((remainMs % 3600000) / 60000);
+
+  const isActive = !!fastStart && elapsedH < goalHours;
+  const isDone = !!fastStart && elapsedH >= goalHours;
+
+  const handleToggle = async () => {
+    if (fastStart) {
+      await AsyncStorage.removeItem(FAST_KEY);
+      setFastStart(null);
+    } else {
+      const t = Date.now();
+      await AsyncStorage.setItem(FAST_KEY, String(t));
+      setFastStart(t);
+    }
+  };
+
+  const statusColor = isDone ? '#49CF38' : isActive ? '#429FE7' : '#B0B8C1';
+  const statusLabel = isDone
+    ? tr('¡Completado!', 'Complete!', 'Complété !', 'Completato!')
+    : isActive
+    ? tr('activo', 'active', 'actif', 'attivo')
+    : tr('inactivo', 'inactive', 'inactif', 'inattivo');
+
+  return (
+    <View style={fastStyles.card}>
+      {/* Header */}
+      <View style={fastStyles.header}>
+        <View style={fastStyles.headerLeft}>
+          <BText style={fastStyles.headerLabel}>
+            {tr('Ayuno', 'Fasting', 'Jeûne', 'Digiuno')}
+            {' · '}{fastingProtocol || '16:8'}
+          </BText>
+          <View style={[fastStyles.dot, { backgroundColor: statusColor }]} />
+          <BText style={[fastStyles.statusTxt, { color: statusColor }]}>{statusLabel}</BText>
+        </View>
+      </View>
+
+      {/* Ring */}
+      <View style={fastStyles.ringWrap}>
+        <Svg width={144} height={144} viewBox="0 0 144 144">
+          {/* Track */}
+          <Circle cx={72} cy={72} r={RING_R} stroke="#E8EEF4" strokeWidth={10} fill="none" />
+          {/* Progress */}
+          <Circle
+            cx={72} cy={72} r={RING_R}
+            stroke={statusColor}
+            strokeWidth={10}
+            fill="none"
+            strokeLinecap="round"
+            strokeDasharray={`${RING_CIRC}`}
+            strokeDashoffset={dashOffset}
+            transform="rotate(-90 72 72)"
+          />
+        </Svg>
+        <View style={fastStyles.ringCenter}>
+          <BText style={fastStyles.timerDigits}>{fastStart ? fmtHHMM(elapsedMs) : `${String(goalHours).padStart(2,'0')}:00:00`}</BText>
+          <BText style={fastStyles.timerLabel}>
+            {tr('de', 'of', 'sur', 'di')} {goalHours}h
+          </BText>
+        </View>
+      </View>
+
+      {/* Sub-info */}
+      {isActive && (
+        <BText style={fastStyles.subInfo}>
+          {tr('Fin a las', 'Ends at', 'Fin à', 'Fine alle')} {endStr}
+          {remainH > 0 || remainM > 0
+            ? `  ·  ${remainH > 0 ? `${remainH}h ` : ''}${remainM}min ${tr('restantes', 'left', 'restantes', 'rimanenti')}`
+            : ''}
+        </BText>
+      )}
+      {isDone && (
+        <BText style={[fastStyles.subInfo, { color: '#49CF38' }]}>
+          {tr('Ayuno completado 🎉', 'Fasting complete 🎉', 'Jeûne complété 🎉', 'Digiuno completato 🎉')}
+        </BText>
+      )}
+      {!fastStart && (
+        <BText style={fastStyles.subInfo}>
+          {tr('Pulsa para iniciar tu ayuno', 'Tap to start your fast', 'Appuie pour commencer', 'Tocca per iniziare')}
+        </BText>
+      )}
+
+      {/* Button */}
+      <TouchableOpacity
+        style={[fastStyles.btn, isActive && fastStyles.btnStop]}
+        onPress={handleToggle}
+        activeOpacity={0.85}
+      >
+        <BText style={fastStyles.btnTxt}>
+          {isActive
+            ? tr('Terminar ayuno', 'End fast', 'Terminer le jeûne', 'Termina digiuno')
+            : isDone
+            ? tr('Nuevo ayuno', 'New fast', 'Nouveau jeûne', 'Nuovo digiuno')
+            : tr('Iniciar ayuno', 'Start fast', 'Commencer le jeûne', 'Inizia digiuno')}
+        </BText>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const fastStyles = StyleSheet.create({
+  card: { marginHorizontal: 16, marginBottom: 12, borderRadius: 20, backgroundColor: '#0A0A0A', padding: 20, alignItems: 'center' },
+  header: { width: '100%', flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  headerLabel: { fontSize: 13, color: '#9CA8B4', fontFamily: F.body, letterSpacing: 0.2 },
+  dot: { width: 6, height: 6, borderRadius: 3 },
+  statusTxt: { fontSize: 12, fontFamily: F.bodyB },
+  ringWrap: { width: 144, height: 144, justifyContent: 'center', alignItems: 'center', marginBottom: 12 },
+  ringCenter: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center' },
+  timerDigits: { fontSize: 26, color: 'white', fontFamily: F.bodyB, letterSpacing: 1, fontVariant: ['tabular-nums'] },
+  timerLabel: { fontSize: 12, color: '#9CA8B4', fontFamily: F.body, marginTop: 2 },
+  subInfo: { fontSize: 12, color: '#9CA8B4', fontFamily: F.body, textAlign: 'center', marginBottom: 16, lineHeight: 18 },
+  btn: { width: '100%', backgroundColor: '#429FE7', borderRadius: 12, paddingVertical: 13, alignItems: 'center' },
+  btnStop: { backgroundColor: '#1A1A2E', borderWidth: 1, borderColor: '#429FE7' },
+  btnTxt: { fontSize: 14, color: 'white', fontFamily: F.bodyB },
+});
+
 const HORMONAL_CONTRA = ['pill', 'hormonal_iud', 'ring', 'patch', 'implant'];
 
 export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCycleDay, logRecipeDone, todayMenu, widgets, toggleWidget, cycleDailyLogs = {} }) {
@@ -475,6 +635,14 @@ export default function HomeScreen({ pi, profile, lang = 'es', healthData, logCy
  </View>
  </View>
  </View>
+ </WidgetWrap>
+
+ {/* ── AYUNO ── */}
+ <WidgetWrap {...ww} id="fasting">
+  <FastingRingCard
+   lang={lang}
+   fastingProtocol={profile?.profileExtended?.editFasting || '16-8'}
+  />
  </WidgetWrap>
 
  {/* ── CONSEJO DE LA FASE ── */}
