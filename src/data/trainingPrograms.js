@@ -365,12 +365,11 @@ export const PROGRAMS = [
        E('jump_squat', 1, 10),
        // Circuito ×3
        R(3, [
-        E('bulgarian_lunge', 1, 10),
-        E('good_morning', 1, 10),
-        E('pistol_chair', 1, 10),
-        E('active_side_plank', 1, 10),
-        S('toe_walk', 1),
-        E('lunge_thoracic', 1, 10),
+        E('lateral_lunge', 1, 12),
+        E('reverse_lunge', 1, 12),
+        E('jump_squat', 1, 12),
+        E('single_bridge', 1, 10),
+        E('mtn_climber', 1, null, 20),
        ]),
        // Vuelta a la calma
        S('supine_twist', 2),
@@ -403,7 +402,7 @@ export const PROGRAMS = [
       label: { es: 'Cardio fraccionado', en: 'Interval cardio', fr: 'Fractionné', it: 'Cardio a intervalli' },
       spec: { seg: [
        S('walk_fast', 10),
-       R(10, [S('hiit_work', 1), S('hiit_rest', 2)]),
+       R(8, [S('hiit_work', 1), S('hiit_rest', 1.5)]),
        S('walk', 10),
       ] },
      },
@@ -428,12 +427,11 @@ export const PROGRAMS = [
        E('jumping_jack', 1, 10),
        // Circuito ×3
        R(3, [
-        E('jump_lunge', 1, 12),
+        E('jump_squat', 1, 12),
+        E('pistol_chair', 1, 6),
+        E('step_up_knee', 1, 12),
         E('single_bridge', 1, 12),
-        E('lateral_lunge', 1, 12),
-        E('burpee', 1, 6),
-        E('leg_curl_chair', 1, 12),
-        E('box_jump', 1, 10),
+        E('mtn_climber', 1, null, 20),
        ]),
        // Vuelta a la calma
        S('supine_twist', 2),
@@ -466,7 +464,7 @@ export const PROGRAMS = [
       label: { es: 'Cardio fraccionado intenso', en: 'Intense interval cardio', fr: 'Fractionné intensif', it: 'Cardio intervalli intenso' },
       spec: { seg: [
        S('walk_fast', 10),
-       R(8, [S('hiit_work', 2), S('hiit_rest', 2)]),
+       R(10, [S('hiit_work', 1), S('hiit_rest', 1)]),
        S('walk', 10),
       ] },
      },
@@ -502,6 +500,247 @@ export const PROGRAMS = [
         E('press', 1, 12),
        ]),
        // Vuelta a la calma
+       E('cat_cow', 1, 10),
+       S('child_pose', 1),
+       S('breath_chair', 3),
+      ] },
+     },
+     {
+      label: { es: 'Movilidad y recuperación (fin de fase / SPM)', en: 'Mobility & recovery (end of phase / PMS)', fr: 'Mobilité et récupération (fin de phase / SPM)', it: 'Mobilità e recupero (fine fase / SPM)' },
+      spec: { mix: [
+       E('cat_cow', 1, 10),
+       E('bird_dog', 1, 10),
+       E('worlds_greatest', 1, 10),
+       E('lunge_thoracic', 1, 10),
+       E('wall_angels', 1, 10),
+       E('sumo_squat', 1, 10),
+       E('hip_90_90', 1, 10),
+       E('open_book', 1, 10),
+       S('child_sides', 2),
+       S('breath', 3),
+      ] },
+     },
+     {
+      label: { es: 'Cardio: endurance 45-60 min', en: 'Cardio: endurance 45-60 min', fr: 'Endurance fondamentale 45-60 min', it: 'Cardio: resistenza 45-60 min' },
+      spec: { seg: [S('endurance_cardio', 50)] },
+     },
+    ],
+   },
+  },
+ },
+
+ // ── Programa muy activa: 4+ sesiones/semana sincronizadas con el ciclo (~3 meses) ─
+ {
+  id: 'physio_active_advanced', emoji: 'Trophy', cat: 'strength', level: 'intermediate', spw: 4,
+  phaseRotation: true,
+  name: {
+   es: 'Muy activa (3 meses)',
+   en: 'Very active (3 months)',
+   fr: 'Très active (3 mois)',
+   it: 'Molto attiva (3 mesi)',
+  },
+  desc: {
+   es: 'Programa para mujeres muy activas: 4+ sesiones/semana adaptadas a tu fase del ciclo. Fuerza, potencia y cardio de alta intensidad progresivos en ~3 meses.',
+   en: 'Programme for very active women: 4+ sessions/week adapted to your cycle phase. Progressive strength, power and high-intensity cardio over ~3 months.',
+   fr: 'Programme pour femmes très actives : 4+ séances/semaine adaptées à ta phase du cycle. Force, puissance et cardio haute intensité progressifs en ~3 mois.',
+   it: 'Programma per donne molto attive: 4+ sessioni/settimana adattate alla tua fase del ciclo. Forza, potenza e cardio ad alta intensità progressivi in ~3 mesi.',
+  },
+  phases: {
+
+   // ── Menstrual ───────────────────────────────────────────────────────────────
+   menstrual: {
+    note: {
+     es: 'El objetivo es recuperarte y mantener tus capacidades. Pon el énfasis en la movilidad y la técnica.',
+     en: 'The goal is to recover and maintain your capacities. Focus on mobility and technique.',
+     fr: 'L\'objectif est de récupérer et maintenir tes capacités. Mets l\'accent sur la mobilité et la technique.',
+     it: 'L\'obiettivo è recuperare e mantenere le capacità. Dai priorità alla mobilità e alla tecnica.',
+    },
+    sessions: [
+     {
+      label: { es: 'Refuerzo suave cuerpo entero', en: 'Light full-body strength', fr: 'Renfo léger corps entier', it: 'Rinforzo leggero corpo intero' },
+      spec: { mix: [
+       E('cat_cow', 1, 10),
+       E('superman', 1, 10),
+       E('worlds_greatest', 1, 10),
+       R(3, [
+        E('squat', 1, 15),
+        E('bridge', 1, 15),
+        E('row', 1, 15),
+        E('reverse_lunge', 1, 10),
+        E('incline_pushup', 1, 10),
+        E('bird_dog', 1, 8),
+        E('balance', 1, null, 30),
+        E('press', 1, 15),
+       ]),
+       S('hip_circles', 2),
+       S('arm_circles', 2),
+       S('child_pose', 1),
+      ] },
+     },
+     {
+      label: { es: 'Cardio: endurance 45-60 min', en: 'Cardio: endurance 45-60 min', fr: 'Endurance fondamentale 45-60 min', it: 'Cardio: resistenza 45-60 min' },
+      spec: { seg: [S('endurance_cardio', 50)] },
+     },
+     {
+      label: { es: 'Pilates / yoga / movilidad', en: 'Pilates / yoga / mobility', fr: 'Pilates / yoga / mobilité', it: 'Pilates / yoga / mobilità' },
+      spec: { mix: [
+       S('breath', 3),
+       E('cat_cow', 1, 15),
+       E('open_book', 1, 10),
+       E('bird_dog', 1, 15),
+       E('updown_dog', 1, 10),
+       E('hip_90_90', 1, 10),
+       E('dead_bug', 1, 10),
+       S('leg_rock', 2),
+       E('bridge', 1, 15),
+       S('hip_circles', 2),
+       S('child_sides', 2),
+      ] },
+     },
+    ],
+   },
+
+   // ── Follicular ──────────────────────────────────────────────────────────────
+   follicular: {
+    note: {
+     es: 'Desarrolla fuerza, potencia y capacidades cardiovasculares.',
+     en: 'Build strength, power and cardiovascular capacity.',
+     fr: 'Développe force, puissance et capacités cardiovasculaires.',
+     it: 'Sviluppa forza, potenza e capacità cardiovascolare.',
+    },
+    sessions: [
+     {
+      label: { es: 'Parte inferior', en: 'Lower body', fr: 'Bas du corps', it: 'Parte inferiore' },
+      spec: { mix: [
+       E('superman', 1, 10),
+       E('worlds_greatest', 1, 10),
+       E('jump_squat', 1, 10),
+       E('updown_dog', 1, 10),
+       R(3, [
+        E('bulgarian_lunge', 1, 10),
+        E('good_morning', 1, 10),
+        E('pistol_chair', 1, 10),
+        E('active_side_plank', 1, 10),
+        S('toe_walk', 1),
+        E('lunge_thoracic', 1, 10),
+       ]),
+       S('supine_twist', 2),
+       E('cat_cow', 1, 10),
+       S('child_pose', 1),
+      ] },
+     },
+     {
+      label: { es: 'Parte superior', en: 'Upper body', fr: 'Haut du corps', it: 'Parte superiore' },
+      spec: { mix: [
+       E('bird_dog', 1, 10),
+       E('cat_cow', 1, 10),
+       E('jumping_jack', 1, 10),
+       R(3, [
+        E('horizontal_row', 1, 10),
+        E('dips', 1, 10),
+        E('press', 1, 10),
+        E('superman', 1, 10),
+        E('mtn_climber', 1, 10),
+        E('pushup', 1, 6),
+       ]),
+       S('cross_seated', 2),
+       S('child_pose', 1),
+      ] },
+     },
+     {
+      label: { es: 'Cardio fraccionado', en: 'Interval cardio', fr: 'Fractionné', it: 'Cardio a intervalli' },
+      spec: { seg: [
+       S('walk_fast', 10),
+       R(10, [S('hiit_work', 1), S('hiit_rest', 1.5)]),
+       S('walk', 10),
+      ] },
+     },
+    ],
+   },
+
+   // ── Ovulatory ───────────────────────────────────────────────────────────────
+   ovulatory: {
+    note: {
+     es: 'Aprovecha este período para trabajar intensidad, potencia y velocidad.',
+     en: 'Exploit this period to work on intensity, power and speed.',
+     fr: 'Exploite cette période pour travailler intensité, puissance et vitesse.',
+     it: 'Sfrutta questo periodo per lavorare su intensità, potenza e velocità.',
+    },
+    sessions: [
+     {
+      label: { es: 'Parte inferior intensa', en: 'Intense lower body', fr: 'Bas du corps intensif', it: 'Parte inferiore intensa' },
+      spec: { mix: [
+       E('cat_cow', 1, 10),
+       E('worlds_greatest', 1, 10),
+       E('jumping_jack', 1, 10),
+       R(3, [
+        E('jump_lunge', 1, 12),
+        E('mtn_climber', 1, null, 30),
+        E('lateral_lunge', 1, 12),
+        E('burpee', 1, 6),
+        E('single_bridge', 1, 12),
+        E('box_jump', 1, 10),
+       ]),
+       S('supine_twist', 2),
+       E('updown_dog', 1, 10),
+       S('child_pose', 1),
+      ] },
+     },
+     {
+      label: { es: 'Parte superior intensa', en: 'Intense upper body', fr: 'Haut du corps intensif', it: 'Parte superiore intensa' },
+      spec: { mix: [
+       E('cat_cow', 1, 10),
+       E('superman', 1, 10),
+       E('worlds_greatest', 1, 10),
+       R(3, [
+        E('med_ball_slam', 1, 10),
+        E('bicep_curl', 1, 10),
+        E('med_ball_throw', 1, 10),
+        E('kb_swing', 1, 10),
+        E('horizontal_row', 1, 10),
+        E('side_plank_abd', 1, null, 20),
+       ]),
+       S('child_sides', 2),
+       S('breath_chair', 3),
+      ] },
+     },
+     {
+      label: { es: 'Cardio fraccionado intenso', en: 'Intense interval cardio', fr: 'Fractionné intensif', it: 'Cardio intervalli intenso' },
+      spec: { seg: [
+       S('walk_fast', 10),
+       R(8, [S('hiit_work', 2), S('hiit_rest', 2)]),
+       S('walk', 10),
+      ] },
+     },
+    ],
+   },
+
+   // ── Luteal ──────────────────────────────────────────────────────────────────
+   luteal: {
+    note: {
+     es: 'Mantén tus avances y favorece la recuperación al final de la fase.',
+     en: 'Maintain your gains and favour recovery towards the end of the phase.',
+     fr: 'Maintiens tes acquis et favorise la récupération en fin de phase.',
+     it: 'Mantieni i progressi e favorisci il recupero a fine fase.',
+    },
+    sessions: [
+     {
+      label: { es: 'Refuerzo global', en: 'Global strength', fr: 'Renforcement global', it: 'Rinforzo globale' },
+      spec: { mix: [
+       E('high_knees', 1, null, 90),
+       E('superman', 1, 10),
+       E('worlds_greatest', 1, 10),
+       R(3, [
+        E('squat', 1, 15),
+        E('single_bridge', 1, 10),
+        E('vertical_pull', 1, 12),
+        E('horizontal_row', 1, 12),
+        E('static_lunge', 1, 10, 10),
+        E('incline_pushup', 1, 10),
+        E('lateral_band', 1, 20),
+        E('balance_arms', 1, null, 30),
+        E('press', 1, 12),
+       ]),
        E('cat_cow', 1, 10),
        S('child_pose', 1),
        S('breath_chair', 3),
@@ -582,14 +821,21 @@ export const PROGRAMS = [
       ] },
      },
      {
-      label: { es: 'Marcha + movilidad (si regla dolorosa)', en: 'Walk + mobility (if painful period)', fr: 'Marche + mobilité (si règles douloureuses)', it: 'Camminata + mobilità (se ciclo doloroso)' },
+      label: { es: 'Movilidad suave (si regla dolorosa)', en: 'Gentle mobility (if painful period)', fr: 'Mobilité douce (si règles douloureuses)', it: 'Mobilità dolce (se ciclo doloroso)' },
       spec: { mix: [
-       S('walk_fast', 25),
        S('breath_chair', 5),
-       E('cat_cow', 1, 10),
+       E('cat_cow', 1, 12),
        E('updown_dog', 1, 10),
        E('worlds_greatest', 1, 10),
+       E('hip_90_90', 1, 10),
+       E('lunge_thoracic', 1, 10),
+       E('bird_dog', 1, 12),
+       S('child_sides', 2),
       ] },
+     },
+     {
+      label: { es: 'Marcha activa', en: 'Brisk walk', fr: 'Marche active', it: 'Camminata attiva' },
+      spec: { seg: [S('walk', 5), S('walk_fast', 20), S('walk', 5)] },
      },
     ],
    },
@@ -1098,5 +1344,6 @@ export function isRecommended(p, profileExtended = {}) {
  if (p.id === 'strength_beginner' && sportGoal === 'muscle') return true;
  if (p.id === 'swim_beginner' && sports.includes('swimming')) return true;
  if (p.id === 'physio_sedentaire' && ['sedentary', 'light'].includes(profileExtended?.fitnessLevel)) return true;
+ if (p.id === 'physio_active_advanced' && profileExtended?.fitnessLevel === 'very_active') return true;
  return false;
 }
