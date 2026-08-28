@@ -582,6 +582,8 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
   const [localBatchDays, setBatchDays]  = useState(profileExtended?.batchCookingDays || []);
   const [localSupps, setSupps]          = useState(profileExtended?.supplements     || []);
   const [localSuppsOther, setSuppsOther]= useState(profileExtended?.supplementsOther|| '');
+  const [localSmokes, setSmokes]        = useState(profileExtended?.smokes          ?? null);
+  const [localDrinks, setDrinks]        = useState(profileExtended?.drinks          || '');
   const [saving, setSaving]             = useState(false);
 
   const hasNutriData = !!profileExtended?.diet;
@@ -604,6 +606,8 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
       batchCookingDays: localBatch ? localBatchDays : [],
       supplements: localSupps,
       supplementsOther: localSupps.includes('other') ? localSuppsOther.trim() : '',
+      smokes: localSmokes,
+      drinks: localDrinks,
     });
     setSaving(false);
     setOpen(false);
@@ -635,6 +639,8 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
     setBatchDays(cur.batchCookingDays || []);
     setSupps(cur.supplements || []);
     setSuppsOther(cur.supplementsOther || '');
+    setSmokes(cur.smokes ?? null);
+    setDrinks(cur.drinks || '');
     setOpen(true);
   };
 
@@ -916,6 +922,31 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
             multiline
           />
         )}
+
+        {/* ── TABACO ── */}
+        <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
+          {L('¿Fumas?', 'Do you smoke?', 'Tu fumes ?', 'Fumi?')}
+        </Text>
+        <View style={{ gap: 2 }}>
+          <OptionCard variant="azote" label={L('No', 'No', 'Non', 'No')}        selected={localSmokes === false} onPress={() => setSmokes(false)} />
+          <OptionCard variant="azote" label={L('Ocasionalmente', 'Occasionally', 'Occasionnellement', 'Occasionalmente')} selected={localSmokes === 'occasional'} onPress={() => setSmokes('occasional')} />
+          <OptionCard variant="azote" label={L('Sí, a diario', 'Yes, daily', 'Oui, quotidiennement', 'Sì, quotidianamente')} selected={localSmokes === 'daily'} onPress={() => setSmokes('daily')} />
+        </View>
+
+        {/* ── ALCOHOL ── */}
+        <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
+          {L('¿Consumes alcohol?', 'Do you drink alcohol?', 'Tu consommes de l\'alcool ?', 'Consumi alcol?')}
+        </Text>
+        <View style={{ gap: 2 }}>
+          {[
+            { v: 'never',   l: L('Nunca',                    'Never',                   'Jamais',                      'Mai') },
+            { v: 'social',  l: L('Socialmente (fines de semana)', 'Socially (weekends)', 'Socialement (week-ends)',     'Socialmente (weekend)') },
+            { v: 'regular', l: L('Regularmente (varias veces/semana)', 'Regularly (several times/week)', 'Régulièrement (plusieurs fois/semaine)', 'Regolarmente (più volte/settimana)') },
+            { v: 'daily',   l: L('A diario',                 'Daily',                   'Quotidiennement',             'Quotidianamente') },
+          ].map(o => (
+            <OptionCard key={o.v} variant="azote" label={o.l} selected={localDrinks === o.v} onPress={() => setDrinks(o.v)} />
+          ))}
+        </View>
 
         <TouchableOpacity style={[s.saveBtnAzote, saving && { opacity: 0.45 }]} onPress={save} disabled={saving}>
           <Text style={s.saveBtnAzoteTxt}>{saving ? '…' : (p.common.save || 'Guardar')}</Text>
