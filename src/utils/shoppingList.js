@@ -98,64 +98,169 @@ const PARTICLES_TO_STRIP = [
 ];
 
 // ── Categorías ────────────────────────────────────────────────────────────────
+// ORDEN IMPORTANTE: las categorías se comprueban en este orden.
+// Poner Lácteos antes de Cereales para que "leche de avena" → Lácteos.
 const CATEGORY_KEYWORDS = {
  ' Proteínas': [
- 'pollo', 'pavo', 'salmón', 'salmon', 'atún', 'atun', 'merluza', 'lubina',
- 'ternera', 'cerdo', 'huevo', 'huevos', 'tofu', 'sardinas', 'sardina',
- 'tempeh', 'edamame', 'lentejas', 'garbanzos', 'judías', 'frijoles',
- 'jamón', 'jamon', 'pavo', 'cordero', 'bacalao', 'caballa',
- 'chicken', 'turkey', 'tuna', 'beef', 'pork', 'egg', 'eggs', 'lentils',
- 'chickpeas', 'beans', 'fish', 'salmon',
- ],
- ' Verduras': [
- 'espinaca', 'espinacas', 'brócoli', 'brocoli', 'calabacín', 'calabacin',
- 'calabaza', 'pimiento', 'cebolla', 'zanahoria', 'tomate', 'ajo',
- 'kale', 'rúcula', 'rucula', 'pepino', 'espárragos', 'esparragos',
- 'batata', 'patata', 'boniato', 'lechuga', 'judías verdes', 'rábano',
- 'remolacha', 'puerro', 'apio', 'champiñón', 'champiñones',
- 'spinach', 'broccoli', 'courgette', 'pumpkin', 'pepper', 'onion',
- 'carrot', 'tomato', 'garlic', 'rocket', 'cucumber', 'asparagus',
- 'sweet potato', 'potato', 'lettuce', 'green beans',
- ],
- ' Fruta': [
- 'plátano', 'platano', 'manzana', 'fresa', 'fresas', 'arándano', 'arandano',
- 'arándanos', 'arandanos', 'mango', 'naranja', 'limón', 'limon',
- 'dátil', 'datil', 'dátiles', 'datiles', 'frutos rojos', 'frutos del bosque',
- 'kiwi', 'pera', 'piña', 'pina', 'uva', 'melón', 'sandía',
- 'cereza', 'cerezas',
- 'banana', 'apple', 'strawberry', 'strawberries', 'blueberry', 'blueberries',
- 'orange', 'lemon', 'date', 'dates', 'berries', 'kiwi', 'pear',
- ],
- ' Cereales y panes': [
- 'avena', 'quinoa', 'arroz', 'pasta', 'pan', 'harina', 'maíz', 'maiz',
- 'centeno', 'mijo', 'cuscús', 'cuscus', 'bulgur',
- 'oat', 'oats', 'rice', 'bread', 'flour', 'corn', 'rye',
- 'wrap', 'tortilla', 'tortita', 'tortitas',
- ],
- ' Frutos secos y semillas': [
- 'almendra', 'almendras', 'nueces', 'nuez', 'chía', 'chia', 'lino',
- 'sésamo', 'sesamo', 'cáñamo', 'canamo', 'pistachos',
- 'avellanas', 'cacahuete', 'cacahuetes', 'macadamia',
- 'almond', 'almonds', 'walnut', 'walnuts', 'flax', 'sesame', 'hemp',
- 'peanut', 'peanuts',
+  // Carnes
+  'pollo', 'pavo', 'ternera', 'cerdo', 'cordero', 'pato', 'conejo',
+  'bacon', 'loncha', 'lonchas', 'panceta', 'chorizo',
+  'salchicha', 'salchichón', 'mortadela', 'fiambre', 'embutido',
+  'carne', 'pechuga', 'muslo', 'contramuslo', 'deshuesado', 'escalope',
+  'solomillo', 'costilla', 'hamburguesa',
+  'jamón', 'jamon',
+  // Pescados y mariscos
+  'salmón', 'salmon', 'atún', 'atun', 'merluza', 'lubina', 'bacalao',
+  'sardina', 'sardinas', 'caballa', 'dorada', 'rodaballo',
+  'boquerón', 'boqueron', 'anchoa', 'trucha', 'sepia', 'calamar',
+  'pulpo', 'mejillón', 'mejillones', 'almeja', 'almejas',
+  'gamba', 'gambas', 'langostino', 'langostinos',
+  'cigala', 'bogavante', 'nécora',
+  // Huevos
+  'huevo', 'huevos', 'clara', 'yema',
+  // Legumbres
+  'lentejas', 'garbanzos', 'frijoles', 'alubias', 'habas', 'guisantes', 'azuki',
+  'judías blancas', 'judías negras', 'judías pintas', 'judías rojas',
+  // Proteína vegetal
+  'tofu', 'tempeh', 'seitán', 'seitan', 'quorn',
+  'edamame', 'soja texturizada', 'proteína de soja',
+  'proteína de suero', 'proteína de guisante', 'proteína en polvo', 'whey',
+  // EN
+  'chicken', 'turkey', 'beef', 'pork', 'lamb', 'duck', 'rabbit',
+  'tuna', 'hake', 'cod', 'sardine', 'mackerel',
+  'shrimp', 'prawns', 'squid', 'octopus', 'mussel', 'clam',
+  'egg', 'eggs', 'lentils', 'chickpeas', 'fish',
  ],
  ' Lácteos y vegetales': [
- 'leche', 'yogur', 'queso', 'mantequilla', 'nata', 'parmesano',
- 'ricotta', 'mozzarella', 'cheddar', 'feta', 'skyr', 'cottage',
- 'milk', 'yoghurt', 'yogurt', 'cheese', 'butter', 'cream',
- 'leche de avena', 'leche de almendra', 'leche de coco', 'leche de soja',
- 'oat milk', 'almond milk', 'coconut milk', 'soy milk',
+  // Bebidas vegetales primero (antes de que "avena" → Cereales)
+  'leche de avena', 'bebida de avena',
+  'leche de almendra', 'bebida de almendra',
+  'leche de coco', 'bebida de coco',
+  'leche de soja', 'bebida de soja',
+  'leche de arroz', 'bebida de arroz',
+  'bebida vegetal',
+  // Lácteos
+  'leche', 'yogur', 'yogurt', 'kéfir', 'kefir',
+  'queso', 'parmesano', 'ricotta', 'mozzarella', 'cheddar',
+  'feta', 'gouda', 'brie', 'camembert', 'manchego', 'cottage',
+  'skyr', 'quark',
+  'mantequilla', 'ghee', 'margarina',
+  'nata', 'crema', 'crème',
+  // EN
+  'milk', 'yoghurt', 'cheese', 'butter', 'cream',
+  'oat milk', 'almond milk', 'coconut milk', 'soy milk', 'rice milk',
+ ],
+ ' Verduras': [
+  'espinaca', 'espinacas', 'brócoli', 'brocoli', 'coliflor',
+  'calabacín', 'calabacin', 'calabaza', 'zapallo',
+  'pimiento', 'pimientos', 'guindilla', 'jalapeño',
+  'cebolla', 'cebolleta', 'chalotas', 'chalota',
+  'zanahoria', 'zanahorias',
+  'tomate', 'tomates', 'cherry', 'cherry tomate',
+  'kale', 'rúcula', 'rucula', 'pepino', 'pepinos',
+  'espárragos', 'esparragos', 'espárrago', 'esparrago',
+  'batata', 'patata', 'patatas', 'boniato', 'yuca',
+  'lechuga', 'lechugas', 'judías verdes', 'rábano', 'rabano',
+  'remolacha', 'puerro', 'hinojo',
+  'champiñón', 'champiñones', 'seta', 'setas', 'portobello',
+  'berenjena', 'berenjenas', 'alcachofa', 'alcachofas',
+  'acelga', 'acelgas', 'chirivía',
+  // 'col' eliminada (3 chars, coincide con "chocolate") → usar términos más largos
+  'repollo', 'lombarda', 'coles de bruselas', 'chucrut', 'berza',
+  // 'maíz'/'maiz' eliminados de aquí → solo en Cereales (tortillas, mazorca…)
+  'elote', 'mazorca',
+  'aguacate', 'palta',
+  'mezcla', 'mezclum', 'canónigos', 'hojas verdes', 'brotes tiernos',
+  'microgreens', 'pak choi', 'bok choy',
+  'okra', 'wakame', 'nabo',
+  // EN
+  'spinach', 'broccoli', 'cauliflower', 'courgette', 'zucchini',
+  'pumpkin', 'pepper', 'chilli', 'onion', 'leek', 'carrot',
+  'tomato', 'garlic', 'cucumber', 'asparagus', 'sweet potato',
+  'potato', 'lettuce', 'mushroom', 'eggplant', 'aubergine',
+  'artichoke', 'chard', 'avocado', 'rocket', 'arugula',
+  'celery', 'fennel', 'beetroot', 'cabbage', 'sprouts',
+ ],
+ ' Fruta': [
+  'plátano', 'platano', 'manzana', 'pera',
+  'fresa', 'fresas', 'frambuesa', 'frambuesas',
+  'arándano', 'arandano', 'arándanos', 'arandanos',
+  'mango', 'naranja', 'naranjas', 'mandarina',
+  'limón', 'limon', 'lima', 'pomelo', 'toronja',
+  'dátil', 'datil', 'dátiles', 'datiles',
+  'frutos rojos', 'frutos del bosque', 'bayas',
+  'kiwi', 'piña', 'pina', 'papaya', 'maracuyá',
+  'uva', 'uvas', 'melón', 'melon', 'sandía', 'sandia',
+  'cereza', 'cerezas', 'melocotón', 'melocoton', 'nectarina',
+  'albaricoque', 'ciruela', 'higo', 'granada',
+  'coco', 'caquí', 'lichi',
+  // Frutas secas
+  'orejones', 'pasas', 'uvas pasas', 'ciruelas pasas',
+  'dátiles medjool', 'higos secos', 'cranberries', 'goji',
+  // EN
+  'banana', 'apple', 'pear', 'strawberry', 'raspberry', 'blueberry',
+  'orange', 'lemon', 'lime', 'grapefruit', 'date', 'berries',
+  'pineapple', 'grape', 'melon', 'watermelon', 'cherry',
+  'peach', 'nectarine', 'apricot', 'plum', 'fig', 'pomegranate',
+  'raisin', 'dried fruit',
+ ],
+ ' Cereales y panes': [
+  'avena', 'quinoa', 'arroz', 'pasta', 'espagueti', 'espaguetis',
+  'macarrón', 'macarrones', 'penne', 'fusilli', 'fettuccine',
+  'pan', 'panecillo', 'baguette', 'pita', 'naan',
+  'harina', 'maíz', 'maiz', 'centeno', 'mijo', 'cebada',
+  'cuscús', 'cuscus', 'bulgur', 'amaranto', 'teff', 'sorgo',
+  'granola', 'muesli', 'copos', 'cereales',
+  'wrap', 'tortilla', 'tortita', 'tortitas', 'crepe',
+  'crackers', 'galletas', 'biscotes', 'pan de molde',
+  // EN
+  'oat', 'oats', 'rice', 'bread', 'flour', 'corn', 'rye', 'barley',
+  'couscous', 'cereal', 'cracker', 'biscuit',
+ ],
+ ' Frutos secos y semillas': [
+  'almendra', 'almendras', 'nueces', 'nuez', 'avellana', 'avellanas',
+  'pistachos', 'pistacho', 'anacardo', 'anacardos', 'macadamia',
+  'cacahuete', 'cacahuetes', 'pecan',
+  'chía', 'chia', 'lino', 'linaza', 'sésamo', 'sesamo',
+  'cáñamo', 'girasol', 'pepitas', 'semilla', 'semillas',
+  // EN
+  'almond', 'walnut', 'hazelnut', 'pistachio',
+  'cashew', 'peanut',
+  'flax', 'sesame', 'hemp',
  ],
  ' Despensa y especias': [
- 'aceite', 'oliva', 'miel', 'sirope', 'sal', 'pimienta', 'vinagre',
- 'soja', 'miso', 'cacao', 'chocolate', 'canela', 'cúrcuma', 'curcuma',
- 'jengibre', 'curry', 'pimentón', 'pimenton', 'comino', 'romero',
- 'tomillo', 'orégano', 'oregano', 'laurel', 'mostaza', 'tahini', 'hummus',
- 'aceitunas', 'algas', 'caldo',
- 'oil', 'olive', 'honey', 'syrup', 'salt', 'pepper', 'vinegar',
- 'sauce', 'sauce de soya', 'cinnamon', 'turmeric', 'ginger',
- 'paprika', 'cumin', 'rosemary', 'thyme', 'oregano', 'bay', 'mustard',
- 'olives', 'broth', 'stock',
+  // Aceites y condimentos
+  'aceite', 'oliva', 'vinagre', 'mayonesa', 'ketchup', 'mostaza',
+  'salsa', 'tamari', 'teriyaki', 'tahini', 'hummus', 'miso',
+  'sriracha', 'tabasco', 'worcestershire', 'aderezo',
+  // Especias y hierbas frescas/secas
+  'sal', 'pimienta', 'pimentón', 'pimenton', 'paprika', 'comino',
+  'curry', 'cúrcuma', 'curcuma', 'canela', 'jengibre', 'cardamomo',
+  'clavo', 'nuez moscada', 'azafrán', 'azafran',
+  'orégano', 'oregano', 'tomillo', 'romero', 'laurel', 'albahaca',
+  'cilantro', 'perejil', 'eneldo', 'menta', 'hierbabuena',
+  'cebollino', 'estragón', 'estragon', 'hierbas', 'especias',
+  // Dulces y endulzantes
+  'miel', 'sirope', 'jarabe', 'azúcar', 'azucar',
+  'stevia', 'estevia', 'eritritol', 'xilitol',
+  'cacao', 'chocolate', 'vainilla',
+  // Conservas y botes
+  'aceitunas', 'alcaparra', 'alcaparras', 'pepinillo', 'pepinillos', 'encurtido',
+  'lata', 'conserva', 'tomate triturado', 'tomate frito', 'passata',
+  'caldo', 'consomé', 'bouillon',
+  // Algas y superalimentos
+  'algas', 'nori', 'alga', 'wakame', 'espirulina', 'chlorella',
+  'kombucha', 'kéfir de agua',
+  // Básicos de despensa
+  'levadura', 'bicarbonato', 'polvo de hornear',
+  'agua', 'agua mineral', 'zumo', 'jugo', 'caldo vegetal',
+  'maicena', 'almidón', 'gelatina', 'agar',
+  // EN
+  'oil', 'vinegar', 'mayonnaise', 'mustard', 'sauce',
+  'salt', 'pepper', 'paprika', 'cumin', 'cinnamon', 'turmeric',
+  'ginger', 'oregano', 'thyme', 'rosemary', 'basil',
+  'parsley', 'dill', 'mint', 'honey', 'syrup', 'sugar', 'cocoa',
+  'olives', 'capers', 'broth', 'stock', 'water', 'juice',
  ],
 };
 
@@ -285,10 +390,19 @@ function normalizeName(name) {
  return n;
 }
 
+// Regexp de palabra entera (acepta tildes y ñ) para keywords cortas
+function wordRe(k) {
+ return new RegExp(`(?<![a-záéíóúüñ])${k}(?![a-záéíóúüñ])`, 'i');
+}
+
 function categorize(name) {
  const lower = name.toLowerCase();
  for (const [cat, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
- if (keywords.some(k => lower.includes(k))) return cat;
+   if (keywords.some(k =>
+     k.length <= 4
+       ? wordRe(k).test(lower)   // palabras cortas: solo palabra completa
+       : lower.includes(k)        // palabras largas: substring (más permisivo)
+   )) return cat;
  }
  return DEFAULT_CATEGORY;
 }
