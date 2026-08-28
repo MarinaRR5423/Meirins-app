@@ -13,7 +13,7 @@ import T from '../i18n/translations';
 import { F } from '../theme/fonts';
 import RangeCalendar from './RangeCalendar';
 import TrainerCard from './TrainerCard';
-import { useDiets, DIET_CATEGORIES, normalizeDietId } from '../hooks/useDiets';
+import { useDiets, DIET_CATEGORIES, normalizeDietId, PREGNANCY_ALLOWED_DIET_IDS } from '../hooks/useDiets';
 import { PROGRAMS, totalSessions, LEVEL_LABEL, isRecommended, isVisible } from '../data/trainingPrograms';
 import { ALL_MEALS, MEAL_LABELS, getActiveMeals } from '../utils/fastingMeals';
 import { trackEvent, Events } from '../lib/analytics';
@@ -567,6 +567,7 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
 
   // 19 dietas + ayunos desde Supabase
   const { diets: allDiets, dietsByCategory } = useDiets(lang);
+  const isPregnant = goal === 'pregnant';
 
   // ── Hooks ANTES de cualquier return condicional ────────────────────────────
   const [open, setOpen]                 = useState(false);
@@ -687,17 +688,43 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
       <SetupModal visible={open} onClose={() => setOpen(false)} variant="azote"
         title={lang === 'en' ? 'Nutrition' : lang === 'fr' ? 'Nutrition' : lang === 'it' ? 'Nutrizione' : 'Nutrición'}>
 
+        {/* ── AVISO EMBARAZO ── */}
+        {isPregnant && (
+          <View style={{ backgroundColor: '#FDF2F8', borderRadius: 12, padding: 14, gap: 4, marginBottom: 4 }}>
+            <Text style={{ fontFamily: F.bodyB, fontSize: 14, color: '#9D174D' }}>
+              {lang === 'en' ? '🌸 Pregnancy nutrition'
+               : lang === 'fr' ? '🌸 Nutrition grossesse'
+               : lang === 'it' ? '🌸 Nutrizione in gravidanza'
+               : '🌸 Nutrición en el embarazo'}
+            </Text>
+            <Text style={{ fontFamily: F.body, fontSize: 13, color: '#6B7280', lineHeight: 18 }}>
+              {lang === 'en'
+                ? 'We only show diets compatible with pregnancy. Raw fish, alcohol, high-mercury fish, raw eggs and unpasteurised products are automatically excluded from recipes.'
+                : lang === 'fr'
+                ? 'Seuls les régimes compatibles avec la grossesse sont affichés. Poisson cru, alcool, poisson riche en mercure, œufs crus et produits non pasteurisés sont exclus automatiquement.'
+                : lang === 'it'
+                ? 'Mostriamo solo le diete compatibili con la gravidanza. Pesce crudo, alcol, pesce ad alto contenuto di mercurio, uova crude e prodotti non pastorizzati sono esclusi automaticamente.'
+                : 'Solo mostramos dietas compatibles con el embarazo. Pescado crudo, alcohol, pescado rico en mercurio, huevos crudos y productos sin pasteurizar se excluyen automáticamente de las recetas.'}
+            </Text>
+          </View>
+        )}
+
         {/* ── DIETA BASE (agrupada por categoría) ── */}
         {allDiets.length > 0
           ? Object.entries(dietsByCategory)
               .filter(([cat]) => cat !== 'fasting')
               .map(([cat, catDiets]) => {
+                // En embarazo: filtrar cada categoría a solo las dietas permitidas
+                const visibleDiets = isPregnant
+                  ? catDiets.filter(d => PREGNANCY_ALLOWED_DIET_IDS.includes(d.id))
+                  : catDiets;
+                if (visibleDiets.length === 0) return null;
                 const catInfo = DIET_CATEGORIES[cat] || { label: { es: cat, en: cat } };
                 return (
                   <View key={cat} style={{ gap: 8 }}>
                     <Text style={s.dietCatLabel}>{catInfo.label[lang] || catInfo.label.es}</Text>
                     <View style={{ gap: 2 }}>
-                      {catDiets.map(d => {
+                      {visibleDiets.map(d => {
                         const sel = normalizeDietId(localDiet) === d.id;
                         return (
                           <OptionCard key={d.id} variant="azote"
@@ -752,8 +779,8 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
           </View>
         </View>
 
-        {/* ── PROTOCOLO DE AYUNO ── */}
-        {dietsByCategory?.['fasting']?.length > 0 && <>
+        {/* ── PROTOCOLO DE AYUNO ── (oculto en embarazo) */}
+        {!isPregnant && dietsByCategory?.['fasting']?.length > 0 && <>
           <View style={{ gap: 4 }}>
             <Text style={s.dietCatLabel}>
               {lang === 'en' ? 'Fasting protocol' : lang === 'fr' ? 'Protocole de jeûne' : lang === 'it' ? 'Protocollo di digiuno' : 'Protocolo de ayuna'}

@@ -20,6 +20,17 @@ export function normalizeDietId(id) {
  return DIET_ID_MAP[id] || id;
 }
 
+// IDs de dietas base permitidas durante el embarazo
+// (Low-carb, ancestral, keto, paleo, ayuno → no recomendados en gestación)
+export const PREGNANCY_ALLOWED_DIET_IDS = [
+ 'standard',
+ 'mediterranean',
+ 'vegetarian',
+ 'vegan',
+ 'pescatarian',
+ 'intuitive_eating', // flexible, sin restricción calórica
+];
+
 // Categorías con label multilingüe e icono
 export const DIET_CATEGORIES = {
  standard: { icon: '', label: { es: 'Estándar', en: 'Standard', fr: 'Standard', it: 'Standard' } },

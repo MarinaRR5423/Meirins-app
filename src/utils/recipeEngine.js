@@ -75,6 +75,21 @@ function isMacroCompliant(recipe, dbMealType, totalDailyKcal, diet) {
  return true;
 }
 
+// ── RESTRICCIONES EMBARAZO ───────────────────────────────────────────────────
+// Tags de receta (recipe.tags[]) que indican ingredientes desaconsejados en
+// gestación según guías médicas (OMS / SEGO). Si la receta los tiene y la
+// usuaria está embarazada, se descarta en el filtrado duro.
+const PREGNANCY_UNSAFE_TAGS = [
+ 'alcohol',          // cualquier bebida alcohólica
+ 'raw_fish',         // sashimi, sushi, carpaccio de pescado
+ 'raw_meat',         // tartar, carpaccio de carne, carne poco hecha
+ 'raw_egg',          // mayonesa casera, tiramisú, mousse cruda
+ 'high_mercury',     // atún rojo, pez espada, cazón, macarela gigante
+ 'unpasteurized',    // quesos curados sin pasteurizar, leche cruda
+ 'liver',            // paté, foie, hígado (exceso vitamina A)
+ 'deli_meat_raw',    // embutidos sin cocinar (listeria)
+];
+
 // ── 1. FILTRADO DURO ────────────────────────────────────────────────────────
 // Una receta SOLO es válida si:
 // - No contiene ningún alérgeno del usuario
@@ -120,6 +135,11 @@ function isHardCompatible(recipe, profile) {
  if (recipe.avoid_for?.length > 0) {
  if (lifeStage && recipe.avoid_for.includes(lifeStage)) return false;
  if (conditions.some(c => recipe.avoid_for.includes(c))) return false;
+ }
+
+ // 5. Restricciones embarazo — duro
+ if (lifeStage === 'pregnant' && recipe.tags?.length > 0) {
+ if (recipe.tags.some(t => PREGNANCY_UNSAFE_TAGS.includes(t))) return false;
  }
 
  return true;
