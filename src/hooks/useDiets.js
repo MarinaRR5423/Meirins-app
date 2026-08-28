@@ -20,6 +20,11 @@ export function normalizeDietId(id) {
  return DIET_ID_MAP[id] || id;
 }
 
+// Categorías de dieta restringidas para usuarias con anticonceptivos hormonales
+// que además fuman o beben (riesgo cardiovascular acumulado).
+// La dieta cetogénica eleva LDL y puede potenciar trombosis en ese perfil.
+export const KETO_RESTRICTED_CATEGORIES = ['low-carb'];
+
 // IDs de dietas base permitidas durante el embarazo
 // (Low-carb, ancestral, keto, paleo, ayuno → no recomendados en gestación)
 export const PREGNANCY_ALLOWED_DIET_IDS = [

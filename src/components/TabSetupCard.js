@@ -13,7 +13,7 @@ import T from '../i18n/translations';
 import { F } from '../theme/fonts';
 import RangeCalendar from './RangeCalendar';
 import TrainerCard from './TrainerCard';
-import { useDiets, DIET_CATEGORIES, normalizeDietId, PREGNANCY_ALLOWED_DIET_IDS } from '../hooks/useDiets';
+import { useDiets, DIET_CATEGORIES, normalizeDietId, PREGNANCY_ALLOWED_DIET_IDS, KETO_RESTRICTED_CATEGORIES } from '../hooks/useDiets';
 import { PROGRAMS, totalSessions, LEVEL_LABEL, isRecommended, isVisible } from '../data/trainingPrograms';
 import { ALL_MEALS, MEAL_LABELS, getActiveMeals } from '../utils/fastingMeals';
 import { trackEvent, Events } from '../lib/analytics';
@@ -569,6 +569,14 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
   const { diets: allDiets, dietsByCategory } = useDiets(lang);
   const isPregnant = goal === 'pregnant';
 
+  // Restricción keto: anticonceptivos hormonales + fuma o bebe
+  // (riesgo cardiovascular acumulado — la cetogénica eleva LDL y potencia trombosis)
+  const isHormonalContra = profileExtended?.contraUse === true &&
+    ['pill', 'hormonal_iud'].includes(profileExtended?.contraType);
+  const smokesOrDrinks = localSmokes === true ||
+    (localDrinks && localDrinks !== '' && localDrinks !== 'none' && localDrinks !== 'no');
+  const hideKeto = isHormonalContra && smokesOrDrinks;
+
   // ── Hooks ANTES de cualquier return condicional ────────────────────────────
   const [open, setOpen]                 = useState(false);
   const [localDiet, setLocalDiet]       = useState(profileExtended?.diet            || '');
@@ -714,9 +722,12 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
           ? Object.entries(dietsByCategory)
               .filter(([cat]) => cat !== 'fasting')
               .map(([cat, catDiets]) => {
-                // En embarazo: filtrar cada categoría a solo las dietas permitidas
+                // En embarazo: solo dietas permitidas
+                // Keto restringida: anticonceptivos hormonales + fuma/bebe
                 const visibleDiets = isPregnant
                   ? catDiets.filter(d => PREGNANCY_ALLOWED_DIET_IDS.includes(d.id))
+                  : hideKeto && KETO_RESTRICTED_CATEGORIES.includes(cat)
+                  ? [] // ocultar toda la categoría low-carb
                   : catDiets;
                 if (visibleDiets.length === 0) return null;
                 const catInfo = DIET_CATEGORIES[cat] || { label: { es: cat, en: cat } };
