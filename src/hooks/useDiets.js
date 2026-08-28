@@ -33,6 +33,11 @@ export const PREGNANCY_ALLOWED_DIET_IDS = [
  'vegetarian',
  'vegan',
  'pescatarian',
+ 'gluten_free',
+ 'lactose_free',
+ 'anti_inflammatory',
+ 'dash',
+ 'fodmap',
  'intuitive_eating', // flexible, sin restricción calórica
 ];
 
