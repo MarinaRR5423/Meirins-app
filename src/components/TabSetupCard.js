@@ -25,6 +25,29 @@ const MENO_Q_OPTS = [
   { v: 'under3m',      l: { es: 'Menos de 3 meses',       en: 'Less than 3 months',      fr: 'Moins de 3 mois',           it: 'Meno di 3 mesi' } },
   { v: 'neverregular', l: { es: 'Nunca ha sido regular',  en: 'Never been regular',      fr: "N'a jamais été régulier",   it: 'Non è mai stato regolare' } },
 ];
+const MENO_SX_OPTS = [
+  { v: 'sofocos',   l: { es: 'Sofocos o calores repentinos', en: 'Hot flashes',          fr: 'Bouffées de chaleur',    it: 'Vampate di calore' } },
+  { v: 'sudores',   l: { es: 'Sudores nocturnos',            en: 'Night sweats',          fr: 'Sueurs nocturnes',       it: 'Sudorazioni notturne' } },
+  { v: 'humor',     l: { es: 'Cambios de humor o irritabilidad', en: 'Mood swings',       fr: "Sautes d'humeur",        it: 'Sbalzi d\'umore' } },
+  { v: 'insomnio',  l: { es: 'Insomnio o sueño alterado',   en: 'Sleep issues',          fr: 'Troubles du sommeil',    it: 'Problemi di sonno' } },
+  { v: 'ninguno',   l: { es: 'Ninguno de estos',             en: 'None of these',         fr: 'Aucun de ces symptômes', it: 'Nessuno di questi' } },
+];
+const MENO_CAUSE_OPTS = [
+  { v: 'estres',         l: { es: 'Mucho estrés últimamente',          en: 'A lot of stress lately',              fr: 'Beaucoup de stress récemment',    it: 'Molto stress ultimamente' } },
+  { v: 'anticonceptivo', l: { es: 'Cambio o retirada de anticonceptivo', en: 'Change or stop of contraceptive',  fr: "Changement d'un contraceptif",    it: 'Cambio contraccettivo' } },
+  { v: 'peso',           l: { es: 'Pérdida de peso importante',        en: 'Significant weight loss',             fr: 'Perte de poids importante',       it: 'Perdita di peso importante' } },
+  { v: 'no_se',          l: { es: 'No lo sé',                          en: "I don't know",                        fr: 'Je ne sais pas',                  it: 'Non lo so' } },
+];
+const MENO_ONSET_OPTS = [
+  { v: 'siempre',  l: { es: 'Siempre, desde la primera regla', en: 'Always, since my first period', fr: 'Toujours, dès les premières règles', it: 'Sempre, dalla prima mestruazione' } },
+  { v: 'gradual',  l: { es: 'Hace años, gradualmente',         en: 'Years ago, gradually',           fr: 'Il y a des années, progressivement', it: 'Anni fa, gradualmente' } },
+  { v: 'reciente', l: { es: 'Hace poco, es reciente',          en: 'Recently',                       fr: 'Récemment',                         it: 'Di recente' } },
+];
+const MENO_DIAG_OPTS = [
+  { v: 'sop',  l: { es: 'Sí, SOP',             en: 'Yes, PCOS',               fr: 'Oui, SOPK',              it: 'Sì, PCOS' } },
+  { v: 'otra', l: { es: 'Sí, otra condición',  en: 'Yes, another condition',  fr: 'Oui, une autre condition', it: "Sì, un'altra condizione" } },
+  { v: 'no',   l: { es: 'No / No lo sé',       en: "No / I don't know",       fr: 'Non / Je ne sais pas',    it: 'No / Non lo so' } },
+];
 
 const LIFE_STAGES_NEW = [
   { v: 'reproductive',  l: { es: 'Reproductiva',   en: 'Reproductive',   fr: 'Reproductive',   it: 'Riproduttiva' } },
@@ -199,7 +222,34 @@ export function CicloSetupCard({ lang, lastPeriod, setLastPeriod, cycleLength, s
   const [contraUse, setContraUse]   = useState(profileExtended?.contraUse ?? null);   // true | false | null
   const [contraType, setContraType] = useState(profileExtended?.contraType || '');
   const [menoOpen, setMenoOpen]     = useState(false);
-  const [menoQ, setMenoQ]           = useState(profileExtended?.menoSuspectQ || '');
+  const [menoQ, setMenoQ]           = useState(profileExtended?.menoData?.q1 || '');
+  const [menoSx, setMenoSx]         = useState(profileExtended?.menoData?.symptoms || []);
+  const [menoCause, setMenoCause]   = useState(profileExtended?.menoData?.cause || '');
+  const [menoHasSx, setMenoHasSx]   = useState(profileExtended?.menoData?.hasSx ?? null);
+  const [menoOnset, setMenoOnset]   = useState(profileExtended?.menoData?.onset || '');
+  const [menoDiag, setMenoDiag]     = useState(profileExtended?.menoData?.diagnosis || '');
+
+  const toggleMenoSx = (v) => {
+    if (v === 'ninguno') { setMenoSx(['ninguno']); return; }
+    setMenoSx(prev => {
+      const without = prev.filter(x => x !== 'ninguno');
+      return without.includes(v) ? without.filter(x => x !== v) : [...without, v];
+    });
+  };
+
+  // Estima etapa según respuestas + edad del perfil
+  const computeMenoSuspect = (age) => {
+    const hasSxSelected = menoSx.length > 0 && !menoSx.includes('ninguno');
+    if (menoQ === 'over12m') {
+      if (age < 40) return 'early_menopause';
+      if (age < 45) return 'perimenopause';
+      return 'menopause';
+    }
+    if (menoQ === '3to12m') return hasSxSelected ? 'perimenopause' : 'cycle_irregular';
+    if (menoQ === 'under3m') return (menoHasSx && age >= 40) ? 'perimenopause_early' : 'cycle_irregular';
+    if (menoQ === 'neverregular') return menoDiag === 'sop' ? 'pcos' : 'cycle_irregular';
+    return '';
+  };
   const [saving, setSaving]         = useState(false);
 
   const toggleCondition = (v) =>
@@ -210,10 +260,17 @@ export function CicloSetupCard({ lang, lastPeriod, setLastPeriod, cycleLength, s
     setSaving(true);
     if (!menoOpen) await setLastPeriod(rangeStart);
     if (saveProfileExtended) {
+      const age = profileExtended?.age ? parseInt(profileExtended.age) : 0;
       await saveProfileExtended({
         periodEnd: rangeEnd || null,
         lifeStage, conditions, contraUse, contraType,
-        ...(menoOpen ? { menoSuspectQ: menoQ } : {}),
+        ...(menoOpen ? {
+          menoData: {
+            q1: menoQ, symptoms: menoSx, cause: menoCause,
+            hasSx: menoHasSx, onset: menoOnset, diagnosis: menoDiag,
+            suspect: computeMenoSuspect(age),
+          },
+        } : {}),
       });
     }
     setSaving(false);
@@ -291,14 +348,66 @@ export function CicloSetupCard({ lang, lastPeriod, setLastPeriod, cycleLength, s
         </TouchableOpacity>
         {menoOpen && (
           <View style={s.menoExpand}>
+            {/* Q1 — siempre visible */}
             <Text style={s.menoExpandQ}>
               {tr({ es: '¿Hace cuánto que no tienes la regla?', en: 'How long since your last period?', fr: "Depuis combien de temps n'as-tu pas tes règles ?", it: 'Da quanto tempo non hai il ciclo?' }, lang)}
             </Text>
             <View style={{ gap: 4 }}>
               {MENO_Q_OPTS.map(o => (
-                <OptionCard key={o.v} variant="azote" label={tr(o.l, lang)} selected={menoQ === o.v} onPress={() => setMenoQ(o.v)} />
+                <OptionCard key={o.v} variant="azote" label={tr(o.l, lang)} selected={menoQ === o.v}
+                  onPress={() => { setMenoQ(o.v); setMenoSx([]); setMenoCause(''); setMenoHasSx(null); setMenoOnset(''); setMenoDiag(''); }} />
               ))}
             </View>
+
+            {/* RAMA A — más de 12m o entre 3–12m */}
+            {(menoQ === 'over12m' || menoQ === '3to12m') && (
+              <View style={{ marginTop: 16, gap: 4 }}>
+                <Text style={s.menoExpandQ}>
+                  {tr({ es: '¿Tienes alguno de estos síntomas?', en: 'Do you have any of these symptoms?', fr: 'As-tu certains de ces symptômes ?', it: 'Hai qualcuno di questi sintomi?' }, lang)}
+                </Text>
+                <Text style={[s.menoExpandQ, { fontSize: 11, color: '#666', marginBottom: 2 }]}>
+                  {tr({ es: 'Puedes marcar varios', en: 'You can select several', fr: 'Tu peux en cocher plusieurs', it: 'Puoi selezionarne più d\'uno' }, lang)}
+                </Text>
+                {MENO_SX_OPTS.map(o => (
+                  <OptionCard key={o.v} variant="azote" label={tr(o.l, lang)} selected={menoSx.includes(o.v)} onPress={() => toggleMenoSx(o.v)} />
+                ))}
+              </View>
+            )}
+
+            {/* RAMA B — menos de 3 meses */}
+            {menoQ === 'under3m' && (
+              <View style={{ marginTop: 16, gap: 4 }}>
+                <Text style={s.menoExpandQ}>
+                  {tr({ es: '¿A qué crees que se puede deber?', en: 'What do you think might be causing it?', fr: 'À quoi penses-tu que c\'est dû ?', it: 'A cosa pensi sia dovuto?' }, lang)}
+                </Text>
+                {MENO_CAUSE_OPTS.map(o => (
+                  <OptionCard key={o.v} variant="azote" label={tr(o.l, lang)} selected={menoCause === o.v} onPress={() => setMenoCause(o.v)} />
+                ))}
+                <Text style={[s.menoExpandQ, { marginTop: 12 }]}>
+                  {tr({ es: '¿Tienes sofocos, cambios de humor o insomnio?', en: 'Do you have hot flashes, mood changes or insomnia?', fr: 'As-tu des bouffées de chaleur, des sautes d\'humeur ou de l\'insomnie ?', it: 'Hai vampate, sbalzi d\'umore o insonnia?' }, lang)}
+                </Text>
+                <OptionCard variant="azote" label={tr({ es: 'Sí', en: 'Yes', fr: 'Oui', it: 'Sì' }, lang)} selected={menoHasSx === true} onPress={() => setMenoHasSx(true)} />
+                <OptionCard variant="azote" label={tr({ es: 'No', en: 'No', fr: 'Non', it: 'No' }, lang)} selected={menoHasSx === false} onPress={() => setMenoHasSx(false)} />
+              </View>
+            )}
+
+            {/* RAMA C — nunca regular */}
+            {menoQ === 'neverregular' && (
+              <View style={{ marginTop: 16, gap: 4 }}>
+                <Text style={s.menoExpandQ}>
+                  {tr({ es: '¿Cuándo empezó la irregularidad?', en: 'When did the irregularity start?', fr: 'Quand l\'irrégularité a-t-elle commencé ?', it: 'Quando è iniziata l\'irregolarità?' }, lang)}
+                </Text>
+                {MENO_ONSET_OPTS.map(o => (
+                  <OptionCard key={o.v} variant="azote" label={tr(o.l, lang)} selected={menoOnset === o.v} onPress={() => setMenoOnset(o.v)} />
+                ))}
+                <Text style={[s.menoExpandQ, { marginTop: 12 }]}>
+                  {tr({ es: '¿Te han diagnosticado SOP u otra condición?', en: 'Have you been diagnosed with PCOS or another condition?', fr: 'As-tu reçu un diagnostic de SOPK ou autre ?', it: 'Ti è stato diagnosticato PCOS o un\'altra condizione?' }, lang)}
+                </Text>
+                {MENO_DIAG_OPTS.map(o => (
+                  <OptionCard key={o.v} variant="azote" label={tr(o.l, lang)} selected={menoDiag === o.v} onPress={() => setMenoDiag(o.v)} />
+                ))}
+              </View>
+            )}
           </View>
         )}
 
