@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, ScrollView, Platform, ImageBackground, Dimensions } from 'react-native';
+import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, ScrollView, Platform, ImageBackground, Dimensions } from 'react-native';
 import { BlurView } from 'expo-blur';
 import * as Linking from 'expo-linking';
 import * as Localization from 'expo-localization';
@@ -149,19 +149,19 @@ export default function AuthScreen({ lang }) {
  <View style={styles.bgOverlay} />
 
  {/* Floating pills */}
- <View style={[styles.pill, styles.pillGreen, { top: SH * 0.14, left: SW * 0.06 }]}>
- <BText style={[styles.pillText, { color: '#0B1F08' }]}>{t.pillCycle}</BText>
- </View>
- <View style={[styles.pill, styles.pillOrange, { top: SH * 0.22, right: SW * 0.12 }]}>
- <BText style={[styles.pillText, { color: '#260E01' }]}>{t.pillNutri}</BText>
- </View>
  <View style={[styles.pill, styles.pillBlue, { top: SH * 0.08, right: SW * 0.06 }]}>
- <BText style={[styles.pillText, { color: '#0A1823' }]}>{t.pillTrain}</BText>
+   <BText style={[styles.pillText, { color: '#0A1823' }]}>{t.pillTrain}</BText>
+ </View>
+ <View style={[styles.pill, styles.pillGreen, { top: SH * 0.38, left: SW * 0.06 }]}>
+   <BText style={[styles.pillText, { color: '#0B1F08' }]}>{t.pillCycle}</BText>
+ </View>
+ <View style={[styles.pill, styles.pillOrange, { top: SH * 0.50, right: SW * 0.08 }]}>
+   <BText style={[styles.pillText, { color: '#260E01' }]}>{t.pillNutri}</BText>
  </View>
 
  {/* Logo */}
  <View style={styles.logoArea}>
- <BText style={styles.logoText}>Blumm</BText>
+   <Image source={require('../../assets/blumm-logo-white.png')} style={styles.logoImg} resizeMode="contain" />
  </View>
 
  {/* Frosted glass bottom container */}
@@ -178,12 +178,17 @@ export default function AuthScreen({ lang }) {
 
  {/* Apple + Google row */}
  <View style={styles.oauthRow}>
- <TouchableOpacity style={[styles.blackBtn, styles.oauthBtn]} onPress={handleAppleSignIn}>
- <BText style={styles.blackBtnText}>􀣺 Apple</BText>
- </TouchableOpacity>
- <TouchableOpacity style={[styles.blackBtn, styles.oauthBtn]} onPress={handleGoogleSignIn}>
- <BText style={styles.blackBtnText}>G Google</BText>
- </TouchableOpacity>
+   <AppleAuthentication.AppleAuthenticationButton
+     buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+     buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+     cornerRadius={12}
+     style={[styles.oauthBtn, { height: 48 }]}
+     onPress={handleAppleSignIn}
+   />
+   <TouchableOpacity style={[styles.blackBtn, styles.oauthBtn, { flexDirection: 'row', gap: 8 }]} onPress={handleGoogleSignIn}>
+     <Text style={{ fontSize: 18, lineHeight: 22 }}>G</Text>
+     <BText style={styles.blackBtnText}>Google</BText>
+   </TouchableOpacity>
  </View>
 
  {/* Already have account */}
@@ -196,10 +201,13 @@ export default function AuthScreen({ lang }) {
 
  {/* Terms */}
  <BText style={styles.terms}>
- Al continuar aceptas nuestras{' '}
- <BText style={styles.termsBold} onPress={() => Linking.openURL(TERMS_URL)}>condiciones de uso</BText>
- {' '}y{' '}
- <BText style={styles.termsBold} onPress={() => Linking.openURL(PRIVACY_URL)}>política de privacidad</BText>
+   {detectedLang === 'en'
+     ? <>If you continue, you agree to our <BText style={styles.termsBold} onPress={() => Linking.openURL(TERMS_URL)}>terms of use</BText></>
+     : detectedLang === 'fr'
+     ? <>Si tu continues, tu acceptes nos <BText style={styles.termsBold} onPress={() => Linking.openURL(TERMS_URL)}>conditions d'utilisation</BText></>
+     : detectedLang === 'it'
+     ? <>Continuando, accetti i nostri <BText style={styles.termsBold} onPress={() => Linking.openURL(TERMS_URL)}>termini di utilizzo</BText></>
+     : <>Si continúas el proceso, entendemos que aceptas nuestras <BText style={styles.termsBold} onPress={() => Linking.openURL(TERMS_URL)}>condiciones de uso</BText></>}
  </BText>
  </View>
  </View>
@@ -219,14 +227,14 @@ export default function AuthScreen({ lang }) {
   <View style={styles.bgOverlay} />
 
   {/* Floating pills */}
-  <View style={[styles.pill, styles.pillGreen, { top: SH * 0.14, left: SW * 0.06 }]}>
-   <BText style={[styles.pillText, { color: '#0B1F08' }]}>{t.pillCycle}</BText>
-  </View>
-  <View style={[styles.pill, styles.pillOrange, { top: SH * 0.22, right: SW * 0.12 }]}>
-   <BText style={[styles.pillText, { color: '#260E01' }]}>{t.pillNutri}</BText>
-  </View>
   <View style={[styles.pill, styles.pillBlue, { top: SH * 0.08, right: SW * 0.06 }]}>
-   <BText style={[styles.pillText, { color: '#0A1823' }]}>{t.pillTrain}</BText>
+    <BText style={[styles.pillText, { color: '#0A1823' }]}>{t.pillTrain}</BText>
+  </View>
+  <View style={[styles.pill, styles.pillGreen, { top: SH * 0.38, left: SW * 0.06 }]}>
+    <BText style={[styles.pillText, { color: '#0B1F08' }]}>{t.pillCycle}</BText>
+  </View>
+  <View style={[styles.pill, styles.pillOrange, { top: SH * 0.50, right: SW * 0.08 }]}>
+    <BText style={[styles.pillText, { color: '#260E01' }]}>{t.pillNutri}</BText>
   </View>
 
   {/* White panel from bottom */}
@@ -304,7 +312,7 @@ const styles = StyleSheet.create({
 
  // ── Logo ───────────────────────────────────────────────────────────────────
  logoArea: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingTop: 60 },
- logoText: { fontSize: 52, fontFamily: F.headingX, color: '#FFFFFF', letterSpacing: -1 },
+ logoImg: { width: 200, height: 80 },
 
  // ── Pills ──────────────────────────────────────────────────────────────────
  pill: { position: 'absolute', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 999 },
