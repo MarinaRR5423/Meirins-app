@@ -38,6 +38,17 @@ import ErrorBoundary from './src/components/ErrorBoundary';
 import FloatingTabBar from './src/components/FloatingTabBar';
 import { initAnalytics, wrapWithSentry, trackEvent, identifyUser, setPostHogClient, Events } from './src/lib/analytics';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
+
+// Configurar sesión de audio al cargar el módulo (antes del primer render)
+// para que la música del sistema no se interrumpa al abrir la app.
+Audio.setAudioModeAsync({
+  allowsRecordingIOS: false,
+  playsInSilentModeIOS: false,
+  staysActiveInBackground: false,
+  interruptionModeIOS: InterruptionModeIOS.MixWithOthers,
+  interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
+  shouldDuckAndroid: false,
+}).catch(() => {});
 import { useTodayMenu } from './src/hooks/useTodayMenu';
 import { useHomeWidgets } from './src/hooks/useHomeWidgets';
 
@@ -139,19 +150,6 @@ function App() {
 
   // Analytics init (no-op si no está configurado)
   useEffect(() => { initAnalytics(); }, []);
-
-  // Permite que la música del sistema siga sonando cuando se abre la app
-  useEffect(() => {
-    Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      playsInSilentModeIOS: false,
-      staysActiveInBackground: false,
-      // MixWithOthers → la música del sistema NO se interrumpe al abrir la app
-      interruptionModeIOS: InterruptionModeIOS.MixWithOthers,
-      interruptionModeAndroid: InterruptionModeAndroid.DuckOthers,
-      shouldDuckAndroid: false,
-    }).catch(() => {});
-  }, []);
 
   // Cache de fase para el splash video
   useEffect(() => {

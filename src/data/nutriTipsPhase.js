@@ -692,14 +692,37 @@ function getDayOfPhase(pi) {
  * @param {object} profileExtended — perfil extendido (para conditionalGoal y lifeStage)
  * @returns {{ focus, phrase, bullets } | null}
  */
+// Epoch fijo para el contador de rotación global (no cambia nunca)
+const TIP_EPOCH = new Date('2024-01-01T00:00:00Z');
+
+/**
+ * Calcula un contador global de días que no se resetea entre ciclos.
+ * Deriva la fecha de inicio del ciclo actual restando (day - 1) días a hoy,
+ * luego suma el día dentro de la fase para obtener una posición absoluta.
+ * Así, si la regla dura 3 días y tiene 4 tips, el siguiente ciclo
+ * arranca en el tip que no llegó a verse.
+ */
+function getGlobalTipDay(pi) {
+  const cycleDay = Math.max(1, pi?.day ?? 1);
+  // Fecha de inicio del ciclo actual (hoy - (cycleDay - 1) días)
+  const periodStart = new Date();
+  periodStart.setHours(0, 0, 0, 0);
+  periodStart.setDate(periodStart.getDate() - (cycleDay - 1));
+  // Días desde el epoch fijo hasta el inicio de este ciclo
+  const daysSinceEpoch = Math.floor((periodStart - TIP_EPOCH) / 86400000);
+  // Añadir el día dentro de la fase para progresar tip a tip dentro del ciclo
+  const dayOfPhase = Math.max(0, getDayOfPhase(pi));
+  return daysSinceEpoch + dayOfPhase;
+}
+
 export function getCurrentNutriTip(pi, profileExtended) {
   const lifeStage = profileExtended?.lifeStage;
   const isPerimenopausal = lifeStage === 'perimenopausal' || lifeStage === 'menopause';
 
   if (isPerimenopausal) {
     const tips = NUTRI_PHASE_TIPS.perimenopausal;
-    // 1 tip por semana — usamos el día del ciclo como proxy de días transcurridos
-    const week = Math.floor((pi?.day ?? 0) / 7);
+    // 1 tip por semana — usamos el contador global para no resetear entre ciclos
+    const week = Math.floor(getGlobalTipDay(pi) / 7);
     return tips[week % tips.length] ?? tips[0];
   }
 
@@ -715,6 +738,7 @@ export function getCurrentNutriTip(pi, profileExtended) {
 
   if (!tips.length) return null;
 
-  const dayOfPhase = Math.max(0, getDayOfPhase(pi));
-  return tips[dayOfPhase % tips.length];
+  // Rotación global: el índice no se resetea a 0 en cada ciclo,
+  // así las usuarias con reglas cortas ven todos los tips a lo largo de los meses.
+  return tips[getGlobalTipDay(pi) % tips.length];
 }

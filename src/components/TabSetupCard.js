@@ -593,6 +593,8 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
   const [localSuppsOther, setSuppsOther]= useState(profileExtended?.supplementsOther|| '');
   const [localSmokes, setSmokes]        = useState(profileExtended?.smokes          ?? null);
   const [localDrinks, setDrinks]        = useState(profileExtended?.drinks          || '');
+  const [smokesOpen, setSmokesOpen]     = useState(false);
+  const [drinksOpen, setDrinksOpen]     = useState(false);
   const [saving, setSaving]             = useState(false);
 
   const hasNutriData = !!profileExtended?.diet;
@@ -962,29 +964,76 @@ export function NutriSetupCard({ lang, profileExtended, saveAll, saveProfileExte
         )}
 
         {/* ── TABACO ── */}
-        <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
-          {L('¿Fumas?', 'Do you smoke?', 'Tu fumes ?', 'Fumi?')}
-        </Text>
-        <View style={{ gap: 2 }}>
-          <OptionCard variant="azote" label={L('No', 'No', 'Non', 'No')}        selected={localSmokes === false} onPress={() => setSmokes(false)} />
-          <OptionCard variant="azote" label={L('Ocasionalmente', 'Occasionally', 'Occasionnellement', 'Occasionalmente')} selected={localSmokes === 'occasional'} onPress={() => setSmokes('occasional')} />
-          <OptionCard variant="azote" label={L('Sí, a diario', 'Yes, daily', 'Oui, quotidiennement', 'Sì, quotidianamente')} selected={localSmokes === 'daily'} onPress={() => setSmokes('daily')} />
-        </View>
+        {(() => {
+          const smokeLabel =
+            localSmokes === false      ? L('No', 'No', 'Non', 'No') :
+            localSmokes === 'occasional' ? L('Ocasionalmente', 'Occasionally', 'Occasionnellement', 'Occasionalmente') :
+            localSmokes === 'daily'    ? L('Sí, a diario', 'Yes, daily', 'Oui, quotidiennement', 'Sì, quotidianamente') :
+            null;
+          return (
+            <>
+              <TouchableOpacity
+                onPress={() => setSmokesOpen(v => !v)}
+                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 24, paddingVertical: 4 }}
+                activeOpacity={0.7}
+              >
+                <Text style={s.secLabelAzote}>
+                  {L('¿Fumas?', 'Do you smoke?', 'Tu fumes ?', 'Fumi?')}
+                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  {smokeLabel && !smokesOpen ? (
+                    <Text style={{ fontSize: 13, color: '#888' }}>{smokeLabel}</Text>
+                  ) : null}
+                  <ChevronDown size={16} color="#888" style={{ transform: [{ rotate: smokesOpen ? '180deg' : '0deg' }] }} />
+                </View>
+              </TouchableOpacity>
+              {smokesOpen && (
+                <View style={{ gap: 2, marginTop: 4 }}>
+                  <OptionCard variant="azote" label={L('No', 'No', 'Non', 'No')}        selected={localSmokes === false} onPress={() => { setSmokes(false); setSmokesOpen(false); }} />
+                  <OptionCard variant="azote" label={L('Ocasionalmente', 'Occasionally', 'Occasionnellement', 'Occasionalmente')} selected={localSmokes === 'occasional'} onPress={() => { setSmokes('occasional'); setSmokesOpen(false); }} />
+                  <OptionCard variant="azote" label={L('Sí, a diario', 'Yes, daily', 'Oui, quotidiennement', 'Sì, quotidianamente')} selected={localSmokes === 'daily'} onPress={() => { setSmokes('daily'); setSmokesOpen(false); }} />
+                </View>
+              )}
+            </>
+          );
+        })()}
 
         {/* ── ALCOHOL ── */}
-        <Text style={[s.secLabelAzote, { marginTop: 24 }]}>
-          {L('¿Consumes alcohol?', 'Do you drink alcohol?', 'Tu consommes de l\'alcool ?', 'Consumi alcol?')}
-        </Text>
-        <View style={{ gap: 2 }}>
-          {[
+        {(() => {
+          const drinkOpts = [
             { v: 'never',   l: L('Nunca',                    'Never',                   'Jamais',                      'Mai') },
             { v: 'social',  l: L('Socialmente (fines de semana)', 'Socially (weekends)', 'Socialement (week-ends)',     'Socialmente (weekend)') },
             { v: 'regular', l: L('Regularmente (varias veces/semana)', 'Regularly (several times/week)', 'Régulièrement (plusieurs fois/semaine)', 'Regolarmente (più volte/settimana)') },
             { v: 'daily',   l: L('A diario',                 'Daily',                   'Quotidiennement',             'Quotidianamente') },
-          ].map(o => (
-            <OptionCard key={o.v} variant="azote" label={o.l} selected={localDrinks === o.v} onPress={() => setDrinks(o.v)} />
-          ))}
-        </View>
+          ];
+          const drinkLabel = drinkOpts.find(o => o.v === localDrinks)?.l ?? null;
+          return (
+            <>
+              <TouchableOpacity
+                onPress={() => setDrinksOpen(v => !v)}
+                style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 24, paddingVertical: 4 }}
+                activeOpacity={0.7}
+              >
+                <Text style={s.secLabelAzote}>
+                  {L('¿Consumes alcohol?', 'Do you drink alcohol?', 'Tu consommes de l\'alcool ?', 'Consumi alcol?')}
+                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  {drinkLabel && !drinksOpen ? (
+                    <Text style={{ fontSize: 13, color: '#888' }}>{drinkLabel}</Text>
+                  ) : null}
+                  <ChevronDown size={16} color="#888" style={{ transform: [{ rotate: drinksOpen ? '180deg' : '0deg' }] }} />
+                </View>
+              </TouchableOpacity>
+              {drinksOpen && (
+                <View style={{ gap: 2, marginTop: 4 }}>
+                  {drinkOpts.map(o => (
+                    <OptionCard key={o.v} variant="azote" label={o.l} selected={localDrinks === o.v} onPress={() => { setDrinks(o.v); setDrinksOpen(false); }} />
+                  ))}
+                </View>
+              )}
+            </>
+          );
+        })()}
 
         <TouchableOpacity style={[s.saveBtnAzote, saving && { opacity: 0.45 }]} onPress={save} disabled={saving}>
           <Text style={s.saveBtnAzoteTxt}>{saving ? '…' : (p.common.save || 'Guardar')}</Text>
@@ -1373,48 +1422,34 @@ export function GymSetupCard({ lang, trainDays, setTrainDays, profileExtended, s
           {L('Programa de entrenamiento', 'Training program', 'Programme d\'entraînement', 'Programma di allenamento')}
         </Text>
 
-        {/* Grupos por nivel apilados */}
+        {/* Lista plana de programas — sin agrupación por nivel */}
         {(() => {
-          const levels = [
-            { id: 'beginner',     label: L('Principiante', 'Beginner',     'Débutant',      'Principiante') },
-            { id: 'intermediate', label: L('Intermedio',   'Intermediate', 'Intermédiaire', 'Intermedio') },
-            { id: 'advanced',     label: L('Avanzado',     'Advanced',     'Avancé',        'Avanzato') },
-          ];
           const recCfg = { ...(profileExtended || {}), fitnessLevel: localFitness || profileExtended?.fitnessLevel };
-          return levels.map(lv => {
-            const progs = PROGRAMS.filter(pr => isVisible(pr, profileExtended, age) && pr.level === lv.id);
-            return (
-              <View key={lv.id} style={{ marginTop: 16 }}>
-                <Text style={s.levelGroupHeader}>{lv.label}</Text>
-                {progs.length === 0 ? (
-                  <Text style={s.levelEmpty}>{L('Próximamente', 'Coming soon', 'Bientôt disponible', 'Prossimamente')}</Text>
-                ) : (
-                  <View style={{ gap: 8, marginTop: 6 }}>
-                    {progs.map(pr => {
-                      const active = selectedProgram === pr.id;
-                      const durationTxt = pr.phaseRotation
-                        ? L('3 meses', '3 months', '3 mois', '3 mesi')
-                        : `${pr.weeks?.length || 0} ${L('semanas', 'weeks', 'semaines', 'settimane')}`;
-                      const rec = isRecommended(pr, recCfg);
-                      return (
-                        <TouchableOpacity key={pr.id} onPress={() => setSelectedProgram(active ? '' : pr.id)}
-                          style={[s.programRow, active && s.programRowActive]}>
-                          <View style={{ flex: 1 }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                              <Text style={s.programName}>{pr.name[lang] || pr.name.es}</Text>
-                              {rec && <View style={s.programRecBadge}><Text style={s.programRecTxt}>{L('Recomendado', 'Recommended', 'Recommandé', 'Consigliato')}</Text></View>}
-                            </View>
-                            <Text style={s.programMeta}>{durationTxt}</Text>
-                          </View>
-                          {active && <Check size={16} color="#FE6004" strokeWidth={2.5} />}
-                        </TouchableOpacity>
-                      );
-                    })}
-                  </View>
-                )}
-              </View>
-            );
-          });
+          const progs = PROGRAMS.filter(pr => isVisible(pr, profileExtended, age));
+          return (
+            <View style={{ gap: 8, marginTop: 12 }}>
+              {progs.map(pr => {
+                const active = selectedProgram === pr.id;
+                const durationTxt = pr.phaseRotation
+                  ? L('3 meses', '3 months', '3 mois', '3 mesi')
+                  : `${pr.weeks?.length || 0} ${L('semanas', 'weeks', 'semaines', 'settimane')}`;
+                const rec = isRecommended(pr, recCfg);
+                return (
+                  <TouchableOpacity key={pr.id} onPress={() => setSelectedProgram(active ? '' : pr.id)}
+                    style={[s.programRow, active && s.programRowActive]}>
+                    <View style={{ flex: 1 }}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                        <Text style={s.programName}>{pr.name[lang] || pr.name.es}</Text>
+                        {rec && <View style={s.programRecBadge}><Text style={s.programRecTxt}>{L('Recomendado', 'Recommended', 'Recommandé', 'Consigliato')}</Text></View>}
+                      </View>
+                      <Text style={s.programMeta}>{durationTxt}</Text>
+                    </View>
+                    {active && <Check size={16} color="#FE6004" strokeWidth={2.5} />}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          );
         })()}
 
         <View style={{ height: 16 }} />
